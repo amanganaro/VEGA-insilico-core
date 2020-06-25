@@ -1,6 +1,6 @@
 package insilico.core.model;
 
-import insilico.core.alert.AlertList;
+import insilico.core.alerts.AlertList;
 import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.DescriptorsEngine;
 import insilico.core.exception.GenericFailureException;

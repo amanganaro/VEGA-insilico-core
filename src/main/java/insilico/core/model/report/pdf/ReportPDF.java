@@ -12,12 +12,11 @@ import insilico.core.ad.item.iADIndex;
 import insilico.core.ad.reasoining.ACFAnalysis;
 import insilico.core.ad.reasoining.DescriptorAnalysis;
 import insilico.core.ad.reasoining.Uncertainty;
-import insilico.core.ad.reasoining.*;
 import insilico.core.ad.reasoining.UncertaintyClassBar;
 import insilico.core.ad.reasoining.iReasoningItem;
-import insilico.core.alert.Alert;
-import insilico.core.alert.AlertEncoding;
-import insilico.core.alert.AlertsEngine;
+import insilico.core.alerts.Alert;
+import insilico.core.alerts.AlertEncoding;
+import insilico.core.alerts.AlertsEngine;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.constant.MessagesAD;
 import insilico.core.exception.GenericFailureException;
@@ -44,7 +43,6 @@ import insilico.core.version.InsilicoInfo;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
@@ -842,9 +840,9 @@ public class ReportPDF {
 
             // Joins different warnings
             String msg = "";
-            for (int i=0; i<inMol.GetWarnings().getSize(); i++)
+            for (int i = 0; i<inMol.GetWarnings().GetSize(); i++)
                 msg += "[Molecule warning] " + inMol.GetWarnings().GetMessages(i) + "\n";
-            for (int i=0; i<inMol.GetErrors().getSize(); i++)
+            for (int i = 0; i<inMol.GetErrors().GetSize(); i++)
                 msg += "[Molecule error] " + inMol.GetErrors().GetMessages(i) + "\n";
             if (!curOut.getErrMessage().isEmpty())
                 msg += "[Model] " + curOut.getErrMessage() + "\n";
@@ -1023,9 +1021,9 @@ public class ReportPDF {
 
             // Joins different warnings
             String msg = "";
-            for (int i=0; i<inMol.GetWarnings().getSize(); i++)
+            for (int i = 0; i<inMol.GetWarnings().GetSize(); i++)
                 msg += "[Molecule warning] " + inMol.GetWarnings().GetMessages(i) + "\n";
-            for (int i=0; i<inMol.GetErrors().getSize(); i++)
+            for (int i = 0; i<inMol.GetErrors().GetSize(); i++)
                 msg += "[Molecule error] " + inMol.GetErrors().GetMessages(i) + "\n";
             if (!curOut.getErrMessage().isEmpty())
                 msg += "[Model] " + curOut.getErrMessage() + "\n";

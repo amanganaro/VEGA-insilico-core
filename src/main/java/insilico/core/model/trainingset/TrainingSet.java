@@ -1,6 +1,6 @@
 package insilico.core.model.trainingset;
 
-import insilico.core.alert.AlertEncoding;
+import insilico.core.alerts.AlertEncoding;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.model.InsilicoModelOutput;
@@ -288,8 +288,6 @@ public class TrainingSet implements Serializable, iTrainingSet {
                 return Format.format(value);
         }
     }
-
-    // TODO: 11/06/2020 Inserisci gli altri metodi dopo che hai implementato InsilicoModel
 
     public void Build(String molFilePath, iInsilicoModel Model){
         try{

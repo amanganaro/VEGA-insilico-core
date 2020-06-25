@@ -16,16 +16,16 @@ public class InsilicoMoleculeMessages implements Serializable, Cloneable {
         messages = new ArrayList<>();
     }
 
-    public void addMessage(String msg){
+    public void AddMessage(String msg){
         messages.add(msg);
     }
 
-    public int getSize(){
+    public int GetSize(){
         return messages.size();
     }
 
     public String GetMessages(int Index){
-        if((Index>=0) && (Index<getSize())){
+        if((Index>=0) && (Index< GetSize())){
             return messages.get(Index);
         }
         else

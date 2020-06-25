@@ -2,7 +2,7 @@ package insilico.core.model;
 
 import insilico.core.ad.item.iADIndex;
 import insilico.core.ad.reasoining.iReasoningItem;
-import insilico.core.alert.AlertList;
+import insilico.core.alerts.AlertList;
 import insilico.core.similarity.SimilarMolecule;
 
 import java.io.Serializable;

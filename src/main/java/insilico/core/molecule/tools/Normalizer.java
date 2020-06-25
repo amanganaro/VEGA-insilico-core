@@ -86,7 +86,7 @@ public class Normalizer {
         // Adds (implict) hydrogens where they are lacking
         try {
             if (Manipulator.AddLackingImplicitHydrogens(newMol) > 0)
-                Warnings.addMessage("Some lacking hydrogen atoms have been added to original structure");
+                Warnings.AddMessage("Some lacking hydrogen atoms have been added to original structure");
         } catch (CDKException e) {
             String err = ERR_HEADER + "unable to add lacking hydrogen atoms";
             InsilicoLogger.getLogger().error(err + " (" + e.getMessage() + ")");
@@ -172,7 +172,7 @@ public class Normalizer {
                             // Clears marked atoms and relative bonds
                             if ( (!MarkedAtoms.isEmpty()) || (!MarkedBonds.isEmpty()) ) {
                                 InsilicoLogger.getLogger().debug("Aromaticity has been removed from a five membered carbon cycle");
-                                Warnings.addMessage("Some five membered carbon cycles were wrongly set as aromatic and have been changed");
+                                Warnings.AddMessage("Some five membered carbon cycles were wrongly set as aromatic and have been changed");
                                 for (IAtom mAt : MarkedAtoms) {
                                     mAt.setFlag(CDKConstants.ISAROMATIC, false);
                                 }
@@ -712,7 +712,7 @@ public class Normalizer {
         }
 
         if (RingFixed)
-            Warnings.addMessage("Some aromatic rings are not correctly recognized, and transformed to kekule form.");
+            Warnings.AddMessage("Some aromatic rings are not correctly recognized, and transformed to kekule form.");
 
     }
 

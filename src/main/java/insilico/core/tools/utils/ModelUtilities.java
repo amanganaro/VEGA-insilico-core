@@ -2,7 +2,7 @@ package insilico.core.tools.utils;
 
 import insilico.core.ad.item.ADIndex;
 import insilico.core.ad.item.iADIndex;
-import insilico.core.alert.Alert;
+import insilico.core.alerts.Alert;
 import insilico.core.constant.MessagesAD;
 import insilico.core.model.InsilicoModelOutput;
 

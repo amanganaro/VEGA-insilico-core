@@ -1,7 +1,7 @@
 package insilico.core.molecule;
 
-import insilico.core.alert.Alert;
-import insilico.core.alert.AlertList;
+import insilico.core.alerts.Alert;
+import insilico.core.alerts.AlertList;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.exception.MatrixNotSupportedException;
@@ -203,10 +203,10 @@ public class InsilicoMolecule implements Serializable, Cloneable {
                 matrix = new MoleculeMatrix(MatrixClass,DistanceDetourMatrix.getMatrix(this.GetStructure()));
             if (MatrixClass == EdgeAdjacencyMatrix.class)
                 matrix = new MoleculeMatrix(MatrixClass,EdgeAdjacencyMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == TopDistanceMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass,TopDistanceMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == TopDistanceMatrixHFilled.class)
-                matrix = new MoleculeMatrix(MatrixClass,TopDistanceMatrixHFilled.getMatrix(this.GetStructure()));
+            if (MatrixClass == TopoDistanceMatrix.class)
+                matrix = new MoleculeMatrix(MatrixClass, TopoDistanceMatrix.getMatrix(this.GetStructure()));
+            if (MatrixClass == TopoDistanceMatrixHFilled.class)
+                matrix = new MoleculeMatrix(MatrixClass, TopoDistanceMatrixHFilled.getMatrix(this.GetStructure()));
             if (MatrixClass == LaplaceMatrix.class)
                 matrix = new MoleculeMatrix(MatrixClass,LaplaceMatrix.getMatrix(this.GetStructure()));
             if (MatrixClass == BaryszMatrix.class)
@@ -248,7 +248,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         }
     }
 
-    public double[][] getMatrixBurden() throws GenericFailureException{
+    public double[][] GetMatrixBurden() throws GenericFailureException{
         try {
             return this.GetMatrix(BurdenMatrix.class).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
@@ -278,9 +278,9 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         }
     }
 
-    public double[][] GetMatrixEdgeAdjacency() throws GenericFailureException{
+    public double[][][] GetMatrixEdgeAdjacency() throws GenericFailureException{
         try {
-            return this.GetMatrix(EdgeAdjacencyMatrix.class).getBidimensionalDoubleMatrix();
+            return this.GetMatrix(EdgeAdjacencyMatrix.class).getThreedimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + EdgeAdjacencyMatrix.class.getSimpleName();
             InsilicoLogger.getLogger().warn(msg);
@@ -288,11 +288,11 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         }
     }
 
-    public double[][] GetMatrixTopologicalDistance() throws GenericFailureException{
+    public int[][] GetMatrixTopologicalDistance() throws GenericFailureException{
         try {
-            return this.GetMatrix(TopDistanceMatrix.class).getBidimensionalDoubleMatrix();
+            return this.GetMatrix(TopoDistanceMatrix.class).getBidimensionalIntMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + TopDistanceMatrix.class.getSimpleName();
+            String msg = "Unable to convert matrix of class " + TopoDistanceMatrix.class.getSimpleName();
             InsilicoLogger.getLogger().warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -300,9 +300,9 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public double[][] GetMatrixTopologicalDistanceHFilled() throws GenericFailureException{
         try {
-            return this.GetMatrix(TopDistanceMatrixHFilled.class).getBidimensionalDoubleMatrix();
+            return this.GetMatrix(TopoDistanceMatrixHFilled.class).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + TopDistanceMatrixHFilled.class.getSimpleName();
+            String msg = "Unable to convert matrix of class " + TopoDistanceMatrixHFilled.class.getSimpleName();
             InsilicoLogger.getLogger().warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -454,7 +454,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
      * @param message error as String
      */
     public void AddError(String message) {
-        errors.addMessage(message);
+        errors.AddMessage(message);
     }
 
 
@@ -463,7 +463,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
      * @param message warning as String
      */
     public void AddWarning(String message) {
-        warnings.addMessage(message);
+        warnings.AddMessage(message);
     }
 
 

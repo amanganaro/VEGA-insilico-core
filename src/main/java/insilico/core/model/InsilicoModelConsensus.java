@@ -98,7 +98,7 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
         // 0 - Check Molecule
         if(!CurMolecule.IsValid()) {
             CurOutput.setStatus(InsilicoModelOutput.OUTPUT_ERROR);
-            CurOutput.setErrMessage(MessagesError.MODEL_INVALID_MOLECULE + (CurMolecule.GetErrors().getSize()>0?(". " + CurMolecule.GetErrors().GetMessages()):""));
+            CurOutput.setErrMessage(MessagesError.MODEL_INVALID_MOLECULE + (CurMolecule.GetErrors().GetSize()>0?(". " + CurMolecule.GetErrors().GetMessages()):""));
             CurOutput.setAssessment(MessagesError.MODEL_ASSESSMENT_FOR_NOT_CALCULATED_MOLECULE);
             CurOutput.setAssessmentVerbose(MessagesError.MODEL_ASSESSMENT_FOR_NOT_CALCULATED_MOLECULE);
             return CurOutput;

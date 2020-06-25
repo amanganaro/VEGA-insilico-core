@@ -1,13 +1,12 @@
 package insilico.core.model.runner;
 
-import insilico.core.alert.AlertsEngine;
+import insilico.core.alerts.AlertsEngine;
 import insilico.core.descriptor.DescriptorsEngine;
 import insilico.core.descriptor.blocks.Constitutional;
 import insilico.core.descriptor.blocks.FunctionalGroups;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.model.InsilicoModelConsensus;
 import insilico.core.molecule.InsilicoMolecule;
 
 import java.util.ArrayList;

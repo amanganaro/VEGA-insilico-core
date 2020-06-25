@@ -1,9 +1,8 @@
 package insilico.core.model.trainingset;
 
-import insilico.core.alert.AlertEncoding;
-import insilico.core.alert.iAlertBlock;
+import insilico.core.alerts.AlertEncoding;
+import insilico.core.alerts.iAlertBlock;
 import insilico.core.exception.GenericFailureException;
-import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModel;
 import insilico.core.molecule.InsilicoMolecule;
@@ -17,7 +16,6 @@ import insilico.core.tools.utils.GeneralUtilities;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;

@@ -1,0 +1,114 @@
+package insilico.core.alerts;
+
+import insilico.core.exception.GenericFailureException;
+import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.molecule.tools.CustomQueryMatcher;
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+
+import java.util.List;
+
+public abstract class AlertBlockFromSMARTS extends AlertBlock {
+
+    // Matcher tool
+    protected CustomQueryMatcher Matcher;
+
+    // Flag for initialization of SMARTS matchers
+    protected boolean IsInitialized;
+
+
+
+    public AlertBlockFromSMARTS(int BlockIndex, String Name) throws InitFailureException {
+        super(BlockIndex, Name);
+        Matcher = null;
+        IsInitialized = false;
+    }
+
+    /**
+     * Method to be called in the constructor of the class
+     * has to be OVERLOADED by inherited classes in order to build
+     * the complete list of fragment for that class
+     * @throws insilico.core.exception.InitFailureException
+     */
+    @Override
+    protected abstract void BuildSAList() throws InitFailureException;
+
+
+    protected abstract void InitSMARTS() throws InitFailureException;
+
+
+    /**
+     * Method to be called for checking if CurQuery has some
+     * matches with currently loaded molecule
+     *
+     * @param CurQuery
+     * @return
+     * @throws org.openscience.cdk.exception.CDKException
+     */
+    protected boolean Matches(QueryAtomContainer CurQuery) throws CDKException {
+
+        boolean FoundMatches = Matcher.matches(CurQuery);
+        return FoundMatches;
+
+    }
+
+
+    /**
+     * Method to be called for checking if CurQuery has some
+     * matches with currently loaded molecule and the number of
+     * matches is needed
+     *
+     * @param CurQuery
+     * @return
+     * @throws org.openscience.cdk.exception.CDKException
+     */
+    protected int MatchesNumber(QueryAtomContainer CurQuery) throws CDKException {
+
+        int nmatch = 0;
+        List mappings;
+
+        boolean status = Matcher.matches(CurQuery);
+
+        if (status) {
+            mappings = Matcher.getUniqueMatchingAtoms();
+            nmatch = mappings.size();
+        }
+
+        return nmatch;
+    }
+
+
+    /**
+     * Main method to be called for checking structural alerts
+     * return true if checking has been performed, false if errors has
+     * been encountered.
+     *
+     * @param mol
+     * @return
+     * @throws insilico.core.exception.InvalidMoleculeException
+     * @throws insilico.core.exception.GenericFailureException
+     */
+    @Override
+    public AlertList Calculate(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
+
+        if (!mol.IsValid())
+            throw new InvalidMoleculeException("Given molecule is not marked as valid");
+        CurMol = mol;
+
+        // Init
+        try {
+            Matcher = new CustomQueryMatcher(CurMol);
+            if (!IsInitialized) {
+                InitSMARTS();
+                IsInitialized = true;
+            }
+        } catch (Exception e) {
+            throw new GenericFailureException("Unable to init matcher: " + e.getMessage());
+        }
+
+        // Calls method for checking alerts
+        return CalculateSAMatches();
+    }
+}
