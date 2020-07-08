@@ -44,8 +44,7 @@ public class BaryszMatrix {
 
             for (int j=(i+1); j<nSK; j++) {
                 Atom atEnd = (Atom) mol.getAtom(j);
-                List<IAtom> shortestPath =
-                        PathTools.getShortestPath(mol, atStart, atEnd);
+                List<IAtom> shortestPath = PathTools.getShortestPath(mol, atStart, atEnd);
 
                 // van der waals volumes
                 double w_sum = 0;

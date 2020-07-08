@@ -6,8 +6,9 @@ import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModelConsensus;
 import insilico.core.model.runner.InsilicoModelConsensusWrapper;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import insilico.core.version.InsilicoInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class ReportTXTConsensusSingle {
+
+    static Logger logger = LoggerFactory.getLogger(ReportTXTConsensusSingle.class);
 
     /**
      * Writes the single report from the consensus model wrapper to std output
@@ -63,7 +66,7 @@ public class ReportTXTConsensusSingle {
             InsilicoInfo icv = new InsilicoInfo();
             Out.print("(calculation core version: " + icv.getVersion() + ")" + System.lineSeparator());
         } catch (InitFailureException ex) {
-            InsilicoLogger.getLogger().warn("unable to retrieve core information - " + ex.getMessage());
+            logger.warn("unable to retrieve core information - " + ex.getMessage());
         }
 
         Out.print(System.lineSeparator());

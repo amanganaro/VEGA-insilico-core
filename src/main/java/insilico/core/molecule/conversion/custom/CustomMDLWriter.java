@@ -1,5 +1,6 @@
 package insilico.core.molecule.conversion.custom;
 
+import insilico.core.molecule.conversion.MDLMolecule;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.config.XMLIsotopeFactory;
 import org.openscience.cdk.exception.CDKException;
@@ -10,6 +11,8 @@ import org.openscience.cdk.io.formats.MDLFormat;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.ChemFileManipulator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.text.NumberFormat;
@@ -30,7 +33,7 @@ import java.util.TimeZone;
  */
 public class CustomMDLWriter extends DefaultChemObjectWriter {
 
-    private final static ILoggingTool logger = LoggingToolFactory.createLoggingTool(CustomMDLWriter.class);
+    static Logger logger = LoggerFactory.getLogger(CustomMDLWriter.class);
 
     private BufferedWriter writer;
 
@@ -127,7 +130,7 @@ public class CustomMDLWriter extends DefaultChemObjectWriter {
             }
         } catch (Exception ex) {
             logger.error(ex.getMessage());
-            logger.debug(ex);
+            logger.debug(ex.getMessage());
             throw new CDKException("Exception while writing MDL file: " + ex.getMessage(), ex);
         }
         throw new CDKException("Only supported is writing of ChemFile, MoleculeSet, AtomContainer and Molecule objects.");

@@ -6,8 +6,9 @@ import insilico.core.descriptor.weight.VertexDegree;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Topological descriptors block.<p>
@@ -17,6 +18,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class Topological extends DescriptorBlock {
     
     private static final long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(Topological.class);
+
     private static final String BlockName = "Topological Descriptors";
 
     
@@ -69,7 +73,7 @@ public class Topological extends DescriptorBlock {
         try {
             TopoMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

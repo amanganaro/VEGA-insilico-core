@@ -68,17 +68,41 @@
             <version>6.2</version>
         </dependency>
 
-<!--        Logger 4j-->
+<!--        Logger -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.13.3</version>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.30</version>
         </dependency>
+
+        <!--        JPMML FOR MARKUP LANGUAGE-->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.13.3</version>
+            <groupId>org.jpmml</groupId>
+            <artifactId>jpmml</artifactId>
+            <version>1.0.22</version>
+            <type>pom</type>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jpmml/pmml-evaluator -->
+        <dependency>
+            <groupId>org.jpmml</groupId>
+            <artifactId>pmml-evaluator</artifactId>
+            <version>1.5.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jpmml</groupId>
+            <artifactId>pmml-model</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        <!-- Thanks for using https://jar-download.com -->
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -87,13 +111,7 @@
             <scope>provided</scope>
         </dependency>
 
-<!--        JPMML FOR MARKUP LANGUAGE-->
-        <dependency>
-            <groupId>org.jpmml</groupId>
-            <artifactId>jpmml</artifactId>
-            <version>1.0.22</version>
-            <type>pom</type>
-        </dependency>
+
 
 <!--        iText for PDF Reporting-->
         <dependency>

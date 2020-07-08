@@ -1,8 +1,9 @@
 package insilico.core.molecule.conversion;
 
 
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Parsing and normalization for CAS numbers
@@ -11,7 +12,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  */
 public class CAS {
 
-    private static ILoggingTool logger = LoggingToolFactory.createLoggingTool(CAS.class);
+    static  Logger logger = LoggerFactory.getLogger(CAS.class);
 
     /** Default string for invalid CAS numbers ({@value #MISSING_CAS}) */
     public final static String MISSING_CAS = "N.A.";

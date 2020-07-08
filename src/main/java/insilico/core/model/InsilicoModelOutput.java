@@ -1,7 +1,7 @@
 package insilico.core.model;
 
 import insilico.core.ad.item.iADIndex;
-import insilico.core.ad.reasoining.iReasoningItem;
+import insilico.core.ad.reasoning.iReasoningItem;
 import insilico.core.alerts.AlertList;
 import insilico.core.similarity.SimilarMolecule;
 

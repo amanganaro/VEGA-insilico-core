@@ -7,13 +7,14 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.Bond;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,9 @@ import java.util.Arrays;
 public class EdgeAdjacency extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(EdgeAdjacency.class);
+
     private final static String BlockName = "Edge Adjacency Descriptors";
 
     private final static int MinEig = 1;
@@ -114,7 +118,7 @@ public class EdgeAdjacency extends DescriptorBlock {
         try {
             EdgeAdjMat = mol.GetMatrixEdgeAdjacency();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

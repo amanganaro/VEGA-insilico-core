@@ -6,8 +6,9 @@ import insilico.core.descriptor.weight.*;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -23,6 +24,9 @@ import java.util.ArrayList;
 public class AutoCorrelation extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(AutoCorrelation.class);
+
     private final static String BlockName = "AutoCorrelation Descriptors";
 
     public final static String PARAMETER_WEIGHT_M = "weightm";
@@ -82,7 +86,7 @@ public class AutoCorrelation extends DescriptorBlock {
         try {
             TopoMatrix = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

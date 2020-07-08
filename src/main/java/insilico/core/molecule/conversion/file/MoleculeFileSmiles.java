@@ -2,7 +2,8 @@ package insilico.core.molecule.conversion.file;
 
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import java.util.ArrayList;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class MoleculeFileSmiles extends MoleculeFile {
+
+    Logger logger = LoggerFactory.getLogger(MoleculeFileSmiles.class);
 
     private int SmilesField;
     private int CASField;
@@ -68,7 +71,7 @@ public class MoleculeFileSmiles extends MoleculeFile {
                 m.SetId("Molecule " + Count);
             return m;
         } catch (IOException e) {
-            InsilicoLogger.getLogger().error("Error while reading file " + this.FileName + " (" + e.getMessage() + ")");
+            logger.error("Error while reading file " + this.FileName + " (" + e.getMessage() + ")");
             throw(e);
         }
     }

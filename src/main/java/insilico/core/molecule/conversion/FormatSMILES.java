@@ -6,8 +6,9 @@ import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -15,7 +16,7 @@ import org.openscience.cdk.tools.LoggingToolFactory;
  */
 public class FormatSMILES {
 
-    private static ILoggingTool logger = LoggingToolFactory.createLoggingTool(FormatSMILES.class);
+    static Logger logger = LoggerFactory.getLogger(FormatSMILES.class);
 
     public final static short SMI_FIELD_SMILES = 1;
     public final static short SMI_FIELD_NAME = 2;

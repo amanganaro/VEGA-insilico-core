@@ -3,11 +3,12 @@ package insilico.core.descriptor.weight;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.molecule.matrix.TopoDistanceMatrix;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,8 @@ import java.util.Map;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class EState {
+
+    Logger logger = LoggerFactory.getLogger(EState.class);
 
     private Map<String, Integer> periods;
 
@@ -40,7 +43,7 @@ public class EState {
         try {
             TopDistMat = TopoDistanceMatrix.getMatrix(mol);
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             throw new GenericFailureException("Unable to calculate matrices");
         }
 

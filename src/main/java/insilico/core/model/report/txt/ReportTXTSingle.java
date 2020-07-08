@@ -6,9 +6,10 @@ import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModel;
 import insilico.core.model.runner.InsilicoModelWrapper;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import insilico.core.tools.utils.ModelUtilities;
 import insilico.core.version.InsilicoInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -17,6 +18,8 @@ import java.util.ArrayList;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class ReportTXTSingle {
+
+    static Logger logger = LoggerFactory.getLogger(ReportTXTSingle.class);
 
     /**
      * Writes the single report from the model wrapper to std output
@@ -47,7 +50,7 @@ public class ReportTXTSingle {
             InsilicoInfo icv = new InsilicoInfo();
             Out.print("(calculation core version: " + icv.getVersion() + ")" + System.lineSeparator());
         } catch (InitFailureException ex) {
-            InsilicoLogger.getLogger().warn("unable to retrieve core information - " + ex.getMessage());
+            logger.warn("unable to retrieve core information - " + ex.getMessage());
         }
 
         Out.print(System.lineSeparator());

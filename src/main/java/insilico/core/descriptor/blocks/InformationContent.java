@@ -6,13 +6,14 @@ import insilico.core.descriptor.weight.VertexDegree;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import insilico.core.tools.utils.MoleculeUtilities;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,9 @@ import java.util.List;
 public class InformationContent extends DescriptorBlock {
     
     private static final long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(InformationContent.class);
+
     private final static String BlockName = "Information Content";
 
     public final static String PARAMETER_MAX_LAG_01 = "ml01";
@@ -108,7 +112,7 @@ public class InformationContent extends DescriptorBlock {
             ConnMat = mol.GetMatrixConnectionAugmented();
             TopoDistMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

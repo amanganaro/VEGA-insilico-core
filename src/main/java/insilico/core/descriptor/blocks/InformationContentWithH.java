@@ -9,13 +9,14 @@ import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.matrix.ConnectionAugMatrix;
 import insilico.core.molecule.matrix.TopoDistanceMatrix;
 import insilico.core.molecule.tools.Manipulator;
-import insilico.core.tools.logger.InsilicoLogger;
 import insilico.core.tools.utils.MoleculeUtilities;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,6 +30,9 @@ import java.util.List;
 public class InformationContentWithH extends DescriptorBlock {
     
     private static final long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(InformationContentWithH.class);
+
     private final static String BlockName = "Information Content";
 
     public final static String PARAMETER_MAX_LAG_01 = "ml01";
@@ -109,7 +113,7 @@ public class InformationContentWithH extends DescriptorBlock {
             ConnMat = ConnectionAugMatrix.getMatrix(m);
             TopoDistMat = TopoDistanceMatrix.getMatrix(m);
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

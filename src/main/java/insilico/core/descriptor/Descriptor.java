@@ -99,16 +99,15 @@ public class Descriptor implements Serializable, Cloneable {
      */
     public String getFormattedValue() {
         String str = "";
-        String format = "0";
+        StringBuilder format = new StringBuilder("0");
         if (getPrecision()>0) {
-            format += ".";
-            for (int k=0; k<getPrecision(); k++)
-                format += "#";
+            format.append(".");
+            format.append("#".repeat(Math.max(0, getPrecision())));
         }
         DecimalFormatSymbols InternationalSymbols =
                 new DecimalFormatSymbols();
         InternationalSymbols.setDecimalSeparator('.');
-        DecimalFormat df = new DecimalFormat(format, InternationalSymbols);
+        DecimalFormat df = new DecimalFormat(format.toString(), InternationalSymbols);
         if (getValue() != MISSING_VALUE)
             str = df.format(getValue());
         else

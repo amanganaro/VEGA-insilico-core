@@ -6,8 +6,9 @@ import insilico.core.model.InsilicoModelConsensusOutput;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.runner.InsilicoModelConsensusWrapper;
 import insilico.core.model.runner.InsilicoModelWrapper;
-import insilico.core.tools.logger.InsilicoLogger;
 import insilico.core.version.InsilicoInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +20,8 @@ import java.util.ArrayList;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class ReportTXTMultiple {
+
+    static Logger logger = LoggerFactory.getLogger(ReportTXTMultiple.class);
 
     /**
      * Writes the multiple report from the model wrapper to std output
@@ -105,7 +108,7 @@ public class ReportTXTMultiple {
             InsilicoInfo icv = new InsilicoInfo();
             Out.print("(calculation core version: " + icv.getVersion() + ")" + System.lineSeparator());
         } catch (InitFailureException ex) {
-            InsilicoLogger.getLogger().warn("unable to retrieve core information - " + ex.getMessage());
+            logger.warn("unable to retrieve core information - " + ex.getMessage());
         }
 
         Out.print(System.lineSeparator());

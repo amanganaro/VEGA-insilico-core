@@ -5,9 +5,10 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Atom Centered Fragments (ACF) descriptors block.<p>
@@ -17,6 +18,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class AtomCenteredFragments extends DescriptorBlock {
 
     private static final long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(AtomCenteredFragments.class);
+
     private static final String BlockName = "Atom Centered Fragments";
 
     // Names and description of ACF
@@ -201,7 +205,7 @@ public class AtomCenteredFragments extends DescriptorBlock {
         try {
             ConnAugMatrix = mol.GetMatrixConnectionAugmented();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
@@ -216,10 +220,7 @@ public class AtomCenteredFragments extends DescriptorBlock {
         nSK = CurMol.getAtomCount();
         AtomAromatic = new boolean[nSK];
         for (int i=0; i<nSK; i++)
-            if (CurMol.getAtom(i).getFlag(CDKConstants.ISAROMATIC))
-                AtomAromatic[i] = true;
-            else
-                AtomAromatic[i] = false;
+            AtomAromatic[i] = CurMol.getAtom(i).getFlag(CDKConstants.ISAROMATIC);
 
         // Searches fragments for each atom
         for (int i=0; i<nSK; i++) {
