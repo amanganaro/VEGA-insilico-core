@@ -1,0 +1,47 @@
+<xml>
+   
+    <Version>
+        <Name>InSilico Core libraries</Name>
+        <Major>1</Major>
+        <Minor>2</Minor>
+        <Revision>8</Revision>
+    </Version>
+    
+    <New>
+        In 1.2.7
+        Added alerts for Reprotox-IRFMN
+        
+        In 1.2.6
+        Modified sulfonic fragment for Meylan Logp (also modifies meylan BCF)
+        Modified -CL aliphatic attack for Meylan Logp (also modifies meylan BCF)
+        Small fix in nRSR and nRSSR functional groups (added exception for C-S-C=S)
+        
+        In 1.2.5: 
+        Modified AD output, now AD assessment provided as a separate column in output
+        Fixed PNG for ER/CERAPP alert set
+        Added Barysz matrix
+        Implemented BIC descriptors (information content)
+        Implemented IVDE
+        Implemented MAXDN, MAXDP
+        Corrected nRNNOx group in Functional Groups count
+        Added catch for error with very long smiles (>1000 atoms) from CDK canonical labeler
+        Added wrapper for Ann models from PMML files
+        Added fix for aromaticity detection for P with valence 5 in rings
+        
+        In 1.2.4:
+        Extension of Information Content descriptors with CICk series
+        Added hepatotoxicity SAs
+        Added descriptors/fragments for kM
+        
+        In 1.2.3:
+        Correction for Benigni-Bossa ruleset
+        
+        In 1.2.2:
+        Correction in similarity calculation for Bray-Curtis index 
+        (non binary distance index) to avoid global similarity of zero
+        for strongly different compounds.
+        Correction for Benigni-Bossa SA1 image
+        Correction in description for 2 SA for sediment persistence
+    </New>
+
+</xml>
