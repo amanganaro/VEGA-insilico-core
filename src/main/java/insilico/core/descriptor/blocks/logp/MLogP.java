@@ -5,12 +5,12 @@ import insilico.core.alerts.AlertList;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.blocks.AtomCenteredFragments;
+import insilico.core.descriptor.blocks.WalkAndPath;
 import insilico.core.descriptor.weight.GhoseCrippenWeights;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import insilico.core.tools.utils.MoleculeUtilities;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.CDKConstants;
@@ -20,6 +20,8 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IRing;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -31,6 +33,9 @@ import java.util.List;
 public class MLogP extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(MLogP.class);
+
     private final static String BlockName = "MLogP Descriptor";
 
     private IAtomContainer CurMol;
@@ -80,7 +85,7 @@ public class MLogP extends DescriptorBlock {
             ConnMatrix = mol.GetMatrixConnectionAugmented();
             TopoMatrix = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

@@ -37,9 +37,10 @@ import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import insilico.core.similarity.SimilarMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import insilico.core.tools.utils.ModelUtilities;
 import insilico.core.version.InsilicoInfo;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -54,6 +55,8 @@ import static com.lowagie.text.Element.*;
 import static com.lowagie.text.Rectangle.BOTTOM;
 
 public class ReportPDF {
+
+    Logger logger = LoggerFactory.getLogger(ReportPDF.class);
 
     protected Document document;
     protected ByteArrayOutputStream doc_bos;
@@ -1193,7 +1196,7 @@ public class ReportPDF {
                     g.drawLine(20, 160, 160, 20);
                     g.dispose();
                     gif = Image.getInstance(I,null);
-                    InsilicoLogger.getLogger().warn("Unable to depict molecule no. " + curSimMol.getIndex() + " from TS in " + ModelWrapper.getModel().getInfo().getName());
+                    logger.warn("Unable to depict molecule no. " + curSimMol.getIndex() + " from TS in " + ModelWrapper.getModel().getInfo().getName());
                 }
 
                 cell = new PdfPCell(gif, true);
@@ -1633,7 +1636,7 @@ public class ReportPDF {
                             g.drawLine(20, 160, 160, 20);
                             g.dispose();
                             gif = Image.getInstance(I,null);
-                            InsilicoLogger.getLogger().warn("Unable to depict molecule no. " + curSimMol.getIndex() + " from TS in " + ModelWrapper.getModel().getInfo().getName());
+                            logger.warn("Unable to depict molecule no. " + curSimMol.getIndex() + " from TS in " + ModelWrapper.getModel().getInfo().getName());
                         }
 
                         cell = new PdfPCell(gif, true);

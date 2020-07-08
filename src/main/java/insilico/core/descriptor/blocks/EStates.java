@@ -5,11 +5,12 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.weight.EState;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -20,6 +21,9 @@ import org.openscience.cdk.interfaces.IBond;
 public class EStates extends DescriptorBlock {
 
     private static final long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(EStates.class);
+
     private final static String BlockName = "E-States Descriptors";
     
     
@@ -115,7 +119,7 @@ public class EStates extends DescriptorBlock {
             try {
                 nH = curAt.getImplicitHydrogenCount();
             } catch (Exception e) {
-                InsilicoLogger.getLogger().warn("unable to get H count");
+                logger.warn("unable to get H count");
             }
             
             // formal charge

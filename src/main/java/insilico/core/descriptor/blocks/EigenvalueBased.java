@@ -11,11 +11,12 @@ import insilico.core.descriptor.weight.VanDerWaals;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,6 +30,9 @@ import java.util.List;
 public class EigenvalueBased extends DescriptorBlock {
 
     private static final long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(EigenvalueBased.class);
+
     private final static String BlockName = "Eigenvalue-based Descriptors";
     
     public final static String PARAMETER_WEIGHT_M = "weightm";
@@ -106,7 +110,7 @@ public class EigenvalueBased extends DescriptorBlock {
         try {
             ConnMatrix = mol.GetMatrixConnectionAugmented();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

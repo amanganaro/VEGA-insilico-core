@@ -2,6 +2,8 @@ package insilico.core.molecule.conversion;
 
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -13,10 +15,12 @@ import java.util.ArrayList;
  */
 public class MDLTagReader {
 
+    Logger logger = LoggerFactory.getLogger(MDLMolecule.class);
+
     private final static int DefaultMaxMolNum = 20;
     private int MaxMolNum;
     private ArrayList<String> Tags;
-    private final static ILoggingTool logger = LoggingToolFactory.createLoggingTool(MDLTagReader.class);
+
 
 
     public MDLTagReader() {

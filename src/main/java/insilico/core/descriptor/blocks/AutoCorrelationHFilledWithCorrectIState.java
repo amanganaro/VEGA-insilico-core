@@ -8,14 +8,19 @@ import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.matrix.TopoDistanceMatrix;
 import insilico.core.molecule.tools.Manipulator;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
 public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(AutoCorrelationHFilledWithCorrectIState.class);
+
+
     private final static String BlockName = "AutoCorrelation Descriptors";
 
     public final static String PARAMETER_WEIGHT_M = "weightm";
@@ -91,7 +96,7 @@ public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
         try {
             TopoMatrix = TopoDistanceMatrix.getMatrix(m);
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

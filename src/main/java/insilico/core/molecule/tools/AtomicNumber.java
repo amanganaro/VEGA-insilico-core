@@ -1,7 +1,9 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.exception.InitFailureException;
-import insilico.core.tools.logger.InsilicoLogger;
+import insilico.core.molecule.conversion.file.MoleculeFileSmiles;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -16,6 +18,9 @@ import java.util.ArrayList;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class AtomicNumber {
+
+    Logger logger = LoggerFactory.getLogger(AtomicNumber.class);
+
 
     final static private char CharTAB = 9;
 
@@ -44,7 +49,7 @@ public class AtomicNumber {
             }
             in.close();
         } catch (IOException | NumberFormatException e) {
-            InsilicoLogger.getLogger().error("Error while initializing atomic number handler (" + e.getMessage() + ")");
+            logger.error("Error while initializing atomic number handler (" + e.getMessage() + ")");
             throw new InitFailureException("Unable to init Z data from embedded file.");
         }
     }

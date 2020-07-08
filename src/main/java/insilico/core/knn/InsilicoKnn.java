@@ -7,9 +7,10 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.similarity.SimilarMolecule;
 import insilico.core.similarity.Similarity;
 import insilico.core.similarity.SimilarityDescriptorsBuilder;
-import insilico.core.tools.logger.InsilicoLogger;
-import io.swagger.models.auth.In;
+
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +20,8 @@ import java.util.Arrays;
  * @author Alberto Manganaro <a.manganaro@kode-solutions.net>
  */
 public abstract class InsilicoKnn {
+
+    Logger logger = LoggerFactory.getLogger(InsilicoKnn.class);
 
     protected int NeighboursNumber;
     protected double MinSimilarity;
@@ -216,7 +219,7 @@ public abstract class InsilicoKnn {
 
         if ((TrainSet == null) || (TrainSet.getMoleculesSize() == 0)) {
             SimilarMols = null;
-            InsilicoLogger.getLogger().warn("Unable to retrieve training set for AD similarity calculation");
+            logger.warn("Unable to retrieve training set for AD similarity calculation");
             throw new GenericFailureException("Unable to retrieve training set");
         }
 
@@ -242,7 +245,7 @@ public abstract class InsilicoKnn {
                     curSim = 0.38;
 
             } catch (Throwable ex){
-                InsilicoLogger.getLogger().warn("AD similarity calculation: unable to calculate for training set molecule " + i + ": " + TrainSet.getSMILES(i));
+                logger.warn("AD similarity calculation: unable to calculate for training set molecule " + i + ": " + TrainSet.getSMILES(i));
                 curSim = 0;
             }
 

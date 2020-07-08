@@ -7,9 +7,10 @@ import insilico.core.descriptor.weight.VertexDegree;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.graph.matrix.AdjacencyMatrix;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Topological Charge descriptors block.<p>
@@ -19,6 +20,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class TopologicalCharge extends DescriptorBlock {
     
     private static final long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(TopologicalCharge.class);
+
     private static final String BlockName = "Topological Charge Descriptors";
 
     private final static int MaxPath = 8;
@@ -70,7 +74,7 @@ public class TopologicalCharge extends DescriptorBlock {
         try {
             TopoMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

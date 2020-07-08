@@ -7,7 +7,6 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import insilico.core.tools.utils.MoleculeUtilities;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.Bond;
@@ -15,6 +14,8 @@ import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,18 +28,21 @@ import java.util.Arrays;
 public class EdgeAdjacencyCorrected extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
+
+    Logger logger = LoggerFactory.getLogger(EdgeAdjacencyCorrected.class);
+
     private final static String BlockName = "Edge Adjacency Descriptors";
 
     private final static int MinEig = 1;
     private final static int MaxEig = 15;
     private final static int MinSM = 1;
     private final static int MaxSM = 15;
-    
+
     public final static String PARAMETER_WEIGHT_X = "weightX";  // Edge degree
     public final static String PARAMETER_WEIGHT_D = "weightD";  // Dipole moments
     public final static String PARAMETER_WEIGHT_R = "weightR";  // Resonance integral
     public final static String PARAMETER_WEIGHT_B = "weightB";  // Bond Order
-    
+
     private final static short WEIGHT_X_IDX = 0;
     private final static short WEIGHT_D_IDX = 1;
     private final static short WEIGHT_R_IDX = 2;
@@ -46,25 +50,25 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
     private final static String[] WEIGHT_SYMBOL = {"ed", "dm", "ri", "bo"};
 
 
-    
+
     /**
-     * Constructor. This should not be used, no weight is specified. The 
+     * Constructor. This should not be used, no weight is specified. The
      * overloaded constructors should be used instead.
-     */    
+     */
     public EdgeAdjacencyCorrected() {
         super();
         this.Name = EdgeAdjacencyCorrected.BlockName;
     }
 
-    
-    
+
+
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
         ArrayList<Integer> weightList = BuildWeightList();
         for (Integer curWeight : weightList) {
             Add("SpMax" + WEIGHT_SYMBOL[curWeight], "");
-            for (int i=MinEig; i<=MaxEig; i++) 
+            for (int i=MinEig; i<=MaxEig; i++)
                 Add("EEig" + i + WEIGHT_SYMBOL[curWeight], "");
             for (int i=MinSM; i<=MaxSM; i++) {
                 Add("ESpm" + i + WEIGHT_SYMBOL[curWeight], "");
@@ -73,8 +77,8 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
         }
         SetAllValues(Descriptor.MISSING_VALUE);
     }
-    
-    
+
+
     private ArrayList<Integer> BuildWeightList() {
         ArrayList<Integer> w = new ArrayList<>();
         if (getBoolProperty(PARAMETER_WEIGHT_X))
@@ -87,11 +91,11 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
             w.add((int) WEIGHT_B_IDX);
         return w;
     }
-    
-    
+
+
     /**
      * Calculate descriptors for the given molecule.
-     * 
+     *
      * @param mol molecule to be calculated
      */
     @Override
@@ -107,23 +111,23 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
-        
+
         // Only for mol with nSK>1
         if (m.getAtomCount() < 2) {
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
-        
+
         // Gets matrices
         double[][][] EdgeAdjMat = null;
         try {
             EdgeAdjMat = mol.GetMatrixEdgeAdjacency();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
-        
+
         Matrix DataMatrix = null;
 
         // Generates weight
@@ -131,7 +135,7 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
 
         // Cycle for all weights
         for (Integer curWeight : weightList) {
-           
+
             if (curWeight == WEIGHT_X_IDX) {
                 double[][] EdgeDegreeMat = new double[EdgeAdjMat.length][EdgeAdjMat[0].length];
                 for (int i=0; i<EdgeAdjMat.length; i++)
@@ -139,8 +143,8 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                         EdgeDegreeMat[i][j] = EdgeAdjMat[i][j][1];
 
                 DataMatrix = new Matrix(EdgeDegreeMat);
-            } 
-            
+            }
+
             if (curWeight == WEIGHT_D_IDX) {
                 double[][] EdgeDipoleMat = new double[EdgeAdjMat.length][EdgeAdjMat[0].length];
                 for (int i=0; i<EdgeAdjMat.length; i++)
@@ -155,14 +159,14 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                             double CurVal = GetDipoleMoment(m, a, b);
                             if (CurVal == 0)
                                 CurVal = GetDipoleMoment(m, b, a);
-                            EdgeDipoleMat[i][j] = CurVal;                            
+                            EdgeDipoleMat[i][j] = CurVal;
                         }
                     }
                 }
-                
+
                 DataMatrix = new Matrix(EdgeDipoleMat);
-            } 
-            
+            }
+
             if (curWeight == WEIGHT_R_IDX) {
                 double[][] EdgeResMat = new double[EdgeAdjMat.length][EdgeAdjMat[0].length];
                 for (int i=0; i<EdgeResMat.length; i++)
@@ -178,19 +182,19 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
 
                 DataMatrix = new Matrix(EdgeResMat);
             }
-            
+
             if (curWeight == WEIGHT_B_IDX) {
                 double[][] EdgeDegreeMat = new double[EdgeAdjMat.length][EdgeAdjMat[0].length];
                 for (int i=0; i<EdgeAdjMat.length; i++)
-                    for (int j=0; j<EdgeAdjMat[0].length; j++) 
+                    for (int j=0; j<EdgeAdjMat[0].length; j++)
                         if (EdgeAdjMat[i][j][0] != 0)
                             EdgeDegreeMat[i][j] = MoleculeUtilities.Bond2Double(m.getBond(j));
 
                 DataMatrix = new Matrix(EdgeDegreeMat);
-            } 
-            
-            
-            
+            }
+
+
+
             // Calculates eigenvalues
             double[] eigenvalues;
             EigenvalueDecomposition ed = new EigenvalueDecomposition(DataMatrix);
@@ -200,7 +204,7 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
 
             // SpMax
             this.SetByName("SpMax" + WEIGHT_SYMBOL[curWeight], eigenvalues[eigenvalues.length - 1]);
-            
+
             // EEig
             for (int i=MinEig; i<=MaxEig; i++) {
                 int idx = (eigenvalues.length - 1) - (i-1);
@@ -217,28 +221,28 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                 for (int k=(eigenvalues.length-1); k>=0; k--) {
                     curSM += Math.pow(eigenvalues[k], (i));
                     if (Math.abs(eigenvalues[k]) > 0.000001)
-                        curSM_D5 += Math.pow((eigenvalues[k]), (i));                    
+                        curSM_D5 += Math.pow((eigenvalues[k]), (i));
                 }
                 curSM = Math.log(1 + curSM);
                 curSM_D5 = Math.log(1 + curSM_D5);
 
                 this.SetByName("ESpm" + i + WEIGHT_SYMBOL[curWeight], curSM);
                 this.SetByName("ESpm" + i + WEIGHT_SYMBOL[curWeight] + "D5", curSM_D5);
-            }      
+            }
 
-        }        
+        }
 
     }
 
-    
-    
+
+
     private double GetResonanceIntegral(Bond bnd) {
-        
+
         Atom atA = (Atom) bnd.getAtom(0);
         Atom atB = (Atom) bnd.getAtom(1);
         String A = atA.getSymbol();
         String B = atB.getSymbol();
-        
+
         if ( ((A.compareToIgnoreCase("C") == 0) && (B.compareToIgnoreCase("C") == 0)) )
             return 1.00;
         if ( ((A.compareToIgnoreCase("C") == 0) && (B.compareToIgnoreCase("B") == 0)) ||
@@ -269,24 +273,24 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
         if ( ((A.compareToIgnoreCase("C") == 0) && (B.compareToIgnoreCase("I") == 0)) ||
              ((A.compareToIgnoreCase("I") == 0) && (B.compareToIgnoreCase("C") == 0)))
             return 0.1;
-        
+
         return 0.00;
     }
-    
-    
+
+
     private double GetDipoleMoment(IAtomContainer CurMol, Atom at1, Atom at2) {
-        
+
         String a = at1.getSymbol();
         String b = at2.getSymbol();
-        
+
         // C - something
         if (a.equalsIgnoreCase("C")) {
-            
+
             // C-F
             if (b.equalsIgnoreCase("F")) {
                 return 1.51;
-            } 
-            
+            }
+
             // C-Cl , C(Cl)-Cl , C(Cl)(Cl)-Cl
             if (b.equalsIgnoreCase("Cl")) {
                 int nCl=0;
@@ -300,18 +304,18 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                     return 1.20;
                 if (nCl==3)
                     return 0.83;
-            } 
-            
+            }
+
             // C-Br
             if (b.equalsIgnoreCase("Br")) {
                 return 1.48;
-            } 
-        
+            }
+
             // C-I
             if (b.equalsIgnoreCase("I")) {
                 return 1.29;
-            } 
-        
+            }
+
             // C-N , C=N , C#N
             if (b.equalsIgnoreCase("N")) {
                 if (CurMol.getBond(at1, at2).getFlag(CDKConstants.ISAROMATIC))
@@ -323,8 +327,8 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                     return 0.9;
                 if (ord == IBond.Order.TRIPLE)
                     return 3.6;
-            } 
-        
+            }
+
             // C-O , C=O
             if (b.equalsIgnoreCase("O")) {
                 if (CurMol.getBond(at1, at2).getFlag(CDKConstants.ISAROMATIC))
@@ -334,8 +338,8 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                     return 0.86;
                 if (ord == IBond.Order.DOUBLE)
                     return 2.4;
-            } 
-        
+            }
+
             // C-S , C=S
             if (b.equalsIgnoreCase("S")) {
                 if (CurMol.getBond(at1, at2).getFlag(CDKConstants.ISAROMATIC))
@@ -345,10 +349,10 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                     return 2.95;
                 if (ord == IBond.Order.DOUBLE)
                     return 2.8;
-            } 
-            
+            }
+
         }
-        
+
 
         // N-O , N-[O-] , N=O
         if ((a.equalsIgnoreCase("N")) && (b.equalsIgnoreCase("O"))) {
@@ -365,9 +369,9 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
 //                return 0.3;
             if ((ord == IBond.Order.DOUBLE) && (nConn==1))
                 return 2.0;
-        } 
+        }
 
-        
+
         // S-[O-]
         if ((a.equalsIgnoreCase("S")) && (b.equalsIgnoreCase("O"))) {
             if (CurMol.getBond(at1, at2).getFlag(CDKConstants.ISAROMATIC))
@@ -376,9 +380,9 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
             int nConn = CurMol.getConnectedAtomsCount(at2);
             if ((ord == IBond.Order.SINGLE) && (nConn==2))
                 return 2.9;
-        } 
+        }
 
-        
+
         // C(*)(*)-C(*)(*)(*) , C(*)(*)-C , CC(*)(*)(*)
         if ((a.equalsIgnoreCase("C")) && (b.equalsIgnoreCase("C"))) {
 
@@ -392,7 +396,7 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
             try {
                 nH2 = at2.getImplicitHydrogenCount();
             } catch (Exception E) {}
-            
+
             int nConn1 = CurMol.getConnectedAtomsCount(at1) + nH1;
             int nConn2 = CurMol.getConnectedAtomsCount(at2) + nH2;
 
@@ -402,16 +406,16 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                 return 1.15;
             if ((nConn1==2) && (nConn2==4))
                 return 1.48;
-        } 
-        
+        }
+
         return 0;
     }
-        
+
 
     /**
      * Clones the actual descriptor block
      * @return a cloned copy of the actual object
-     * @throws CloneNotSupportedException 
+     * @throws CloneNotSupportedException
      */
     public DescriptorBlock CreateClone() throws CloneNotSupportedException {
         EdgeAdjacencyCorrected block = new EdgeAdjacencyCorrected();

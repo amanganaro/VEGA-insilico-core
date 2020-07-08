@@ -11,8 +11,9 @@ import insilico.core.descriptor.weight.VanDerWaals;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,6 +28,9 @@ import java.util.Arrays;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class BurdenEigenvalueHFilled extends DescriptorBlock {
+
+    Logger logger = LoggerFactory.getLogger(BurdenEigenvalueHFilled.class);
+
 
     private static final long serialVersionUID = 1L;
     private final static String BlockName = "Burden Eigenvalue Descriptors";
@@ -108,7 +112,7 @@ public class BurdenEigenvalueHFilled extends DescriptorBlock {
         try {
             BurdenMat = HMol.GetMatrixBurden();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e);
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

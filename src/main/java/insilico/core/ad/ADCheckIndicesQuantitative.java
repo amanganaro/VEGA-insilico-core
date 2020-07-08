@@ -10,8 +10,8 @@ import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.similarity.SimilarMolecule;
-import insilico.core.tools.logger.InsilicoLogger;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -19,7 +19,7 @@ import org.slf4j.Logger;
  */
 public class ADCheckIndicesQuantitative extends ADCheckIndices {
 
-    Logger logger =
+    Logger logger = LoggerFactory.getLogger(ADCheckIndicesQuantitative.class);
 
     protected double IndexSimilarity;
     protected double IndexAccuracy;
@@ -75,7 +75,7 @@ public class ADCheckIndicesQuantitative extends ADCheckIndices {
             return MostSimilar;
             
         } catch (CloneNotSupportedException e) {
-            InsilicoLogger.getLogger().warn("Error in AD: calculation of similarity for molecule " + Mol.GetSMILES() + " - " + e.getMessage());
+            logger.warn("Error in AD: calculation of similarity for molecule " + Mol.GetSMILES() + " - " + e.getMessage());
             throw new GenericFailureException("Unable to calculate similarity - " + e.getMessage());
         }
     }
