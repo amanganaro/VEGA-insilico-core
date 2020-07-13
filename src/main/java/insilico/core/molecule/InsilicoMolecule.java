@@ -5,23 +5,15 @@ import insilico.core.alerts.AlertList;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.exception.MatrixNotSupportedException;
-import insilico.core.exception.MoleculeConversionException;
-import insilico.core.model.trainingset.TrainingSet;
 import insilico.core.molecule.acf.ACFItemList;
-import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.matrix.*;
-import insilico.core.molecule.tools.Manipulator;
 import insilico.core.similarity.SimilarityDescriptors;
 import org.openscience.cdk.RingSet;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.ringsearch.AllRingsFinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 /**
  * Basic molecule object
@@ -43,18 +35,21 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     private InsilicoMoleculeMessages errors, warnings;
 
-    transient private IAtomContainer structure;
-    transient private RingSet SSSR;
-    transient private RingSet allRings;
-    transient private ArrayList<MoleculeMatrix> matrices;
-    transient private AlertList structuralAlerts;
-    transient private SimilarityDescriptors similarityDescriptors;
-    transient private ACFItemList ACF;
+
+//    // Cached Data
+//    transient private IAtomContainer structure;
+//    transient private RingSet SSSR;
+//    transient private RingSet allRings;
+//    transient private ArrayList<MoleculeMatrix> matrices;
+//    transient private AlertList structuralAlerts;
+//    transient private SimilarityDescriptors similarityDescriptors;
+//    transient private ACFItemList ACF;
+    private InsilicoMoleculeCache MoleculeCache = new InsilicoMoleculeCache();
 
     /**
      * Constructor for empty molecule
      */
-    public InsilicoMolecule(){
+    public InsilicoMolecule() {
         isValid = false;
         explicitHydrogen = false;
         Name = "";
@@ -68,21 +63,15 @@ public class InsilicoMolecule implements Serializable, Cloneable {
     /**
      * Clear all cached information
      */
-    public final void ClearCache(){
-        ClearCachePreserveStructure();
-        structure = null;
-        SSSR = null;
-        allRings = null;
+    public void ClearCache(){
+        MoleculeCache.ClearCache();
     }
 
     /**
      * Clear all cached information except the molecule's structure and its ring sets
      */
-    public final void ClearCachePreserveStructure(){
-        matrices = new ArrayList<>();
-        structuralAlerts = new AlertList();
-        similarityDescriptors = null;
-        ACF = null;
+    public final void ClearCachePreserveStructure() {
+        MoleculeCache.ClearCachePreserveStructure();
     }
 
     public Object Clone() throws CloneNotSupportedException {
@@ -97,146 +86,170 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public IAtomContainer GetStructure() throws InvalidMoleculeException {
 
-        if((isValid == false) || (SMILES.isEmpty())){
+        if((!isValid) || (SMILES.isEmpty())){
             String err = "Requested CDK AtomContainer for an invalid molecule (SMILES: " + SMILES + ")";
             logger.warn(err);
             throw new InvalidMoleculeException();
         }
 
-        if (structure != null){
-            return structure;
-        }
+        //
+//        try {
+//            structure = SmilesMolecule.CreateCDKMolecule(SMILES, new InsilicoMoleculeMessages());
+//        } catch (MoleculeConversionException ex){
+//            structure = null;
+//            String err = "Failed SMILES conversion while requesting CDK Molecule for SMILES: "+ SMILES;
+//            logger.warn(err);
+//            throw new InvalidMoleculeException(err);
+//        }
+//
+//        if (explicitHydrogen)
+//            try {
+//                structure = Manipulator.AddHydrogens(structure);
+//            } catch (GenericFailureException ex){
+//                structure = null;
+//                String err = "Failed normalization while requesting CDK Molecule for SMILES: "+ this.SMILES;
+//                logger.warn(err);
+//                throw new InvalidMoleculeException(err);
+//            }
 
-        try {
-            structure = SmilesMolecule.CreateCDKMolecule(SMILES, new InsilicoMoleculeMessages());
-        } catch (MoleculeConversionException ex){
-            structure = null;
-            String err = "Failed SMILES conversion while requesting CDK Molecule for SMILES: "+ SMILES;
-            logger.warn(err);
-            throw new InvalidMoleculeException(err);
-        }
-
-        if (explicitHydrogen)
-            try {
-                structure = Manipulator.AddHydrogens(structure);
-            } catch (GenericFailureException ex){
-                structure = null;
-                String err = "Failed normalization while requesting CDK Molecule for SMILES: "+ this.SMILES;
-                logger.warn(err);
-                throw new InvalidMoleculeException(err);
-            }
-
-        return structure;
+        return MoleculeCache.GetStructure(SMILES, explicitHydrogen);
     }
 
 
     public RingSet GetSSSR() throws InvalidMoleculeException {
-        if (SSSR == null){
-            Cycles cycles = Cycles.sssr(GetStructure());
-            SSSR = (RingSet) cycles.toRingSet();
-//            DEPRECATED
-//            SSSRFinder rf = new SSSRFinder(GetStructure());
-//            SSSR = (RingSet) rf.findSSSR();
+//        if (SSSR == null){
+//            Cycles cycles = Cycles.sssr(GetStructure());
+//            SSSR = (RingSet) cycles.toRingSet();
+////            DEPRECATED
+////            SSSRFinder rf = new SSSRFinder(GetStructure());
+////            SSSR = (RingSet) rf.findSSSR();
+//        }
+
+        if((!isValid) || (SMILES.isEmpty())){
+            String err = "Requested CDK AtomContainer for an invalid molecule (SMILES: " + SMILES + ")";
+            logger.warn(err);
+            throw new InvalidMoleculeException();
         }
-        return SSSR;
+        return MoleculeCache.GetSSSR(SMILES, explicitHydrogen);
     }
 
     public RingSet GetAllRings() throws InvalidMoleculeException{
-        if (allRings == null){
-            AllRingsFinder ringsFinder = new AllRingsFinder();
-            ringsFinder.setTimeout(5000);
-            try {
-                allRings = (RingSet) ringsFinder.findAllRings(GetStructure());
-            } catch (CDKException ex){
-                ringsFinder = new AllRingsFinder().setTimeout(15000);
-                try {
-                    allRings = (RingSet) ringsFinder.findAllRings(GetStructure(), 20);
-                } catch (CDKException ex2) {
-                    this.isValid = false;
-                    this.AddError("Unable to perceive all rings");
-                    logger.warn("Unable to find all rings for molecule " + GetSMILES());
-                    throw new InvalidMoleculeException("unable to find all rings");
-                }
-
-                this.AddWarning("All rings perceived only partially due to the complexity of the molecule");
-                logger.warn("unable to find all rings for molecule " + GetSMILES() + " - rings perceived only partially");
-            }
+//        if (allRings == null){
+//            AllRingsFinder ringsFinder = new AllRingsFinder();
+//            ringsFinder.setTimeout(5000);
+//            try {
+//                allRings = (RingSet) ringsFinder.findAllRings(GetStructure());
+//            } catch (CDKException ex){
+//                ringsFinder = new AllRingsFinder().setTimeout(15000);
+//                try {
+//                    allRings = (RingSet) ringsFinder.findAllRings(GetStructure(), 20);
+//                } catch (CDKException ex2) {
+//                    this.isValid = false;
+//                    this.AddError("Unable to perceive all rings");
+//                    logger.warn("Unable to find all rings for molecule " + GetSMILES());
+//                    throw new InvalidMoleculeException("unable to find all rings");
+//                }
+//
+//                this.AddWarning("All rings perceived only partially due to the complexity of the molecule");
+//                logger.warn("unable to find all rings for molecule " + GetSMILES() + " - rings perceived only partially");
+//            }
+//        }
+        if((!isValid) || (SMILES.isEmpty())){
+            String err = "Requested CDK AtomContainer for an invalid molecule (SMILES: " + SMILES + ")";
+            logger.warn(err);
+            throw new InvalidMoleculeException();
         }
-        return allRings;
+        return MoleculeCache.GetAllRings(SMILES, explicitHydrogen, warnings, errors);
     }
 
     public boolean HasSimilarityDescriptors() {
-        return !(similarityDescriptors == null);
+        return MoleculeCache.HasSimilarityDescriptors();
     }
 
-    public SimilarityDescriptors GetSimilarityDescriptors() {return similarityDescriptors;}
+    public SimilarityDescriptors GetSimilarityDescriptors() {return MoleculeCache.GetSimilarityDescriptors();}
+
     public void SetSimilarityDescriptors(SimilarityDescriptors similarityDescriptors){
-        this.similarityDescriptors = similarityDescriptors;
+        MoleculeCache.SetSimilarityDescriptors(similarityDescriptors);
     }
 
-    public boolean HasACF(){return !(ACF == null);}
-    public ACFItemList  GetACF(){return ACF;}
+    public boolean HasACF(){
+        return MoleculeCache.HasACF();
+    }
+    public ACFItemList  GetACF(){
+        return MoleculeCache.GetACF();
+    }
+
     public void SetACF(ACFItemList ACFItems){
-        this.ACF = ACFItems;
+        MoleculeCache.SetACF(ACFItems);
     }
 
-    public AlertList GetAlerts(){return structuralAlerts;}
-    public void PurgeAlerts(){structuralAlerts = new AlertList();}
-    public void AddAlert(Alert alert){structuralAlerts.add(alert);}
-    public void AddAlert(AlertList alert){
+    public AlertList GetAlerts(){return MoleculeCache.GetAlerts();}
+
+    public void PurgeAlerts(){
+        MoleculeCache.PurgeAlerts();
+    }
+
+    public void AddAlert(Alert alert){
+        MoleculeCache.AddAlert(alert);
+    }
+
+    public void AddAlert(AlertList alert) {
+        AlertList alertList = MoleculeCache.GetAlerts();
         for (Alert a: alert.getSAList())
-            structuralAlerts.add(a);
+            alertList.add(a);
     }
 
     private MoleculeMatrix GetMatrix(Class MatrixClass) throws GenericFailureException {
 
-        // Check if already cached
-        for (MoleculeMatrix matrix: matrices)
-            if (matrix.getMatrixClass() == MatrixClass) return matrix;
+        return MoleculeCache.GetMatrix(MatrixClass, SMILES, explicitHydrogen);
 
-        MoleculeMatrix matrix = null;
-        try {
-
-            if (MatrixClass == AdjacencyMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass, AdjacencyMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == BondAugMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass, BondAugMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == BurdenMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass, BurdenMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == ConnectionAugMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass, ConnectionAugMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == DistanceDetourMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass,DistanceDetourMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == EdgeAdjacencyMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass,EdgeAdjacencyMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == TopoDistanceMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass, TopoDistanceMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == TopoDistanceMatrixHFilled.class)
-                matrix = new MoleculeMatrix(MatrixClass, TopoDistanceMatrixHFilled.getMatrix(this.GetStructure()));
-            if (MatrixClass == LaplaceMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass,LaplaceMatrix.getMatrix(this.GetStructure()));
-            if (MatrixClass == BaryszMatrix.class)
-                matrix = new MoleculeMatrix(MatrixClass,BaryszMatrix.getMatrix(this.GetStructure()));
-
-        } catch (InvalidMoleculeException ex){
-            String msg = "Unable to build matrix " + MatrixClass.getName() + ", invalid molecule structure for " + this.GetSMILES();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-
-        if (matrix != null) {
-            this.matrices.add(matrix);
-            return matrix;
-        } else {
-            String msg = "Unable to build matrix " + MatrixClass.getName() + " for molecule " + this.GetSMILES();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
+//        // Check if already cached
+//        for (MoleculeMatrix matrix: matrices)
+//            if (matrix.getMatrixClass() == MatrixClass) return matrix;
+//
+//        MoleculeMatrix matrix = null;
+//        try {
+//
+//            if (MatrixClass == AdjacencyMatrix.class)
+//                matrix = new MoleculeMatrix(MatrixClass, AdjacencyMatrix.getMatrix(this.GetStructure()));
+//            if (MatrixClass == BondAugMatrix.class)
+//                matrix = new MoleculeMatrix(MatrixClass, BondAugMatrix.getMatrix(this.GetStructure()));
+//            if (MatrixClass == BurdenMatrix.class)
+//                matrix = new MoleculeMatrix(MatrixClass, BurdenMatrix.getMatrix(this.GetStructure()));
+//            if (MatrixClass == ConnectionAugMatrix.class)
+//                matrix = new MoleculeMatrix(MatrixClass, ConnectionAugMatrix.getMatrix(this.GetStructure()));
+//            if (MatrixClass == DistanceDetourMatrix.class)
+//                matrix = new MoleculeMatrix(MatrixClass,DistanceDetourMatrix.getMatrix(this.GetStructure()));
+//            if (MatrixClass == EdgeAdjacencyMatrix.class)
+//                matrix = new MoleculeMatrix(MatrixClass,EdgeAdjacencyMatrix.getMatrix(this.GetStructure()));
+//            if (MatrixClass == TopoDistanceMatrix.class)
+//                matrix = new MoleculeMatrix(MatrixClass, TopoDistanceMatrix.getMatrix(this.GetStructure()));
+//            if (MatrixClass == TopoDistanceMatrixHFilled.class)
+//                matrix = new MoleculeMatrix(MatrixClass, TopoDistanceMatrixHFilled.getMatrix(this.GetStructure()));
+//            if (MatrixClass == LaplaceMatrix.class)
+//                matrix = new MoleculeMatrix(MatrixClass,LaplaceMatrix.getMatrix(this.GetStructure()));
+//            if (MatrixClass == BaryszMatrix.class)
+//                matrix = new MoleculeMatrix(MatrixClass,BaryszMatrix.getMatrix(this.GetStructure()));
+//
+//        } catch (InvalidMoleculeException ex){
+//            String msg = "Unable to build matrix " + MatrixClass.getName() + ", invalid molecule structure for " + this.GetSMILES();
+//            logger.warn(msg);
+//            throw new GenericFailureException(msg);
+//        }
+//
+//        if (matrix != null) {
+//            this.matrices.add(matrix);
+//            return matrix;
+//        } else {
+//            String msg = "Unable to build matrix " + MatrixClass.getName() + " for molecule " + this.GetSMILES();
+//            logger.warn(msg);
+//            throw new GenericFailureException(msg);
+//        }
     }
 
     public int[][] GetMatrixAdjacency() throws GenericFailureException{
         try {
-            return this.GetMatrix(AdjacencyMatrix.class).getBidimensionalIntMatrix();
+            return MoleculeCache.GetMatrix(AdjacencyMatrix.class, SMILES, explicitHydrogen).getBidimensionalIntMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + AdjacencyMatrix.class.getSimpleName();
             logger.warn(msg);
@@ -246,7 +259,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public double[][] GetMatrixBondAugmented() throws GenericFailureException{
         try {
-            return this.GetMatrix(BondAugMatrix.class).getBidimensionalDoubleMatrix();
+            return MoleculeCache.GetMatrix(BondAugMatrix.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + BondAugMatrix.class.getSimpleName();
             logger.warn(msg);
@@ -256,7 +269,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public double[][] GetMatrixBurden() throws GenericFailureException{
         try {
-            return this.GetMatrix(BurdenMatrix.class).getBidimensionalDoubleMatrix();
+            return MoleculeCache.GetMatrix(BurdenMatrix.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + BurdenMatrix.class.getSimpleName();
             logger.warn(msg);
@@ -266,7 +279,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public double[][] GetMatrixConnectionAugmented() throws GenericFailureException{
         try {
-            return this.GetMatrix(ConnectionAugMatrix.class).getBidimensionalDoubleMatrix();
+            return MoleculeCache.GetMatrix(ConnectionAugMatrix.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + ConnectionAugMatrix.class.getSimpleName();
             logger.warn(msg);
@@ -276,7 +289,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public double[][] GetMatrixDistanceDetour() throws GenericFailureException{
         try {
-            return this.GetMatrix(DistanceDetourMatrix.class).getBidimensionalDoubleMatrix();
+            return MoleculeCache.GetMatrix(DistanceDetourMatrix.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + DistanceDetourMatrix.class.getSimpleName();
             logger.warn(msg);
@@ -286,7 +299,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public double[][][] GetMatrixEdgeAdjacency() throws GenericFailureException{
         try {
-            return this.GetMatrix(EdgeAdjacencyMatrix.class).getThreedimensionalDoubleMatrix();
+            return MoleculeCache.GetMatrix(EdgeAdjacencyMatrix.class, SMILES, explicitHydrogen).getThreedimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + EdgeAdjacencyMatrix.class.getSimpleName();
             logger.warn(msg);
@@ -296,7 +309,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public int[][] GetMatrixTopologicalDistance() throws GenericFailureException{
         try {
-            return this.GetMatrix(TopoDistanceMatrix.class).getBidimensionalIntMatrix();
+            return MoleculeCache.GetMatrix(TopoDistanceMatrix.class, SMILES, explicitHydrogen).getBidimensionalIntMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + TopoDistanceMatrix.class.getSimpleName();
             logger.warn(msg);
@@ -306,7 +319,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public double[][] GetMatrixTopologicalDistanceHFilled() throws GenericFailureException{
         try {
-            return this.GetMatrix(TopoDistanceMatrixHFilled.class).getBidimensionalDoubleMatrix();
+            return MoleculeCache.GetMatrix(TopoDistanceMatrixHFilled.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + TopoDistanceMatrixHFilled.class.getSimpleName();
             logger.warn(msg);
@@ -316,7 +329,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public int[][] GetMatrixLaplace() throws GenericFailureException{
         try {
-            return this.GetMatrix(LaplaceMatrix.class).getBidimensionalIntMatrix();
+            return MoleculeCache.GetMatrix(LaplaceMatrix.class, SMILES, explicitHydrogen).getBidimensionalIntMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + LaplaceMatrix.class.getSimpleName();
             logger.warn(msg);
@@ -326,7 +339,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     public double[][][] GetMatrixBarysz() throws GenericFailureException{
         try {
-            return this.GetMatrix(BaryszMatrix.class).getThreedimensionalDoubleMatrix();
+            return MoleculeCache.GetMatrix(BaryszMatrix.class, SMILES, explicitHydrogen).getThreedimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
             String msg = "Unable to convert matrix of class " + BaryszMatrix.class.getSimpleName();
             logger.warn(msg);
@@ -406,21 +419,21 @@ public class InsilicoMolecule implements Serializable, Cloneable {
      */
     public void SetSMILES(String newSMILES) {
         this.SMILES = newSMILES;
-        this.ClearCache();
+        MoleculeCache.ClearCache();
     }
 
 
     /**
      * Sets the SMILES for the molecule together with its given CDK structure..
-     * Cached data are discarded as not updated anymore.
+     *
      *
      * @param newSMILES SMILES for the molecule
      * @param structure CDK structure for the molecule
      */
     public void SetSMILESAndStructure(String newSMILES, IAtomContainer structure) {
         this.SMILES = newSMILES;
-        this.ClearCache();
-        this.structure = structure;
+        MoleculeCache.ClearCache();
+        MoleculeCache.SetStructure(structure);
     }
 
 
@@ -492,10 +505,5 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         this.explicitHydrogen = ExplicitHydrogen;
         this.ClearCache();
     }
-
-
-
-
-
 
 }
