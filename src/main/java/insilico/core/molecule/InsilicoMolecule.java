@@ -35,15 +35,6 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     private InsilicoMoleculeMessages errors, warnings;
 
-
-//    // Cached Data
-//    transient private IAtomContainer structure;
-//    transient private RingSet SSSR;
-//    transient private RingSet allRings;
-//    transient private ArrayList<MoleculeMatrix> matrices;
-//    transient private AlertList structuralAlerts;
-//    transient private SimilarityDescriptors similarityDescriptors;
-//    transient private ACFItemList ACF;
     private InsilicoMoleculeCache MoleculeCache = new InsilicoMoleculeCache();
 
     /**
@@ -84,6 +75,11 @@ public class InsilicoMolecule implements Serializable, Cloneable {
 
     // Getters and setters for all cached data
 
+    /**
+     *
+     * @return
+     * @throws InvalidMoleculeException
+     */
     public IAtomContainer GetStructure() throws InvalidMoleculeException {
 
         if((!isValid) || (SMILES.isEmpty())){

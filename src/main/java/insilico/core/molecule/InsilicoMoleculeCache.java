@@ -23,13 +23,15 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Class to wrap InsilicoMolecule structures' cached data
+ */
 public class InsilicoMoleculeCache implements Serializable, Cloneable {
 
-    Logger logger = LoggerFactory.getLogger(InsilicoMoleculeCache.class);
+    private Logger logger = LoggerFactory.getLogger(InsilicoMoleculeCache.class);
 
     private static final long serialVersionUID = 1L;
 
-    // Cached Data
     private IAtomContainer structure;
     private RingSet SSSR;
     private RingSet allRings;
@@ -39,6 +41,9 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
     private ACFItemList ACF;
 
 
+    /**
+     * Reset class for object's properties. Delete structure's data
+     */
     public final void ClearCache() {
         ClearCachePreserveStructure();
         structure = null;
@@ -46,6 +51,9 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         allRings = null;
     }
 
+    /**
+     * Reset class for object's properties. Doesn't delete structure's data
+     */
     public final void ClearCachePreserveStructure() {
         matrices = new ArrayList<>();
         structuralAlerts = new AlertList();
@@ -62,6 +70,14 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
     void SetStructure(IAtomContainer newStructure){
         this.structure = newStructure;
     }
+
+    /**
+     * Get stored IAtomContainer's object about structure.
+     * @param SMILES
+     * @param explicitHydrogen
+     * @return
+     * @throws InvalidMoleculeException
+     */
     public IAtomContainer GetStructure(String SMILES, boolean explicitHydrogen) throws InvalidMoleculeException {
 
         if (structure != null) {
@@ -90,7 +106,13 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         return structure;
     }
 
-
+    /**
+     * GET SSR
+     * @param SMILES
+     * @param explicitHydrogen
+     * @return
+     * @throws InvalidMoleculeException
+     */
     public RingSet GetSSSR (String SMILES, boolean explicitHydrogen) throws InvalidMoleculeException {
         if (SSSR == null){
             Cycles cycles = Cycles.sssr(GetStructure(SMILES, explicitHydrogen));
@@ -102,6 +124,15 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         return SSSR;
     }
 
+    /**
+     * Find all rings for given InsilicoMolecule object
+     * @param SMILES InsilicoMolecule smiles
+     * @param explicitHydrogen InsilicoMolecule flag for explicyt hydrogen
+     * @param warnings InsilicoMolecule's warning messages
+     * @param errors InsilicoMolecule's error messages
+     * @return
+     * @throws InvalidMoleculeException
+     */
     public RingSet GetAllRings(String SMILES, boolean explicitHydrogen, InsilicoMoleculeMessages warnings, InsilicoMoleculeMessages errors) throws InvalidMoleculeException{
         if (allRings == null){
             AllRingsFinder ringsFinder = new AllRingsFinder();
@@ -151,6 +182,14 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
             structuralAlerts.add(a);
     }
 
+    /**
+     *
+     * @param MatrixClass
+     * @param SMILES
+     * @param explicitHydrogen
+     * @return
+     * @throws GenericFailureException
+     */
     public MoleculeMatrix GetMatrix(Class MatrixClass, String SMILES, boolean explicitHydrogen) throws GenericFailureException {
 
         // Check if already cached
