@@ -92,11 +92,11 @@ public class FragmenterCRS4 {
             bondList.add(aBond);
 
             //  Poi prende l'atomo connesso all'atomo dato in input
-            IAtom nextAtom = aBond.getConnectedAtom(atom);
+            IAtom nextAtom = aBond.getOther(atom);
 
             // Se il numero di atomi connessi all'atomo precedente è diverso da 1 ricomincia (richiama se stessa)
             // altrimenti passa al bond successivo della lista di bond connessi all'atomo dato
-            if (atomContainer.getConnectedAtomsCount(nextAtom) == 1)
+            if (atomContainer.getConnectedBondsCount(nextAtom) == 1)
                 continue;
             traverse(atomContainer, nextAtom, bondList);
         }
@@ -129,13 +129,13 @@ public class FragmenterCRS4 {
         Atom a1 = (Atom) bond.getAtom(0);
         Atom a2 = (Atom) bond.getAtom(1);
         String symbol;
-        for(int i = 0; i < atomContainer.getConnectedAtomsCount(a1); i ++){
+        for(int i = 0; i < atomContainer.getConnectedBondsCount(a1); i ++){
             symbol = atomContainer.getConnectedAtomsList(a1).get(i).getSymbol();
             if ( symbol != "C" & symbol != "H" ){
                 return true;
             }
         }
-        for(int i = 0; i < atomContainer.getConnectedAtomsCount(a2); i ++){
+        for(int i = 0; i < atomContainer.getConnectedBondsCount(a2); i ++){
             symbol = atomContainer.getConnectedAtomsList(a2).get(i).getSymbol();
             if ( symbol != "C" & symbol != "H" ){
                 return true;
@@ -209,9 +209,11 @@ public class FragmenterCRS4 {
         // TODO: 25/06/2020 SMARTQUERYTOOL depcrecated
         // http://cdk.github.io/cdk/latest/docs/api/org/openscience/cdk/smarts/SmartsPattern.html
         // The class SMARTSQueryTool provides a easy to use wrapper around SMARTS matching functionality.
-        // Qui fa un dizionario di classi SMARTSQueryTool		
-        Map<String, SMARTSQueryTool> smarts = new Hashtable<String, SMARTSQueryTool>();
+        // Qui fa un dizionario di classi SMARTSQueryTool
+
+        Map<String, SMARTSQueryTool> smarts = new Hashtable<>();
 //        Map<String, SmartsPattern> smarts = new Hashtable<>();
+//        SmartsPattern amide = SmartsPattern.create("[$([C;!$(C([#7])[#7])](=!@[O]))]!@[$([#7;+0;!D1])]");
         SMARTSQueryTool amide = new SMARTSQueryTool("[$([C;!$(C([#7])[#7])](=!@[O]))]!@[$([#7;+0;!D1])]", DefaultChemObjectBuilder.getInstance());
         smarts.put("amide", amide);
         SMARTSQueryTool ester = new SMARTSQueryTool("[$(C=!@O)]!@[$([O;+0])]", DefaultChemObjectBuilder.getInstance());
@@ -246,7 +248,7 @@ public class FragmenterCRS4 {
             chiave = keys.next();
             valore = smarts.get(chiave);
             //  Perform a SMARTS match and check whether the query is present in the target molecule.
-            status = ((SMARTSQueryTool) valore).matches(atomContainer);
+            status = ((SmartsPattern) valore).matches(atomContainer);
             //System.out.println(status);
             if (status) {
 

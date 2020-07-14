@@ -93,7 +93,7 @@ public class ACFBuilder {
         // Cycles upon all atoms
         for (IAtom atom : Mol.atoms()) {
 
-            int A = Mol.getAtomNumber(atom);
+            int A = Mol.indexOf(atom);
 
             // Skips Hydrogen atoms
             if (atom.getSymbol().compareToIgnoreCase("H")==0)

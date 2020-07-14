@@ -26,7 +26,7 @@ public class VertexDegree {
 
         for (int i=0; i<nSK; i++) {
             Atom at = (Atom) molecule.getAtom(i);
-            w[i] = molecule.getConnectedAtomsCount(at);
+            w[i] = molecule.getConnectedBondsCount(at);
             if (!(HDepleted))
                 w[i] += Manipulator.CountImplicitHydrogens(at);
         }

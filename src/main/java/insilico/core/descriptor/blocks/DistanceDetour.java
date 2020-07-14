@@ -93,7 +93,7 @@ public class DistanceDetour extends DescriptorBlock {
                 
                 if ((rSize >= MinRingSize) && (rSize <= MaxRingSize)) {
                     for (IAtom at : r.atoms()) {
-                        int atNum = m.getAtomNumber(at);
+                        int atNum = m.indexOf(at);
                         double rowSum = 0;
                         for (int k=0; k<DDrMatrix[atNum].length; k++)
                             rowSum += DDrMatrix[atNum][k];

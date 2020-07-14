@@ -44,7 +44,7 @@ public class AtomicNumber {
             String CurLine;
             while ((CurLine = br.readLine())!=null) {
                 String[] BufStr = CurLine.split(String.valueOf(CharTAB).toString());
-                Z.add(new Integer(BufStr[0]));
+                Z.add(Integer.valueOf(BufStr[0]));
                 Symbol.add(BufStr[1]);
             }
             in.close();

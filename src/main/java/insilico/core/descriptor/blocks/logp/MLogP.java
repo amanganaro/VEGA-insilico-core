@@ -16,6 +16,7 @@ import org.openscience.cdk.Atom;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.RingSet;
 import org.openscience.cdk.graph.PathTools;
+import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -23,6 +24,7 @@ import org.openscience.cdk.interfaces.IRing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -312,7 +314,12 @@ public class MLogP extends DescriptorBlock {
             // X-A-Y
             if ((TopoMatrix[i][atom]==2)  && ((ConnMatrix[i][i]==8)||(ConnMatrix[i][i]==7))) {
 
-                List<IAtom> Path = PathTools.getShortestPath(mol, mol.getAtom(atom), mol.getAtom(i));
+                ShortestPaths shortestPaths = new ShortestPaths(mol, mol.getAtom(atom));
+                List<IAtom> Path = Arrays.asList(shortestPaths.atomsTo(mol.getAtom(i)));
+
+                // DEPRECATED METHOD
+//                List<IAtom> Path = PathTools.getShortestPath(mol, mol.getAtom(atom), mol.getAtom(i));
+
                 String A_Atom = Path.get(1).getSymbol();
                 if ((AreEqual(A_Atom,"C"))||(AreEqual(A_Atom,"S"))||(AreEqual(A_Atom,"P"))) {
                     count+=1;
@@ -333,7 +340,7 @@ public class MLogP extends DescriptorBlock {
 //                            count++;
 //                    }
 
-                    int MidAtom = mol.getAtomNumber(Path.get(1));
+                    int MidAtom = mol.indexOf(Path.get(1));
                     int midVD = 0;
                     for (int k=0; k<nAtoms; k++) {
                         if (k==MidAtom) continue;
@@ -491,7 +498,7 @@ public class MLogP extends DescriptorBlock {
                     else if (AreEqual(R.getAtom(i).getSymbol(),"C")) {
                         C++;
                         for (int k=0; k<nAtoms; k++)
-                            if ( (AreEqual(GetName(mol,k),"O")) && (ConnMatrix[mol.getAtomNumber(R.getAtom(i))][k]==2) ) {
+                            if ( (AreEqual(GetName(mol,k),"O")) && (ConnMatrix[mol.indexOf(R.getAtom(i))][k]==2) ) {
                                 CdblO++;
                             }
                     } else
@@ -517,7 +524,7 @@ public class MLogP extends DescriptorBlock {
             if (MoleculeUtilities.IsRingAromatic(R))
                 for (int j=0; j<R.getAtomCount(); j++) {
 
-                    int jj = mol.getAtomNumber(R.getAtom(j));
+                    int jj = mol.indexOf(R.getAtom(j));
 
                     for (int k=0; k<nAtoms; k++)
                         if ( (TopoMatrix[k][jj]==1) && (!(R.contains(mol.getAtom(k)))) &&
@@ -679,7 +686,13 @@ public class MLogP extends DescriptorBlock {
                         if ((AreEqual(GetName(mol,j),"C"))&& (TopoMatrix[i][j]>6)) {
 
                             boolean ChainFound=true;
-                            List<IAtom> Path = PathTools.getShortestPath(mol, mol.getAtom(i), mol.getAtom(j));
+
+                            ShortestPaths shortestPaths = new ShortestPaths(mol, mol.getAtom(i));
+                            List<IAtom> Path = Arrays.asList(shortestPaths.atomsTo(mol.getAtom(j)));
+
+                            // DEPRECATED METHOD
+//                            List<IAtom> Path = PathTools.getShortestPath(mol, mol.getAtom(i), mol.getAtom(j));
+
                             for (int k=1; k<Path.size(); k++) {
                                 IAtom CurAtom = Path.get(k);
                                 nH=0;
@@ -741,7 +754,7 @@ public class MLogP extends DescriptorBlock {
                     if ( (R.getAtomCount()==6) && (MoleculeUtilities.IsRingAromatic(R)) ) {
                         for (int j=0; j<6; j++) {
                             int Branches = 0;
-                            int atomNum = mol.getAtomNumber(R.getAtom(j));
+                            int atomNum = mol.indexOf(R.getAtom(j));
                             if (atomNum!=i) {
                                 if (AreEqual(GetName(mol,j),"C")) {
                                     for (int k=0; k<nAtoms; k++) {

@@ -12,7 +12,9 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import org.openscience.cdk.Atom;
+import org.openscience.cdk.graph.AllPairsShortestPaths;
 import org.openscience.cdk.graph.PathTools;
+import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
@@ -164,12 +166,16 @@ public class EigenvalueBased extends DescriptorBlock {
                         // builds shortest path between i and j
                         Atom at1 = (Atom) m.getAtom(i);
                         Atom at2 = (Atom) m.getAtom(j);
-                        List<IAtom> Path = PathTools.getShortestPath(m, at1, at2);
+                        ShortestPaths sp = new ShortestPaths(m, at1);
+                        List<IAtom> Path = Arrays.asList(sp.atomsTo(at2));
+
+                        // OLD DEPRECATED METHOD
+//                        List<IAtom> Path = PathTools.getShortestPath(m, at1, at2);
 
                         double val = 0;
                         for (int k=0; k<(Path.size()-1); k++) {
-                            int a1 = m.getAtomNumber(Path.get(k));
-                            int a2 = m.getAtomNumber(Path.get(k+1));
+                            int a1 = m.indexOf(Path.get(k));
+                            int a2 = m.indexOf(Path.get(k + 1));
                             double bond = ConnMatrix[a1][a2];
                             val += (1 / bond) * (Math.pow(refW, 2) / (w[a1] * w[a2]) );
                         }

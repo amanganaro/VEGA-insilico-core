@@ -365,7 +365,7 @@ public class EdgeAdjacencyAugmentedCorrected extends DescriptorBlock {
             IBond.Order ord = CurMol.getBond(at1, at2).getOrder();
             int nH=0;
             try { nH = at2.getImplicitHydrogenCount(); } catch (Exception e) {}
-            int nConn = CurMol.getConnectedAtomsCount(at2) + nH;
+            int nConn = CurMol.getConnectedBondsCount(at2) + nH;
             if ((ord == IBond.Order.SINGLE) && (nConn==2))
                 return 3.2;
             if ((ord == IBond.Order.SINGLE) && (nConn==1))
@@ -381,7 +381,7 @@ public class EdgeAdjacencyAugmentedCorrected extends DescriptorBlock {
             if (CurMol.getBond(at1, at2).getFlag(CDKConstants.ISAROMATIC))
                 return 0;
             IBond.Order ord = CurMol.getBond(at1, at2).getOrder();
-            int nConn = CurMol.getConnectedAtomsCount(at2);
+            int nConn = CurMol.getConnectedBondsCount(at2);
             if ((ord == IBond.Order.SINGLE) && (nConn==2))
                 return 2.9;
         } 
@@ -401,8 +401,8 @@ public class EdgeAdjacencyAugmentedCorrected extends DescriptorBlock {
                 nH2 = at2.getImplicitHydrogenCount();
             } catch (Exception E) {}
             
-            int nConn1 = CurMol.getConnectedAtomsCount(at1) + nH1;
-            int nConn2 = CurMol.getConnectedAtomsCount(at2) + nH2;
+            int nConn1 = CurMol.getConnectedBondsCount(at1) + nH1;
+            int nConn2 = CurMol.getConnectedBondsCount(at2) + nH2;
 
             if ((nConn1==3) && (nConn2==4))
                 return 0.68;

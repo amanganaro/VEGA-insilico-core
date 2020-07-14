@@ -53,7 +53,7 @@ public class EdgeAdjacencyMatrix {
                 List<IBond> connBonds = molecule.getConnectedBondsList(at);
                 for (int z=0; z<molecule.getConnectedBondsCount(at); z++) {
                     IBond connBond = connBonds.get(z);
-                    int BondNum = molecule.getBondNumber(connBond);
+                    int BondNum = molecule.indexOf(connBond);
                     if (BondNum != i) {
                         matrix[i][BondNum][0] = 1;
                         matrix[BondNum][i][0] = 1;

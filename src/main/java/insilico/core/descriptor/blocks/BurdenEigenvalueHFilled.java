@@ -74,13 +74,13 @@ public class BurdenEigenvalueHFilled extends DescriptorBlock {
     private ArrayList<Integer> BuildWeightList() {
         ArrayList<Integer> w = new ArrayList<>();
         if (getBoolProperty(PARAMETER_WEIGHT_M))
-            w.add(new Integer(WEIGHT_M_IDX));
+            w.add((int) WEIGHT_M_IDX);
         if (getBoolProperty(PARAMETER_WEIGHT_P))
-            w.add(new Integer(WEIGHT_P_IDX));
+            w.add((int) WEIGHT_P_IDX);
         if (getBoolProperty(PARAMETER_WEIGHT_E))
-            w.add(new Integer(WEIGHT_E_IDX));
+            w.add((int) WEIGHT_E_IDX);
         if (getBoolProperty(PARAMETER_WEIGHT_V))
-            w.add(new Integer(WEIGHT_V_IDX));
+            w.add((int) WEIGHT_V_IDX);
         return w;
     }
 

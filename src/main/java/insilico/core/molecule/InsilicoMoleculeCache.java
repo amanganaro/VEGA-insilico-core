@@ -67,8 +67,12 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
     }
 
 
-    void SetStructure(IAtomContainer newStructure){
+    public void SetStructure(IAtomContainer newStructure){
         this.structure = newStructure;
+    }
+
+    public void SetStructure(String newSMILES) throws InvalidMoleculeException {
+        this.structure = GetStructure(newSMILES, newSMILES.contains("H"));
     }
 
     /**
@@ -183,7 +187,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
     }
 
     /**
-     *
+     * Calculate MoleculeMatrix object for given SMILES
      * @param MatrixClass
      * @param SMILES
      * @param explicitHydrogen
@@ -236,104 +240,5 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         }
     }
 
-    public int[][] GetMatrixAdjacency(String SMILES, boolean explicytHydrogen) throws GenericFailureException{
-        try {
-            return this.GetMatrix(AdjacencyMatrix.class, SMILES, explicytHydrogen).getBidimensionalIntMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + AdjacencyMatrix.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
-
-    public double[][] GetMatrixBondAugmented(String SMILES, boolean explicytHydrogen) throws GenericFailureException {
-        try {
-            return this.GetMatrix(BondAugMatrix.class, SMILES, explicytHydrogen).getBidimensionalDoubleMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + BondAugMatrix.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
-
-    public double[][] GetMatrixBurden(String SMILES, boolean explicytHydrogen) throws GenericFailureException{
-        try {
-            return this.GetMatrix(BurdenMatrix.class, SMILES, explicytHydrogen).getBidimensionalDoubleMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + BurdenMatrix.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
-
-    public double[][] GetMatrixConnectionAugmented(String SMILES, boolean explicytHydrogen) throws GenericFailureException{
-        try {
-            return this.GetMatrix(ConnectionAugMatrix.class, SMILES, explicytHydrogen).getBidimensionalDoubleMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + ConnectionAugMatrix.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
-
-    public double[][] GetMatrixDistanceDetour(String SMILES, boolean explicytHydrogen) throws GenericFailureException{
-        try {
-            return this.GetMatrix(DistanceDetourMatrix.class, SMILES, explicytHydrogen).getBidimensionalDoubleMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + DistanceDetourMatrix.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
-
-    public double[][][] GetMatrixEdgeAdjacency(String SMILES, boolean explicytHydrogen) throws GenericFailureException{
-        try {
-            return this.GetMatrix(EdgeAdjacencyMatrix.class, SMILES, explicytHydrogen).getThreedimensionalDoubleMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + EdgeAdjacencyMatrix.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
-
-    public int[][] GetMatrixTopologicalDistance(String SMILES, boolean explicytHydrogen) throws GenericFailureException{
-        try {
-            return this.GetMatrix(TopoDistanceMatrix.class, SMILES, explicytHydrogen).getBidimensionalIntMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + TopoDistanceMatrix.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
-
-    public double[][] GetMatrixTopologicalDistanceHFilled(String SMILES, boolean explicytHydrogen) throws GenericFailureException{
-        try {
-            return this.GetMatrix(TopoDistanceMatrixHFilled.class, SMILES, explicytHydrogen).getBidimensionalDoubleMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + TopoDistanceMatrixHFilled.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
-
-    public int[][] GetMatrixLaplace(String SMILES, boolean explicytHydrogen) throws GenericFailureException{
-        try {
-            return this.GetMatrix(LaplaceMatrix.class, SMILES, explicytHydrogen).getBidimensionalIntMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + LaplaceMatrix.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
-
-    public double[][][] GetMatrixBarysz(String SMILES, boolean explicytHydrogen) throws GenericFailureException{
-        try {
-            return this.GetMatrix(BaryszMatrix.class, SMILES, explicytHydrogen).getThreedimensionalDoubleMatrix();
-        } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + BaryszMatrix.class.getSimpleName();
-            logger.warn(msg);
-            throw new GenericFailureException(msg);
-        }
-    }
 
 }

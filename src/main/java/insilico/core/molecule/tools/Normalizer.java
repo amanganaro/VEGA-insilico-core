@@ -459,7 +459,7 @@ public class Normalizer {
             }
         } catch (CDKException e) {
 
-            String err = ERR_HEADER + "unable to configure atom no. " + molecule.getAtomNumber(atom);
+            String err = ERR_HEADER + "unable to configure atom no. " + molecule.indexOf(atom);
             if ((atom.getSymbol()!=null)&&(!atom.getSymbol().equalsIgnoreCase("")))
                 err += " (" + atom.getSymbol() + ")";
             logger.error(err + " (" + e.getMessage() + ")");
@@ -524,7 +524,7 @@ public class Normalizer {
 
             for (IAtom at : ring.atoms()) {
 
-                int atNum = molecule.getAtomNumber(at);
+                int atNum = molecule.indexOf(at);
                 int Z = (int) ConnMatrix[atNum][atNum];
                 int H;
                 try {

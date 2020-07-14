@@ -5,10 +5,12 @@ import insilico.core.descriptor.weight.VanDerWaals;
 import insilico.core.tools.utils.MoleculeUtilities;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.PathTools;
+import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -44,7 +46,13 @@ public class BaryszMatrix {
 
             for (int j=(i+1); j<nSK; j++) {
                 Atom atEnd = (Atom) mol.getAtom(j);
-                List<IAtom> shortestPath = PathTools.getShortestPath(mol, atStart, atEnd);
+
+
+                ShortestPaths sp = new ShortestPaths(mol, atStart);
+                List<IAtom> shortestPath = Arrays.asList(sp.atomsTo(atEnd));
+
+                // OLD DEPRECATED METHOD
+//                List<IAtom> shortestPath = PathTools.getShortestPath(mol, atStart, atEnd);
 
                 // van der waals volumes
                 double w_sum = 0;

@@ -118,7 +118,7 @@ public class KekuleForm {
 
                         IBond bnd = molecule.getBond(at, molecule.getAtom(k));
                         if (ring.contains(bnd))
-                            ArBonds.add(ring.getBondNumber(bnd));
+                            ArBonds.add(ring.indexOf(bnd));
 
                         continue;
                     }

@@ -4,9 +4,11 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.molecule.tools.Manipulator;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.PathTools;
+import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -42,8 +44,12 @@ public class TopoDistanceMatrixHFilled {
 
             for (int j=(i+1); j<nSK; j++) {
                 Atom atEnd = (Atom) molH.getAtom(j);
-                List<IAtom> shortestPaths =
-                        PathTools.getShortestPath(molH, atStart, atEnd);
+
+                ShortestPaths sp = new ShortestPaths(molH, atStart);
+                List<IAtom> shortestPaths = Arrays.asList(sp.atomsTo(atEnd));
+                // DEPRECATED METHOD
+//                List<IAtom> shortestPaths = PathTools.getShortestPath(molH, atStart, atEnd);
+
                 matrix[i][j] = shortestPaths.size()-1;
                 matrix[j][i] = matrix[i][j];
             }

@@ -245,8 +245,8 @@ public class CustomMDLWriter extends DefaultChemObjectWriter {
 //        			line += formatMDLInt(container.getAtomNumber(bond.getAtom(1)) + 1,3);
 //        		}
 
-                line = formatMDLInt(container.getAtomNumber(bond.getAtom(0)) + 1,3);
-                line += formatMDLInt(container.getAtomNumber(bond.getAtom(1)) + 1,3);
+                line = formatMDLInt(container.indexOf(bond.getAtom(0)) + 1,3);
+                line += formatMDLInt(container.indexOf(bond.getAtom(1)) + 1,3);
 
 
                 // Modified by AM

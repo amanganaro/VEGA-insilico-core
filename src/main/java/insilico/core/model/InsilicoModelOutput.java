@@ -156,10 +156,10 @@ public class InsilicoModelOutput implements Serializable {
 
 
     /**
-     * @param Experimental the Experimental to set
+//     * @param Experimental the Experimental to set
      */
     public void setExperimental(double Value) {
-        this.Experimental = new Double(Value);
+        this.Experimental = Value;
     }
 
 

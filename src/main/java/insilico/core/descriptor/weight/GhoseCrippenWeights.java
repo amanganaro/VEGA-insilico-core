@@ -625,7 +625,7 @@ public class GhoseCrippenWeights {
 
             for (IAtom conn : CurMol.getConnectedAtomsList(at))
                 if (conn.getSymbol().equalsIgnoreCase("H"))
-                    FragAtomId[CurMol.getAtomNumber(conn)] = H_type;
+                    FragAtomId[CurMol.indexOf(conn)] = H_type;
 
         }
 

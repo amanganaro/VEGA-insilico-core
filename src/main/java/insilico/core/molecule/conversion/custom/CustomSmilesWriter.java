@@ -272,6 +272,7 @@ public class CustomSmilesWriter {
      * @return false=not the end of configuration, true=end of configuration
      */
     private boolean isEndOfDoubleBond(IAtomContainer container, IAtom atom, IAtom parent, boolean[] doubleBondConfiguration){
+
         if(container.getBondNumber(atom, parent) == -1 || doubleBondConfiguration.length <= container.getBondNumber(atom, parent) || !doubleBondConfiguration[container.getBondNumber(atom,parent)])
             return false;
         int lengthAtom = container.getConnectedBondsCount(atom) + ((atom.getImplicitHydrogenCount() == CDKConstants.UNSET) ? 0 : atom.getImplicitHydrogenCount());
@@ -290,7 +291,7 @@ public class CustomSmilesWriter {
                     if (atm != parent && one == null)
                     {
                         one = atm;
-                    } else if (atm != parent && one != null)
+                    } else if (atm != parent)
                     {
                         two = atm;
                     }
@@ -331,7 +332,7 @@ public class CustomSmilesWriter {
             }
             if (atm != nextAtom && one == null)
                 one = atm;
-            else if (atm != nextAtom && one != null)
+            else if (atm != nextAtom)
                 two = atm;
         }
         String[] morganNumbers = MorganNumbersTools.getMorganNumbersWithElementSymbol(container);

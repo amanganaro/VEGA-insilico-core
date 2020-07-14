@@ -12,6 +12,7 @@ import insilico.core.molecule.tools.Manipulator;
 import insilico.core.tools.utils.MoleculeUtilities;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.PathTools;
+import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
@@ -19,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -144,11 +146,15 @@ public class InformationContentWithH extends DescriptorBlock {
                     if (i==j) continue;
                     if (TopoDistMat[i][j] == CurLag) {
                         Atom atEnd = (Atom) m.getAtom(j);
-                        List<IAtom> sp = PathTools.getShortestPath(m, atStart, atEnd);
+                        ShortestPaths shortestPaths = new ShortestPaths(m, atStart);
+                        List<IAtom> sp = Arrays.asList(shortestPaths.atomsTo(atEnd));
+                        // DEPRECATED METHOD
+//                        List<IAtom> sp = PathTools.getShortestPath(m, atStart, atEnd);
+
                         StringBuilder bufPath = new StringBuilder("" + sp.get(0).getAtomicNumber());
                         for (int k=0; k<(sp.size()-1); k++) {
-                            int a = m.getAtomNumber(sp.get(k));
-                            int b = m.getAtomNumber(sp.get(k+1));
+                            int a = m.indexOf(sp.get(k));
+                            int b = m.indexOf(sp.get(k + 1));
                             if (ConnMat[a][b] == 1)
                                 bufPath.append("s");
                             if (ConnMat[a][b] == 2)
@@ -158,7 +164,7 @@ public class InformationContentWithH extends DescriptorBlock {
                             if (ConnMat[a][b] == 1.5)
                                 bufPath.append("a");
                             bufPath.append(sp.get(k + 1).getAtomicNumber());
-                            bufPath.append("(").append(VertexDeg[m.getAtomNumber(sp.get(k + 1))]).append(")");
+                            bufPath.append("(").append(VertexDeg[m.indexOf(sp.get(k + 1))]).append(")");
                         }
                         CurNeig.add(bufPath.toString());
                     }

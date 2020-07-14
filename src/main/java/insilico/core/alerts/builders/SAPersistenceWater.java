@@ -1,0 +1,284 @@
+package insilico.core.alerts.builders;
+
+import insilico.core.alerts.*;
+import insilico.core.constant.InsilicoConstants;
+import insilico.core.exception.GenericFailureException;
+import insilico.core.exception.InitFailureException;
+import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.molecule.conversion.SmilesMolecule;
+import insilico.core.molecule.tools.Depiction;
+import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
+
+/**
+ *
+ * @author User
+ */
+public class SAPersistenceWater extends AlertBlockFromSMARTS implements iAlertBlock {
+    
+    private QueryAtomContainer[] SA;
+    private boolean[] Multiple;
+    private boolean[] Single;
+    private int nRules;
+
+    private final static String[] SMARTSFragsNP = {
+        "O=CC",
+        "Nc1ccc(cc1)",
+        "c1ccc(OC)cc1",
+        "Cc1ccccc1C",
+        "c1(C)c2c(cccc2)ccc1",
+        "c1(O)c(C)cccc1",
+        "P(OC)OC",
+        "C(O)C",
+        "c1ccccc1O",
+        "O=C",
+        "C(=C)C",
+        "NC"
+    };
+
+    private final static String[] SMARTSChemClassNP = {
+        "C(=O)([O;D1;!-])[A]", // carboxyl acids (aliphatic) - single - nP
+        "O=[$([C;D2]),$([C;D3]C)][O;D2][C,c]", // esters (aliphatic) - single - nP
+        "O=C([a])[O;D2][C,c]", // esters (aromatic) - multiple - nP
+        "[$(C(=[O,S])([O,S][a])N),$(C(=[O,S])([O,S])N[a])]", // (thio)-carbamates (aromatic) - single - nP
+        "[$([C;D2](=O)C)]", // aldehydes (aliphatic) - single - nP
+        "[C;D3](=O)([C])[C]", // ketones (aliphatic) - single - nP
+        "[N;D1][$([C;A]);!$(C=[O,S])]", // primary amines (aliphatci) - single - nP
+        "[N;D1][a]", // primary amines (aromatic)		nP
+        "O=NN([C,c])[C,c]", // N-nitroso groups (aliphatic) - single - nP
+        "[O;D1;!-]A", // hydroxyl groups - nP
+        "[O;D1;!-]a", // aromatic hydroxyl - single - nP
+        "[O;D1;!-][C;D2;H2][C,c]" // primary alcohol		nP        
+    };    
+
+    final static String[] SMARTSFragsVP = {
+        "c1ccc(c(c1)c2ccccc2Cl)",
+        "C1(=C(C2(C3C(CC(C3))C1(C2(Cl)Cl)Cl)Cl)Cl)Cl",
+        "c1cc(c(c(c1Cl)Cl)Cl)",
+        "c1(c2ccccc2)ccccc1",
+    };
+    
+    
+ 
+    
+    
+    public SAPersistenceWater() throws InitFailureException {
+        super(InsilicoConstants.SA_BLOCK_PERSISTENCE_WATER_IRFMN, "Rules for persistence in water (IRFMN)");
+    }
+    
+    
+    @Override
+    protected void BuildSAList() throws InitFailureException {
+
+        nRules = SMARTSFragsNP.length + SMARTSFragsVP.length + SMARTSChemClassNP.length;
+        Multiple = new boolean[nRules];
+        for (boolean b : Multiple) b = false;
+        Single = new boolean[nRules];
+        for (boolean b : Single) b = false;
+        
+        int idx = 0;
+        int pngidx = 0;
+        Alert curSA;
+
+        for (int i=0; i<SMARTSFragsNP.length; i++) {
+            curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+            curSA.setName("nP (water) alert no. " + (idx+1));
+            curSA.setDescription("Fragment related to nP compounds (water), defined by the SMARTS: " + SMARTSFragsNP[i]);
+            curSA.setImageURL("/insilico/core/alerts/png/perswater/PER_WATER_" + (pngidx+1) + ".png");
+            curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+            Alerts.add(curSA);
+            idx++; pngidx++;
+        }
+        
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of a single carboxyl acid (aliphatic)");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+        
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of a single ester (aliphatic)");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+    
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of multiple esters (aromatic)");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Multiple[idx] = true;
+        idx++;
+
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of a single (thio)-carbamate (aromatic)");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+        
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of a single aldehyde (aliphatic)");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+        
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of a single ketone (aliphatic)");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+                
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of a single primary amine (aliphatic)");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+                
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of primary amines (aromatic)");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        idx++;
+                
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of a single N-nitroso group (aliphatic)");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+                
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of hydroxyl groups");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        idx++;
+                
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of a single aromatic hydroxyl");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+                
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName("nP (water) alert no. " + (idx+1));
+        curSA.setDescription("Chemical class related to nP compounds (water), defined by the presence of primary alcohols");
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        idx++;
+
+        int vPidx = 0;        
+        
+        for (int i=0; i<SMARTSFragsVP.length; i++) {
+            curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+            curSA.setName("vP (water) alert no. " + (vPidx+1));
+            curSA.setDescription("Fragment related to vP compounds (water), defined by the SMARTS: " + SMARTSFragsVP[i]);
+            curSA.setImageURL("/insilico/core/alerts/png/perswater/PER_WATER_" + (pngidx+1) + ".png");
+            curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_VP, true);
+            Alerts.add(curSA);
+            idx++; vPidx++; pngidx++;
+        }
+
+    }
+    
+    
+    @Override
+    protected void InitSMARTS() throws InitFailureException {
+
+        try {
+
+            SA = new QueryAtomContainer[nRules];
+            
+            int idx = 0;
+            for (String s : SMARTSFragsNP) {
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                idx++;
+            }
+            for (String s : SMARTSChemClassNP) {
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                idx++;
+            }
+
+            for (String s : SMARTSFragsVP) {
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                idx++;
+            }
+            
+        } catch (Exception e) {
+            throw new InitFailureException("Unable to initialize SMARTS");
+        }    
+    }
+
+    
+    @Override
+    protected AlertList CalculateSAMatches() throws GenericFailureException {
+        AlertList Res = new AlertList();
+        
+        try {
+
+            for (int i=0; i<nRules; i++) {
+                int matches = MatchesNumber(SA[i]);
+                if (Single[i]) {
+                    if (matches == 1)
+                        Res.add((Alert)Alerts.get(i).clone());
+                } else if (Multiple[i]) {
+                    if (matches > 1) 
+                        Res.add((Alert)Alerts.get(i).clone());
+                } else if (matches > 0)
+                    Res.add((Alert)Alerts.get(i).clone());
+            }
+            
+        } catch (CDKException | CloneNotSupportedException e) {
+            return null;
+        }
+        
+        return Res; 
+    }
+
+    
+    public void SaveSmartsPNG() {
+    
+        int idx = 1;
+
+        for (int i=0; i<SMARTSFragsNP.length; i++) {
+            String s = (String)SMARTSFragsNP[i];
+            try {
+                InsilicoMolecule mol = SmilesMolecule.Convert(s);
+                Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_WATER_" + (idx) + ".png");
+            } catch (Exception e) {
+                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+            }
+            idx++;
+        }
+
+        for (int i=0; i<SMARTSFragsVP.length; i++) {
+            String s = (String)SMARTSFragsVP[i];
+            try {
+                InsilicoMolecule mol = SmilesMolecule.Convert(s);
+                Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_WATER_" + (idx) + ".png");
+            } catch (Exception e) {
+                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+            }
+            idx++;
+        }
+
+    }       
+}

@@ -179,7 +179,7 @@ public class CustomQueryMatcher {
                 for (IAtom atom : this.curMol.GetStructure().atoms()) {
                     if (queryAtom.matches(atom)) {
                         List<Integer> tmp = new ArrayList<Integer>();
-                        tmp.add(this.curMol.GetStructure().getAtomNumber(atom));
+                        tmp.add(this.curMol.GetStructure().indexOf(atom));
                         matchingAtoms.add(tmp);
                     }
                 }
@@ -465,8 +465,8 @@ public class CustomQueryMatcher {
                 atom1 = bond.getAtom(0);
                 atom2 = bond.getAtom(1);
 
-                Integer idx1 = atomContainer.getAtomNumber(atom1);
-                Integer idx2 = atomContainer.getAtomNumber(atom2);
+                Integer idx1 = atomContainer.indexOf(atom1);
+                Integer idx2 = atomContainer.indexOf(atom2);
 
                 if (!tmp.contains(idx1)) tmp.add(idx1);
                 if (!tmp.contains(idx2)) tmp.add(idx2);
