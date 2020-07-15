@@ -5,10 +5,7 @@ import insilico.core.molecule.conversion.file.MoleculeFileSmiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -38,7 +35,11 @@ public class AtomicNumber {
 
         // Loads data into the arraylists
         try {
-            URL uData = getClass().getResource(System.getProperty("user.dir") + "/src/main/java/insilico.core/molecule/tools/Z.dat");
+            URL uData = getClass().getResource(System.getProperty("user.dir") + "/src/main/java/insilico/core/molecule/tools/Z.dat");
+//            URL uData = getClass().getResource(System.getProperty("user.dir") + "/Z/Z.dat");
+
+//            URL data = new File(System.getProperty("user.dir") + "tmp/Z.dat").toURI().toURL();
+
             DataInputStream in = new DataInputStream(uData.openStream());
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             String CurLine;
