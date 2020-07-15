@@ -7,6 +7,8 @@ import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.isomorphism.Mappings;
+import org.openscience.cdk.smarts.Smarts;
 import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.SMARTSQueryTool;
 
@@ -131,13 +133,13 @@ public class FragmenterCRS4 {
         String symbol;
         for(int i = 0; i < atomContainer.getConnectedBondsCount(a1); i ++){
             symbol = atomContainer.getConnectedAtomsList(a1).get(i).getSymbol();
-            if ( symbol != "C" & symbol != "H" ){
+            if (!symbol.equals("C") & !symbol.equals("H")){
                 return true;
             }
         }
         for(int i = 0; i < atomContainer.getConnectedBondsCount(a2); i ++){
             symbol = atomContainer.getConnectedAtomsList(a2).get(i).getSymbol();
-            if ( symbol != "C" & symbol != "H" ){
+            if (!symbol.equals("C") & !symbol.equals("H")){
                 return true;
             }
         }
@@ -179,13 +181,16 @@ public class FragmenterCRS4 {
 
         List<IAtomContainer> Results = new ArrayList<>();
 
-        SMARTSQueryTool rotata = new SMARTSQueryTool("[!$([NH]!@C(=O))&!D1&!$(*#*)]-&!@[!$([NH]!@C(=O))&!D1&!$(*#*)]",DefaultChemObjectBuilder.getInstance());
-        List <List<Integer>> mappings;
+        SmartsPattern rotata = SmartsPattern.create("[!$([NH]!@C(=O))&!D1&!$(*#*)]-&!@[!$([NH]!@C(=O))&!D1&!$(*#*)]");
+//        SMARTSQueryTool rotata = new SMARTSQueryTool("[!$([NH]!@C(=O))&!D1&!$(*#*)]-&!@[!$([NH]!@C(=O))&!D1&!$(*#*)]", DefaultChemObjectBuilder.getInstance());
+        List mappings;
+        Mappings map;
 
-        boolean status = ((SMARTSQueryTool) rotata).matches(atomContainer);
+        boolean status = rotata.matches(atomContainer);
         if (status) {
-            int nmatch = ((SMARTSQueryTool) rotata).countMatches();
-            mappings = ((SMARTSQueryTool) rotata).getMatchingAtoms();
+            int nmatch = rotata.match(atomContainer).length;
+            map = rotata.matchAll(atomContainer);
+            mappings = Arrays.asList(map.toArray());
             //System.out.println( "ROTATA" + " " + nmatch );
             for (int i = 0; i < nmatch; i++) {
                 List atomIndices = (List) mappings.get(i);
@@ -211,50 +216,81 @@ public class FragmenterCRS4 {
         // The class SMARTSQueryTool provides a easy to use wrapper around SMARTS matching functionality.
         // Qui fa un dizionario di classi SMARTSQueryTool
 
-        Map<String, SMARTSQueryTool> smarts = new Hashtable<>();
-//        Map<String, SmartsPattern> smarts = new Hashtable<>();
-//        SmartsPattern amide = SmartsPattern.create("[$([C;!$(C([#7])[#7])](=!@[O]))]!@[$([#7;+0;!D1])]");
-        SMARTSQueryTool amide = new SMARTSQueryTool("[$([C;!$(C([#7])[#7])](=!@[O]))]!@[$([#7;+0;!D1])]", DefaultChemObjectBuilder.getInstance());
+        
+        Map<String, SmartsPattern> smarts = new Hashtable<>();
+        SmartsPattern amide = SmartsPattern.create("[$([C;!$(C([#7])[#7])](=!@[O]))]!@[$([#7;+0;!D1])]");
         smarts.put("amide", amide);
-        SMARTSQueryTool ester = new SMARTSQueryTool("[$(C=!@O)]!@[$([O;+0])]", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern ester = SmartsPattern.create("[$(C=!@O)]!@[$([O;+0])]");
         smarts.put("ester", ester);
-        SMARTSQueryTool amine = new SMARTSQueryTool("[$([N;!D1;+0;!$(N-C=[#7,#8,#15,#16])](-!@[*]))]-!@[$([*])]", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern amine = SmartsPattern.create("[$([N;!D1;+0;!$(N-C=[#7,#8,#15,#16])](-!@[*]))]-!@[$([*])]");
         smarts.put("amine", amine);
-        SMARTSQueryTool urea = new SMARTSQueryTool("[$(C(=!@O)([#7;+0;D2,D3])!@[#7;+0;D2,D3])]!@[$([#7;+0;D2,D3])]", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern urea = SmartsPattern.create("[$(C(=!@O)([#7;+0;D2,D3])!@[#7;+0;D2,D3])]!@[$([#7;+0;D2,D3])]");
         smarts.put("urea", urea);
-        SMARTSQueryTool ether = new SMARTSQueryTool("[$([O;+0](-!@[#6!$(C=O)])-!@[#6!$(C=O)])]-!@[$([#6!$(C=O)])]", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern ether = SmartsPattern.create("[$([O;+0](-!@[#6!$(C=O)])-!@[#6!$(C=O)])]-!@[$([#6!$(C=O)])]");
         smarts.put("ether", ether);
-        SMARTSQueryTool olefin = new SMARTSQueryTool("C=!@C", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern olefin = SmartsPattern.create("C=!@C");
         smarts.put("olefin", olefin);
-        SMARTSQueryTool quaternaryN = new SMARTSQueryTool("[N;+1;D4]!@[#6]", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern quaternaryN =  SmartsPattern.create("[N;+1;D4]!@[#6]");
         smarts.put("quaternaryN", quaternaryN);
-        SMARTSQueryTool aromaticNaliphaticC = new SMARTSQueryTool("[$([n;+0])]-!@C", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern aromaticNaliphaticC = SmartsPattern.create("[$([n;+0])]-!@C");
         smarts.put("aromaticNaliphaticC", aromaticNaliphaticC);
-        SMARTSQueryTool lactamNaromaticC = new SMARTSQueryTool("[$([O]=[C]-@[N;+0])]-!@[$([C])]", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern lactamNaromaticC = SmartsPattern.create("[$([O]=[C]-@[N;+0])]-!@[$([C])]");
         smarts.put("lactamNaromaticC", lactamNaromaticC);
-        SMARTSQueryTool aromaticCaromaticC = new SMARTSQueryTool("c-!@c", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern aromaticCaromaticC = SmartsPattern.create("c-!@c");
         smarts.put("aromaticCaromaticC", aromaticCaromaticC);
-        SMARTSQueryTool sulphonamide = new SMARTSQueryTool("[$([#7;+0;D2,D3])]-!@[$([S](=[O])=[O])]", DefaultChemObjectBuilder.getInstance());
+        SmartsPattern sulphonamide = SmartsPattern.create("[$([#7;+0;D2,D3])]-!@[$([S](=[O])=[O])]");
         smarts.put("sulphonamide", sulphonamide);
+        // DEPRECATED METHODS
+//        Map<String, SMARTSQueryTool> smarts = new Hashtable<>();
+//        SMARTSQueryTool amide = new SMARTSQueryTool("[$([C;!$(C([#7])[#7])](=!@[O]))]!@[$([#7;+0;!D1])]", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("amide", amide);
+//        SMARTSQueryTool ester = new SMARTSQueryTool("[$(C=!@O)]!@[$([O;+0])]", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("ester", ester);
+//        SMARTSQueryTool amine = new SMARTSQueryTool("[$([N;!D1;+0;!$(N-C=[#7,#8,#15,#16])](-!@[*]))]-!@[$([*])]", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("amine", amine);
+//        SMARTSQueryTool urea = new SMARTSQueryTool("[$(C(=!@O)([#7;+0;D2,D3])!@[#7;+0;D2,D3])]!@[$([#7;+0;D2,D3])]", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("urea", urea);
+//        SMARTSQueryTool ether = new SMARTSQueryTool("[$([O;+0](-!@[#6!$(C=O)])-!@[#6!$(C=O)])]-!@[$([#6!$(C=O)])]", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("ether", ether);
+//        SMARTSQueryTool olefin = new SMARTSQueryTool("C=!@C", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("olefin", olefin);
+//        SMARTSQueryTool quaternaryN = new SMARTSQueryTool("[N;+1;D4]!@[#6]", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("quaternaryN", quaternaryN);
+//        SMARTSQueryTool aromaticNaliphaticC = new SMARTSQueryTool("[$([n;+0])]-!@C", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("aromaticNaliphaticC", aromaticNaliphaticC);
+//        SMARTSQueryTool lactamNaromaticC = new SMARTSQueryTool("[$([O]=[C]-@[N;+0])]-!@[$([C])]", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("lactamNaromaticC", lactamNaromaticC);
+//        SMARTSQueryTool aromaticCaromaticC = new SMARTSQueryTool("c-!@c", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("aromaticCaromaticC", aromaticCaromaticC);
+//        SMARTSQueryTool sulphonamide = new SMARTSQueryTool("[$([#7;+0;D2,D3])]-!@[$([S](=[O])=[O])]", DefaultChemObjectBuilder.getInstance());
+//        smarts.put("sulphonamide", sulphonamide);
 
 
         boolean status = false;
         Iterator<String> keys = smarts.keySet().iterator();
         String chiave;
-        Object valore;
+        SmartsPattern valore;
         List mappings;
+        Mappings map;
 
         while(keys.hasNext()) {
             chiave = keys.next();
             valore = smarts.get(chiave);
             //  Perform a SMARTS match and check whether the query is present in the target molecule.
-            status = ((SmartsPattern) valore).matches(atomContainer);
+            status = valore.matches(atomContainer);
             //System.out.println(status);
             if (status) {
 
                 //  Returns the number of times the pattern was found in the target molecule.
-                int nmatch = ((SMARTSQueryTool) valore).countMatches();
-                mappings = ((SMARTSQueryTool) valore).getMatchingAtoms();
+
+//                int nmatch = ((SmartsPattern) valore).countMatches();
+                int nmatch = valore.match(atomContainer).length;
+
+//                mappings = ((SMARTSQueryTool) valore).getMatchingAtoms();
+                map = valore.matchAll(atomContainer);
+
+                mappings = Arrays.asList(map.toArray());
+//                mappings = Arrays.atList(((SmartsPattern) valore).matchAll(atomContainer).toArray());
 
                 for (int i = 0; i < nmatch; i++) {
                     List atomIndices = (List) mappings.get(i);

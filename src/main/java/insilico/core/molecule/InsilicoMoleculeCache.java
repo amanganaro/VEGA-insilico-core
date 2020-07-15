@@ -140,22 +140,13 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
     public RingSet GetAllRings(String SMILES, boolean explicitHydrogen, InsilicoMoleculeMessages warnings, InsilicoMoleculeMessages errors) throws InvalidMoleculeException{
         if (allRings == null){
             AllRingsFinder ringsFinder = new AllRingsFinder();
-            ringsFinder.setTimeout(5000);
             try {
                 allRings = (RingSet) ringsFinder.findAllRings(GetStructure(SMILES, explicitHydrogen));
             } catch (CDKException ex) {
-                ringsFinder = new AllRingsFinder().setTimeout(15000);
-                try {
-                    allRings = (RingSet) ringsFinder.findAllRings(GetStructure(SMILES, explicitHydrogen), 20);
-                } catch (CDKException ex2) {
 
-                    errors.AddMessage("Unable to perceive all rings");
-                    logger.warn("Unable to find all rings for molecule " + SMILES);
-                    throw new InvalidMoleculeException("unable to find all rings");
-                }
-
-                warnings.AddMessage("All rings perceived only partially due to the complexity of the molecule");
-                logger.warn("unable to find all rings for molecule " + SMILES + " - rings perceived only partially");
+                errors.AddMessage("Unable to perceive all rings");
+                logger.warn("Unable to find all rings for molecule " + SMILES);
+                throw new InvalidMoleculeException("unable to find all rings");
             }
         }
         return allRings;

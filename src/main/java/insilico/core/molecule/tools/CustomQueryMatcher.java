@@ -325,7 +325,7 @@ public class CustomQueryMatcher {
         IRingSet allRings =  curMol.GetAllRings();
 
         // sets SSSR information
-//         TODO: 12/06/2020 Correct deprecated mode?
+//         DEPRECATED METHODS
 //        SSSRFinder finder = new SSSRFinder(curMol.GetStructure());
 //        IRingSet sssr = finder.findEssentialRings();
 
