@@ -5,6 +5,7 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.weight.EState;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -119,7 +120,7 @@ public class EStates extends DescriptorBlock {
             try {
                 nH = curAt.getImplicitHydrogenCount();
             } catch (Exception e) {
-                logger.warn("unable to get H count");
+                InsilicoLogger.getLogger().warn("unable to get H count");
             }
             
             // formal charge

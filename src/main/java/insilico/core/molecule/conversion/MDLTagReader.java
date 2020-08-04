@@ -1,5 +1,6 @@
 package insilico.core.molecule.conversion;
 
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.tools.ILoggingTool;
 import org.openscience.cdk.tools.LoggingToolFactory;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class MDLTagReader {
             }
             br.close();
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            InsilicoLogger.getLogger().warn(e.getMessage());
         }
 
         return Tags;
@@ -105,7 +106,7 @@ public class MDLTagReader {
             }
             br.close();
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            InsilicoLogger.getLogger().warn(e.getMessage());
         }
 
         return Tags;

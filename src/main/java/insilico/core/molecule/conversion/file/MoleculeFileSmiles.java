@@ -2,6 +2,7 @@ package insilico.core.molecule.conversion.file;
 
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +72,7 @@ public class MoleculeFileSmiles extends MoleculeFile {
                 m.SetId("Molecule " + Count);
             return m;
         } catch (IOException e) {
-            logger.error("Error while reading file " + this.FileName + " (" + e.getMessage() + ")");
+            InsilicoLogger.getLogger().error("Error while reading file " + this.FileName + " (" + e.getMessage() + ")");
             throw(e);
         }
     }

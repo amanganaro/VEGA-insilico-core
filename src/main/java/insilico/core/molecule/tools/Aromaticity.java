@@ -7,89 +7,87 @@ import org.openscience.cdk.interfaces.*;
 
 import java.util.Iterator;
 
+/**
+ * Detection of Aromaticity with Huckel rule https://en.wikipedia.org/wiki/H%C3%BCckel%27s_rule
+ */
 public class Aromaticity {
+
     /**
-     * Configures aromaticity in a molecule with Huckel rule.
-     * @param mol CDK Molecule object to be configured
+     * Configures aromaticity in a molecule with Huckel's rule.
+     * @param mol CDK Molecule Object to be configured
      * @return True if some atoms have been set to aromatic
+     * @throws InvalidMoleculeException
      */
-    public static boolean ConfigureMolecule(InsilicoMolecule mol) throws InvalidMoleculeException {
-
-        boolean RetVal = false;
-
-        Iterator<IAtomContainer> RingsIterator = mol.GetSSSR().atomContainers().iterator();
-        while (RingsIterator.hasNext()) {
-            IRing ring = (IRing)RingsIterator.next();
-            boolean CurRetVal = ConfigureRing(ring, mol.GetSSSR(), mol.GetStructure());
-            if (CurRetVal)
-                RetVal = true;
+    public static boolean ConfigureMolecule(InsilicoMolecule mol) throws InvalidMoleculeException{
+        boolean retVal = false;
+        Iterator<IAtomContainer> ringsIterator = mol.GetSSSR().atomContainers().iterator();
+        while (ringsIterator.hasNext()) {
+            IRing ring = (IRing) ringsIterator.next();
+            boolean curRetVal = ConfigureRing(ring, mol.GetSSSR(), mol.GetStructure());
+            if (curRetVal)
+                retVal = true;
         }
 
-        return RetVal;
+        return retVal;
     }
 
 
     /**
-     * Configures aromaticity in a single ring with Huckel rule.
+     * Configures aromaticity in a single ring with Huckel's rule
      * @param ring CDK IRing object to be configured
      * @param allRings Set of rings (SSSR) of the molecule
-     * @param mol CDK Molecule object where the ring belongs
+     * @param mol CDK Molecule Object where the ring belongs
      * @return True if some atoms have been set to aromatic
      */
-    public static boolean ConfigureRing(IRing ring, IRingSet allRings, IAtomContainer mol) {
+    public static boolean ConfigureRing(IRing ring, IRingSet allRings, IAtomContainer mol){
 
-        boolean BasicAromaticityDetection = true;
+        boolean basicAromaticityDetection = true;
 
         int PIElectrons = 0;
+        boolean notAllowedAtoms = false;
+        boolean exoDoubleBond = false;
 
-        boolean NotAllowedAtom = false;
-        boolean ExoDoubleBond = false;
+        // Calculate PI Electrons for eatch atom in ring
+        for (IAtom atom : ring.atoms()){
 
-
-        // Calculates PI Electrons for each atom in ring
-
-        for (IAtom at : ring.atoms()) {
-
-            // Checks if loop should be continued
-            if (NotAllowedAtom)
+            if (notAllowedAtoms)
                 break;
 
-
-            // General info on atom
-
-            String atomSymbol = at.getSymbol();
-
-            int FormalCharge = 0;
+            // General information on atom
+            String atomSymbol = atom.getSymbol();
+            int formalCharge = 0;
             try {
-                FormalCharge = at.getFormalCharge();
-            } catch (Exception e) {}
+                formalCharge = atom.getFormalCharge();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
 
-            boolean IsAromaticAtom = false;
-            int nBondSingle=0, nBondDouble=0;
-            boolean ExoDoubleBondToElectroNegative = false;
-            Iterator<IBond> BndIterator = mol.getConnectedBondsList(at).iterator();
-            while (BndIterator.hasNext()) {
-                IBond b = BndIterator.next();
-                boolean IsBondInCurRing = ring.contains(b);
+            boolean isAromaticAtom = false;
+            int nBondSingle = 0, nBondDouble = 0;
+            boolean exoDoubleBondToElectronegative = false;
 
-                if (b.getFlag(CDKConstants.ISAROMATIC)) {
-                    IsAromaticAtom = true;
-                }
+            Iterator<IBond> bondIterator = mol.getConnectedBondsList(atom).iterator();
+            while (bondIterator.hasNext()){
+                IBond bnd = bondIterator.next();
+                boolean isBondInCurrentRing = ring.contains(bnd);
+
+                if (bnd.getFlag(CDKConstants.ISAROMATIC))
+                    isAromaticAtom = true;
                 else {
-                    if (b.getOrder() == IBond.Order.SINGLE) {
-                        if (IsBondInCurRing)
+                    if (bnd.getOrder() == IBond.Order.SINGLE) {
+                        if (isBondInCurrentRing)
                             nBondSingle++;
-                    } else if (b.getOrder() == IBond.Order.DOUBLE) {
-                        if (IsBondInCurRing)
+                    } else if (bnd.getOrder() == IBond.Order.DOUBLE) {
+                        if (isBondInCurrentRing)
                             nBondDouble++;
                     }
                 }
 
                 // checks exocyclic bonds
-                if (!IsBondInCurRing)
-                    if (b.getOrder() == IBond.Order.DOUBLE) {
-                        IAtom at1 = b.getAtom(0);
-                        IAtom at2 = b.getAtom(1);
+                if (!isBondInCurrentRing)
+                    if (bnd.getOrder() == IBond.Order.DOUBLE) {
+                        IAtom at1 = bnd.getAtom(0);
+                        IAtom at2 = bnd.getAtom(1);
                         IAtom atExt = null;
                         if (ring.contains(at1))
                             atExt = at2;
@@ -102,7 +100,7 @@ public class Aromaticity {
                         } else {
 
                             // Exocyclic double bond
-                            ExoDoubleBond = true;
+                            exoDoubleBond = true;
 
                             String atExtSymbol = atExt.getSymbol();
                             if ((atExtSymbol.equalsIgnoreCase("O"))||
@@ -112,33 +110,31 @@ public class Aromaticity {
                                     (atExtSymbol.equalsIgnoreCase("Se"))) {
 
                                 // Exocyclic bond to an electronegative atom
-                                ExoDoubleBondToElectroNegative = true;
+                                exoDoubleBondToElectronegative = true;
                             }
                         }
 
                     }
-
             }
 
             int nTotSingle=0, nTotDbl=0, nTotTriple=0, nTotArom=0;
-            BndIterator = mol.getConnectedBondsList(at).iterator();
-            while (BndIterator.hasNext()) {
-                IBond b = BndIterator.next();
+            bondIterator = mol.getConnectedBondsList(atom).iterator();
+            while (bondIterator.hasNext()) {
+                IBond bnd = bondIterator.next();
 
-                if (b.getFlag(CDKConstants.ISAROMATIC)) {
+                if (bnd.getFlag(CDKConstants.ISAROMATIC)) {
                     nTotArom++;
                 }
                 else {
-                    if (b.getOrder() == IBond.Order.SINGLE) {
+                    if (bnd.getOrder() == IBond.Order.SINGLE) {
                         nTotSingle++;
-                    } else if (b.getOrder() == IBond.Order.DOUBLE) {
+                    } else if (bnd.getOrder() == IBond.Order.DOUBLE) {
                         nTotDbl++;
-                    } else if (b.getOrder() == IBond.Order.TRIPLE) {
+                    } else if (bnd.getOrder() == IBond.Order.TRIPLE) {
                         nTotTriple++;
                     }
                 }
             }
-
 
             // Calculates PI electrons by atom type
 
@@ -146,27 +142,26 @@ public class Aromaticity {
             if (atomSymbol.equalsIgnoreCase("C")) {
 
                 // Charged C can not be aromatic
-                if (FormalCharge!=0) {
-                    NotAllowedAtom = true;
+                if (formalCharge!=0) {
+                    notAllowedAtoms = true;
                     continue;
                 }
 
                 // sp2 hybridized form (or belongs to another fused aromatic ring)
-                if ((nBondDouble == 1) || IsAromaticAtom) {
+                if ((nBondDouble == 1) || isAromaticAtom) {
                     PIElectrons += 1;
                     continue;
                 }
 
                 // exocyclic double bond to el. neg.
-                if ((ExoDoubleBondToElectroNegative)&&(!BasicAromaticityDetection)) {
+                if ((exoDoubleBondToElectronegative)&&(!basicAromaticityDetection)) {
                     PIElectrons += 0;
                     continue;
                 }
 
-                NotAllowedAtom = true;
+                notAllowedAtoms = true;
                 continue;
             }
-
 
             // N or P atom
             if ((atomSymbol.equalsIgnoreCase("N"))||(atomSymbol.equalsIgnoreCase("P"))) {
@@ -174,16 +169,16 @@ public class Aromaticity {
                 // for P atom, check if valence is over 3
                 // in this case it is not aromatic by defauls (to be checked?)
                 if (atomSymbol.equalsIgnoreCase("P")) {
-                    if (!IsAromaticAtom) {
+                    if (!isAromaticAtom) {
                         int Valence = nTotSingle + 2*nTotDbl + 3*nTotTriple;
                         if (Valence > 3) {
-                            NotAllowedAtom = true;
+                            notAllowedAtoms = true;
                             continue;
                         }
                     } else {
                         int Valence = nTotSingle + 2*nTotDbl + 3*nTotTriple + nTotArom;
                         if (Valence > 3) {
-                            NotAllowedAtom = true;
+                            notAllowedAtoms = true;
                             continue;
                         }
                     }
@@ -191,33 +186,32 @@ public class Aromaticity {
 
                 // sp2 hybridized form because already set as aromatic
                 // (i.e. already in a fused aromatic ring)
-                if (IsAromaticAtom) {
+                if (isAromaticAtom) {
                     PIElectrons += 1;
                     continue;
                 }
 
                 // sp2 hybridized form: like C=N-C
-                if ((nBondDouble == 1) && (FormalCharge == 0)) {
+                if ((nBondDouble == 1) && (formalCharge == 0)) {
                     PIElectrons += 1;
                     continue;
                 }
 
                 // sp2 hybridized form with charge +1: like C=[N+](-C)-C
-                if ((nBondDouble == 1) && (FormalCharge == 1)) {
+                if ((nBondDouble == 1) && (formalCharge == 1)) {
                     PIElectrons += 1;
                     continue;
                 }
 
                 // sp3 hybridized form: like C-N(-C)-C
-                if ((nBondSingle == 2) && (FormalCharge == 0)){
+                if ((nBondSingle == 2) && (formalCharge == 0)){
                     PIElectrons += 2;
                     continue;
                 }
 
-                NotAllowedAtom = true;
+                notAllowedAtoms = true;
                 continue;
             }
-
 
             // O or S atom
             if ((atomSymbol.equalsIgnoreCase("O"))||(atomSymbol.equalsIgnoreCase("S"))) {
@@ -228,12 +222,12 @@ public class Aromaticity {
                 }
 
                 // =[O+]- or =[S+]-
-                if (FormalCharge == 1) {
+                if (formalCharge == 1) {
                     PIElectrons += 1;
                     continue;
                 }
 
-                NotAllowedAtom = true;
+                notAllowedAtoms = true;
                 continue;
             }
 
@@ -246,18 +240,18 @@ public class Aromaticity {
                     continue;
                 }
 
-                NotAllowedAtom = true;
+                notAllowedAtoms = true;
                 continue;
             }
 
-            NotAllowedAtom = true;
+            notAllowedAtoms = true;
 
         }
 
 
         // Checks aromaticity by 4n+2 rule
 
-        if ((NotAllowedAtom)||( (BasicAromaticityDetection)&&(ExoDoubleBond) ))
+        if ((notAllowedAtoms)||( (basicAromaticityDetection)&&(exoDoubleBond) ))
 
             return false;
 
@@ -278,7 +272,6 @@ public class Aromaticity {
                 return false;
 
             }
-
         }
     }
 }

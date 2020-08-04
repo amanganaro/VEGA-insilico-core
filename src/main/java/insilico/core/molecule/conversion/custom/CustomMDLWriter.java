@@ -1,6 +1,7 @@
 package insilico.core.molecule.conversion.custom;
 
 import insilico.core.molecule.conversion.MDLMolecule;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.config.XMLIsotopeFactory;
 import org.openscience.cdk.exception.CDKException;
@@ -129,8 +130,8 @@ public class CustomMDLWriter extends DefaultChemObjectWriter {
                 return;
             }
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
-            logger.debug(ex.getMessage());
+            InsilicoLogger.getLogger().error(ex.getMessage());
+            InsilicoLogger.getLogger().debug(ex.getMessage());
             throw new CDKException("Exception while writing MDL file: " + ex.getMessage(), ex);
         }
         throw new CDKException("Only supported is writing of ChemFile, MoleculeSet, AtomContainer and Molecule objects.");
@@ -230,7 +231,7 @@ public class CustomMDLWriter extends DefaultChemObjectWriter {
             IBond bond = (IBond) bonds.next();
 
             if (bond.getAtomCount() != 2) {
-                logger.warn("Skipping bond with more/less than two atoms: " + bond);
+                InsilicoLogger.getLogger().warn("Skipping bond with more/less than two atoms: " + bond);
             } else {
 
                 // Modified by AM - no stero information taken into account

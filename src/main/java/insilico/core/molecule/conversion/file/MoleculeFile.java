@@ -2,6 +2,7 @@ package insilico.core.molecule.conversion.file;
 
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.custom.CustomMDLWriter;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public abstract class MoleculeFile {
             reader.close();
             isFileOpen = false;
         } catch (IOException e) {
-            logger.warn(e.getMessage());
+            InsilicoLogger.getLogger().warn(e.getMessage());
         }
     }
 

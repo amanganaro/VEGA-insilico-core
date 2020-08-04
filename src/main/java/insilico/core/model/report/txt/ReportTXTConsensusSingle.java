@@ -6,6 +6,7 @@ import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModelConsensus;
 import insilico.core.model.runner.InsilicoModelConsensusWrapper;
 import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import insilico.core.version.InsilicoInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +67,7 @@ public class ReportTXTConsensusSingle {
             InsilicoInfo icv = new InsilicoInfo();
             Out.print("(calculation core version: " + icv.getVersion() + ")" + System.lineSeparator());
         } catch (InitFailureException ex) {
-            logger.warn("unable to retrieve core information - " + ex.getMessage());
+            InsilicoLogger.getLogger().warn("unable to retrieve core information - " + ex.getMessage());
         }
 
         Out.print(System.lineSeparator());

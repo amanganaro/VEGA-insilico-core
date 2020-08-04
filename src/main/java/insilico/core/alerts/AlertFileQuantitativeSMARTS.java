@@ -1,6 +1,7 @@
 package insilico.core.alerts;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +73,7 @@ public class AlertFileQuantitativeSMARTS {
                 else
                     Description[i] = "";
             } catch (NumberFormatException e) {
-                logger.error("Unable to read value from alert input file at line " + (i+1) + " - " + e.getMessage());
+                InsilicoLogger.getLogger().error("Unable to read value from alert input file at line " + (i+1) + " - " + e.getMessage());
                 throw new GenericFailureException("Error in numeric conversion from alerts file");
             }
         }

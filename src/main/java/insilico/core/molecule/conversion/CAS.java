@@ -2,6 +2,7 @@ package insilico.core.molecule.conversion;
 
 
 
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +67,7 @@ public class CAS {
             res = A + "-" + B + "-" + C;
 
         } catch (Exception e) {
-            logger.warn("Unable to parse CAS string " + CAS);
+            InsilicoLogger.getLogger().warn("Unable to parse CAS string " + CAS);
             res = MISSING_CAS;
         }
 

@@ -11,6 +11,7 @@ import insilico.core.descriptor.weight.VanDerWaals;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.AllPairsShortestPaths;
 import org.openscience.cdk.graph.PathTools;
@@ -112,7 +113,7 @@ public class EigenvalueBased extends DescriptorBlock {
         try {
             ConnMatrix = mol.GetMatrixConnectionAugmented();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            InsilicoLogger.getLogger().warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

@@ -8,6 +8,7 @@ import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.matrix.TopoDistanceMatrix;
 import insilico.core.molecule.tools.Manipulator;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +97,7 @@ public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
         try {
             TopoMatrix = TopoDistanceMatrix.getMatrix(m);
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            InsilicoLogger.getLogger().warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

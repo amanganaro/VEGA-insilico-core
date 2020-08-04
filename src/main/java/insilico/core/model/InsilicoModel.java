@@ -15,6 +15,7 @@ import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.acf.ACFBuilder;
 import insilico.core.similarity.SimilarityDescriptorsBuilder;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -221,7 +222,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
             }
         } catch (Throwable e) {
             if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-            logger.error("Descriptors calculation: " + e);
+            InsilicoLogger.getLogger().error("Descriptors calculation: " + e);
             throw new GenericFailureException("Unexpected error: " + e);
         }
         if (DescriptorStatus == InsilicoModel.DESCRIPTORS_CALCULATED) {
@@ -266,7 +267,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
             ModelStatus = CalculateModel();
         } catch (Throwable e) {
             if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-            logger.error("Model calculation: " + e);
+            InsilicoLogger.getLogger().error("Model calculation: " + e);
             throw new GenericFailureException("Unexpected error: " + e);
         }
         if (ModelStatus != InsilicoModel.MODEL_CALCULATED) {
@@ -283,7 +284,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
                 ADStatus = CalculateAD();
             } catch (Throwable e) {
                 if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-                logger.error("AD calculation: " + e);
+                InsilicoLogger.getLogger().error("AD calculation: " + e);
                 throw new GenericFailureException("Unexpected error: " + e);
             }
             if (ADStatus != InsilicoModel.AD_CALCULATED) {
@@ -293,7 +294,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
                     CalculateAssessment();
                 } catch (Throwable e) {
                     if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-                    logger.error("Assessment calculation: " + e);
+                    InsilicoLogger.getLogger().error("Assessment calculation: " + e);
                     throw new GenericFailureException("Unexpected error: " + e);
                 }
                 CurOutput.setErrMessage(MessagesError.MODEL_AD_NOT_CALCULATED);
@@ -305,7 +306,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
                 CalculateAssessment();
             } catch (Throwable e) {
                 if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-                logger.error("Assessment calculation: " + e);
+                InsilicoLogger.getLogger().error("Assessment calculation: " + e);
                 throw new GenericFailureException("Unexpected error: " + e);
             }
         }

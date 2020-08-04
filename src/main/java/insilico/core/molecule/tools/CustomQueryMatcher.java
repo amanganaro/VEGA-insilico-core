@@ -404,7 +404,7 @@ public class CustomQueryMatcher {
 //            AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
 //            CDKHueckelAromaticityDetector.detectAromaticity(atomContainer);
 //        } catch (CDKException e) {
-//            logger.debug(e.toString());
+//            InsilicoLogger.getLogger().debug(e.toString());
 //            throw new CDKException(e.toString(), e);
 //        }
     }

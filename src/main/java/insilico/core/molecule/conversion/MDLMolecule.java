@@ -6,6 +6,7 @@ import insilico.core.exception.MoleculeConversionException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.custom.CustomMDLWriter;
 import insilico.core.molecule.tools.Normalizer;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
@@ -33,7 +34,7 @@ public class MDLMolecule {
     public static InsilicoMolecule Convert(byte[] MDL) {
 
         InsilicoMolecule isMol = new InsilicoMolecule();
-        logger.debug("Starting conversion for MDL");
+        InsilicoLogger.getLogger().debug("Starting conversion for MDL");
 
         try {
 
@@ -69,11 +70,11 @@ public class MDLMolecule {
                 Mol = MolNorm.ConfigureMolecule(Mol, isMol.GetWarnings());
             } catch (InitFailureException e) {
                 String err = ERR_HEADER + "unable to init normalizer for MDL molecule";
-                logger.error(err + " (" + e.getMessage() + ")");
+                InsilicoLogger.getLogger().error(err + " (" + e.getMessage() + ")");
                 throw new MoleculeConversionException(err);
             } catch (MoleculeConversionException e) {
                 String err = ERR_HEADER + "unable to normalize MDL molecule (" + e.getMessage() + ")";
-                logger.error(err);
+                InsilicoLogger.getLogger().error(err);
                 throw new MoleculeConversionException(err);
             }
 
@@ -85,13 +86,13 @@ public class MDLMolecule {
             isMol.MarkAsValid();
 
         } catch (MoleculeConversionException e) {
-            logger.error("Molecule conversion failed for MDL (" + e.getMessage() + ")");
+            InsilicoLogger.getLogger().error("Molecule conversion failed for MDL (" + e.getMessage() + ")");
             for (String s : e.getMessageList())
                 isMol.AddError(s);
             isMol.MarkAsInvalid();
         }
 
-        logger.debug("MDL molecule converted");
+        InsilicoLogger.getLogger().debug("MDL molecule converted");
         return isMol;
     }
 
@@ -116,10 +117,10 @@ public class MDLMolecule {
                 if (curCAS != null)
                     isMol.SetCAS(CAS.NormalizeCAS(curCAS));
                 else
-                    logger.warn(ERR_HEADER + "unable to find the " + CASTag + " tag in the MDL code, CAS not set");
+                    InsilicoLogger.getLogger().warn(ERR_HEADER + "unable to find the " + CASTag + " tag in the MDL code, CAS not set");
             } catch (GenericFailureException e) {
                 String Warn = ERR_HEADER + "error while searching the " + CASTag + " tag, CAS not set";
-                logger.warn(Warn);
+                InsilicoLogger.getLogger().warn(Warn);
                 isMol.AddWarning(Warn);
             }
 
@@ -130,10 +131,10 @@ public class MDLMolecule {
                 if (curId != null)
                     isMol.SetId(curId);
                 else
-                    logger.warn(ERR_HEADER + "unable to find the " + IdTag + " tag in the MDL code, Id not set");
+                    InsilicoLogger.getLogger().warn(ERR_HEADER + "unable to find the " + IdTag + " tag in the MDL code, Id not set");
             } catch (GenericFailureException e) {
                 String Warn = ERR_HEADER + "error while searching the " + IdTag + " tag, Id not set";
-                logger.warn(Warn);
+                InsilicoLogger.getLogger().warn(Warn);
                 isMol.AddWarning(Warn);
             }
 
@@ -197,7 +198,7 @@ public class MDLMolecule {
             writer.close();
             OutMol = baos.toByteArray();
         } catch (Exception e) {
-            logger.error(ERR_HEADER + "unable to generate MDL.");
+            InsilicoLogger.getLogger().error(ERR_HEADER + "unable to generate MDL.");
             throw new MoleculeConversionException(ERR_HEADER + "unable to generate MDL.");
         }
 

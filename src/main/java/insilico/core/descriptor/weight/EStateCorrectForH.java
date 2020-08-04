@@ -3,6 +3,7 @@ package insilico.core.descriptor.weight;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.molecule.matrix.TopoDistanceMatrix;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
@@ -53,7 +54,7 @@ public class EStateCorrectForH {
 //            TopoDistMat = Mol.GetMatrixTopologicalDistance();
             TopDistMat = TopoDistanceMatrix.getMatrix(mol);
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            InsilicoLogger.getLogger().warn(e.getMessage());
             throw new GenericFailureException("Unable to calculate matrices");
         }
 

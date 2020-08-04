@@ -5,6 +5,7 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.model.runner.InsilicoModelWrapper;
 import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +113,7 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
             ModelStatus = CalculateModel();
         } catch (Throwable ex){
             if (ex.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(ex.getMessage());
-            logger.error("Model calculation: " + ex);
+            InsilicoLogger.getLogger().error("Model calculation: " + ex);
             throw new GenericFailureException("Unexpected error: " + ex);
         }
         if (ModelStatus != InsilicoModel.MODEL_CALCULATED) {
@@ -128,7 +129,7 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
             CalculateAssessment();
         } catch (Throwable e) {
             if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-            logger.error("Assessment calculation: " + e);
+            InsilicoLogger.getLogger().error("Assessment calculation: " + e);
             throw new GenericFailureException("Unexpected error: " + e);
         }
 

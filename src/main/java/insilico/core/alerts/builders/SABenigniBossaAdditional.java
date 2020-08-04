@@ -4,6 +4,7 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -50,7 +51,7 @@ public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iA
                 try {
                     ParsedSMARTS.add(SMARTSParser.parse(curSMARTS, DefaultChemObjectBuilder.getInstance()));
                 } catch (Exception ex) {
-                    logger.warn("unable to initialize " + Id + ": " + curSMARTS);
+                    InsilicoLogger.getLogger().warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
                 }
             }
@@ -58,7 +59,7 @@ public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iA
                 try {
                     ParsedPreSMARTS.add(SMARTSParser.parse(curSMARTS, DefaultChemObjectBuilder.getInstance()));
                 } catch (Exception ex) {
-                    logger.warn("unable to initialize " + Id + ": " + curSMARTS);
+                    InsilicoLogger.getLogger().warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
                 }
             }            

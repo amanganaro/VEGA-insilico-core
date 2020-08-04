@@ -7,6 +7,7 @@ import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.similarity.SimilarMolecule;
 import insilico.core.similarity.Similarity;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +79,7 @@ public class ADCheckIndices {
         
         if ((TrainSet == null)||(TrainSet.getMoleculesSize()==0)) {
             SimilarMols = null;
-            logger.warn("Unable to retrieve training set for AD similarity calculation");
+            InsilicoLogger.getLogger().warn("Unable to retrieve training set for AD similarity calculation");
             throw new GenericFailureException("Unable to retrieve training set");
         }
         
@@ -106,7 +107,7 @@ public class ADCheckIndices {
                     curSim = 0.38;
                 
             } catch (Throwable e) {
-                logger.warn("AD similarity calculation: unable to calculate for training set molecule "
+                InsilicoLogger.getLogger().warn("AD similarity calculation: unable to calculate for training set molecule "
                         + idx + ": " + TrainSet.getSMILES(idx));
                 curSim = 0;
             }

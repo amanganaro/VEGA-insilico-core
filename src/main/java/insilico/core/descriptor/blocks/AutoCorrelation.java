@@ -198,6 +198,7 @@ public class AutoCorrelation extends DescriptorBlock {
         DescList.clear();
         ArrayList<Integer> weightList = BuildWeightList();
         ArrayList<Integer> lagList = BuildLagList();
+
         for (Integer curWeight : weightList) {
             for (Integer curLag : lagList) {
                 Add("ATS" + curLag.toString() + WEIGHT_SYMBOL[curWeight], "");

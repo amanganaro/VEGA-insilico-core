@@ -5,6 +5,7 @@ import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Normalizer;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -221,7 +222,7 @@ public class Similarity implements Serializable {
                 }
             } catch (InvalidMoleculeException e) {
                 e.printStackTrace();
-                logger.warn("unable to check exact similarity for molecule " + mol.GetSMILES());
+                InsilicoLogger.getLogger().warn("unable to check exact similarity for molecule " + mol.GetSMILES());
             }
         }
 

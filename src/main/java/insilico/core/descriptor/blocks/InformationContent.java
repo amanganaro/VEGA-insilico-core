@@ -7,6 +7,7 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.tools.utils.MoleculeUtilities;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.graph.ShortestPaths;
@@ -114,7 +115,7 @@ public class InformationContent extends DescriptorBlock {
             ConnMat = mol.GetMatrixConnectionAugmented();
             TopoDistMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            InsilicoLogger.getLogger().warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

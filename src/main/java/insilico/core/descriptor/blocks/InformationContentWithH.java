@@ -10,6 +10,7 @@ import insilico.core.molecule.matrix.ConnectionAugMatrix;
 import insilico.core.molecule.matrix.TopoDistanceMatrix;
 import insilico.core.molecule.tools.Manipulator;
 import insilico.core.tools.utils.MoleculeUtilities;
+import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.graph.ShortestPaths;
@@ -115,7 +116,7 @@ public class InformationContentWithH extends DescriptorBlock {
             ConnMat = ConnectionAugMatrix.getMatrix(m);
             TopoDistMat = TopoDistanceMatrix.getMatrix(m);
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            InsilicoLogger.getLogger().warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
