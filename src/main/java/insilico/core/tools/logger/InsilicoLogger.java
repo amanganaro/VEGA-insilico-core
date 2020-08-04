@@ -6,7 +6,6 @@ import org.apache.log4j.PropertyConfigurator;
 
 import java.net.URL;
 
-import static org.apache.logging.log4j.LogManager.getLogger;
 
 /**
  * Provides method to init logger (should be invoked when application start)
