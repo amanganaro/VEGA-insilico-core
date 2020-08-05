@@ -206,7 +206,7 @@ public class AtomCenteredFragments extends DescriptorBlock {
         try {
             ConnAugMatrix = mol.GetMatrixConnectionAugmented();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

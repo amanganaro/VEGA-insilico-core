@@ -97,7 +97,7 @@ public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
         try {
             TopoMatrix = TopoDistanceMatrix.getMatrix(m);
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

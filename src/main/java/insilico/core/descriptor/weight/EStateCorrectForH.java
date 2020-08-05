@@ -54,7 +54,7 @@ public class EStateCorrectForH {
 //            TopoDistMat = Mol.GetMatrixTopologicalDistance();
             TopDistMat = TopoDistanceMatrix.getMatrix(mol);
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             throw new GenericFailureException("Unable to calculate matrices");
         }
 

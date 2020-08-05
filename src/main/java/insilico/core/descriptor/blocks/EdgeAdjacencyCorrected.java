@@ -124,7 +124,7 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
         try {
             EdgeAdjMat = mol.GetMatrixEdgeAdjacency();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

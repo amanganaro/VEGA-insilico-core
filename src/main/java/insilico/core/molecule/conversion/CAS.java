@@ -67,7 +67,7 @@ public class CAS {
             res = A + "-" + B + "-" + C;
 
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn("Unable to parse CAS string " + CAS);
+            logger.warn("Unable to parse CAS string " + CAS);
             res = MISSING_CAS;
         }
 

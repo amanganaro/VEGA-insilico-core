@@ -84,7 +84,7 @@ public class BurdenEigenvalue extends DescriptorBlock {
         try {
             BurdenMat = mol.GetMatrixBurden();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

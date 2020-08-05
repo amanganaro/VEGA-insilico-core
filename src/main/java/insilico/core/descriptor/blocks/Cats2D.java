@@ -95,14 +95,14 @@ public class Cats2D extends DescriptorBlock {
         try {
             TopoMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
         try {
             ConnAugMatrix = mol.GetMatrixConnectionAugmented();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

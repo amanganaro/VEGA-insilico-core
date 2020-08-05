@@ -104,7 +104,7 @@ public class DistanceEdge extends DescriptorBlock {
         try {
             TopoMatrix = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

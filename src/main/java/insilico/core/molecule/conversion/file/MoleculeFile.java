@@ -79,7 +79,7 @@ public abstract class MoleculeFile {
             reader.close();
             isFileOpen = false;
         } catch (IOException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
         }
     }
 

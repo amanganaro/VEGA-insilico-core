@@ -35,7 +35,7 @@ import java.util.*;
  * directly. Example usage would be
  * <p/>
  * <pre>
- * SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+ * SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
  * IAtomContainer atomContainer = sp.parseSmiles(&quot;CC(=O)OC(=O)C&quot;);
  * SMARTSQueryTool querytool = new SMARTSQueryTool(&quot;O=CO&quot;);
  * boolean status = querytool.matches(atomContainer);
@@ -404,7 +404,7 @@ public class CustomQueryMatcher {
 //            AtomContainerManipulator.percieveAtomTypesAndConfigureAtoms(atomContainer);
 //            CDKHueckelAromaticityDetector.detectAromaticity(atomContainer);
 //        } catch (CDKException e) {
-//            InsilicoLogger.getLogger().debug(e.toString());
+//            logger.debug(e.toString());
 //            throw new CDKException(e.toString(), e);
 //        }
     }

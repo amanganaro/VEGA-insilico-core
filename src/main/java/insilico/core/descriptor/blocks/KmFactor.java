@@ -6,7 +6,7 @@ import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.tools.CustomQueryMatcher;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -207,7 +207,7 @@ public class KmFactor extends DescriptorBlock {
         for (int i=0; i< KmFragments.length; i++) {
             if (KmFragments[i][3] != null)
                 try {
-                    Queries[i] = SMARTSParser.parse((String)KmFragments[i][3], DefaultChemObjectBuilder.getInstance());
+                    Queries[i] = SMARTSParser.parse((String)KmFragments[i][3], SilentChemObjectBuilder.getInstance());
                 } catch (Exception e) {
                     Queries[i] = null;
                 }
@@ -216,7 +216,7 @@ public class KmFactor extends DescriptorBlock {
         Queries_f_31 = new QueryAtomContainer[f_31.length];
         for (int i=0; i< f_31.length; i++) {
             try {
-                Queries_f_31[i] = SMARTSParser.parse((String)f_31[i][1], DefaultChemObjectBuilder.getInstance());
+                Queries_f_31[i] = SMARTSParser.parse((String)f_31[i][1], SilentChemObjectBuilder.getInstance());
             } catch (Exception e) {
                 Queries_f_31[i] = null;
             }
@@ -224,7 +224,7 @@ public class KmFactor extends DescriptorBlock {
         
         QueryAtomContainer buf = null;
         try {
-            buf  = SMARTSParser.parse(Benzene, DefaultChemObjectBuilder.getInstance());
+            buf  = SMARTSParser.parse(Benzene, SilentChemObjectBuilder.getInstance());
         } catch (Exception e) {
             //
         }

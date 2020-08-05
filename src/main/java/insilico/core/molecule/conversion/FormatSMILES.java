@@ -3,7 +3,7 @@ package insilico.core.molecule.conversion;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.molecule.tools.MoleculeNormalization;
 import insilico.core.tools.utils.logger.InsilicoLogger;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.smiles.SmilesParser;
@@ -34,11 +34,11 @@ public class FormatSMILES {
 
         // create structure
         IAtomContainer curStructure = null;
-        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
         try {
             curStructure = sp.parseSmiles(SMILES);
         } catch (InvalidSmilesException e) {
-            InsilicoLogger.getLogger().warn("Error while parsing SMILES: " + SMILES + " - " + e.getMessage());
+            logger.warn("Error while parsing SMILES: " + SMILES + " - " + e.getMessage());
             throw new GenericFailureException("Error while parsing SMILES: " + SMILES + " - " + e.getMessage());
         }
 

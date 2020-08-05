@@ -158,7 +158,7 @@ public class Normalizer {
 
                             // Clears marked atoms and relative bonds
                             if ( (!markedAtoms.isEmpty()) || (!markedBonds.isEmpty())){
-                                InsilicoLogger.getLogger().debug("Aromaticity has been removed from a five membered carbon cycle");
+                                logger.debug("Aromaticity has been removed from a five membered carbon cycle");
                                 warnings.AddMessage("Some five membered carbon ccles were wrongly set as aromatic and have been changed");
                                 for (IAtom mAt : markedAtoms){
                                     mAt.setFlag(CDKConstants.ISAROMATIC, false);
@@ -209,7 +209,7 @@ public class Normalizer {
             }
         } catch (Exception e) {
             String err = ERR_HEADER + "unable to remove improper fixed aromaticity";
-            InsilicoLogger.getLogger().error(err + " (" + e.getMessage() + ")");
+            logger.error(err + " (" + e.getMessage() + ")");
             throw new MoleculeConversionException(err);
         }
 
@@ -230,7 +230,7 @@ public class Normalizer {
             }
         } catch (Exception e) {
             String err = ERR_HEADER + "unable to set aromaticity";
-            InsilicoLogger.getLogger().error(err + " (" + e.getMessage() + ")");
+            logger.error(err + " (" + e.getMessage() + ")");
             throw new MoleculeConversionException(err);
         }
 
@@ -255,7 +255,7 @@ public class Normalizer {
 
         } catch (Exception e) {
             String err = ERR_HEADER + "unable to calculate aromaticity";
-            InsilicoLogger.getLogger().error(err + " (" + e.getMessage() + ")");
+            logger.error(err + " (" + e.getMessage() + ")");
             throw new MoleculeConversionException(err);
         }
 
@@ -537,7 +537,7 @@ public class Normalizer {
 
             // Tries to remove aromaticity if needed
             if (!aromCorrect) {
-                InsilicoLogger.getLogger().debug("Wrong no. of electrons for Hueckel rule - PI electrons = " + PIelectrons);
+                logger.debug("Wrong no. of electrons for Hueckel rule - PI electrons = " + PIelectrons);
                 KekuleForm Kekule = new KekuleForm();
                 try {
                     Kekule.Convert(mol, ring);
@@ -554,7 +554,7 @@ public class Normalizer {
 
         if (conversionError) {
             String err = ERR_HEADER + "some aromatic rings can not be not correctly recognized";
-            InsilicoLogger.getLogger().error(err);
+            logger.error(err);
             throw new MoleculeConversionException(err);
         }
 
@@ -639,7 +639,7 @@ public class Normalizer {
                     Mol.getAtom(idxDoubleO).setFormalCharge(-1);
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
 
-                    InsilicoLogger.getLogger().debug("Normalized a NO2 group");
+                    logger.debug("Normalized a NO2 group");
                     continue;
                 }
 
@@ -662,7 +662,7 @@ public class Normalizer {
                     Mol.getAtom(idxTripleN).setFormalCharge(NTripleCharge -1);
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxTripleN)).setOrder(IBond.Order.DOUBLE);
 
-                    InsilicoLogger.getLogger().debug("Normalized a N=N#N / C=N#N group");
+                    logger.debug("Normalized a N=N#N / C=N#N group");
                     continue;
                 }
 
@@ -682,7 +682,7 @@ public class Normalizer {
                     Mol.getAtom(idxDoubleO).setFormalCharge(-1);
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
 
-                    InsilicoLogger.getLogger().debug("Normalized a C#N=O / C=N=O / N=N=O group");
+                    logger.debug("Normalized a C#N=O / C=N=O / N=N=O group");
                     // continue;   not needed, last block
                 }
 

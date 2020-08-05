@@ -9,7 +9,7 @@ import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.CustomQueryMatcher;
 import insilico.core.molecule.tools.Depiction;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.UniversalIsomorphismTester;
@@ -86,7 +86,7 @@ public class SAMutagenSarpy18K extends AlertBlockFromSMARTS implements iAlertBlo
             SA = new QueryAtomContainer[SMARTSFileReader.getSize()];
             
             for (int i=0; i<SMARTSFileReader.getSize(); i++) {
-                SA[i] = SMARTSParser.parse(SMARTSFileReader.getSMARTS()[i], DefaultChemObjectBuilder.getInstance());
+                SA[i] = SMARTSParser.parse(SMARTSFileReader.getSMARTS()[i], SilentChemObjectBuilder.getInstance());
             }
             
         } catch (Exception e) {

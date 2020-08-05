@@ -4,7 +4,7 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -145,15 +145,15 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
             
             int idx = 0;
             for (String s : SMARTSCategory1) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
                 idx++;
             }
             for (String s : SMARTSCategory2) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
                 idx++;
             }
             for (String s : SMARTSCategory3) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
                 idx++;
             }
             

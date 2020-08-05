@@ -67,7 +67,7 @@ public class ReportTXTConsensusSingle {
             InsilicoInfo icv = new InsilicoInfo();
             Out.print("(calculation core version: " + icv.getVersion() + ")" + System.lineSeparator());
         } catch (InitFailureException ex) {
-            InsilicoLogger.getLogger().warn("unable to retrieve core information - " + ex.getMessage());
+            logger.warn("unable to retrieve core information - " + ex.getMessage());
         }
 
         Out.print(System.lineSeparator());

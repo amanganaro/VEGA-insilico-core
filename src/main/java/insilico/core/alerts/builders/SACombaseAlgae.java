@@ -7,7 +7,7 @@ import insilico.core.exception.InitFailureException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -166,15 +166,15 @@ public class SACombaseAlgae extends AlertBlockFromSMARTS implements iAlertBlock 
             
             int idx = 0;
             for (String s : SMARTS_LET_1) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
                 idx++;
             }
             for (String s : SMARTS_LET_100) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
                 idx++;
             }
             for (String s : SMARTS_GT_100) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
                 idx++;
             }
             

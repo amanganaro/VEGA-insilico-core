@@ -120,7 +120,7 @@ public class EStates extends DescriptorBlock {
             try {
                 nH = curAt.getImplicitHydrogenCount();
             } catch (Exception e) {
-                InsilicoLogger.getLogger().warn("unable to get H count");
+                logger.warn("unable to get H count");
             }
             
             // formal charge

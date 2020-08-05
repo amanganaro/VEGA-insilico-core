@@ -11,7 +11,7 @@ import insilico.core.tools.utils.GeneralUtilities;
 import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -44,7 +44,7 @@ public class SmilesMolecule {
     public static InsilicoMolecule Convert(String SMILESString, int SMILESField, int CASField, int IdField){
 
         InsilicoMolecule isMol = new InsilicoMolecule();
-        InsilicoLogger.getLogger().debug("Starting conversion for SMILES: " + SMILESString);
+        logger.debug("Starting conversion for SMILES: " + SMILESString);
 
         try {
             SMILESString = GeneralUtilities.TrimString(SMILESString);
@@ -107,7 +107,7 @@ public class SmilesMolecule {
 
 
         } catch (MoleculeConversionException | NumberFormatException ex){
-            InsilicoLogger.getLogger().error("Molecule conversion failed for SMILES " + isMol.GetSMILES() + " (" + ex.getMessage() + ")");
+            logger.error("Molecule conversion failed for SMILES " + isMol.GetSMILES() + " (" + ex.getMessage() + ")");
             if (ex.getClass() == MoleculeConversionException.class)
                 for (String s : ((MoleculeConversionException)ex).getMessageList())
                     isMol.AddError(s);
@@ -116,7 +116,7 @@ public class SmilesMolecule {
             isMol.MarkAsInvalid();
         }
 
-        InsilicoLogger.getLogger().debug("SMILES molecule converted");
+        logger.debug("SMILES molecule converted");
         return isMol;
     }
 
@@ -142,20 +142,20 @@ public class SmilesMolecule {
 
         // Parses SMILES and creates AtomContainer object
         try {
-            SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+            SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
 //            smilesParser.setPreservingAromaticity(true);
             mol = smilesParser.parseSmiles(SMILES);
 
-            if (InsilicoLogger.getLogger().isDebugEnabled()) {
-                InsilicoLogger.getLogger().debug("SMILES converted with CDK SmilesParser");
+            if (logger.isDebugEnabled()) {
+                logger.debug("SMILES converted with CDK SmilesParser");
                 for (int at=0; at<mol.getAtomCount(); at++)
-                    InsilicoLogger.getLogger().debug("Atom no. " + (at+1) + ": " + mol.getAtom(at).getSymbol() +
+                    logger.debug("Atom no. " + (at+1) + ": " + mol.getAtom(at).getSymbol() +
                             ", aromatic=" + mol.getAtom(at).getFlag(CDKConstants.ISAROMATIC));
             }
 
         } catch (InvalidSmilesException  e) {
             String err = ERR_HEADER + "unable to parse SMILES string " + SMILES;
-            InsilicoLogger.getLogger().error(err + " (" + e.getMessage() + ")");
+            logger.error(err + " (" + e.getMessage() + ")");
             throw new MoleculeConversionException(err);
         }
 
@@ -165,11 +165,11 @@ public class SmilesMolecule {
             mol = normalizer.ConfigureMolecule(mol, warnings);
         } catch (InitFailureException ex){
             String err = ERR_HEADER + "unable to init normalizer for SMILES string " + SMILES;
-            InsilicoLogger.getLogger().error(err + " (" + ex.getMessage() + ")");
+            logger.error(err + " (" + ex.getMessage() + ")");
             throw new MoleculeConversionException(err);
         } catch (MoleculeConversionException e){
             String err = ERR_HEADER + "unable to normalize SMILES string " + SMILES + " (" + e.getMessage() + ")";
-            InsilicoLogger.getLogger().error(err);
+            logger.error(err);
             throw new MoleculeConversionException(err);
         }
 
@@ -194,7 +194,7 @@ public class SmilesMolecule {
             String err = ERR_HEADER + "unable to generate SMILES string";
             if (!ex.getMessage().isEmpty())
                 err += " (" + ex.getMessage() + ")";
-            InsilicoLogger.getLogger().error(err);
+            logger.error(err);
             throw new MoleculeConversionException(err);
         }
 

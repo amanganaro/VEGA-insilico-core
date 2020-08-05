@@ -116,7 +116,7 @@ public class InformationContentWithH extends DescriptorBlock {
             ConnMat = ConnectionAugMatrix.getMatrix(m);
             TopoDistMat = TopoDistanceMatrix.getMatrix(m);
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

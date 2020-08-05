@@ -21,8 +21,7 @@ import java.io.Serializable;
  */
 public class InsilicoMolecule implements Serializable, Cloneable {
 
-    Logger logger = LoggerFactory.getLogger(InsilicoMolecule.class);
-
+    private Logger logger = LoggerFactory.getLogger(InsilicoMolecule.class);
 
     private static final long serialVersionUID = 1L;
 

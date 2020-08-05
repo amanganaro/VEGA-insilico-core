@@ -67,7 +67,7 @@ public class AlertFileClassificationSMARTS {
                         ParentAlerts[i].add(Integer.valueOf(s));
                 }
             } catch (NumberFormatException e) {
-                InsilicoLogger.getLogger().error("Unable to read value from alert input file at line " + (i+1) + " - " + e.getMessage());
+                logger.error("Unable to read value from alert input file at line " + (i+1) + " - " + e.getMessage());
                 throw new GenericFailureException("Error in numeric conversion from alerts file");
             }
         }

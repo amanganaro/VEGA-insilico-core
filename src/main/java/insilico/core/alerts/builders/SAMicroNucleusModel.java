@@ -7,7 +7,7 @@ import insilico.core.exception.InitFailureException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -209,7 +209,7 @@ public class SAMicroNucleusModel extends AlertBlockFromSMARTS implements iAlertB
             
             int idx = 0;
             for (Object[] arr : SMARTS) {
-                SA[idx] = SMARTSParser.parse((String)arr[1], DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse((String)arr[1], SilentChemObjectBuilder.getInstance());
                 idx++;
             }
             

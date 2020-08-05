@@ -113,7 +113,7 @@ public class BurdenEigenvalueHFilled extends DescriptorBlock {
         try {
             BurdenMat = HMol.GetMatrixBurden();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

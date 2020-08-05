@@ -75,7 +75,7 @@ public class MoleculeFileSDF extends MoleculeFile {
                 m.SetId("Molecule " + Count);
             return m;
         } catch (IOException e) {
-            InsilicoLogger.getLogger().error("Error while reading file " + this.FileName + " (" + e.getMessage() + ")");
+            logger.error("Error while reading file " + this.FileName + " (" + e.getMessage() + ")");
             throw(e);
         }
 

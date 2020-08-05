@@ -115,7 +115,7 @@ public class InformationContent extends DescriptorBlock {
             ConnMat = mol.GetMatrixConnectionAugmented();
             TopoDistMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

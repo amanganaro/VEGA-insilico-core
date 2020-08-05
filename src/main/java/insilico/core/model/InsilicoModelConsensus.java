@@ -113,7 +113,7 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
             ModelStatus = CalculateModel();
         } catch (Throwable ex){
             if (ex.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(ex.getMessage());
-            InsilicoLogger.getLogger().error("Model calculation: " + ex);
+            logger.error("Model calculation: " + ex);
             throw new GenericFailureException("Unexpected error: " + ex);
         }
         if (ModelStatus != InsilicoModel.MODEL_CALCULATED) {
@@ -129,7 +129,7 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
             CalculateAssessment();
         } catch (Throwable e) {
             if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-            InsilicoLogger.getLogger().error("Assessment calculation: " + e);
+            logger.error("Assessment calculation: " + e);
             throw new GenericFailureException("Unexpected error: " + e);
         }
 

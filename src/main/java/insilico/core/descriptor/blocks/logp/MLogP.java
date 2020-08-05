@@ -88,7 +88,7 @@ public class MLogP extends DescriptorBlock {
             ConnMatrix = mol.GetMatrixConnectionAugmented();
             TopoMatrix = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

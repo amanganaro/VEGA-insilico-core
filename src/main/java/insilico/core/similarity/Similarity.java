@@ -222,7 +222,7 @@ public class Similarity implements Serializable {
                 }
             } catch (InvalidMoleculeException e) {
                 e.printStackTrace();
-                InsilicoLogger.getLogger().warn("unable to check exact similarity for molecule " + mol.GetSMILES());
+                logger.warn("unable to check exact similarity for molecule " + mol.GetSMILES());
             }
         }
 

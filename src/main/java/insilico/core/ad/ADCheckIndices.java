@@ -79,7 +79,7 @@ public class ADCheckIndices {
         
         if ((TrainSet == null)||(TrainSet.getMoleculesSize()==0)) {
             SimilarMols = null;
-            InsilicoLogger.getLogger().warn("Unable to retrieve training set for AD similarity calculation");
+            logger.warn("Unable to retrieve training set for AD similarity calculation");
             throw new GenericFailureException("Unable to retrieve training set");
         }
         
@@ -107,7 +107,7 @@ public class ADCheckIndices {
                     curSim = 0.38;
                 
             } catch (Throwable e) {
-                InsilicoLogger.getLogger().warn("AD similarity calculation: unable to calculate for training set molecule "
+                logger.warn("AD similarity calculation: unable to calculate for training set molecule "
                         + idx + ": " + TrainSet.getSMILES(idx));
                 curSim = 0;
             }

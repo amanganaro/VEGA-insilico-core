@@ -70,7 +70,7 @@ public class TopologicalEState extends DescriptorBlock {
         try {
             ES = new EState(mol.GetStructure());
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
@@ -81,7 +81,7 @@ public class TopologicalEState extends DescriptorBlock {
         try {
             TopoMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

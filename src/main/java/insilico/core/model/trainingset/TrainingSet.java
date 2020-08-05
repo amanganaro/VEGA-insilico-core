@@ -110,7 +110,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public int getId(int Index) throws GenericFailureException {
         if((Id == null) || (Index < 0) || (Index >= Id.length)){
             String message = "Id object empty or wrong index in request to training set";
-            InsilicoLogger.getLogger().error(message);
+            logger.error(message);
             throw new GenericFailureException(message);
         }
         return Id[Index];
@@ -120,7 +120,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public String getCAS(int Index) throws GenericFailureException {
         if ((CAS == null) || (Index < 0) || (Index >= CAS.length)) {
             String message = "CAS object empty or wrong index in request to training set";
-            InsilicoLogger.getLogger().error(message);
+            logger.error(message);
             throw new GenericFailureException(message);
         }
         return CAS[Index];
@@ -130,7 +130,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public String getSMILES(int Index) throws GenericFailureException {
         if ((SMILES == null) || (Index < 0) || (Index >= SMILES.length)) {
             String message = "SMILES object empty or wrong index in request to training set";
-            InsilicoLogger.getLogger().error(message);
+            logger.error(message);
             throw new GenericFailureException(message);
         }
         return SMILES[Index];
@@ -140,7 +140,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public short getMoleculeSet(int Index) throws GenericFailureException {
         if ((Status == null) || (Index < 0) || (Index >= Status.length)) {
             String message = "Status object empty or wrong index in request to training set";
-            InsilicoLogger.getLogger().error(message);
+            logger.error(message);
             throw new GenericFailureException(message);
         }
         return Status[Index];
@@ -149,7 +149,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getExperimentalValue(int Index) throws GenericFailureException {
         if ((Experimental == null) || (Index < 0) || (Index >= Experimental.length)) {
-            InsilicoLogger.getLogger().error("Experimental object empty or wrong index in request to training set");
+            logger.error("Experimental object empty or wrong index in request to training set");
             throw new GenericFailureException("Experimental object empty or wrong index in request to training set");
         }
         return Experimental[Index];
@@ -158,7 +158,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getExperimentalValueFormatted(int Index) throws GenericFailureException {
         if ((Experimental == null) || (Index < 0) || (Index >= Experimental.length)) {
-            InsilicoLogger.getLogger().error("Experimental object empty or wrong index in request to training set");
+            logger.error("Experimental object empty or wrong index in request to training set");
             throw new GenericFailureException("Experimental object empty or wrong index in request to training set");
         }
 
@@ -169,7 +169,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getPredictedValue(int Index) throws GenericFailureException {
         if ((Prediction == null) || (Index < 0) || (Index >= Prediction.length)) {
-            InsilicoLogger.getLogger().error("Prediction object empty or wrong index in request to training set");
+            logger.error("Prediction object empty or wrong index in request to training set");
             throw new GenericFailureException("Prediction object empty or wrong index in request to training set");
         }
         return Prediction[Index];
@@ -178,7 +178,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getPredictedValueFormatted(int Index) throws GenericFailureException {
         if ((Prediction == null) || (Index < 0) || (Index >= Prediction.length)) {
-            InsilicoLogger.getLogger().error("Prediction object empty or wrong index in request to training set");
+            logger.error("Prediction object empty or wrong index in request to training set");
             throw new GenericFailureException("Prediction object empty or wrong index in request to training set");
         }
 
@@ -201,7 +201,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getDescriptorMax(int Index) throws GenericFailureException {
         if ((DescriptorMax == null) || (Index < 0) || (Index >= DescriptorMax.length)) {
-            InsilicoLogger.getLogger().error("DescriptorMax object empty or wrong index in request to training set");
+            logger.error("DescriptorMax object empty or wrong index in request to training set");
             throw new GenericFailureException("DescriptorMax object empty or wrong index in request to training set");
         }
         return DescriptorMax[Index];
@@ -210,7 +210,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getDescriptorMin(int Index) throws GenericFailureException {
         if ((DescriptorMin == null) || (Index < 0) || (Index >= DescriptorMin.length)) {
-            InsilicoLogger.getLogger().error("DescriptorMin object empty or wrong index in request to training set");
+            logger.error("DescriptorMin object empty or wrong index in request to training set");
             throw new GenericFailureException("DescriptorMin object empty or wrong index in request to training set");
         }
         return DescriptorMin[Index];
@@ -220,7 +220,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public double getDescriptor(int MolIndex, int DescriptorIndex) throws GenericFailureException {
         if ((Descriptors == null) || (MolIndex < 0) || (MolIndex >= Descriptors.length) ||
                 (DescriptorIndex < 0) || (DescriptorIndex >= Descriptors[0].length)) {
-            InsilicoLogger.getLogger().error("Descriptors object empty or wrong index in request to training set");
+            logger.error("Descriptors object empty or wrong index in request to training set");
             throw new GenericFailureException("Descriptors object empty or wrong index in request to training set");
         }
         return Descriptors[MolIndex][DescriptorIndex];
@@ -229,7 +229,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public SimilarityDescriptors getSimilarityDescriptor(int Index) throws GenericFailureException {
         if ((SimDescriptors == null) || (Index < 0) || (Index >= SimDescriptors.length)) {
-            InsilicoLogger.getLogger().error("SimDescriptors object empty or wrong index in request to training set");
+            logger.error("SimDescriptors object empty or wrong index in request to training set");
             throw new GenericFailureException("SimDescriptors object empty or wrong index in request to training set");
         }
         return SimDescriptors[Index];
@@ -238,7 +238,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getAlerts(int Index) throws GenericFailureException {
         if ((Alerts == null) || (Index < 0) || (Index >= Alerts.length)) {
-            InsilicoLogger.getLogger().error("Alerts object empty or wrong index in request to training set");
+            logger.error("Alerts object empty or wrong index in request to training set");
             throw new GenericFailureException("Alerts object empty or wrong index in request to training set");
         }
         return Alerts[Index];
@@ -247,7 +247,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public ACFItemList getACF() throws GenericFailureException {
         if (ACFList == null) {
-            InsilicoLogger.getLogger().error("ACFList object empty or wrong index in request to training set");
+            logger.error("ACFList object empty or wrong index in request to training set");
             throw new GenericFailureException("ACFList object empty or wrong index in request to training set");
         }
         return ACFList;
@@ -256,11 +256,11 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getClassLabel(double Value) throws GenericFailureException {
         if (!hasClassValues) {
-            InsilicoLogger.getLogger().error("Requested class label for a dataset without classification info in request to training set");
+            logger.error("Requested class label for a dataset without classification info in request to training set");
             throw new GenericFailureException("Requested class label for a dataset without classification info in request to training set");
         }
         if (!ClassValues.containsKey(Value)) {
-            InsilicoLogger.getLogger().error("Class label not found (value = " + Value + ") in request to training set");
+            logger.error("Class label not found (value = " + Value + ") in request to training set");
             throw new GenericFailureException("Class label not found (value = " + Value + ") in request to training set");
         }
         return ClassValues.get(Value);
@@ -285,7 +285,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
                 try {
                     return getClassLabel(value);
                 } catch (GenericFailureException e) {
-                    InsilicoLogger.getLogger().error("Unable to format value " + value + " in request to training ");
+                    logger.error("Unable to format value " + value + " in request to training ");
                     return "-";
                 }
             else
@@ -435,7 +435,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
             in.close();
 
         } catch (Exception e){
-            InsilicoLogger.getLogger().error(e.getMessage());
+            logger.error(e.getMessage());
             // TODO: 15/06/2020 sviluppare exception
         }
 

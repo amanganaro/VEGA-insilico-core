@@ -206,7 +206,7 @@ public class CustomSmilesWriter {
         while (atoms.hasNext()) ((IAtom)atoms.next()).setFlag(CDKConstants.VISITED, false);
 
         createDFSTree(a, tree, null, atomContainer);
-        //InsilicoLogger.getLogger().debug("Done with tree");
+        //logger.debug("Done with tree");
 
         parseChain(tree, line, atomContainer, null, chiral, doubleBondConfiguration, new Vector(), useAromaticity);
     }
@@ -706,7 +706,7 @@ public class CustomSmilesWriter {
         List v = new Vector();
         Iterator it = getRingOpenings(atom, v).iterator();
         Iterator it2 = v.iterator();
-        //InsilicoLogger.getLogger().debug("in parseAtom() after checking for Ring openings");
+        //logger.debug("in parseAtom() after checking for Ring openings");
         while (it.hasNext())
         {
             Integer integer = (Integer) it.next();
@@ -724,7 +724,7 @@ public class CustomSmilesWriter {
             else buffer.append(integer);
         }
         atomsInOrderOfSmiles.add(atom);
-        //InsilicoLogger.getLogger().debug("End of parseAtom()");
+        //logger.debug("End of parseAtom()");
     }
 
     /**

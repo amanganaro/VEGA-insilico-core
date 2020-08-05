@@ -7,7 +7,7 @@ import insilico.core.exception.InitFailureException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -104,18 +104,18 @@ public class SACombaseDaphnia extends AlertBlockFromSMARTS implements iAlertBloc
 
         try {
 
-            SA_Benzene = SMARTSParser.parse("c1ccccc1", DefaultChemObjectBuilder.getInstance());
+            SA_Benzene = SMARTSParser.parse("c1ccccc1", SilentChemObjectBuilder.getInstance());
             
             int nFragments = SMARTS_LT_1_BENZENE.length + SMARTS_LT_1.length;
             SA = new QueryAtomContainer[nFragments];
             
             int idx = 0;
             for (String s : SMARTS_LT_1_BENZENE) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
                 idx++;
             }
             for (String s : SMARTS_LT_1) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
                 idx++;
             }
             

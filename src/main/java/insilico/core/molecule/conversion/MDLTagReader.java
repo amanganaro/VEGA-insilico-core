@@ -68,7 +68,7 @@ public class MDLTagReader {
             }
             br.close();
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
         }
 
         return Tags;
@@ -106,7 +106,7 @@ public class MDLTagReader {
             }
             br.close();
         } catch (Exception e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
         }
 
         return Tags;

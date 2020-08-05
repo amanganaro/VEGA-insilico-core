@@ -5,7 +5,7 @@ import insilico.core.descriptor.blocks.Constitutional;
 import insilico.core.descriptor.blocks.FunctionalGroups;
 import insilico.core.exception.DescriptorNotFoundException;
 import insilico.core.molecule.InsilicoMolecule;
-import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.fingerprint.*;
 
 /**
@@ -70,7 +70,7 @@ public class SimilarityDescriptorsBuilder {
                 break;
             case FP_PUBCHEM:
                 // TODO: 15/06/2020 Builder corretto?
-                FP = new PubchemFingerprinter(DefaultChemObjectBuilder.getInstance());
+                FP = new PubchemFingerprinter(SilentChemObjectBuilder.getInstance());
                 break;
             case FP_SUBSTRUCTURE:
                 FP = new SubstructureFingerprinter();

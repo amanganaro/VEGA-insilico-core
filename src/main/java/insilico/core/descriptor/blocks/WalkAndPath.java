@@ -133,7 +133,7 @@ public class WalkAndPath extends DescriptorBlock {
         try {
             AdjMat = mol.GetMatrixAdjacency();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

@@ -94,7 +94,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         } catch (MoleculeConversionException ex) {
             structure = null;
             String err = "Failed SMILES conversion while requesting CDK Molecule for SMILES: " + SMILES;
-            InsilicoLogger.getLogger().warn(err);
+            logger.warn(err);
             throw new InvalidMoleculeException(err);
         }
 
@@ -104,7 +104,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
             } catch (GenericFailureException ex) {
                 structure = null;
                 String err = "Failed normalization while requesting CDK Molecule for SMILES: " + SMILES;
-                InsilicoLogger.getLogger().warn(err);
+                logger.warn(err);
                 throw new InvalidMoleculeException(err);
             }
         }
@@ -146,7 +146,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
             } catch (CDKException ex) {
 
                 errors.AddMessage("Unable to perceive all rings");
-                InsilicoLogger.getLogger().warn("Unable to find all rings for molecule " + SMILES);
+                logger.warn("Unable to find all rings for molecule " + SMILES);
                 throw new InvalidMoleculeException("unable to find all rings");
             }
         }
@@ -218,7 +218,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
 
         } catch (InvalidMoleculeException ex){
             String msg = "Unable to build matrix " + MatrixClass.getName() + ", invalid molecule structure for " + SMILES;
-            InsilicoLogger.getLogger().warn(msg);
+            logger.warn(msg);
             throw new GenericFailureException(msg);
         }
 
@@ -227,7 +227,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
             return matrix;
         } else {
             String msg = "Unable to build matrix " + MatrixClass.getName() + " for molecule " + SMILES;
-            InsilicoLogger.getLogger().warn(msg);
+            logger.warn(msg);
             throw new GenericFailureException(msg);
         }
     }

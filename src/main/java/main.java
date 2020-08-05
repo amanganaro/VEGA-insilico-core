@@ -39,12 +39,12 @@ public class main {
             if(count == 0)
                 count++;
             InsilicoMolecule mol = new InsilicoMolecule();
-            InsilicoLogger.getLogger().info("["  + count + "] " + smiles);
+            logger.info("["  + count + "] " + smiles);
             mol.SetSMILES(smiles);
             mol.MarkAsValid();
             mol.GetStructure();
             molecules.add(mol);
-            InsilicoLogger.getLogger().info("["  + count + "] + MOLECULE CREATED FROM " + smiles);
+            logger.info("["  + count + "] + MOLECULE CREATED FROM " + smiles);
             count++;
         }
         return molecules;

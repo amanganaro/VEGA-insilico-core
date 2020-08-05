@@ -119,7 +119,7 @@ public class ADCheckIndicesQualitative extends ADCheckIndices {
             return MostSimilar;
             
         } catch (CloneNotSupportedException e) {
-            InsilicoLogger.getLogger().warn("Error in AD: calculation of similarity for molecule " + Mol.GetSMILES() + " - " + e.getMessage());
+            logger.warn("Error in AD: calculation of similarity for molecule " + Mol.GetSMILES() + " - " + e.getMessage());
             throw new GenericFailureException("Unable to calculate similarity - " + e.getMessage());
         }
     }

@@ -76,7 +76,7 @@ public class DistanceDetour extends DescriptorBlock {
         try {
             DDrMatrix = mol.GetMatrixDistanceDetour();
         } catch (GenericFailureException e) {
-            InsilicoLogger.getLogger().warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
