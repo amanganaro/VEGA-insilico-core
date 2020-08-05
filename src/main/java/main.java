@@ -22,8 +22,8 @@ public class main {
 
         FileOutputStream fileOutputStream = new FileOutputStream("test.csv");
         PrintStream stream = new PrintStream(fileOutputStream);
-//        TestDescriptors.Run(new Constitutional(), System.out);
-        TestDescriptors.Run(new Constitutional(), stream);
+        TestDescriptors.Run(new Constitutional(), System.out);
+//        TestDescriptors.Run(new Constitutional(), stream);
 
 
 //        ArrayList<String> SMILES = fetchSmilesFromTXTFile();

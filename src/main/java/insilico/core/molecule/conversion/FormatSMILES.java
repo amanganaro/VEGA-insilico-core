@@ -1,6 +1,7 @@
 package insilico.core.molecule.conversion;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.molecule.tools.InsilicoMoleculeNormalization;
 import insilico.core.molecule.tools.MoleculeNormalization;
 import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
@@ -17,7 +18,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FormatSMILES {
 
-    static Logger logger = LoggerFactory.getLogger(FormatSMILES.class);
+    private static Logger logger = LoggerFactory.getLogger(FormatSMILES.class);
 
     public final static short SMI_FIELD_SMILES = 1;
     public final static short SMI_FIELD_NAME = 2;
@@ -43,7 +44,12 @@ public class FormatSMILES {
         }
 
         // normalize and check structure
-        MoleculeNormalization.Normalize(curStructure);
+//        MoleculeNormalization.Normalize(curStructure);
+        try {
+            InsilicoMoleculeNormalization.Normalize(curStructure);
+        } catch (Exception ex){
+            logger.warn(ex.getMessage());
+        }
 
         return curStructure;
     }

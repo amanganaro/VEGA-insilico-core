@@ -6,10 +6,8 @@ import insilico.core.exception.MoleculeConversionException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.InsilicoMoleculeMessages;
 import insilico.core.molecule.conversion.custom.CustomSmilesWriter;
-import insilico.core.molecule.tools.Normalizer;
+import insilico.core.molecule.tools.InsilicoMoleculeNormalization;
 import insilico.core.tools.utils.GeneralUtilities;
-import insilico.core.tools.utils.logger.InsilicoLogger;
-import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.silent.SilentChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
@@ -161,13 +159,15 @@ public class SmilesMolecule {
 
         // Configures generated structure
         try {
-            Normalizer normalizer = new Normalizer();
-            mol = normalizer.ConfigureMolecule(mol, warnings);
-        } catch (InitFailureException ex){
+//            Normalizer normalizer = new Normalizer();
+            mol = InsilicoMoleculeNormalization.Normalize(mol);
+        } catch (InitFailureException ex)
+        {
             String err = ERR_HEADER + "unable to init normalizer for SMILES string " + SMILES;
             logger.error(err + " (" + ex.getMessage() + ")");
             throw new MoleculeConversionException(err);
-        } catch (MoleculeConversionException e){
+        } catch (Exception e)
+        {
             String err = ERR_HEADER + "unable to normalize SMILES string " + SMILES + " (" + e.getMessage() + ")";
             logger.error(err);
             throw new MoleculeConversionException(err);

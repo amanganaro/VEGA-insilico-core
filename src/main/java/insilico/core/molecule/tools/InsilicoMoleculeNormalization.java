@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class InsilicoMoleculeNormalization {
 
-    static Logger logger = LoggerFactory.getLogger(InsilicoMoleculeNormalization.class);
+    private static Logger logger = LoggerFactory.getLogger(InsilicoMoleculeNormalization.class);
     
     // molecole con DISCORDANZE fra vecchio e nuovo
     //
@@ -243,7 +243,7 @@ public class InsilicoMoleculeNormalization {
                 
             }
         }
-        
+
         return HasModified;
     }    
     
