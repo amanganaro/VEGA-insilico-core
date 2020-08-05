@@ -192,7 +192,7 @@ public class InsilicoMoleculeNormalization {
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
 
                     HasModified = true;
-//                    logger.debug("Normalized a NO2 group");
+                    logger.info("Normalized a NO2 group");
                     continue;
                 }
                 
@@ -216,7 +216,7 @@ public class InsilicoMoleculeNormalization {
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxTripleN)).setOrder(IBond.Order.DOUBLE);
 
                     HasModified = true;
-//                    logger.debug("Normalized a N=N#N / C=N#N group");
+                    logger.info("Normalized a N=N#N / C=N#N group");
                     continue;
                 }
                 
@@ -237,7 +237,7 @@ public class InsilicoMoleculeNormalization {
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
 
                     HasModified = true;
-//                    logger.debug("Normalized a C#N=O / C=N=O / N=N=O group");
+                    logger.info("Normalized a C#N=O / C=N=O / N=N=O group");
                 }
                 
                 

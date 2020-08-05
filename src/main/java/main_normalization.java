@@ -4,9 +4,7 @@
  * and open the template in the editor.
  */
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -31,9 +29,13 @@ public class main_normalization {
         
         DataInputStream in;
         BufferedReader br;
+
+        FileOutputStream fileOutputStream = new FileOutputStream("normalization_test.csv");
+        PrintStream stream = new PrintStream(fileOutputStream);
+
 //        URL TsURL = JavaApplication9.class.getResource("/JavaApplication9/logp.txt");
 //        URL TsURL = JavaApplication9.class.getResource("/JavaApplication9/ncs.txt");
-        URL TsURL = main_normalization.class.getResource("/JavaApplication9/muta.txt");
+        URL TsURL = main_normalization.class.getResource("muta.txt");
         in = new DataInputStream(TsURL.openStream());
         br = new BufferedReader(new InputStreamReader(in));
         
@@ -44,7 +46,7 @@ public class main_normalization {
             smi.add(s);
         }
         
-        process(smi);
+        process(smi, stream);
         if (1==1) return;
         
         IAtomContainer curStructure = null;
@@ -62,10 +64,7 @@ public class main_normalization {
         curStructure = sp.parseSmiles(SMILES);
 
         curStructure = InsilicoMoleculeNormalization.Normalize(curStructure);
-        
-        
-        
-        
+
         for (IAtom a : curStructure.atoms()) {
             System.out.println(a.getSymbol() + ", " +  a.getAtomTypeName() + ", " + a.getAtomicNumber() +
                     ", charge:" + a.getFormalCharge() +
@@ -78,7 +77,7 @@ public class main_normalization {
     }
     
     
-    public static void process(ArrayList<String> SMILES) throws Exception {
+    public static void process(ArrayList<String> SMILES, PrintStream out) throws Exception {
         
         IAtomContainer curStructure = null;
         SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
@@ -86,11 +85,13 @@ public class main_normalization {
         
         String h = "smi\tsk\tar\tal\tplus\tminus\tsbnd\tdbnd\tarbnd";
         System.out.println(h);
+        out.println(h);
         
         int count = 1;
         for (String smi : SMILES) {
 
             System.out.print(count++ + "\t");
+//            out.println(count++ + "\t");
             
             try {
                 curStructure = sp.parseSmiles(smi);
@@ -124,6 +125,7 @@ public class main_normalization {
             s += "\t" + nSk +"\t" + nAr +"\t" + nAl +"\t" + nPlus +"\t" + nMinus;
             s += "\t" + nSinBond + "\t" + nDblBond + "\t" + nAromBond;
             System.out.println(s);
+            out.println(s);
         }
     }
 }
