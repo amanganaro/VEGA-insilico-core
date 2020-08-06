@@ -8,7 +8,7 @@ import insilico.core.alerts.AlertEncoding;
 import insilico.core.alerts.iAlertBlock;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -253,24 +253,24 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
             
             int idx = 0;
             for (String s : All_15_act_inf) {
-                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             for (String s : All_15_act_noninf) {
-                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
 
             for (String s : All_15_inact_inf) {
-                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             for (String s : All_15_inact_noninf) {
-                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             for (String s : Act6) {
-                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             

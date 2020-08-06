@@ -37,6 +37,7 @@ public class EigenvalueBased extends DescriptorBlock {
     Logger logger = LoggerFactory.getLogger(EigenvalueBased.class);
 
     private final static String BlockName = "Eigenvalue-based Descriptors";
+    private boolean defaultDescriptors;
     
     public final static String PARAMETER_WEIGHT_M = "weightm";
     public final static String PARAMETER_WEIGHT_P = "weightp";
@@ -57,7 +58,16 @@ public class EigenvalueBased extends DescriptorBlock {
     public EigenvalueBased() {
         super();
         this.Name = EigenvalueBased.BlockName;
+        this.defaultDescriptors = true;
     }
+
+    public EigenvalueBased(boolean defaultDescriptors) {
+        super();
+        this.Name = EigenvalueBased.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
+    }
+
+
 
     
     
@@ -76,14 +86,22 @@ public class EigenvalueBased extends DescriptorBlock {
     
     private ArrayList<Integer> BuildWeightList() {
         ArrayList<Integer> w = new ArrayList<>();
-        if (getBoolProperty(PARAMETER_WEIGHT_M))
+        if(defaultDescriptors) {
             w.add((int) WEIGHT_M_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_P))
             w.add((int) WEIGHT_P_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_E))
             w.add((int) WEIGHT_E_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_V))
             w.add((int) WEIGHT_V_IDX);
+        } else {
+            if (getBoolProperty(PARAMETER_WEIGHT_M))
+                w.add((int) WEIGHT_M_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_P))
+                w.add((int) WEIGHT_P_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_E))
+                w.add((int) WEIGHT_E_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_V))
+                w.add((int) WEIGHT_V_IDX);
+        }
+
         return w;
     }
 
@@ -165,8 +183,8 @@ public class EigenvalueBased extends DescriptorBlock {
                     } else {
 
                         // builds shortest path between i and j
-                        Atom at1 = (Atom) m.getAtom(i);
-                        Atom at2 = (Atom) m.getAtom(j);
+                        IAtom at1 = m.getAtom(i);
+                        IAtom at2 =  m.getAtom(j);
                         ShortestPaths sp = new ShortestPaths(m, at1);
                         List<IAtom> Path = Arrays.asList(sp.atomsTo(at2));
 

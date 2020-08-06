@@ -1,7 +1,7 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.exception.GenericFailureException;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
@@ -30,7 +30,7 @@ public class MoleculeNormalization {
 
         // Atom Typing
         try {
-            CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(SilentChemObjectBuilder.getInstance());
+            CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(DefaultChemObjectBuilder.getInstance());
             for (int i = 0; i < nAt; i++){
                 IAtomType at = matcher.findMatchingAtomType(structure, structure.getAtom(i));
 

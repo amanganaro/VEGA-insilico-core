@@ -212,7 +212,7 @@ public class Manipulator {
      * @param atom Atom object to be checked
      * @return number of H atoms
      */
-    public static int CountImplicitHydrogens(Atom atom) {
+    public static int CountImplicitHydrogens(IAtom atom) {
         int H=0;
         if (atom.getImplicitHydrogenCount()!=null)
             H = atom.getImplicitHydrogenCount();
@@ -240,7 +240,7 @@ public class Manipulator {
         int OldCount=molecule.getAtomCount();
 
         for (int i=0;i<OldCount;i++) {
-            Atom atom = (Atom) NewMol.getAtom(i);
+            IAtom atom = NewMol.getAtom(i);
             int HCount = CountImplicitHydrogens(atom);
 
             atom.setImplicitHydrogenCount(0);

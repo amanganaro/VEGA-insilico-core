@@ -29,10 +29,10 @@ public class DistanceDetourMatrix {
 
         for (int i=0; i<nSK; i++) {
             matrix[i][i] = 0;  // diagonal
-            Atom atStart = (Atom) molecule.getAtom(i);
+            IAtom atStart =  molecule.getAtom(i);
 
             for (int j=(i+1); j<nSK; j++) {
-                Atom atEnd = (Atom) molecule.getAtom(j);
+                IAtom atEnd =  molecule.getAtom(j);
                 List<List<IAtom>> allPaths =
                         PathTools.getAllPaths(molecule, atStart, atEnd);
                 int min=99999, max=0;

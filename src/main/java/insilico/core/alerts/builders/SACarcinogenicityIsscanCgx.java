@@ -4,7 +4,7 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -92,7 +92,7 @@ public class SACarcinogenicityIsscanCgx extends AlertBlockFromSMARTS implements 
             
             int idx = 0;
             for (String s : CarcSMARTS) {
-                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             

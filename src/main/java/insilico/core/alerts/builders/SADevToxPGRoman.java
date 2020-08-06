@@ -3,7 +3,7 @@ package insilico.core.alerts.builders;
 import insilico.core.alerts.*;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -67,40 +67,40 @@ public class SADevToxPGRoman extends AlertBlockFromSMARTS implements iAlertBlock
         try {
 
             // I
-            s1_1 = SMARTSParser.parse("[#5,#13,#14,#21,#22,#23,#24,#25,#26,#27,#28,#29,#30,#31,#32,#33,#39,#40,#41,#42,#43,#44,#45,#46,#47,#48,#49,#50,#51,#52,#80,#81,#82,#83,#84]", SilentChemObjectBuilder.getInstance());
-            s1_2 = SMARTSParser.parse("OP(O)([*])=O", SilentChemObjectBuilder.getInstance()); // org. phosphorus
-            s1_3a = SMARTSParser.parse("[Si]O[Si]", SilentChemObjectBuilder.getInstance()); // Siloxane
-            s1_3b = SMARTSParser.parse("[C,c]", SilentChemObjectBuilder.getInstance());
+            s1_1 = SMARTSParser.parse("[#5,#13,#14,#21,#22,#23,#24,#25,#26,#27,#28,#29,#30,#31,#32,#33,#39,#40,#41,#42,#43,#44,#45,#46,#47,#48,#49,#50,#51,#52,#80,#81,#82,#83,#84]", DefaultChemObjectBuilder.getInstance());
+            s1_2 = SMARTSParser.parse("OP(O)([*])=O", DefaultChemObjectBuilder.getInstance()); // org. phosphorus
+            s1_3a = SMARTSParser.parse("[Si]O[Si]", DefaultChemObjectBuilder.getInstance()); // Siloxane
+            s1_3b = SMARTSParser.parse("[C,c]", DefaultChemObjectBuilder.getInstance());
 
             // II
-            s2 = SMARTSParser.parse("[R1,R2,R3,R4]", SilentChemObjectBuilder.getInstance());
+            s2 = SMARTSParser.parse("[R1,R2,R3,R4]", DefaultChemObjectBuilder.getInstance());
 
             // III
-            s3 = SMARTSParser.parse("[a]", SilentChemObjectBuilder.getInstance());
+            s3 = SMARTSParser.parse("[a]", DefaultChemObjectBuilder.getInstance());
             
             // IV
-            s4 = SMARTSParser.parse("[!$([C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R])][C;!R][N,S,O,Cl,Br,F,I]", SilentChemObjectBuilder.getInstance());
+            s4 = SMARTSParser.parse("[!$([C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R])][C;!R][N,S,O,Cl,Br,F,I]", DefaultChemObjectBuilder.getInstance());
             s4_chelate= new QueryAtomContainer[9];
-            s4_chelate[0] = SMARTSParser.parse("OC(=O)CN(CCN(CC(O)=O)CC(O)=O)CC(O)=O", SilentChemObjectBuilder.getInstance());
-            s4_chelate[1] = SMARTSParser.parse("CC(=O)CC(C)=O", SilentChemObjectBuilder.getInstance());
-            s4_chelate[2] = SMARTSParser.parse("[N;!$([N+])]", SilentChemObjectBuilder.getInstance());
-            s4_chelate[3] = SMARTSParser.parse("OC(=O)C(O)=O", SilentChemObjectBuilder.getInstance());
-            s4_chelate[4] = SMARTSParser.parse("[*]OC(=O)O[*]", SilentChemObjectBuilder.getInstance());
-            s4_chelate[5] = SMARTSParser.parse("C1C[O]2CC[O]3CC[O]4CC[O]5CC[O]6CC[O]1[Cu]23456", SilentChemObjectBuilder.getInstance());
-            s4_chelate[6] = SMARTSParser.parse("C1=CN=C(C=C1)C1=CC=CC=N1", SilentChemObjectBuilder.getInstance());
-            s4_chelate[7] = SMARTSParser.parse("NCC(O)=O", SilentChemObjectBuilder.getInstance());
-            s4_chelate[8] = SMARTSParser.parse("OC(=O)CN(CC(O)=O)CC(O)=O", SilentChemObjectBuilder.getInstance());
+            s4_chelate[0] = SMARTSParser.parse("OC(=O)CN(CCN(CC(O)=O)CC(O)=O)CC(O)=O", DefaultChemObjectBuilder.getInstance());
+            s4_chelate[1] = SMARTSParser.parse("CC(=O)CC(C)=O", DefaultChemObjectBuilder.getInstance());
+            s4_chelate[2] = SMARTSParser.parse("[N;!$([N+])]", DefaultChemObjectBuilder.getInstance());
+            s4_chelate[3] = SMARTSParser.parse("OC(=O)C(O)=O", DefaultChemObjectBuilder.getInstance());
+            s4_chelate[4] = SMARTSParser.parse("[*]OC(=O)O[*]", DefaultChemObjectBuilder.getInstance());
+            s4_chelate[5] = SMARTSParser.parse("C1C[O]2CC[O]3CC[O]4CC[O]5CC[O]6CC[O]1[Cu]23456", DefaultChemObjectBuilder.getInstance());
+            s4_chelate[6] = SMARTSParser.parse("C1=CN=C(C=C1)C1=CC=CC=N1", DefaultChemObjectBuilder.getInstance());
+            s4_chelate[7] = SMARTSParser.parse("NCC(O)=O", DefaultChemObjectBuilder.getInstance());
+            s4_chelate[8] = SMARTSParser.parse("OC(=O)CN(CC(O)=O)CC(O)=O", DefaultChemObjectBuilder.getInstance());
             
             // V
             //carboxilic acid and derivates (esters, amides, ureas, thioureas, carbamates) with C <= 9:
-            s5_1 = SMARTSParser.parse("[!$([C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R])][$([C;!R](=O)O),$([C;!R](=O)[N;!+]),$([N;!R]C(=[O,S])N),$([N;!R]C(=O)[O;D2])]", SilentChemObjectBuilder.getInstance());
+            s5_1 = SMARTSParser.parse("[!$([C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R]~[C;!R])][$([C;!R](=O)O),$([C;!R](=O)[N;!+]),$([N;!R]C(=[O,S])N),$([N;!R]C(=O)[O;D2])]", DefaultChemObjectBuilder.getInstance());
             //vinyl amides:
-            s5_2 = SMARTSParser.parse("[C;D1]=CC(=O)N", SilentChemObjectBuilder.getInstance());
+            s5_2 = SMARTSParser.parse("[C;D1]=CC(=O)N", DefaultChemObjectBuilder.getInstance());
             //vinyl aldehydes and esters C<4:
-            s5_3 = SMARTSParser.parse("[!$([C;!R]~[C;!R]~[C;!R]~[C;!R])][C;!R][$(OC=[C;D1]),$(C(=O)C=[C;D1])]", SilentChemObjectBuilder.getInstance());
+            s5_3 = SMARTSParser.parse("[!$([C;!R]~[C;!R]~[C;!R]~[C;!R])][C;!R][$(OC=[C;D1]),$(C(=O)C=[C;D1])]", DefaultChemObjectBuilder.getInstance());
             
             // VI
-            s6 = SMARTSParser.parse("[!$([C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R])][C;!R](=O)O", SilentChemObjectBuilder.getInstance());
+            s6 = SMARTSParser.parse("[!$([C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R]-[C;!R])][C;!R](=O)O", DefaultChemObjectBuilder.getInstance());
             
         } catch (Exception e) {
             throw new InitFailureException("Unable to initialize SMARTS");

@@ -29,6 +29,8 @@ public class AutoCorrelation extends DescriptorBlock {
 
     private final static String BlockName = "AutoCorrelation Descriptors";
 
+    private boolean defaultDescriptors;
+
     public final static String PARAMETER_WEIGHT_M = "weightm";
     public final static String PARAMETER_WEIGHT_P = "weightp";
     public final static String PARAMETER_WEIGHT_E = "weighte";
@@ -53,12 +55,22 @@ public class AutoCorrelation extends DescriptorBlock {
 
 
     /**
-     * Constructor. This should not be used, no weight is specified. The
-     * overloaded constructors should be used instead.
+     * Constructor. All descriptors and weight will be calculated
      */
     public AutoCorrelation() {
         super();
         this.Name = AutoCorrelation.BlockName;
+        this.defaultDescriptors = true;
+    }
+
+    /**
+     * Constructor. Weights must be specified.
+     * @param defaultDescriptors if set to false, requires selected weights.
+     */
+    public AutoCorrelation(boolean defaultDescriptors) {
+        super();
+        this.Name = AutoCorrelation.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
     }
 
 
@@ -212,22 +224,41 @@ public class AutoCorrelation extends DescriptorBlock {
 
     private ArrayList<Integer> BuildWeightList() {
         ArrayList<Integer> w = new ArrayList<>();
-        if (getBoolProperty(PARAMETER_WEIGHT_M))
+        if(defaultDescriptors) {
             w.add((int) WEIGHT_M_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_P))
             w.add((int) WEIGHT_P_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_E))
             w.add((int) WEIGHT_E_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_V))
             w.add((int) WEIGHT_V_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_S))
             w.add((int) WEIGHT_S_IDX);
+        } else {
+            if (getBoolProperty(PARAMETER_WEIGHT_M) )
+                w.add((int) WEIGHT_M_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_P) )
+                w.add((int) WEIGHT_P_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_E) )
+                w.add((int) WEIGHT_E_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_V) )
+                w.add((int) WEIGHT_V_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_S) )
+                w.add((int) WEIGHT_S_IDX);
+        }
         return w;
     }
 
 
     private ArrayList<Integer> BuildLagList() {
         ArrayList<Integer> LagList = new ArrayList<>();
+        if(defaultDescriptors) {
+            LagList.add(1);
+            LagList.add(2);
+            LagList.add(3);
+            LagList.add(4);
+            LagList.add(5);
+            LagList.add(6);
+            LagList.add(7);
+            LagList.add(8);
+        }
+
         if (getBoolProperty(PARAMETER_LAG_01)) LagList.add(1);
         if (getBoolProperty(PARAMETER_LAG_02)) LagList.add(2);
         if (getBoolProperty(PARAMETER_LAG_03)) LagList.add(3);

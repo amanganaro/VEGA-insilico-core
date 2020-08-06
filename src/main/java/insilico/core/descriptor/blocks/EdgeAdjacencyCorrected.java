@@ -33,6 +33,7 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
     Logger logger = LoggerFactory.getLogger(EdgeAdjacencyCorrected.class);
 
     private final static String BlockName = "Edge Adjacency Descriptors";
+    private boolean defaultDescriptors;
 
     private final static int MinEig = 1;
     private final static int MaxEig = 15;
@@ -59,6 +60,13 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
     public EdgeAdjacencyCorrected() {
         super();
         this.Name = EdgeAdjacencyCorrected.BlockName;
+        this.defaultDescriptors = true;
+    }
+
+    public EdgeAdjacencyCorrected(boolean defaultDescriptors) {
+        super();
+        this.Name = EdgeAdjacencyCorrected.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
     }
 
 
@@ -82,14 +90,23 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
 
     private ArrayList<Integer> BuildWeightList() {
         ArrayList<Integer> w = new ArrayList<>();
-        if (getBoolProperty(PARAMETER_WEIGHT_X))
+        if (defaultDescriptors) {
             w.add((int) WEIGHT_X_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_D))
             w.add((int) WEIGHT_D_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_R))
             w.add((int) WEIGHT_R_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_B))
             w.add((int) WEIGHT_B_IDX);
+
+        } else {
+            if (getBoolProperty(PARAMETER_WEIGHT_X))
+                w.add((int) WEIGHT_X_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_D))
+                w.add((int) WEIGHT_D_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_R))
+                w.add((int) WEIGHT_R_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_B))
+                w.add((int) WEIGHT_B_IDX);
+        }
+
         return w;
     }
 
@@ -155,8 +172,8 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                 for (int i=0; i<m.getBondCount(); i++) {
                     for (int j=0; j<m.getBondCount(); j++) {
                         if (EdgeDipoleMat[i][j] != 0) {
-                            Atom a = (Atom) m.getBond(i).getAtom(0);
-                            Atom b = (Atom) m.getBond(i).getAtom(1);
+                            IAtom a =  m.getBond(i).getAtom(0);
+                            IAtom b =  m.getBond(i).getAtom(1);
                             double CurVal = GetDipoleMoment(m, a, b);
                             if (CurVal == 0)
                                 CurVal = GetDipoleMoment(m, b, a);
@@ -175,7 +192,7 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
                         EdgeResMat[i][j] = EdgeAdjMat[i][j][1];
 
                 for (int i=0; i<m.getBondCount(); i++) {
-                    EdgeResMat[i][i] = GetResonanceIntegral((Bond)m.getBond(i));
+                    EdgeResMat[i][i] = GetResonanceIntegral(m.getBond(i));
                     if (EdgeResMat[i][i] == 0)
                         EdgeResMat[i][i] = 1;
 
@@ -237,10 +254,10 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
 
 
 
-    private double GetResonanceIntegral(Bond bnd) {
+    private double GetResonanceIntegral(IBond bnd) {
 
-        Atom atA = (Atom) bnd.getAtom(0);
-        Atom atB = (Atom) bnd.getAtom(1);
+        IAtom atA = bnd.getAtom(0);
+        IAtom atB = bnd.getAtom(1);
         String A = atA.getSymbol();
         String B = atB.getSymbol();
 
@@ -279,7 +296,7 @@ public class EdgeAdjacencyCorrected extends DescriptorBlock {
     }
 
 
-    private double GetDipoleMoment(IAtomContainer CurMol, Atom at1, Atom at2) {
+    private double GetDipoleMoment(IAtomContainer CurMol, IAtom at1, IAtom at2) {
 
         String a = at1.getSymbol();
         String b = at2.getSymbol();

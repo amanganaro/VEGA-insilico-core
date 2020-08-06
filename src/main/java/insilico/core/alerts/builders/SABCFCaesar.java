@@ -4,7 +4,7 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -227,9 +227,9 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
             SA = new QueryAtomContainer[nFragments];
             
             for (int i=0; i<nFragments; i++) 
-                SA[i] = SMARTSParser.parse(FragSMARTS[i], SilentChemObjectBuilder.getInstance());
+                SA[i] = SMARTSParser.parse(FragSMARTS[i], DefaultChemObjectBuilder.getInstance());
 
-            SA_5_add = SMARTSParser.parse(FragSMARTS_5_add, SilentChemObjectBuilder.getInstance());
+            SA_5_add = SMARTSParser.parse(FragSMARTS_5_add, DefaultChemObjectBuilder.getInstance());
             
         } catch (Exception e) {
             throw new InitFailureException("Unable to initialize SMARTS");

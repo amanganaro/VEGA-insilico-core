@@ -6,6 +6,7 @@ import insilico.core.molecule.matrix.TopoDistanceMatrix;
 import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.CDKConstants;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.slf4j.Logger;
@@ -229,7 +230,7 @@ public class EState {
     private void CalculateIntrinsicStateAndKHE(IAtomContainer mol) {
         double Z=0, Zv=0;
         for (int i = 0; i <= mol.getAtomCount() - 1; i++) {
-            Atom a = (Atom)mol.getAtom(i);
+            IAtom a = mol.getAtom(i);
 
             int period = periods.get(a.getSymbol());
             double N = (double)period;

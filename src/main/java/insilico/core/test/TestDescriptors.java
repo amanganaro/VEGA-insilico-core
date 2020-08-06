@@ -22,16 +22,19 @@ public class TestDescriptors {
     }
 
 
-    public static void Run(DescriptorBlock block, PrintStream out) throws Exception {
+    public static void Run(DescriptorBlock block, PrintStream outFile, PrintStream out) throws Exception {
 
         // calculate foo molecule just to create descriptors name list
         block.Calculate(SmilesMolecule.Convert("CCC"));
         
         StringBuilder h = new StringBuilder("No.\tMols");
+
         for (Descriptor d : block.GetAllDescriptors())
             h.append("\t").append(d.getName());
+
+        outFile.println(h);
         out.println(h);
-        
+
         DataInputStream in;
         BufferedReader br;
 
@@ -50,6 +53,7 @@ public class TestDescriptors {
                     o.append("\t").append(d.getFormattedValue());
             }
             out.println(o);
+            outFile.println(o);
             count++;
         }
     }

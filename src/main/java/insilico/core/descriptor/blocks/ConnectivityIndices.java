@@ -1,5 +1,6 @@
 package insilico.core.descriptor.blocks;
 
+import com.hp.hpl.jena.reasoner.rulesys.builtins.Max;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.weight.QuantumNumber;
@@ -16,6 +17,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,6 +32,8 @@ public class ConnectivityIndices extends DescriptorBlock {
     Logger logger = LoggerFactory.getLogger(ConnectivityIndices.class);
 
     private final static String BlockName = "Connectivity Descriptors";
+
+    private boolean defaultDescriptors;
 
     public final static String PARAMETER_MAX_PATH_00 = "mp00";
     public final static String PARAMETER_MAX_PATH_01 = "mp01";
@@ -46,6 +50,13 @@ public class ConnectivityIndices extends DescriptorBlock {
     public ConnectivityIndices() {
         super();
         this.Name = ConnectivityIndices.BlockName;
+        this.defaultDescriptors = true;
+    }
+
+    public ConnectivityIndices(boolean defaultDescriptors) {
+        super();
+        this.Name = ConnectivityIndices.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
     }
     
 
@@ -53,6 +64,7 @@ public class ConnectivityIndices extends DescriptorBlock {
     protected final void GenerateDescriptors() {
         DescList.clear();
         int MaxPath = RetrieveMaxPath();
+
         for (int i=0; i<(MaxPath+1); i++) {
             Add("X" + i, "");
             Add("X" + i + "v", "");
@@ -64,22 +76,27 @@ public class ConnectivityIndices extends DescriptorBlock {
     
     private int RetrieveMaxPath() {
         int MaxPath = -1;
-        if (getBoolProperty(PARAMETER_MAX_PATH_00))
-            MaxPath = 0;
-        if (getBoolProperty(PARAMETER_MAX_PATH_01))
-            MaxPath = 1;
-        if (getBoolProperty(PARAMETER_MAX_PATH_02))
-            MaxPath = 2;
-        if (getBoolProperty(PARAMETER_MAX_PATH_03))
-            MaxPath = 3;
-        if (getBoolProperty(PARAMETER_MAX_PATH_04))
-            MaxPath = 4;
-        if (getBoolProperty(PARAMETER_MAX_PATH_05))
+        if (defaultDescriptors) {
             MaxPath = 5;
+        } else {
+            if (getBoolProperty(PARAMETER_MAX_PATH_00))
+                MaxPath = 0;
+            if (getBoolProperty(PARAMETER_MAX_PATH_01))
+                MaxPath = 1;
+            if (getBoolProperty(PARAMETER_MAX_PATH_02))
+                MaxPath = 2;
+            if (getBoolProperty(PARAMETER_MAX_PATH_03))
+                MaxPath = 3;
+            if (getBoolProperty(PARAMETER_MAX_PATH_04))
+                MaxPath = 4;
+            if (getBoolProperty(PARAMETER_MAX_PATH_05))
+                MaxPath = 5;
+        }
         return MaxPath;
     }
 
-    
+
+
     /**
      * Calculate descriptors for the given molecule.
      * 
@@ -159,7 +176,7 @@ public class ConnectivityIndices extends DescriptorBlock {
                 
                 if (curDescX[path] == -999) continue;
                 
-                Atom at = (Atom) m.getAtom(i);
+                IAtom at = m.getAtom(i);
                 List<List<IAtom>> CurPaths =  PathTools.getPathsOfLength(m, at, path);
                 for (List<IAtom> curPath : CurPaths) {
                     double prodX = 1;

@@ -33,6 +33,7 @@ public class WalkAndPath extends DescriptorBlock {
     Logger logger = LoggerFactory.getLogger(WalkAndPath.class);
 
     private final static String BlockName = "Walk and Path Descriptors";
+    private boolean defaultDescriptors;
 
     public final static String PARAMETER_PATH_01 = "path01";
     public final static String PARAMETER_PATH_02 = "path02";
@@ -58,10 +59,18 @@ public class WalkAndPath extends DescriptorBlock {
     public WalkAndPath() {
         super();
         this.Name = WalkAndPath.BlockName;
+        this.defaultDescriptors = true;
     }
 
-    
-    
+    public WalkAndPath(boolean defaultDescriptors) {
+        super();
+        this.Name = WalkAndPath.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
+    }
+
+
+
+
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
@@ -90,6 +99,10 @@ public class WalkAndPath extends DescriptorBlock {
     
     private ArrayList<Integer> BuildPathsList() {
         ArrayList<Integer> p = new ArrayList<>();
+        if (defaultDescriptors) {
+            setBoolProperty(PARAMETER_INCLUDE_INDICES, true);
+            setBoolProperty(PARAMETER_INCLUDE_SRW, true);
+        }
         boolean All = getBoolProperty(PARAMETER_INCLUDE_INDICES);
         if ((getBoolProperty(PARAMETER_PATH_01))||(All)) p.add(1);
         if ((getBoolProperty(PARAMETER_PATH_02))||(All)) p.add(2);
@@ -101,6 +114,7 @@ public class WalkAndPath extends DescriptorBlock {
         if ((getBoolProperty(PARAMETER_PATH_08))||(All)) p.add(8);
         if ((getBoolProperty(PARAMETER_PATH_09))||(All)) p.add(9);
         if ((getBoolProperty(PARAMETER_PATH_10))||(All)) p.add(10);
+
         return p;
     }
     
@@ -230,13 +244,13 @@ public class WalkAndPath extends DescriptorBlock {
         double[][] paths = new double[nSK][2];
         
         for (int i=0; i<nSK; i++) {
-            Atom a = (Atom) Mol.getAtom(i);
+            IAtom a = Mol.getAtom(i);
             int PathNum = 0;
             double totBO = 0;
             for (int j=0; j<nSK; j++) {
                 if (i==j)
                     continue;
-                Atom b = (Atom) Mol.getAtom(j);
+                IAtom b =  Mol.getAtom(j);
                 List<List<IAtom>> list= PathTools.getAllPaths(Mol, a, b);
                 for (int k=0; k<list.size(); k++) {
                     if (list.get(k).size() == (PathsOrder+1)) {

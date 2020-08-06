@@ -5,7 +5,7 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.tools.CustomQueryMatcher;
 import insilico.core.tools.utils.MoleculeUtilities;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
@@ -506,7 +506,7 @@ public class FunctionalGroups extends DescriptorBlock {
         for (int i=0; i<FGNumber; i++) {
             try {
                 // TODO: 15/06/2020 Quale builder utilizzare per SmartParse.parse?
-                Queries[i] = SMARTSParser.parse(FGSmarts[i], SilentChemObjectBuilder.getInstance());
+                Queries[i] = SMARTSParser.parse(FGSmarts[i], DefaultChemObjectBuilder.getInstance());
             } catch (Exception e) {
                 Queries[i] = null;
             }

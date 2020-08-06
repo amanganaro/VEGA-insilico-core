@@ -9,7 +9,7 @@ import insilico.core.molecule.conversion.custom.CustomSmilesWriter;
 import insilico.core.molecule.tools.InsilicoMoleculeNormalization;
 import insilico.core.tools.utils.GeneralUtilities;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.exception.InvalidSmilesException;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -140,7 +140,7 @@ public class SmilesMolecule {
 
         // Parses SMILES and creates AtomContainer object
         try {
-            SmilesParser smilesParser = new SmilesParser(SilentChemObjectBuilder.getInstance());
+            SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
 //            smilesParser.setPreservingAromaticity(true);
             mol = smilesParser.parseSmiles(SMILES);
 

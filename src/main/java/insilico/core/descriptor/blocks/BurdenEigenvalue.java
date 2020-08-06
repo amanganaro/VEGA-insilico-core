@@ -35,6 +35,8 @@ public class BurdenEigenvalue extends DescriptorBlock {
 
     private final static String BlockName = "Burden Eigenvalue Descriptors";
 
+    private boolean defaultDescriptors;
+
     public final static String PARAMETER_WEIGHT_M = "weightm";
     public final static String PARAMETER_WEIGHT_P = "weightp";
     public final static String PARAMETER_WEIGHT_E = "weighte";
@@ -55,6 +57,13 @@ public class BurdenEigenvalue extends DescriptorBlock {
     public BurdenEigenvalue() {
         super();
         this.Name = BurdenEigenvalue.BlockName;
+        defaultDescriptors = true;
+    }
+
+    public BurdenEigenvalue(boolean defaultDescriptors) {
+        super();
+        this.Name = BurdenEigenvalue.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
     }
 
 
@@ -193,14 +202,23 @@ public class BurdenEigenvalue extends DescriptorBlock {
 
     private ArrayList<Integer> BuildWeightList() {
         ArrayList<Integer> w = new ArrayList<>();
-        if (getBoolProperty(PARAMETER_WEIGHT_M))
+        if(defaultDescriptors) {
             w.add((int) WEIGHT_M_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_P))
             w.add((int) WEIGHT_P_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_E))
             w.add((int) WEIGHT_E_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_V))
             w.add((int) WEIGHT_V_IDX);
+
+        } else {
+            if (getBoolProperty(PARAMETER_WEIGHT_M) )
+                w.add((int) WEIGHT_M_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_P) )
+                w.add((int) WEIGHT_P_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_E) )
+                w.add((int) WEIGHT_E_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_V) )
+                w.add((int) WEIGHT_V_IDX);
+
+        }
         return w;
     }
 

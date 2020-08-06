@@ -35,7 +35,7 @@ public class ValenceVertexDegree {
         }
 
         for (int i=0; i<nSK; i++) {
-            Atom at = (Atom) mol.getAtom(i);
+            IAtom at =  mol.getAtom(i);
             int Z = ZFinder.GetAtomicNumber(at.getSymbol());
             int Zv = GetValenceElectronsNumber(at.getSymbol());
             int h = Manipulator.CountImplicitHydrogens(at);

@@ -32,6 +32,8 @@ public class BurdenEigenvalueHFilled extends DescriptorBlock {
 
     Logger logger = LoggerFactory.getLogger(BurdenEigenvalueHFilled.class);
 
+    private boolean defaultDescriptors;
+
 
     private static final long serialVersionUID = 1L;
     private final static String BlockName = "Burden Eigenvalue Descriptors";
@@ -56,6 +58,13 @@ public class BurdenEigenvalueHFilled extends DescriptorBlock {
     public BurdenEigenvalueHFilled() {
         super();
         this.Name = BurdenEigenvalueHFilled.BlockName;
+        this.defaultDescriptors = true;
+    }
+
+    public BurdenEigenvalueHFilled(boolean defaultDescriptors) {
+        super();
+        this.Name = BurdenEigenvalueHFilled.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
     }
 
     @Override
@@ -74,14 +83,23 @@ public class BurdenEigenvalueHFilled extends DescriptorBlock {
 
     private ArrayList<Integer> BuildWeightList() {
         ArrayList<Integer> w = new ArrayList<>();
-        if (getBoolProperty(PARAMETER_WEIGHT_M))
+        if(defaultDescriptors) {
             w.add((int) WEIGHT_M_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_P))
             w.add((int) WEIGHT_P_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_E))
             w.add((int) WEIGHT_E_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_V))
             w.add((int) WEIGHT_V_IDX);
+
+        } else {
+            if (getBoolProperty(PARAMETER_WEIGHT_M) )
+                w.add((int) WEIGHT_M_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_P) )
+                w.add((int) WEIGHT_P_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_E) )
+                w.add((int) WEIGHT_E_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_V) )
+                w.add((int) WEIGHT_V_IDX);
+
+        }
         return w;
     }
 

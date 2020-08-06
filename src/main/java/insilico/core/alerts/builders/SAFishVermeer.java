@@ -8,7 +8,7 @@ import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -141,14 +141,14 @@ public class SAFishVermeer extends AlertBlockFromSMARTS implements iAlertBlock {
             
             int idx = 0;
             for (Object[] arr : Set1_Scaffold) {
-                SA_Set1_Scaffold[idx] = SMARTSParser.parse((String)arr[0], SilentChemObjectBuilder.getInstance());
+                SA_Set1_Scaffold[idx] = SMARTSParser.parse((String)arr[0], DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             
             idx = 0;
             for (Object[] arr : Set2_Scaffold_Alerts) {
-                SA_Set2_Scaffold_Alerts[idx][0] = SMARTSParser.parse((String)arr[0], SilentChemObjectBuilder.getInstance());
-                SA_Set2_Scaffold_Alerts[idx][1] = SMARTSParser.parse((String)arr[1], SilentChemObjectBuilder.getInstance());
+                SA_Set2_Scaffold_Alerts[idx][0] = SMARTSParser.parse((String)arr[0], DefaultChemObjectBuilder.getInstance());
+                SA_Set2_Scaffold_Alerts[idx][1] = SMARTSParser.parse((String)arr[1], DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             

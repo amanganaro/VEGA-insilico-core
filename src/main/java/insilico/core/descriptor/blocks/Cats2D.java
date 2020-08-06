@@ -7,6 +7,7 @@ import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.Atom;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,7 +159,7 @@ public class Cats2D extends DescriptorBlock {
         for (int i=0; i<nSK; i++) {
         
             AtomTypes[i] = new ArrayList<>();
-            Atom CurAt = (Atom) m.getAtom(i);
+            IAtom CurAt =  m.getAtom(i);
             
             boolean tN=false, tP=false, tA=false, tD=false, tL=false;
             
@@ -183,7 +184,7 @@ public class Cats2D extends DescriptorBlock {
                         if (j==i) continue;
                         if (ConnAugMatrix[i][j]==1) {
                             if (ConnAugMatrix[j][j] == 8) {
-                                Atom Oxy = (Atom) m.getAtom(j);
+                                IAtom Oxy = m.getAtom(j);
                                 if (Oxy.getFormalCharge()!=0)
                                     NpOm = true;
                             }

@@ -2,6 +2,7 @@ package insilico.core.descriptor.weight;
 
 import insilico.core.molecule.tools.Manipulator;
 import org.openscience.cdk.Atom;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
@@ -25,7 +26,7 @@ public class VertexDegree {
         int[] w = new int[nSK];
 
         for (int i=0; i<nSK; i++) {
-            Atom at = (Atom) molecule.getAtom(i);
+            IAtom at = molecule.getAtom(i);
             w[i] = molecule.getConnectedBondsCount(at);
             if (!(HDepleted))
                 w[i] += Manipulator.CountImplicitHydrogens(at);

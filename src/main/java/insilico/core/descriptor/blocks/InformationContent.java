@@ -196,12 +196,12 @@ public class InformationContent extends DescriptorBlock {
             // Create belonging class for each atom(vertex)
             ArrayList<ArrayList<String>> NeigList = new ArrayList<>(nSK);
             for (int i=0; i<nSK; i++) {
-                Atom atStart = (Atom) m.getAtom(i);
+                IAtom atStart = m.getAtom(i);
                 ArrayList<String> CurNeig = new ArrayList<>();
                 for (int j=0; j<nSK; j++) {
                     if (i==j) continue;
                     if (TopoDistMat[i][j] == CurLag) {
-                        Atom atEnd = (Atom) m.getAtom(j);
+                        IAtom atEnd =  m.getAtom(j);
                         ShortestPaths sps = new ShortestPaths(m, atStart);
                         List<IAtom> sp = Arrays.asList(sps.atomsTo(atEnd));
                         // OLD DEPRECATED METHOD

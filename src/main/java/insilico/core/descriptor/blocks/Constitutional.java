@@ -11,6 +11,7 @@ import insilico.core.molecule.InsilicoMolecule;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.Bond;
 import org.openscience.cdk.CDKConstants;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
@@ -22,7 +23,7 @@ import org.openscience.cdk.interfaces.IBond;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-public class Constitutional extends DescriptorBlock{
+public class Constitutional extends DescriptorBlock {
 
     private static final long serialVersionUID = 1L;
     private static final String BlockName = "Constitutional Descriptors";
@@ -110,7 +111,7 @@ public class Constitutional extends DescriptorBlock{
 
             int nSK = curMol.getAtomCount();
             int nBO = curMol.getBondCount();
-            int H[] = new int[nSK];
+            int[] H = new int[nSK];
 
             int nTotH=0;
             int nC=0, nN=0, nO=0, nP=0, nS=0;
@@ -123,7 +124,7 @@ public class Constitutional extends DescriptorBlock{
 
             for (int i=0; i<nSK; i++) {
 
-                Atom CurAt = (Atom) curMol.getAtom(i);
+                IAtom CurAt = curMol.getAtom(i);
 
                 // Hydrogens
                 H[i] = 0;
@@ -191,7 +192,7 @@ public class Constitutional extends DescriptorBlock{
 
             for (int i=0; i<nBO; i++) {
 
-                Bond CurBo = (Bond) curMol.getBond(i);
+                IBond CurBo = curMol.getBond(i);
 
                 if (CurBo.getFlag(CDKConstants.ISAROMATIC)) {
                     nArBonds++;

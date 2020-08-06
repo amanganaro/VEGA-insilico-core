@@ -9,7 +9,7 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 import java.io.IOException;
@@ -85,7 +85,7 @@ public class SABCFIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
             SA = new QueryAtomContainer[SMARTSFileReader.getSize()];
             
             for (int i=0; i<SMARTSFileReader.getSize(); i++) 
-                SA[i] = SMARTSParser.parse(SMARTSFileReader.getSMARTS()[i], SilentChemObjectBuilder.getInstance());
+                SA[i] = SMARTSParser.parse(SMARTSFileReader.getSMARTS()[i], DefaultChemObjectBuilder.getInstance());
 
         } catch (Exception ex) {
             throw new InitFailureException("Unable to initialize SMARTS");

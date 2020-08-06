@@ -1,16 +1,11 @@
-import insilico.core.descriptor.blocks.Constitutional;
+import insilico.core.descriptor.blocks.*;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.test.TestDescriptors;
-import insilico.core.tools.utils.logger.InsilicoLogger;
-import org.openscience.cdk.Element;
-import org.openscience.cdk.config.Elements;
-import org.openscience.cdk.config.IsotopeFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.rmi.Remote;
 import java.util.ArrayList;
 
 
@@ -20,10 +15,10 @@ public class main {
 
     public static void main(String[]  args) throws Exception {
 
-        FileOutputStream fileOutputStream = new FileOutputStream("test.csv");
+        FileOutputStream fileOutputStream = new FileOutputStream("LogP - KmFactor.csv");
         PrintStream stream = new PrintStream(fileOutputStream);
-        TestDescriptors.Run(new Constitutional(), System.out);
-//        TestDescriptors.Run(new Constitutional(), stream);
+
+        TestDescriptors.Run(new KmFactor(), stream, System.out);
 
 
 //        ArrayList<String> SMILES = fetchSmilesFromTXTFile();

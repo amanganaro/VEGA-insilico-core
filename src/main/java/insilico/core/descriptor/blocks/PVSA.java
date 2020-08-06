@@ -26,6 +26,7 @@ public class PVSA extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
     private final static String BlockName = "PVSA Descriptors";
+    private boolean defaultDescriptors;
 
     public final static String PARAMETER_WEIGHT_M = "weightm";
     public final static String PARAMETER_WEIGHT_LOGP = "weightlogp";
@@ -104,6 +105,13 @@ public class PVSA extends DescriptorBlock {
     public PVSA() {
         super();
         this.Name = PVSA.BlockName;
+        this.defaultDescriptors = true;
+    }
+
+    public PVSA(boolean defaultDescriptors) {
+        super();
+        this.Name = PVSA.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
     }
 
     
@@ -123,14 +131,22 @@ public class PVSA extends DescriptorBlock {
     
     private ArrayList<Integer> BuildWeightList() {
         ArrayList<Integer> w = new ArrayList<>();
-        if (getBoolProperty(PARAMETER_WEIGHT_M))
+
+        if(defaultDescriptors) {
             w.add((int) WEIGHT_M_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_LOGP))
             w.add((int) WEIGHT_LOGP_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_I))
             w.add((int) WEIGHT_I_IDX);
-        if (getBoolProperty(PARAMETER_WEIGHT_MR))
             w.add((int) WEIGHT_MR_IDX);
+        } else  {
+            if (getBoolProperty(PARAMETER_WEIGHT_M))
+                w.add((int) WEIGHT_M_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_LOGP))
+                w.add((int) WEIGHT_LOGP_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_I))
+                w.add((int) WEIGHT_I_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_MR))
+                w.add((int) WEIGHT_MR_IDX);
+        }
         return w;
     }
     
@@ -339,7 +355,7 @@ public class PVSA extends DescriptorBlock {
                 return 1.810;
             
             // acid
-            if (Manipulator.CountImplicitHydrogens((Atom)at) > 0)
+            if (Manipulator.CountImplicitHydrogens(at) > 0)
                 return 2.152;
             
             return 1.779;

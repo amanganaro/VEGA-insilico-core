@@ -27,6 +27,8 @@ public class DistanceEdge extends DescriptorBlock {
 
     private final static String BlockName = "DistanceEdge descriptors";
 
+    private boolean defaultDescriptors;
+
     public final static String PARAMETER_ATOM_C = "atomC";
     public final static String PARAMETER_ATOM_N = "atomN";
     public final static String PARAMETER_ATOM_O = "atomO";
@@ -44,10 +46,18 @@ public class DistanceEdge extends DescriptorBlock {
     public DistanceEdge() {
         super();
         this.Name = DistanceEdge.BlockName;
+        this.defaultDescriptors = true;
     }
 
-    
-    
+    public DistanceEdge(boolean defaultDescriptors) {
+        super();
+        this.Name = DistanceEdge.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
+    }
+
+
+
+
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
@@ -63,19 +73,32 @@ public class DistanceEdge extends DescriptorBlock {
     
     private ArrayList<String> BuildAtomTypeList() {
         ArrayList<String> at = new ArrayList<>();
-        if (getBoolProperty(PARAMETER_ATOM_C)) at.add("C");
-        if (getBoolProperty(PARAMETER_ATOM_N)) at.add("N");
-        if (getBoolProperty(PARAMETER_ATOM_O)) at.add("O");
+        if (defaultDescriptors) {
+            at.add("C");
+            at.add("N");
+            at.add("O");
+        } else {
+            if (getBoolProperty(PARAMETER_ATOM_C)) at.add("C");
+            if (getBoolProperty(PARAMETER_ATOM_N)) at.add("N");
+            if (getBoolProperty(PARAMETER_ATOM_O)) at.add("O");
+        }
         return at;
     }
     
     
     private ArrayList<Integer> BuildVDList() {
         ArrayList<Integer> vd = new ArrayList<>();
-        if (getBoolProperty(PARAMETER_VD_01)) vd.add(1);
-        if (getBoolProperty(PARAMETER_VD_02)) vd.add(2);
-        if (getBoolProperty(PARAMETER_VD_03)) vd.add(3);
-        if (getBoolProperty(PARAMETER_VD_04)) vd.add(4);
+        if (defaultDescriptors) {
+            vd.add(1);
+            vd.add(2);
+            vd.add(3);
+            vd.add(4);
+        } else {
+            if (getBoolProperty(PARAMETER_VD_01)) vd.add(1);
+            if (getBoolProperty(PARAMETER_VD_02)) vd.add(2);
+            if (getBoolProperty(PARAMETER_VD_03)) vd.add(3);
+            if (getBoolProperty(PARAMETER_VD_04)) vd.add(4);
+        }
         return vd;
     }
     

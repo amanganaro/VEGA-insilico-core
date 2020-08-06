@@ -4,7 +4,7 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -93,7 +93,7 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
             for (int i=0; i<SMARTSFragments.length; i++)
 
                 // TODO: 25/06/2020 Builder?
-                SA[i] = SMARTSParser.parse(SMARTSFragments[i], SilentChemObjectBuilder.getInstance());
+                SA[i] = SMARTSParser.parse(SMARTSFragments[i], DefaultChemObjectBuilder.getInstance());
 
         } catch (Exception e) {
             throw new InitFailureException("Unable to initialize SMARTS");

@@ -9,7 +9,7 @@ import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.tools.CustomQueryMatcher;
 import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.CDKConstants;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.*;
 import org.openscience.cdk.isomorphism.UniversalIsomorphismTester;
@@ -134,7 +134,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         public void InitSMARTS() throws InitFailureException {
             for (String curSMARTS : SMARTS) {
                 try {
-                    ParsedSMARTS.add(SMARTSParser.parse(curSMARTS, SilentChemObjectBuilder.getInstance()));
+                    ParsedSMARTS.add(SMARTSParser.parse(curSMARTS, DefaultChemObjectBuilder.getInstance()));
                 } catch (Exception ex) {
                     logger.warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
@@ -142,7 +142,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
             }
             for (String curSMARTS : PreSMARTS) {
                 try {
-                    ParsedPreSMARTS.add(SMARTSParser.parse(curSMARTS, SilentChemObjectBuilder.getInstance()));
+                    ParsedPreSMARTS.add(SMARTSParser.parse(curSMARTS, DefaultChemObjectBuilder.getInstance()));
                 } catch (Exception ex) {
                     logger.warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);

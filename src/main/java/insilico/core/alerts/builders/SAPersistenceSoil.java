@@ -7,7 +7,7 @@ import insilico.core.exception.InitFailureException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
@@ -186,16 +186,16 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
             
             int idx = 0;
             for (String s : SMARTSFragsNP) {
-                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             for (String s : SMARTSChemClassNP) {
-                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
 
             for (String s : SMARTSFragsVP) {
-                SA[idx] = SMARTSParser.parse(s, SilentChemObjectBuilder.getInstance());
+                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             

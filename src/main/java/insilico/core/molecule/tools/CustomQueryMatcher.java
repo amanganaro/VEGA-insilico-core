@@ -12,6 +12,9 @@ import org.openscience.cdk.interfaces.IRingSet;
 import org.openscience.cdk.isomorphism.UniversalIsomorphismTester;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.isomorphism.matchers.smarts.HydrogenAtom;
+import org.openscience.cdk.isomorphism.matchers.smarts.LogicalOperatorAtom;
+import org.openscience.cdk.isomorphism.matchers.smarts.RecursiveSmartsAtom;
 import org.openscience.cdk.isomorphism.mcss.RMap;
 import org.openscience.cdk.ringsearch.SSSRFinder;
 
@@ -35,7 +38,7 @@ import java.util.*;
  * directly. Example usage would be
  * <p/>
  * <pre>
- * SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+ * SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
  * IAtomContainer atomContainer = sp.parseSmiles(&quot;CC(=O)OC(=O)C&quot;);
  * SMARTSQueryTool querytool = new SMARTSQueryTool(&quot;O=CO&quot;);
  * boolean status = querytool.matches(atomContainer);
@@ -164,7 +167,6 @@ public class CustomQueryMatcher {
 
         matchingAtoms = null;
         query = CurQuery;
-        UniversalIsomorphismTester tester = new UniversalIsomorphismTester();
 
         try {
             // First calculate the recursive smarts
@@ -179,11 +181,12 @@ public class CustomQueryMatcher {
                 for (IAtom atom : this.curMol.GetStructure().atoms()) {
                     if (queryAtom.matches(atom)) {
                         List<Integer> tmp = new ArrayList<Integer>();
-                        tmp.add(this.curMol.GetStructure().indexOf(atom));
+                        tmp.add(this.curMol.GetStructure().getAtomNumber(atom));
                         matchingAtoms.add(tmp);
                     }
                 }
             } else {
+                UniversalIsomorphismTester tester = new UniversalIsomorphismTester();
                 List bondMapping = tester.getSubgraphMaps(this.curMol.GetStructure(), query);
                 matchingAtoms = getAtomMappings(bondMapping, this.curMol.GetStructure());
             }

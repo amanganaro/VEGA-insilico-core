@@ -13,7 +13,7 @@ import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
-import org.openscience.cdk.silent.SilentChemObjectBuilder;
+import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.smiles.SmilesParser;
 
 /**
@@ -59,7 +59,7 @@ public class main_normalization {
         // If explicit aromatic is wrong in the SMILES like in c1cc(=O)ccc1
         // the method raises a InvalidSmilesException
         // CHECK: togliere tutti i flag aromatici e calcolare dopo?
-        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
         sp.kekulise(true);        
         curStructure = sp.parseSmiles(SMILES);
 
@@ -80,7 +80,7 @@ public class main_normalization {
     public static void process(ArrayList<String> SMILES, PrintStream out) throws Exception {
         
         IAtomContainer curStructure = null;
-        SmilesParser sp = new SmilesParser(SilentChemObjectBuilder.getInstance());
+        SmilesParser sp = new SmilesParser(DefaultChemObjectBuilder.getInstance());
         sp.kekulise(true);    
         
         String h = "smi\tsk\tar\tal\tplus\tminus\tsbnd\tdbnd\tarbnd";
