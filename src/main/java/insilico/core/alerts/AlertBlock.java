@@ -5,6 +5,8 @@ import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
@@ -12,23 +14,25 @@ import insilico.core.molecule.InsilicoMolecule;
 public abstract class AlertBlock implements iAlertBlock {
 
     // Index (unique id) of the block
-    protected int BlockIndex;
+    protected final int BlockIndex;
 
     // Name of the block
-    private final String Name;
+    protected final String Name;
 
     // Alerts in the block
-    protected AlertList Alerts;
+    protected ArrayList<Alert> Alerts;
 
     // Current molecule to be checked
     protected InsilicoMolecule CurMol;
 
+
     public AlertBlock(int BlockIndex, String Name) throws InitFailureException {
         this.BlockIndex = BlockIndex;
         this.Name = Name;
-        Alerts = new AlertList();
+        Alerts = new ArrayList<>();
         BuildSAList();
     }
+
 
     /**
      * Method to be called in the constructor of the class
@@ -37,6 +41,7 @@ public abstract class AlertBlock implements iAlertBlock {
      * @throws insilico.core.exception.InitFailureException
      */
     protected abstract void BuildSAList() throws InitFailureException;
+
 
     /**
      * Main method to be called for checking structural alerts
@@ -49,7 +54,7 @@ public abstract class AlertBlock implements iAlertBlock {
      * @throws insilico.core.exception.GenericFailureException
      */
     @Override
-    public AlertList Calculate(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
+    public ArrayList<Alert> Calculate(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
 
         if (!mol.IsValid())
             throw new InvalidMoleculeException("Given molecule is not marked as valid");
@@ -81,16 +86,14 @@ public abstract class AlertBlock implements iAlertBlock {
      * @return
      * @throws insilico.core.exception.GenericFailureException
      */
-    protected abstract AlertList CalculateSAMatches() throws GenericFailureException;
+    protected abstract ArrayList<Alert> CalculateSAMatches() throws GenericFailureException;
 
 
     /**
      * @return the alert list
      */
     @Override
-    public AlertList getAlerts() {
-        return Alerts;
-    }
+    public ArrayList<Alert> getAllAlerts() { return Alerts; }
 
     /**
      * @return the Name

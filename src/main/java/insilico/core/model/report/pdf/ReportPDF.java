@@ -38,7 +38,6 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import insilico.core.similarity.SimilarMolecule;
 import insilico.core.tools.utils.ModelUtilities;
-import insilico.core.tools.utils.logger.InsilicoLogger;
 import insilico.core.version.InsilicoInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1226,7 +1225,7 @@ public class ReportPDF {
                         for (String curSA : AlertEncoding.UnpackAlertIds(SimMolAlerts)) {
                             int curSABlock = AlertEncoding.GetBlockIndex(curSA);
                             int curSAIndex = AlertEncoding.GetAlertIndex(curSA);
-                            Alert SA = this.SAEngine.GetAlertBlock(curSABlock).getAlerts().get(curSAIndex);
+                            Alert SA = this.SAEngine.GetAlertBlock(curSABlock).getAllAlerts().get(curSAIndex);
 
                             boolean AlertInTarget = false;
                             for (Alert a : curOut.getSAList().getSAList())
@@ -1665,7 +1664,7 @@ public class ReportPDF {
                             for (String curSimSA : AlertEncoding.UnpackAlertIds(SimMolAlerts)) {
                                 int curSABlock = AlertEncoding.GetBlockIndex(curSimSA);
                                 int curSAIndex = AlertEncoding.GetAlertIndex(curSimSA);
-                                Alert SA = this.SAEngine.GetAlertBlock(curSABlock).getAlerts().get(curSAIndex);
+                                Alert SA = this.SAEngine.GetAlertBlock(curSABlock).getAllAlerts().get(curSAIndex);
 
                                 boolean AlertInTarget = false;
                                 for (Alert a : Results.getSAList().getSAList())

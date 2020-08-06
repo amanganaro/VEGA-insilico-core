@@ -11,6 +11,10 @@ import java.util.Set;
  */
 public interface iPropertyContainer {
 
+    public void setTextProperty(String PropertyName, String Value);
+    public String getTextProperty(String PropertyName) throws PropertyNotFoundException;
+    public Set<String> getAllTextPropertyNames();
+
     public void setBoolProperty(String PropertyName, boolean Value);
     public boolean getBoolProperty(String PropertyName) throws PropertyNotFoundException;
     public Set<String> getAllBoolPropertyNames();

@@ -8,6 +8,7 @@ import insilico.core.molecule.tools.CustomQueryMatcher;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AlertBlockFromSMARTS extends AlertBlock {
@@ -32,8 +33,8 @@ public abstract class AlertBlockFromSMARTS extends AlertBlock {
      * the complete list of fragment for that class
      * @throws insilico.core.exception.InitFailureException
      */
-    @Override
-    protected abstract void BuildSAList() throws InitFailureException;
+//    @Override
+//    protected abstract void BuildSAList() throws InitFailureException;
 
 
     protected abstract void InitSMARTS() throws InitFailureException;
@@ -91,7 +92,7 @@ public abstract class AlertBlockFromSMARTS extends AlertBlock {
      * @throws insilico.core.exception.GenericFailureException
      */
     @Override
-    public AlertList Calculate(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
+    public ArrayList<Alert> Calculate(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
 
         if (!mol.IsValid())
             throw new InvalidMoleculeException("Given molecule is not marked as valid");
