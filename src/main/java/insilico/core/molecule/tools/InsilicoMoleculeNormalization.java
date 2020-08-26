@@ -52,8 +52,12 @@ public class InsilicoMoleculeNormalization {
         // aromaticity - not compliant with the one used in the previous
         // VEGA libraries
         // Uses Cycles.all() to find SSSR (CHECK: aggiungere un timeout?)
-        ElectronDonation ElModel = ElectronDonation.cdk();
-        CycleFinder RingFinder = Cycles.all();
+//        ElectronDonation ElModel = ElectronDonation.cdk();
+//        CycleFinder RingFinder = Cycles.all();
+
+        ElectronDonation ElModel = ElectronDonation.daylight();
+        CycleFinder RingFinder = Cycles.or(Cycles.all(), Cycles.all(6));
+
         Aromaticity Arom = new Aromaticity(ElModel, RingFinder);
         Arom.apply(mol);
                

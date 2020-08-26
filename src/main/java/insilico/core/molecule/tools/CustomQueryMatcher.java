@@ -435,7 +435,7 @@ public class CustomQueryMatcher {
      * @throws CDKException
      */
     private void initializeRecursiveSmartsAtom(IAtom atom, IAtomContainer atomContainer) throws CDKException {
-        // TODO: 12/06/2020 Find alternative ways to implement method. setAtomContainer method not present anymore in RecursiveSmartsAtom and Hydrogen Atom
+
 //        if (atom instanceof LogicalOperatorAtom) {
 //            initializeRecursiveSmartsAtom(((LogicalOperatorAtom) atom).getLeft(), atomContainer);
 //            if (((LogicalOperatorAtom) atom).getRight() != null) {

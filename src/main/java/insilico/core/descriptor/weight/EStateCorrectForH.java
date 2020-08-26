@@ -1,9 +1,15 @@
+//
+// correzione sul calcolo di DV2 e D per la presenza di H
+// quando viene chiamato da desc H-filled come autocorrelation
+//
+
 package insilico.core.descriptor.weight;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.molecule.matrix.TopoDistanceMatrix;
-import insilico.core.tools.utils.logger.InsilicoLogger;
+import java.util.HashMap;
+import java.util.Map;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
@@ -11,9 +17,6 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Weighting scheme for EState. Calculation taken from code by EPA (T.E.S.T)
@@ -35,7 +38,7 @@ public class EStateCorrectForH {
     private final double[] KHE;
 
 
-    public EStateCorrectForH(IAtomContainer mol) throws GenericFailureException {
+    public EStateCorrectForH(IAtomContainer m) throws GenericFailureException {
 
         SetPeriods();
 
@@ -46,13 +49,13 @@ public class EStateCorrectForH {
 //        } catch (InvalidMoleculeException e) {
 //            throw new GenericFailureException("Invalid molecule");
 //        }
-        int nSk = mol.getAtomCount();
+        int nSk = m.getAtomCount();
 
         // Get matrices
-        int[][] TopDistMat;
+        int[][] TopoDistMat;
         try {
 //            TopoDistMat = Mol.GetMatrixTopologicalDistance();
-            TopDistMat = TopoDistanceMatrix.getMatrix(mol);
+            TopoDistMat = TopoDistanceMatrix.getMatrix(m);
         } catch (Exception e) {
             logger.warn(e.getMessage());
             throw new GenericFailureException("Unable to calculate matrices");
@@ -78,21 +81,21 @@ public class EStateCorrectForH {
         }
 
         // Calculations
-        CalculateDeltaValues(mol);
-        CalculateDV(mol);
-        CalculateIntrinsicStateAndKHE(mol);
-        CalculateEState(mol, TopDistMat);
+        CalculateDeltaValues(m);
+        CalculateDV(m);
+        CalculateIntrinsicStateAndKHE(m);
+        CalculateEState(m, TopoDistMat);
 
     }
 
 
-    private void CalculateDeltaValues(IAtomContainer mol) throws GenericFailureException {
+    private void CalculateDeltaValues(IAtomContainer m) throws GenericFailureException {
         // determines D, DV2 for each specific atom
 
-        for (int I = 0; I <= mol.getAtomCount() - 1; I++) {
+        for (int I = 0; I <= m.getAtomCount() - 1; I++) {
 
             int nH = 0;
-            for (IAtom a : mol.getConnectedAtomsList(mol.getAtom(I))) {
+            for (IAtom a : m.getConnectedAtomsList(m.getAtom(I))) {
                 if (a.getAtomicNumber() == 1)
                     nH++;
             }
@@ -102,7 +105,7 @@ public class EStateCorrectForH {
             //to avoid problems with smiles that give
             //different values (es c1ccccc1 - C1=CC=CC1)
             double count = 0;
-            for (IBond bond : mol.getConnectedBondsList(mol.getAtom(I))) {
+            for (IBond bond : m.getConnectedBondsList(m.getAtom(I))) {
                 if (bond.getFlag(CDKConstants.ISAROMATIC)) {
                     count += 1.5;
                 } else {
@@ -119,10 +122,10 @@ public class EStateCorrectForH {
             }
 
             DV2[I]=count - nH;
-            D[I]=mol.getConnectedBondsCount(mol.getAtom(I)) - nH;
+            D[I]=m.getConnectedBondsCount(m.getAtom(I)) - nH;
 
-            String symbol = mol.getAtom(I).getSymbol();
-            int charge = mol.getAtom(I).getFormalCharge();
+            String symbol = m.getAtom(I).getSymbol();
+            int charge = m.getAtom(I).getFormalCharge();
 
             if (symbol.equals("C") || symbol.equals("Si")
                     || symbol.equals("Pb") || symbol.equals("Sn"))
@@ -230,29 +233,36 @@ public class EStateCorrectForH {
     }
 
 
-    private void CalculateDV(IAtomContainer mol) throws GenericFailureException {
+    private void CalculateDV(IAtomContainer m) throws GenericFailureException {
 
-        for (int i = 0; i <= mol.getAtomCount() - 1; i++) {
-            String symbol=mol.getAtom(i).getSymbol();
+        for (int i = 0; i <= m.getAtomCount() - 1; i++) {
+            String symbol=m.getAtom(i).getSymbol();
 
             double Zv = ValenceVertexDegree.GetValenceElectronsNumber(symbol);
             if (Zv == Descriptor.MISSING_VALUE)
                 throw new GenericFailureException("unable to set Zv for atom type: " + symbol);
-            double Z = (double)mol.getAtom(i).getAtomicNumber();
+            double Z = (double)m.getAtom(i).getAtomicNumber();
 
             DV[i]=getDV2()[i]/(Z - Zv - 1);
         }
     }
 
 
-    private void CalculateIntrinsicStateAndKHE(IAtomContainer mol) {
+    private void CalculateIntrinsicStateAndKHE(IAtomContainer m) {
         double Z=0, Zv=0;
-        for (int i = 0; i <= mol.getAtomCount() - 1; i++) {
-            Atom a = (Atom)mol.getAtom(i);
+        for (int i = 0; i <= m.getAtomCount() - 1; i++) {
+            Atom a = (Atom)m.getAtom(i);
 
             int period=(Integer)(periods.get(a.getSymbol()));
             double N = (double)period;
 
+//            double VertexDegree = 0;
+//            int H = Manipulator.CountImplicitHydrogens(a);
+//            for (IAtom connAt : m.getConnectedAtomsList(a))
+//                if (!connAt.getSymbol().equalsIgnoreCase("H"))
+//                    VertexDegree++;
+//            double ValenceVertexDegree = VertexDegree - H - a.getFormalCharge();
+//            IS[i] = (Math.pow(2.0 / N, 2.0) * ValenceVertexDegree + 1) / VertexDegree;
 
             IS[i] = (Math.pow(2.0 / N, 2.0) * getDV2()[i] + 1) / getD()[i];
             KHE[i] = (getDV2()[i] - getD()[i]) / (N * N);
@@ -260,13 +270,13 @@ public class EStateCorrectForH {
     }
 
 
-    private void CalculateEState(IAtomContainer mol, int[][] DistanceMatrix) {
+    private void CalculateEState(IAtomContainer m, int[][] DistanceMatrix) {
 
-        for (int i = 0; i <= mol.getAtomCount() - 1; i++) {
+        for (int i = 0; i <= m.getAtomCount() - 1; i++) {
             double sumDeltaIijForE = 0;
             double sumDeltaIijForHE = 0;
 
-            for (int j = 0; j <= mol.getAtomCount() - 1; j++)
+            for (int j = 0; j <= m.getAtomCount() - 1; j++)
                 if (i != j) {
                     sumDeltaIijForE += (getIS()[i] - getIS()[j])/ Math.pow((double) DistanceMatrix[i][j] + 1.0, 2.0);
                     sumDeltaIijForHE += (getKHE()[j] + 0.2)/ Math.pow((double) DistanceMatrix[i][j] + 1.0, 2.0);
@@ -280,124 +290,124 @@ public class EStateCorrectForH {
 
     private void SetPeriods() {
         periods = new HashMap<>();
-        periods.put("H", 1);
-        periods.put("He", 1);
-        periods.put("Li", 2);
-        periods.put("Be", 2);
-        periods.put("B", 2);
-        periods.put("C", 2);
-        periods.put("N", 2);
-        periods.put("O", 2);
-        periods.put("F", 2);
-        periods.put("Ne", 2);
-        periods.put("Na", 3);
-        periods.put("Mg", 3);
-        periods.put("Al", 3);
-        periods.put("Si", 3);
-        periods.put("P", 3);
-        periods.put("S", 3);
-        periods.put("Cl", 3);
-        periods.put("Ar", 3);
-        periods.put("K", 4);
-        periods.put("Ca", 4);
-        periods.put("Sc", 4);
-        periods.put("Ti", 4);
-        periods.put("V", 4);
-        periods.put("Cr", 4);
-        periods.put("Mn", 4);
-        periods.put("Fe", 4);
-        periods.put("Co", 4);
-        periods.put("Ni", 4);
-        periods.put("Cu", 4);
-        periods.put("Zn", 4);
-        periods.put("Ga", 4);
-        periods.put("Ge", 4);
-        periods.put("As", 4);
-        periods.put("Se", 4);
-        periods.put("Br", 4);
-        periods.put("Kr", 4);
-        periods.put("Rb", 5);
-        periods.put("Sr", 5);
-        periods.put("Y", 5);
-        periods.put("Zr", 5);
-        periods.put("Nb", 5);
-        periods.put("Mo", 5);
-        periods.put("Tc", 5);
-        periods.put("Ru", 5);
-        periods.put("Rh", 5);
-        periods.put("Pd", 5);
-        periods.put("Ag", 5);
-        periods.put("Cd", 5);
-        periods.put("In", 5);
-        periods.put("Sn", 5);
-        periods.put("Sb", 5);
-        periods.put("Te", 5);
-        periods.put("I", 5);
-        periods.put("Xe", 5);
-        periods.put("Cs", 6);
-        periods.put("Ba", 6);
-        periods.put("La", 6);
-        periods.put("Ce", 6);
-        periods.put("Pr", 6);
-        periods.put("Nd", 6);
-        periods.put("Pm", 6);
-        periods.put("Sm", 6);
-        periods.put("Eu", 6);
-        periods.put("Gd", 6);
-        periods.put("Tb", 6);
-        periods.put("Dy", 6);
-        periods.put("Ho", 6);
-        periods.put("Er", 6);
-        periods.put("Tm", 6);
-        periods.put("Yb", 6);
-        periods.put("Lu", 6);
-        periods.put("Hf", 6);
-        periods.put("Ta", 6);
-        periods.put("W", 6);
-        periods.put("Re", 6);
-        periods.put("Os", 6);
-        periods.put("Ir", 6);
-        periods.put("Pt", 6);
-        periods.put("Au", 6);
-        periods.put("Hg", 6);
-        periods.put("Tl", 6);
-        periods.put("Pb", 6);
-        periods.put("Bi", 6);
-        periods.put("Po", 6);
-        periods.put("At", 6);
-        periods.put("Rn", 6);
-        periods.put("Fr", 7);
-        periods.put("Ra", 7);
-        periods.put("Ac", 7);
-        periods.put("Th", 7);
-        periods.put("Pa", 7);
-        periods.put("U", 7);
-        periods.put("Np", 7);
-        periods.put("Pu", 7);
-        periods.put("Am", 7);
-        periods.put("Cm", 7);
-        periods.put("Bk", 7);
-        periods.put("Cf", 7);
-        periods.put("Es", 7);
-        periods.put("Fm", 7);
-        periods.put("Md", 7);
-        periods.put("No", 7);
-        periods.put("Lr", 7);
-        periods.put("Rf", 7);
-        periods.put("Db", 7);
-        periods.put("Sg", 7);
-        periods.put("Bh", 7);
-        periods.put("Hs", 7);
-        periods.put("Mt", 7);
-        periods.put("Ds", 7);
-        periods.put("Rg", 7);
-        periods.put("Uub", 7);
-        periods.put("Uut", 7);
-        periods.put("Uuq", 7);
-        periods.put("Uup", 7);
-        periods.put("Uuh", 7);
-        periods.put("Uus", 7);
-        periods.put("Uuo", 7);
+        periods.put("H", new Integer(1));
+        periods.put("He", new Integer(1));
+        periods.put("Li", new Integer(2));
+        periods.put("Be", new Integer(2));
+        periods.put("B", new Integer(2));
+        periods.put("C", new Integer(2));
+        periods.put("N", new Integer(2));
+        periods.put("O", new Integer(2));
+        periods.put("F", new Integer(2));
+        periods.put("Ne", new Integer(2));
+        periods.put("Na", new Integer(3));
+        periods.put("Mg", new Integer(3));
+        periods.put("Al", new Integer(3));
+        periods.put("Si", new Integer(3));
+        periods.put("P", new Integer(3));
+        periods.put("S", new Integer(3));
+        periods.put("Cl", new Integer(3));
+        periods.put("Ar", new Integer(3));
+        periods.put("K", new Integer(4));
+        periods.put("Ca", new Integer(4));
+        periods.put("Sc", new Integer(4));
+        periods.put("Ti", new Integer(4));
+        periods.put("V", new Integer(4));
+        periods.put("Cr", new Integer(4));
+        periods.put("Mn", new Integer(4));
+        periods.put("Fe", new Integer(4));
+        periods.put("Co", new Integer(4));
+        periods.put("Ni", new Integer(4));
+        periods.put("Cu", new Integer(4));
+        periods.put("Zn", new Integer(4));
+        periods.put("Ga", new Integer(4));
+        periods.put("Ge", new Integer(4));
+        periods.put("As", new Integer(4));
+        periods.put("Se", new Integer(4));
+        periods.put("Br", new Integer(4));
+        periods.put("Kr", new Integer(4));
+        periods.put("Rb", new Integer(5));
+        periods.put("Sr", new Integer(5));
+        periods.put("Y", new Integer(5));
+        periods.put("Zr", new Integer(5));
+        periods.put("Nb", new Integer(5));
+        periods.put("Mo", new Integer(5));
+        periods.put("Tc", new Integer(5));
+        periods.put("Ru", new Integer(5));
+        periods.put("Rh", new Integer(5));
+        periods.put("Pd", new Integer(5));
+        periods.put("Ag", new Integer(5));
+        periods.put("Cd", new Integer(5));
+        periods.put("In", new Integer(5));
+        periods.put("Sn", new Integer(5));
+        periods.put("Sb", new Integer(5));
+        periods.put("Te", new Integer(5));
+        periods.put("I", new Integer(5));
+        periods.put("Xe", new Integer(5));
+        periods.put("Cs", new Integer(6));
+        periods.put("Ba", new Integer(6));
+        periods.put("La", new Integer(6));
+        periods.put("Ce", new Integer(6));
+        periods.put("Pr", new Integer(6));
+        periods.put("Nd", new Integer(6));
+        periods.put("Pm", new Integer(6));
+        periods.put("Sm", new Integer(6));
+        periods.put("Eu", new Integer(6));
+        periods.put("Gd", new Integer(6));
+        periods.put("Tb", new Integer(6));
+        periods.put("Dy", new Integer(6));
+        periods.put("Ho", new Integer(6));
+        periods.put("Er", new Integer(6));
+        periods.put("Tm", new Integer(6));
+        periods.put("Yb", new Integer(6));
+        periods.put("Lu", new Integer(6));
+        periods.put("Hf", new Integer(6));
+        periods.put("Ta", new Integer(6));
+        periods.put("W", new Integer(6));
+        periods.put("Re", new Integer(6));
+        periods.put("Os", new Integer(6));
+        periods.put("Ir", new Integer(6));
+        periods.put("Pt", new Integer(6));
+        periods.put("Au", new Integer(6));
+        periods.put("Hg", new Integer(6));
+        periods.put("Tl", new Integer(6));
+        periods.put("Pb", new Integer(6));
+        periods.put("Bi", new Integer(6));
+        periods.put("Po", new Integer(6));
+        periods.put("At", new Integer(6));
+        periods.put("Rn", new Integer(6));
+        periods.put("Fr", new Integer(7));
+        periods.put("Ra", new Integer(7));
+        periods.put("Ac", new Integer(7));
+        periods.put("Th", new Integer(7));
+        periods.put("Pa", new Integer(7));
+        periods.put("U", new Integer(7));
+        periods.put("Np", new Integer(7));
+        periods.put("Pu", new Integer(7));
+        periods.put("Am", new Integer(7));
+        periods.put("Cm", new Integer(7));
+        periods.put("Bk", new Integer(7));
+        periods.put("Cf", new Integer(7));
+        periods.put("Es", new Integer(7));
+        periods.put("Fm", new Integer(7));
+        periods.put("Md", new Integer(7));
+        periods.put("No", new Integer(7));
+        periods.put("Lr", new Integer(7));
+        periods.put("Rf", new Integer(7));
+        periods.put("Db", new Integer(7));
+        periods.put("Sg", new Integer(7));
+        periods.put("Bh", new Integer(7));
+        periods.put("Hs", new Integer(7));
+        periods.put("Mt", new Integer(7));
+        periods.put("Ds", new Integer(7));
+        periods.put("Rg", new Integer(7));
+        periods.put("Uub", new Integer(7));
+        periods.put("Uut", new Integer(7));
+        periods.put("Uuq", new Integer(7));
+        periods.put("Uup", new Integer(7));
+        periods.put("Uuh", new Integer(7));
+        periods.put("Uus", new Integer(7));
+        periods.put("Uuo", new Integer(7));
     }
 
     /**

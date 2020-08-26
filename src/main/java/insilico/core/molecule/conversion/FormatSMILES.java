@@ -1,8 +1,10 @@
 package insilico.core.molecule.conversion;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.molecule.InsilicoMoleculeMessages;
 import insilico.core.molecule.tools.InsilicoMoleculeNormalization;
 import insilico.core.molecule.tools.MoleculeNormalization;
+import insilico.core.molecule.tools.Normalizer;
 import insilico.core.tools.utils.logger.InsilicoLogger;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.InvalidSmilesException;
@@ -46,7 +48,10 @@ public class FormatSMILES {
         // normalize and check structure
 //        MoleculeNormalization.Normalize(curStructure);
         try {
-            InsilicoMoleculeNormalization.Normalize(curStructure);
+//            Normalizer normalizer = new Normalizer();
+//            curStructure = normalizer.ConfigureMolecule(curStructure, new InsilicoMoleculeMessages());
+            curStructure = InsilicoMoleculeNormalization.Normalize(curStructure);
+//            InsilicoMoleculeNormalization.Normalize(curStructure);
         } catch (Exception ex){
             logger.warn(ex.getMessage());
         }

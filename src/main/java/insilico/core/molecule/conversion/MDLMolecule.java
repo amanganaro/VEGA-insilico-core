@@ -4,8 +4,10 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.MoleculeConversionException;
 import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.molecule.InsilicoMoleculeMessages;
 import insilico.core.molecule.conversion.custom.CustomMDLWriter;
 import insilico.core.molecule.tools.InsilicoMoleculeNormalization;
+import insilico.core.molecule.tools.Normalizer;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
@@ -65,7 +67,8 @@ public class MDLMolecule {
 
             // Configures generated structure
             try {
-//                Normalizer MolNorm = new Normalizer();
+//                Normalizer normalizer = new Normalizer();
+//                Mol = normalizer.ConfigureMolecule(Mol, new InsilicoMoleculeMessages());
                 Mol = InsilicoMoleculeNormalization.Normalize(Mol);
             } catch (InitFailureException e) {
                 String err = ERR_HEADER + "unable to init normalizer for MDL molecule";

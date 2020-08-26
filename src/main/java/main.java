@@ -2,6 +2,7 @@ import insilico.core.descriptor.blocks.*;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.test.TestDescriptors;
+import insilico.core.test.TestDescriptorsRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,22 +16,28 @@ public class main {
 
     public static void main(String[]  args) throws Exception {
 
-        FileOutputStream fileOutputStream = new FileOutputStream("LogP - KmFactor.csv");
-        PrintStream stream = new PrintStream(fileOutputStream);
+        String[] datasetNames = {"logp", "muta", "ncs", "VP"};
 
-        TestDescriptors.Run(new KmFactor(), stream, System.out);
+//        for(String dataset : datasetNames){
+//            TestDescriptorsRunner.RunAllBlocks(dataset);
+//        }
+        TestDescriptorsRunner.RunSingleBlock("muta","WalkAndPath");
+
+
+
 
 
 //        ArrayList<String> SMILES = fetchSmilesFromTXTFile();
 //        ArrayList<InsilicoMolecule> molecules = fetchMoleculesFromSMILES(SMILES);
 
+
     }
 
-    
     private static ArrayList<InsilicoMolecule> fetchMoleculesFromSMILES(ArrayList<String> SMILES) throws InvalidMoleculeException {
         ArrayList<InsilicoMolecule> molecules = new ArrayList<>();
         int count = 0;
         for(String smiles: SMILES){
+
             if(count == 0)
                 count++;
             InsilicoMolecule mol = new InsilicoMolecule();

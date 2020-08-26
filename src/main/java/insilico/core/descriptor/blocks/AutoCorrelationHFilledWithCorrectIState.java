@@ -2,26 +2,35 @@ package insilico.core.descriptor.blocks;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
-import insilico.core.descriptor.weight.*;
+import insilico.core.descriptor.weight.EState;
+import insilico.core.descriptor.weight.EStateCorrectForH;
+import insilico.core.descriptor.weight.Electronegativity;
+import insilico.core.descriptor.weight.Mass;
+import insilico.core.descriptor.weight.Polarizability;
+import insilico.core.descriptor.weight.VanDerWaals;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.matrix.TopoDistanceMatrix;
 import insilico.core.molecule.tools.Manipulator;
-import insilico.core.tools.utils.logger.InsilicoLogger;
+import java.util.ArrayList;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-
+/**
+ * Autocorrelation molecular descriptors.
+ * Calculates Autocorrelation ATS, Moran Autocorrelations and Geary
+ * Autocorrelations.
+ *
+ * Note: only ATS is given in log(1+val) form.
+ *
+ * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
+ */
 public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
-
     Logger logger = LoggerFactory.getLogger(AutoCorrelationHFilledWithCorrectIState.class);
-
-    private boolean defaultDescriptors;
 
     private final static String BlockName = "AutoCorrelation Descriptors";
 
@@ -46,6 +55,7 @@ public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
     private final static short WEIGHT_S_IDX = 4;
     private final static String[] WEIGHT_SYMBOL = {"m", "p", "e", "v", "s"};
 
+    private boolean defaultDescriptors;
 
 
     /**
@@ -64,8 +74,10 @@ public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
         this.defaultDescriptors = defaultDescriptors;
     }
 
+
+
     @Override
-    protected void GenerateDescriptors() {
+    protected final void GenerateDescriptors() {
         DescList.clear();
         ArrayList<Integer> weightList = BuildWeightList();
         ArrayList<Integer> lagList = BuildLagList();
@@ -79,6 +91,55 @@ public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
         }
         SetAllValues(Descriptor.MISSING_VALUE);
     }
+
+
+    private ArrayList<Integer> BuildWeightList() {
+        ArrayList<Integer> w = new ArrayList<>();
+        if(defaultDescriptors) {
+            w.add((int) WEIGHT_M_IDX);
+            w.add((int) WEIGHT_P_IDX);
+            w.add((int) WEIGHT_E_IDX);
+            w.add((int) WEIGHT_V_IDX);
+            w.add((int) WEIGHT_S_IDX);
+        } else {
+            if (getBoolProperty(PARAMETER_WEIGHT_M) )
+                w.add((int) WEIGHT_M_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_P) )
+                w.add((int) WEIGHT_P_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_E) )
+                w.add((int) WEIGHT_E_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_V) )
+                w.add((int) WEIGHT_V_IDX);
+            if (getBoolProperty(PARAMETER_WEIGHT_S) )
+                w.add((int) WEIGHT_S_IDX);
+        }
+        return w;
+    }
+
+    private ArrayList<Integer> BuildLagList() {
+        ArrayList<Integer> LagList = new ArrayList<>();
+        if(defaultDescriptors) {
+            LagList.add(1);
+            LagList.add(2);
+            LagList.add(3);
+            LagList.add(4);
+            LagList.add(5);
+            LagList.add(6);
+            LagList.add(7);
+            LagList.add(8);
+        }
+
+        if (getBoolProperty(PARAMETER_LAG_01)) LagList.add(1);
+        if (getBoolProperty(PARAMETER_LAG_02)) LagList.add(2);
+        if (getBoolProperty(PARAMETER_LAG_03)) LagList.add(3);
+        if (getBoolProperty(PARAMETER_LAG_04)) LagList.add(4);
+        if (getBoolProperty(PARAMETER_LAG_05)) LagList.add(5);
+        if (getBoolProperty(PARAMETER_LAG_06)) LagList.add(6);
+        if (getBoolProperty(PARAMETER_LAG_07)) LagList.add(7);
+        if (getBoolProperty(PARAMETER_LAG_08)) LagList.add(8);
+        return LagList;
+    }
+
 
     /**
      * Calculate descriptors for the given molecule.
@@ -220,50 +281,5 @@ public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
         return block;
     }
 
-    private ArrayList<Integer> BuildWeightList() {
-        ArrayList<Integer> w = new ArrayList<>();
-        if(defaultDescriptors) {
-            w.add((int) WEIGHT_M_IDX);
-            w.add((int) WEIGHT_P_IDX);
-            w.add((int) WEIGHT_E_IDX);
-            w.add((int) WEIGHT_V_IDX);
-            w.add((int) WEIGHT_S_IDX);
-        } else {
-            if (getBoolProperty(PARAMETER_WEIGHT_M) )
-                w.add((int) WEIGHT_M_IDX);
-            if (getBoolProperty(PARAMETER_WEIGHT_P) )
-                w.add((int) WEIGHT_P_IDX);
-            if (getBoolProperty(PARAMETER_WEIGHT_E) )
-                w.add((int) WEIGHT_E_IDX);
-            if (getBoolProperty(PARAMETER_WEIGHT_V) )
-                w.add((int) WEIGHT_V_IDX);
-            if (getBoolProperty(PARAMETER_WEIGHT_S) )
-                w.add((int) WEIGHT_S_IDX);
-        }
-        return w;
-    }
 
-    private ArrayList<Integer> BuildLagList() {
-        ArrayList<Integer> LagList = new ArrayList<>();
-        if(defaultDescriptors) {
-            LagList.add(1);
-            LagList.add(2);
-            LagList.add(3);
-            LagList.add(4);
-            LagList.add(5);
-            LagList.add(6);
-            LagList.add(7);
-            LagList.add(8);
-        }
-
-        if (getBoolProperty(PARAMETER_LAG_01)) LagList.add(1);
-        if (getBoolProperty(PARAMETER_LAG_02)) LagList.add(2);
-        if (getBoolProperty(PARAMETER_LAG_03)) LagList.add(3);
-        if (getBoolProperty(PARAMETER_LAG_04)) LagList.add(4);
-        if (getBoolProperty(PARAMETER_LAG_05)) LagList.add(5);
-        if (getBoolProperty(PARAMETER_LAG_06)) LagList.add(6);
-        if (getBoolProperty(PARAMETER_LAG_07)) LagList.add(7);
-        if (getBoolProperty(PARAMETER_LAG_08)) LagList.add(8);
-        return LagList;
-    }
 }

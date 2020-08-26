@@ -7,6 +7,7 @@ import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.InsilicoMoleculeMessages;
 import insilico.core.molecule.conversion.custom.CustomSmilesWriter;
 import insilico.core.molecule.tools.InsilicoMoleculeNormalization;
+import insilico.core.molecule.tools.Normalizer;
 import insilico.core.tools.utils.GeneralUtilities;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.DefaultChemObjectBuilder;
@@ -160,6 +161,7 @@ public class SmilesMolecule {
         // Configures generated structure
         try {
 //            Normalizer normalizer = new Normalizer();
+//            mol = normalizer.ConfigureMolecule(mol, new InsilicoMoleculeMessages());
             mol = InsilicoMoleculeNormalization.Normalize(mol);
         } catch (InitFailureException ex)
         {

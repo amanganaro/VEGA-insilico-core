@@ -22,7 +22,7 @@ public class TestDescriptors {
     }
 
 
-    public static void Run(DescriptorBlock block, PrintStream outFile, PrintStream out) throws Exception {
+    public static void Run(DescriptorBlock block, String dataset, PrintStream outFile, PrintStream out) throws Exception {
 
         // calculate foo molecule just to create descriptors name list
         block.Calculate(SmilesMolecule.Convert("CCC"));
@@ -38,7 +38,7 @@ public class TestDescriptors {
         DataInputStream in;
         BufferedReader br;
 
-        URL TsURL = TestDescriptors.class.getClassLoader().getResource("logp.txt");
+        URL TsURL = TestDescriptors.class.getClassLoader().getResource(dataset + ".txt");
         in = new DataInputStream(TsURL.openStream());
         br = new BufferedReader(new InputStreamReader(in));
         
