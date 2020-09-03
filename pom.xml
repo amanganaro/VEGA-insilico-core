@@ -4,9 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>InSilicoCore</groupId>
-    <artifactId>InSilicoCore</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>InSilico</groupId>
+    <artifactId>Core</artifactId>
+    <version>0.5</version>
+    <packaging>jar</packaging>
 
 
     <name>InSilicoCore</name>
@@ -22,11 +23,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>nexus-snapshots</id>
-            <url>http://localhost:8081/repository/maven-snapshots/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>nexus-releases</id>
-            <url>http://localhost:8081/repository/maven-releases/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-releases/</url>
         </repository>
 
     </distributionManagement>
@@ -34,7 +35,7 @@
     <repositories>
         <repository>
             <id>maven-group</id>
-            <url>http://localhost:8081/repository/maven-group/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-group/</url>
         </repository>
     </repositories>
 
@@ -58,12 +59,6 @@
             <version>1.7.30</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.mockftpserver</groupId>
-            <artifactId>MockFtpServer</artifactId>
-            <version>2.5</version>
-<!--            <scope>compile</scope>-->
-        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -136,14 +131,27 @@
     </dependencies>
 
     <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
+
+
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <includeSystemScope>true</includeSystemScope>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -221,29 +229,6 @@
                 </dependencies>
             </plugin>
 
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>
-                                target/classes/insilico/core/molecule/tools/
-                            </outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>Z</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
 
         </plugins>

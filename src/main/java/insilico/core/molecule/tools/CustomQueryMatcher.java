@@ -181,7 +181,7 @@ public class CustomQueryMatcher {
                 for (IAtom atom : this.curMol.GetStructure().atoms()) {
                     if (queryAtom.matches(atom)) {
                         List<Integer> tmp = new ArrayList<Integer>();
-                        tmp.add(this.curMol.GetStructure().getAtomNumber(atom));
+                        tmp.add(this.curMol.GetStructure().indexOf(atom));
                         matchingAtoms.add(tmp);
                     }
                 }
@@ -442,7 +442,7 @@ public class CustomQueryMatcher {
 //                initializeRecursiveSmartsAtom(((LogicalOperatorAtom) atom).getRight(), atomContainer);
 //            }
 //        } else if (atom instanceof RecursiveSmartsAtom) {
-//            ((RecursiveSmartsAtom) atom).setAtomContainer(atomContainer);
+//            ((RecursiveSmartsAtom) atom).(atomContainer);
 //        } else if (atom instanceof HydrogenAtom) {
 //            ((HydrogenAtom) atom).setAtomContainer(atomContainer);
 //        }

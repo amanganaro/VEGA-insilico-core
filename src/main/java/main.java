@@ -1,6 +1,8 @@
+import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.blocks.*;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.test.TestDescriptors;
 import insilico.core.test.TestDescriptorsRunner;
 import org.slf4j.Logger;
@@ -16,19 +18,34 @@ public class main {
 
     public static void main(String[]  args) throws Exception {
 
-        String[] datasetNames = {"logp", "muta", "ncs", "VP"};
+        String[] descriptors = {
+                "Constitutional",
+                "AtomCenteredFragments",
+                "AutoCorrelation",
+                "AutoCorrelationHFilled",
+                "AutoCorrelationHFilledWithCorrectIState",
+                "BurdenEigenvalue",
+                "BurdenEigenvalueHFilled",
+                "Cats2D",
+                "ConnectivityIndices",
+                "DistanceDetour",
+                "DistanceEdge",
+                "EdgeAdjacency",
+                "EdgeAdjacencyAugmentedCorrected",
+                "EdgeAdjacencyCorrected",
+                "EigenvalueBased",
+                "EStates",
+                "InformationContent",
+                "InformationContentWithH",
+                "PVSA",
+                "Rings",
+                "Topological",
+                "TopologicalCharge",
+                "TopologicalDistances",
+                "TopologicalEState",
+                "WalkAndPath"
+        };
 
-//        for(String dataset : datasetNames){
-//            TestDescriptorsRunner.RunAllBlocks(dataset);
-//        }
-        TestDescriptorsRunner.RunSingleBlock("muta","WalkAndPath");
-
-
-
-
-
-//        ArrayList<String> SMILES = fetchSmilesFromTXTFile();
-//        ArrayList<InsilicoMolecule> molecules = fetchMoleculesFromSMILES(SMILES);
 
 
     }

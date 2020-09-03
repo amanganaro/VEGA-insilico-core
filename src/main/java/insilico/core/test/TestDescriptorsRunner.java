@@ -2,12 +2,14 @@ package insilico.core.test;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.blocks.*;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.ILoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.nio.file.Path;
 
 public class TestDescriptorsRunner {
 
@@ -41,9 +43,14 @@ public class TestDescriptorsRunner {
       "WalkAndPath"
     };
 
-    public static void RunAllBlocks(String datasetName) throws Exception {
+
+
+    public void RunAllBlocks(String datasetName) throws Exception {
 
         File folder = new File("descriptors_csv/" + datasetName + "/");
+        String destString = "C:\\Users\\Alessio Sommovigo\\Desktop\\Kode\\Projects\\insilicoCoreOld\\descriptors_csv\\" + datasetName + "\\new\\";
+
+
         if (!folder.exists()){
             folder.mkdirs();
         }
@@ -51,21 +58,29 @@ public class TestDescriptorsRunner {
 
         for(String descriptor : descriptorNames){
             RunDescriptorsBlock(descriptor, folder + "/" + datasetName + " - " + descriptor, datasetName);
+            File source = new File(folder + "/" + datasetName + " - " + descriptor + ".csv");
+            File dest = new File (destString + datasetName + " - " + descriptor + ".csv");
+            FileUtils.copyFile(source, dest);
         }
     }
 
-    public static void RunSingleBlock(String datasetName, String descriptorName) throws Exception {
+    public void RunSingleBlock(String datasetName, String descriptorName) throws Exception {
         File folder = new File("descriptors_csv/" + datasetName + "/");
+        String destString = "C:\\Users\\Alessio Sommovigo\\Desktop\\Kode\\Projects\\insilicoCoreOld\\descriptors_csv\\" + datasetName + "\\new\\";
+
         if (!folder.exists()){
             folder.mkdirs();
         }
 
         RunDescriptorsBlock(descriptorName, folder + "/" + datasetName + " - " + descriptorName, datasetName);
+        File source = new File(folder + "/" + datasetName + " - " + descriptorName + ".csv");
+        File dest = new File (destString + datasetName + " - " + descriptorName + ".csv");
+        FileUtils.copyFile(source, dest);
 
     }
 
 
-    private static void RunDescriptorsBlock(String descriptorName, String descriptorFileName, String datasetName) throws Exception {
+    private void RunDescriptorsBlock(String descriptorName, String descriptorFileName, String datasetName) throws Exception {
         switch (descriptorName) {
             case "Constitutional":
                 TestDescriptors.Run(new Constitutional(), datasetName, new PrintStream(new FileOutputStream(descriptorFileName + ".csv")), System.out);

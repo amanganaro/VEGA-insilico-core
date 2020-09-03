@@ -1,6 +1,7 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.tools.utils.MoleculeUtilities;
+import org.openscience.cdk.RingSet;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
@@ -52,13 +53,18 @@ public class InsilicoMoleculeNormalization {
         // aromaticity - not compliant with the one used in the previous
         // VEGA libraries
         // Uses Cycles.all() to find SSSR (CHECK: aggiungere un timeout?)
-//        ElectronDonation ElModel = ElectronDonation.cdk();
-//        CycleFinder RingFinder = Cycles.all();
 
-        ElectronDonation ElModel = ElectronDonation.daylight();
-        CycleFinder RingFinder = Cycles.or(Cycles.all(), Cycles.all(6));
+//        Cycles cycles = Cycles.sssr(GetStructure(SMILES, explicitHydrogen));
+//        SSSR = (RingSet) cycles.toRingSet();
+
+        ElectronDonation ElModel = ElectronDonation.cdk();
+        CycleFinder RingFinder = Cycles.all();
+
+//        ElectronDonation ElModel = ElectronDonation.daylight();
+
 
         Aromaticity Arom = new Aromaticity(ElModel, RingFinder);
+//        Aromaticity Arom = new Aromaticity(ElectronDonation.daylight(), Cycles.cdkAromaticSet());
         Arom.apply(mol);
                
         return(mol);
