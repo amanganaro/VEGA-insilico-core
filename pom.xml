@@ -59,6 +59,12 @@
             <version>1.7.30</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.mockftpserver</groupId>
+            <artifactId>MockFtpServer</artifactId>
+            <version>2.5</version>
+<!--            <scope>compile</scope>-->
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

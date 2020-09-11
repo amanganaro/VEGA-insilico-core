@@ -9,6 +9,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IRingSet;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.UniversalIsomorphismTester;
 import org.openscience.cdk.isomorphism.matchers.IQueryAtom;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
@@ -16,7 +17,8 @@ import org.openscience.cdk.isomorphism.matchers.smarts.HydrogenAtom;
 import org.openscience.cdk.isomorphism.matchers.smarts.LogicalOperatorAtom;
 import org.openscience.cdk.isomorphism.matchers.smarts.RecursiveSmartsAtom;
 import org.openscience.cdk.isomorphism.mcss.RMap;
-import org.openscience.cdk.ringsearch.SSSRFinder;
+import org.openscience.cdk.smarts.SmartsPattern;
+import org.openscience.cdk.smiles.smarts.SMARTSQueryTool;
 
 import java.util.*;
 
@@ -106,10 +108,11 @@ public class CustomQueryMatcher {
 
     private String smarts;
     private InsilicoMolecule curMol = null;
-    //    private IAtomContainer atomContainer = null;
+//        private IAtomContainer atomContainer = null;
     private QueryAtomContainer query = null;
 
     private List<List<Integer>> matchingAtoms = null;
+
 
 
 
@@ -177,7 +180,7 @@ public class CustomQueryMatcher {
                 // lets get the query atom
                 IQueryAtom queryAtom = (IQueryAtom) query.getAtom(0);
 
-                matchingAtoms = new ArrayList<List<Integer>>();
+                matchingAtoms = new ArrayList<>();
                 for (IAtom atom : this.curMol.GetStructure().atoms()) {
                     if (queryAtom.matches(atom)) {
                         List<Integer> tmp = new ArrayList<Integer>();
@@ -432,17 +435,17 @@ public class CustomQueryMatcher {
      *
      * @param atom
      * @param atomContainer
-     * @throws CDKException
      */
-    private void initializeRecursiveSmartsAtom(IAtom atom, IAtomContainer atomContainer) throws CDKException {
+    private void initializeRecursiveSmartsAtom(IAtom atom, IAtomContainer atomContainer)  {
 
-//        if (atom instanceof LogicalOperatorAtom) {
-//            initializeRecursiveSmartsAtom(((LogicalOperatorAtom) atom).getLeft(), atomContainer);
-//            if (((LogicalOperatorAtom) atom).getRight() != null) {
-//                initializeRecursiveSmartsAtom(((LogicalOperatorAtom) atom).getRight(), atomContainer);
-//            }
-//        } else if (atom instanceof RecursiveSmartsAtom) {
-//            ((RecursiveSmartsAtom) atom).(atomContainer);
+        if (atom instanceof LogicalOperatorAtom) {
+            initializeRecursiveSmartsAtom(((LogicalOperatorAtom) atom).getLeft(), atomContainer);
+            if (((LogicalOperatorAtom) atom).getRight() != null) {
+                initializeRecursiveSmartsAtom(((LogicalOperatorAtom) atom).getRight(), atomContainer);
+            }
+        }
+//        else if (atom instanceof RecursiveSmartsAtom) {
+//            ((RecursiveSmartsAtom) atom).setAtomContainer(atomContainer);
 //        } else if (atom instanceof HydrogenAtom) {
 //            ((HydrogenAtom) atom).setAtomContainer(atomContainer);
 //        }

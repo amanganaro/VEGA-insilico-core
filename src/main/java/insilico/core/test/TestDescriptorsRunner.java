@@ -32,8 +32,10 @@ public class TestDescriptorsRunner {
       "EdgeAdjacencyCorrected",
       "EigenvalueBased",
       "EStates",
+      "FunctionalGroups",
       "InformationContent",
       "InformationContentWithH",
+      "KmFactor",
       "PVSA",
       "Rings",
       "Topological",
@@ -45,7 +47,7 @@ public class TestDescriptorsRunner {
 
 
 
-    public void RunAllBlocks(String datasetName) throws Exception {
+    public static void RunAllBlocks(String datasetName) throws Exception {
 
         File folder = new File("descriptors_csv/" + datasetName + "/");
         String destString = "C:\\Users\\Alessio Sommovigo\\Desktop\\Kode\\Projects\\insilicoCoreOld\\descriptors_csv\\" + datasetName + "\\new\\";
@@ -64,7 +66,7 @@ public class TestDescriptorsRunner {
         }
     }
 
-    public void RunSingleBlock(String datasetName, String descriptorName) throws Exception {
+    public static void RunSingleBlock(String datasetName, String descriptorName) throws Exception {
         File folder = new File("descriptors_csv/" + datasetName + "/");
         String destString = "C:\\Users\\Alessio Sommovigo\\Desktop\\Kode\\Projects\\insilicoCoreOld\\descriptors_csv\\" + datasetName + "\\new\\";
 
@@ -80,7 +82,7 @@ public class TestDescriptorsRunner {
     }
 
 
-    private void RunDescriptorsBlock(String descriptorName, String descriptorFileName, String datasetName) throws Exception {
+    private static void RunDescriptorsBlock(String descriptorName, String descriptorFileName, String datasetName) throws Exception {
         switch (descriptorName) {
             case "Constitutional":
                 TestDescriptors.Run(new Constitutional(), datasetName, new PrintStream(new FileOutputStream(descriptorFileName + ".csv")), System.out);
@@ -130,11 +132,17 @@ public class TestDescriptorsRunner {
             case "EStates":
                 TestDescriptors.Run(new EStates(), datasetName, new PrintStream(new FileOutputStream(descriptorFileName + ".csv")), System.out);
                 break;
+            case "FunctionalGroups":
+                TestDescriptors.Run(new FunctionalGroups(), datasetName,new PrintStream(new FileOutputStream(descriptorFileName + ".csv")), System.out );
+                break;
             case "InformationContent":
                 TestDescriptors.Run(new InformationContent(), datasetName, new PrintStream(new FileOutputStream(descriptorFileName + ".csv")), System.out);
                 break;
             case "InformationContentWithH":
                 TestDescriptors.Run(new InformationContentWithH(), datasetName, new PrintStream(new FileOutputStream(descriptorFileName + ".csv")), System.out);
+                break;
+            case "KmFactor":
+                TestDescriptors.Run(new KmFactor(), datasetName, new PrintStream(new FileOutputStream(descriptorFileName + ".csv")), System.out);
                 break;
             case "PVSA":
                 TestDescriptors.Run(new PVSA(), datasetName, new PrintStream(new FileOutputStream(descriptorFileName + ".csv")), System.out);

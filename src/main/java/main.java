@@ -1,9 +1,5 @@
-import insilico.core.descriptor.DescriptorBlock;
-import insilico.core.descriptor.blocks.*;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.molecule.conversion.SmilesMolecule;
-import insilico.core.test.TestDescriptors;
 import insilico.core.test.TestDescriptorsRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +31,8 @@ public class main {
                 "EdgeAdjacencyCorrected",
                 "EigenvalueBased",
                 "EStates",
+                "FunctionalGroups",
+                "KmFactor",
                 "InformationContent",
                 "InformationContentWithH",
                 "PVSA",
@@ -45,6 +43,72 @@ public class main {
                 "TopologicalEState",
                 "WalkAndPath"
         };
+
+        String[] descriptorsForNCS = {
+                "Constitutional",
+                "AtomCenteredFragments",
+                "AutoCorrelation",
+                "AutoCorrelationHFilled",
+                "AutoCorrelationHFilledWithCorrectIState",
+                "BurdenEigenvalue",
+                "BurdenEigenvalueHFilled",
+                "Cats2D",
+                "ConnectivityIndices",
+//                "DistanceDetour",
+                "DistanceEdge",
+                "EdgeAdjacency",
+                "EdgeAdjacencyAugmentedCorrected",
+                "EdgeAdjacencyCorrected",
+                "EigenvalueBased",
+                "EStates",
+                "FunctionalGroups",
+                "KmFactor",
+                "InformationContent",
+                "InformationContentWithH",
+                "PVSA",
+                "Rings",
+                "Topological",
+                "TopologicalCharge",
+                "TopologicalDistances",
+                "TopologicalEState",
+//                "WalkAndPath"
+        };
+
+        String[] descriptorsForMUTA = {
+                "Constitutional",
+                "AtomCenteredFragments",
+                "AutoCorrelation",
+                "AutoCorrelationHFilled",
+                "AutoCorrelationHFilledWithCorrectIState",
+                "BurdenEigenvalue",
+                "BurdenEigenvalueHFilled",
+                "Cats2D",
+                "ConnectivityIndices",
+                "DistanceDetour",
+                "DistanceEdge",
+                "EdgeAdjacency",
+//                "EdgeAdjacencyAugmentedCorrected",
+//                "EdgeAdjacencyCorrected",
+                "EigenvalueBased",
+                "EStates",
+                "FunctionalGroups",
+                "KmFactor",
+                "InformationContent",
+                "InformationContentWithH",
+                "PVSA",
+                "Rings",
+                "Topological",
+                "TopologicalCharge",
+                "TopologicalDistances",
+                "TopologicalEState",
+                "WalkAndPath"
+        };
+
+        TestDescriptorsRunner.RunSingleBlock("VP", "KmFactor");
+        TestDescriptorsRunner.RunSingleBlock("logP", "KmFactor");
+        TestDescriptorsRunner.RunSingleBlock("muta", "KmFactor");
+        TestDescriptorsRunner.RunSingleBlock("ncs", "KmFactor");
+
 
 
 

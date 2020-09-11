@@ -1,7 +1,9 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.molecule.conversion.SmilesMolecule;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.renderer.AtomContainerRenderer;
@@ -89,15 +91,15 @@ public class Depiction {
         ImageIO.write(image, "png", file);
     }
 
-//    public static void SaveTSMoleculesAsPNG(iTrainingSet ts, String root){
-//        for (int i = 0; i < ts.getMoleculesSize(); i++){
-//            try {
-//                InsilicoMolecule molecule = SmilesMolecule.Convert(ts.getSMILES(i));
-//                String id = root + "/" + ts.getId(i) + ".png";
-//            } catch (Exception e){
-//                System.out.println("Error in molecule n° " + (i+1));
-//            }
-//        }
-//    }
+    public static void SaveTSMoleculesAsPNG(iTrainingSet ts, String root){
+        for (int i = 0; i < ts.getMoleculesSize(); i++){
+            try {
+                InsilicoMolecule molecule = SmilesMolecule.Convert(ts.getSMILES(i));
+                String id = root + "/" + ts.getId(i) + ".png";
+            } catch (Exception e){
+                System.out.println("Error in molecule n° " + (i+1));
+            }
+        }
+    }
 
 }

@@ -57,6 +57,8 @@ public class InsilicoMoleculeNormalization {
 //        Cycles cycles = Cycles.sssr(GetStructure(SMILES, explicitHydrogen));
 //        SSSR = (RingSet) cycles.toRingSet();
 
+//        private static final Aromaticity    arom = new Aromaticity(ElectronDonation.daylight(),
+//                Cycles.or(Cycles.all(), Cycles.relevant()));
         ElectronDonation ElModel = ElectronDonation.cdk();
         CycleFinder RingFinder = Cycles.all();
 
@@ -64,7 +66,8 @@ public class InsilicoMoleculeNormalization {
 
 
         Aromaticity Arom = new Aromaticity(ElModel, RingFinder);
-//        Aromaticity Arom = new Aromaticity(ElectronDonation.daylight(), Cycles.cdkAromaticSet());
+//        Aromaticity Arom = new Aromaticity(ElectronDonation.cdk(), Cycles.or(Cycles.all(), Cycles.relevant()));
+        Cycles.markRingAtomsAndBonds(mol);
         Arom.apply(mol);
                
         return(mol);
