@@ -1,164 +1,26 @@
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.test.TestDescriptorsRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import test.descriptors.TestDescriptorsRunner;
 
 import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 
+@Slf4j
 public class main {
-
-    private static Logger logger = LoggerFactory.getLogger(main.class);
 
     public static void main(String[]  args) throws Exception {
 
-        String[] descriptors = {
-                "Constitutional",
-                "AtomCenteredFragments",
-                "AutoCorrelation",
-                "AutoCorrelationHFilled",
-                "AutoCorrelationHFilledWithCorrectIState",
-                "BurdenEigenvalue",
-                "BurdenEigenvalueHFilled",
-                "Cats2D",
-                "ConnectivityIndices",
-                "DistanceDetour",
-                "DistanceEdge",
-                "EdgeAdjacency",
-                "EdgeAdjacencyAugmentedCorrected",
-                "EdgeAdjacencyCorrected",
-                "EigenvalueBased",
-                "EStates",
-                "FunctionalGroups",
-                "KmFactor",
-                "InformationContent",
-                "InformationContentWithH",
-                "PVSA",
-                "Rings",
-                "Topological",
-                "TopologicalCharge",
-                "TopologicalDistances",
-                "TopologicalEState",
-                "WalkAndPath"
-        };
-
-        String[] descriptorsForNCS = {
-                "Constitutional",
-                "AtomCenteredFragments",
-                "AutoCorrelation",
-                "AutoCorrelationHFilled",
-                "AutoCorrelationHFilledWithCorrectIState",
-                "BurdenEigenvalue",
-                "BurdenEigenvalueHFilled",
-                "Cats2D",
-                "ConnectivityIndices",
-//                "DistanceDetour",
-                "DistanceEdge",
-                "EdgeAdjacency",
-                "EdgeAdjacencyAugmentedCorrected",
-                "EdgeAdjacencyCorrected",
-                "EigenvalueBased",
-                "EStates",
-                "FunctionalGroups",
-                "KmFactor",
-                "InformationContent",
-                "InformationContentWithH",
-                "PVSA",
-                "Rings",
-                "Topological",
-                "TopologicalCharge",
-                "TopologicalDistances",
-                "TopologicalEState",
-//                "WalkAndPath"
-        };
-
-        String[] descriptorsForMUTA = {
-                "Constitutional",
-                "AtomCenteredFragments",
-                "AutoCorrelation",
-                "AutoCorrelationHFilled",
-                "AutoCorrelationHFilledWithCorrectIState",
-                "BurdenEigenvalue",
-                "BurdenEigenvalueHFilled",
-                "Cats2D",
-                "ConnectivityIndices",
-                "DistanceDetour",
-                "DistanceEdge",
-                "EdgeAdjacency",
-//                "EdgeAdjacencyAugmentedCorrected",
-//                "EdgeAdjacencyCorrected",
-                "EigenvalueBased",
-                "EStates",
-                "FunctionalGroups",
-                "KmFactor",
-                "InformationContent",
-                "InformationContentWithH",
-                "PVSA",
-                "Rings",
-                "Topological",
-                "TopologicalCharge",
-                "TopologicalDistances",
-                "TopologicalEState",
-                "WalkAndPath"
-        };
-
-        TestDescriptorsRunner.RunSingleBlock("VP", "KmFactor");
-        TestDescriptorsRunner.RunSingleBlock("logP", "KmFactor");
-        TestDescriptorsRunner.RunSingleBlock("muta", "KmFactor");
-        TestDescriptorsRunner.RunSingleBlock("ncs", "KmFactor");
-
-
-
+        TestDescriptorsRunner.RunSingleBlock("kode_dataset","Constitutional");
 
     }
 
-    private static ArrayList<InsilicoMolecule> fetchMoleculesFromSMILES(ArrayList<String> SMILES) throws InvalidMoleculeException {
-        ArrayList<InsilicoMolecule> molecules = new ArrayList<>();
-        int count = 0;
-        for(String smiles: SMILES){
-
-            if(count == 0)
-                count++;
-            InsilicoMolecule mol = new InsilicoMolecule();
-            logger.info("["  + count + "] " + smiles);
-            mol.SetSMILES(smiles);
-            mol.MarkAsValid();
-            mol.GetStructure();
-            molecules.add(mol);
-            logger.info("["  + count + "] + MOLECULE CREATED FROM " + smiles);
-            count++;
-        }
-        return molecules;
-    }
-
-    private static ArrayList<String> fetchSmilesFromTXTFile() {
-        ArrayList<String> smiles = new ArrayList<>();
-        try {
-            BufferedReader buffer = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/src/main/java/VP.txt"));
-            String lineFetched = null;
-            String[] smilesArray;
-
-            while (true) {
-                lineFetched = buffer.readLine();
-                if (lineFetched == null){
-                    break;
-                }
-                smilesArray = lineFetched.split("\t");
-                smiles.add(smilesArray[0]);
-            }
-
-            buffer.close();
 
 
-        } catch (IOException ex){
-            ex.printStackTrace();
-        }
 
-        return smiles;
-
-    }
 
 
 

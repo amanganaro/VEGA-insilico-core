@@ -35,7 +35,7 @@ public class main_normalization {
 
 //        URL TsURL = JavaApplication9.class.getResource("/JavaApplication9/logp.txt");
 //        URL TsURL = JavaApplication9.class.getResource("/JavaApplication9/ncs.txt");
-        URL TsURL = main_normalization.class.getResource("muta.txt");
+        URL TsURL = main_normalization.class.getResource("datasets/muta.txt");
         in = new DataInputStream(TsURL.openStream());
         br = new BufferedReader(new InputStreamReader(in));
         
