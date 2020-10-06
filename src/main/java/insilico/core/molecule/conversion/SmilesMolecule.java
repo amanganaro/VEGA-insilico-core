@@ -25,7 +25,7 @@ public class SmilesMolecule {
 
     static Logger logger = LoggerFactory.getLogger(MDLMolecule.class);
 
-    static private boolean EXCLUDE_DISCONNECTED_STRUCTURES = true;
+    public static boolean EXCLUDE_DISCONNECTED_STRUCTURES = true;
 
     final static private char charTab = 9;
     final static String ERR_HEADER = "Conversion from SMILES: ";
