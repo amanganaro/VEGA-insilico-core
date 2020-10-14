@@ -121,7 +121,7 @@ The model is a re-implementation of the original model developed inside the Deme
 		<n_Train>220</n_Train>
 		<R2_Train>0.75</R2_Train>
 		<RMSE_Train>1.37</RMSE_Train>
-		<N_test>43</N_test>
+		<n_Test>43</n_Test>
 		<R2_Test>0.68</R2_Test>
 		<RMSE_Test>1.49</RMSE_Test>
 	</Stats>

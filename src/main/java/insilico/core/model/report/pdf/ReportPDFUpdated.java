@@ -17,8 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -251,6 +255,8 @@ public class ReportPDFUpdated {
         document.close();
 //        return doc_bos;
     }
+
+
 
     private void WritePageHeader(String headerName) throws GenericFailureException {
 
@@ -536,21 +542,29 @@ public class ReportPDFUpdated {
                 curRef++;
             }
 
-            sectionTitle = new Paragraph("1.5 \t MODEL STATISTICS", fontBigUnderline);
+            sectionTitle = new Paragraph("1.5 MODEL STATISTICS", fontBigUnderline);
+            sectionTitle.add("\n");
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph(TextConstants.STATS_INTRO, font));
 
-            sectionBody = new Paragraph("\t - Training Set: " + "\n", fontBold);
-            sectionBody.add(new Paragraph("\tn = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_n_Train), font));
-            sectionBody.add(new Paragraph("\tR2 = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_R2_Train), font));
-            sectionBody.add(new Paragraph("\tRMSE = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_RMSE_Train) + "\n", font));
+            // Training Set stats
+            sectionBody = new Paragraph("- Training Set: " + "\n", fontBold);
             document.add(sectionBody);
 
-            sectionBody = new Paragraph("\t - Test Set: ", fontBold);
-            sectionBody.add(new Paragraph(	"\tn = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_n_Test) + "\t", font));
-            sectionBody.add(new Paragraph("\tR2 = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_R2_Test) + "\t", font));
-            sectionBody.add(new Paragraph("\tRMSE = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_RMSE_Test) + "\n", font));
+            sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_n_Train) + "        ", font);
+            sectionBody.add("\t" + "R2 = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_R2_Train)+ "        ");
+            sectionBody.add("\t" + "RMSE = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_RMSE_Train) + "        ");
+
+            document.add(sectionBody);
+
+            // Test Set stats
+            sectionBody = new Paragraph("- Test Set: " + "\n", fontBold);
+            document.add(sectionBody);
+
+            sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_n_Test) + "        ", font);
+            sectionBody.add("\t" + "R2 = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_R2_Test) + "        ");
+            sectionBody.add("\t" + "RMSE = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_RMSE_Test) + "        ");
 
             document.add(sectionBody);
 
