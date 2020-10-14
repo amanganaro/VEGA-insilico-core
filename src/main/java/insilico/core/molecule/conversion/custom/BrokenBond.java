@@ -3,6 +3,8 @@ package insilico.core.molecule.conversion.custom;
 import lombok.Data;
 import org.openscience.cdk.interfaces.IAtom;
 
+import java.util.Objects;
+
 @Data
 public class BrokenBond {
 
@@ -40,4 +42,8 @@ public class BrokenBond {
         return (atom1.equals(bond.getAtom1()) && atom2.equals(bond.getAtom2()) || (atom1.equals(bond.getAtom2()) && atom2.equals(bond.getAtom1())));
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(atom1, atom2, marker);
+    }
 }

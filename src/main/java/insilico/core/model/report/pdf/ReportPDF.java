@@ -101,6 +101,13 @@ public class ReportPDF {
     private Image Img_title_4_1;
     private Image Img_title_4_2;
 
+    private Image Img_title_1_highres;
+    private Image Img_title_2_highres;
+    private Image Img_title_3_1_highres;
+    private Image Img_title_3_2_highres;
+    private Image Img_title_4_1_highres;
+    private Image Img_title_4_2_highres;
+
     // Core version
     private InsilicoInfo coreVersion;
 
@@ -174,22 +181,22 @@ public class ReportPDF {
            if (HiRes) {
 
                uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_1.png" );
-               Img_title_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               Img_title_1_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
                uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_2.png" );
-               Img_title_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               Img_title_2_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
                uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_3_1.png" );
-               Img_title_3_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               Img_title_3_1_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
                uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_3_2.png" );
-               Img_title_3_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               Img_title_3_2_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
                uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_4_1.png" );
-               Img_title_4_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               Img_title_4_1_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
                uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_4_2.png" );
-               Img_title_4_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               Img_title_4_2_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
            } else {
 
@@ -444,8 +451,7 @@ public class ReportPDF {
             table.writeSelectedRows(0, -1, MidTable_Left, Math.round(y_pos) - 5 , writer.getDirectContent());
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException("Error while writing PDF report (" + e.getMessage() + ")");
         }
 
         CurPage = 0;

@@ -1,83 +1,56 @@
-import insilico.core.descriptor.blocks.*;
-import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.test.TestDescriptors;
-import insilico.core.test.TestDescriptorsRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import insilico.core.exception.GenericFailureException;
+import insilico.core.exception.InitFailureException;
+import insilico.core.model.InsilicoModelInfoUpdated;
+
+import insilico.core.model.report.pdf.ReportPDFUpdated;
+import lombok.extern.slf4j.Slf4j;
+
 
 import java.io.*;
-import java.util.ArrayList;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 
+@Slf4j
 public class main {
 
-    private static Logger logger = LoggerFactory.getLogger(main.class);
+    public static void main(String[]  args) throws IOException, InitFailureException, GenericFailureException {
 
-    public static void main(String[]  args) throws Exception {
-
-        String[] datasetNames = {"logp", "muta", "ncs", "VP"};
-
-//        for(String dataset : datasetNames){
-//            TestDescriptorsRunner.RunAllBlocks(dataset);
-//        }
-        TestDescriptorsRunner.RunSingleBlock("muta","WalkAndPath");
+        URL url = new File(System.getProperty("user.dir") + "/test_xml/prova_daphnia_demetra.xml").toURI().toURL();
 
 
 
 
+        InsilicoModelInfoUpdated insilicoModelInfoUpdated = new InsilicoModelInfoUpdated(url);
+//        ReportPDFUpdated report = new ReportPDFUpdated(true, url);
+//        FileOutputStream stream = report.GenerateTempReport();
+//
+        Path tempFile = Files.createTempFile(null,null);
 
-//        ArrayList<String> SMILES = fetchSmilesFromTXTFile();
-//        ArrayList<InsilicoMolecule> molecules = fetchMoleculesFromSMILES(SMILES);
-
-
-    }
-
-    private static ArrayList<InsilicoMolecule> fetchMoleculesFromSMILES(ArrayList<String> SMILES) throws InvalidMoleculeException {
-        ArrayList<InsilicoMolecule> molecules = new ArrayList<>();
-        int count = 0;
-        for(String smiles: SMILES){
-
-            if(count == 0)
-                count++;
-            InsilicoMolecule mol = new InsilicoMolecule();
-            logger.info("["  + count + "] " + smiles);
-            mol.SetSMILES(smiles);
-            mol.MarkAsValid();
-            mol.GetStructure();
-            molecules.add(mol);
-            logger.info("["  + count + "] + MOLECULE CREATED FROM " + smiles);
-            count++;
-        }
-        return molecules;
-    }
-
-    private static ArrayList<String> fetchSmilesFromTXTFile() {
-        ArrayList<String> smiles = new ArrayList<>();
-        try {
-            BufferedReader buffer = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/src/main/java/VP.txt"));
-            String lineFetched = null;
-            String[] smilesArray;
-
-            while (true) {
-                lineFetched = buffer.readLine();
-                if (lineFetched == null){
-                    break;
-                }
-                smilesArray = lineFetched.split("\t");
-                smiles.add(smilesArray[0]);
-            }
-
-            buffer.close();
+        Path filepath = Files.write(tempFile, url.getFile().getBytes());
+        ReportPDFUpdated report = new ReportPDFUpdated(true, filepath.toUri().toURL());
 
 
-        } catch (IOException ex){
-            ex.printStackTrace();
-        }
 
-        return smiles;
+
+//        System.out.println(tempFile);
+
+
+//        System.out.println(insilicoModelInfoUpdated.getVersion());
+//        System.out.println(insilicoModelInfoUpdated.getVega());
+//        System.out.println(insilicoModelInfoUpdated.getGuide());
+//        System.out.println(insilicoModelInfoUpdated.getReference());
+//        System.out.println(insilicoModelInfoUpdated.getEndpoint());
+//        System.out.println(insilicoModelInfoUpdated.getStats());
+
+
 
     }
+
+
+
+
 
 
 

@@ -4,9 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>InSilicoCore</groupId>
-    <artifactId>InSilicoCore</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <groupId>InSilico</groupId>
+    <artifactId>Core</artifactId>
+    <version>0.5</version>
+    <packaging>jar</packaging>
 
 
     <name>InSilicoCore</name>
@@ -22,11 +23,11 @@
     <distributionManagement>
         <snapshotRepository>
             <id>nexus-snapshots</id>
-            <url>http://localhost:8081/repository/maven-snapshots/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>nexus-releases</id>
-            <url>http://localhost:8081/repository/maven-releases/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-releases/</url>
         </repository>
 
     </distributionManagement>
@@ -34,7 +35,7 @@
     <repositories>
         <repository>
             <id>maven-group</id>
-            <url>http://localhost:8081/repository/maven-group/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-group/</url>
         </repository>
     </repositories>
 
@@ -58,18 +59,6 @@
             <version>1.7.30</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.mockftpserver</groupId>
-            <artifactId>MockFtpServer</artifactId>
-            <version>2.5</version>
-<!--            <scope>compile</scope>-->
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.25</version>
-        </dependency>
 
         <!--        JPMML FOR MARKUP LANGUAGE-->
         <dependency>
@@ -99,6 +88,12 @@
             <version>2.3.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -110,10 +105,16 @@
 
 
 <!--        iText for PDF Reporting-->
+<!--        <dependency>-->
+<!--            <groupId>com.lowagie</groupId>-->
+<!--            <artifactId>itext</artifactId>-->
+<!--            <version>2.1.7</version>-->
+<!--        </dependency>-->
+
         <dependency>
-            <groupId>com.lowagie</groupId>
-            <artifactId>itext</artifactId>
-            <version>2.1.7</version>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.20</version>
         </dependency>
 
 <!--        OpenJavax for java 11-->
@@ -130,20 +131,37 @@
             <version>5.2</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>InSilico</groupId>
+            <artifactId>TestingTool</artifactId>
+            <version>0.5</version>
+        </dependency>
 
 
     </dependencies>
 
     <build>
+
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.8.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+
+
+
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <includeSystemScope>true</includeSystemScope>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -221,29 +239,6 @@
                 </dependencies>
             </plugin>
 
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.5</version>
-                <executions>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>
-                                target/classes/insilico/core/molecule/tools/
-                            </outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>Z</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
 
         </plugins>

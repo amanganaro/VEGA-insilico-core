@@ -69,7 +69,6 @@ public class SimilarityDescriptorsBuilder {
                 FP = new MACCSFingerprinter();
                 break;
             case FP_PUBCHEM:
-                // TODO: 15/06/2020 Builder corretto?
                 FP = new PubchemFingerprinter(DefaultChemObjectBuilder.getInstance());
                 break;
             case FP_SUBSTRUCTURE:

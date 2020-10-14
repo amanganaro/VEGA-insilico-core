@@ -8,9 +8,13 @@ import insilico.core.tools.utils.MoleculeUtilities;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.isomorphism.Mappings;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class FunctionalGroups extends DescriptorBlock {
@@ -18,7 +22,8 @@ public class FunctionalGroups extends DescriptorBlock {
     private static final long serialVersionUID = 1L;
     private static final String BlockName = "Functional Groups";
 
-    private QueryAtomContainer[] Queries; // one for each pre-fetched SMARTS
+//    private QueryAtomContainer[] Queries; // one for each pre-fetched SMARTS
+    private Pattern[] Queries;
 
 
     // Definition of FG names, description and SMARTS
@@ -502,11 +507,11 @@ public class FunctionalGroups extends DescriptorBlock {
         super();
         this.Name = FunctionalGroups.BlockName;
         int FGNumber = FGSmarts.length;
-        Queries = new QueryAtomContainer[FGNumber];
-        for (int i=0; i<FGNumber; i++) {
+//        Queries = new QueryAtomContainer[FGNumber];
+        Queries = new Pattern[FGNumber];
+        for (int i = 0; i < FGNumber; i++) {
             try {
-                // TODO: 15/06/2020 Quale builder utilizzare per SmartParse.parse?
-                Queries[i] = SMARTSParser.parse(FGSmarts[i], DefaultChemObjectBuilder.getInstance());
+                Queries[i] = SmartsPattern.create(FGSmarts[i]).setPrepare(false);
             } catch (Exception e) {
                 Queries[i] = null;
             }
@@ -538,12 +543,12 @@ public class FunctionalGroups extends DescriptorBlock {
         try {
 
             // Matcher tool
-            CustomQueryMatcher Matcher;
-            try {
-                Matcher = new CustomQueryMatcher(mol);
-            } catch (Exception e) {
-                throw new Exception("Unable to init SMARTS matcher");
-            }
+//            CustomQueryMatcher Matcher;
+//            try {
+//                Matcher = new CustomQueryMatcher(mol);
+//            } catch (Exception e) {
+//                throw new Exception("Unable to init SMARTS matcher");
+//            }
 
             // Performs SMARTS matching
             for (int i=0; i<this.GetSize(); i++) {
@@ -557,15 +562,16 @@ public class FunctionalGroups extends DescriptorBlock {
                     throw new Exception("Unable to init SMARTS query no. " + i);
 
                 int nmatch = 0;
-                List mappings;
+//                List mappings;
+                List<Mappings> mappings = new ArrayList<>();
                 boolean status;
                 boolean err = false;
 
                 try {
-                    status = Matcher.matches(Queries[i]);
+                    status = Queries[i].matches(mol.GetStructure());
                     if (status) {
-                        mappings = Matcher.getUniqueMatchingAtoms();
-                        nmatch = mappings.size();
+                        mappings.add(Queries[i].matchAll(mol.GetStructure()));
+                        nmatch = Queries[i].matchAll(mol.GetStructure()).countUnique();
                     }
                 } catch (Exception e) {
                     err = true;

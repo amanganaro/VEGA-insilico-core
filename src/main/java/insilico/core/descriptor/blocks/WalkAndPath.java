@@ -197,12 +197,12 @@ public class WalkAndPath extends DescriptorBlock {
 
             piID = Math.log(1+piID+nSK);
             TPC = Math.log(1+TPC+nSK);
-            
+
             double PCR = piID / TPC;
             SetByName("piID", piID);
             SetByName("TPC", TPC);
             SetByName("PCR", PCR);
-        }        
+        }
         
         if (getBoolProperty(PARAMETER_INCLUDE_SRW)) {
             int SRWMaxPath = pathsList.get(pathsList.size()-1);

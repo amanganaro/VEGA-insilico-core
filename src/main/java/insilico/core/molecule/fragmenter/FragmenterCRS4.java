@@ -269,6 +269,7 @@ public class FragmenterCRS4 {
         boolean status = false;
         Iterator<String> keys = smarts.keySet().iterator();
         String chiave;
+//        SMARTSQueryTool valore;
         SmartsPattern valore;
         List mappings;
         Mappings map;
@@ -283,10 +284,10 @@ public class FragmenterCRS4 {
 
                 //  Returns the number of times the pattern was found in the target molecule.
 
-//                int nmatch = ((SmartsPattern) valore).countMatches();
+//                int nmatch = valore.countMatches();
                 int nmatch = valore.match(atomContainer).length;
 
-//                mappings = ((SMARTSQueryTool) valore).getMatchingAtoms();
+//                mappings = valore.getMatchingAtoms();
                 map = valore.matchAll(atomContainer);
 
                 mappings = Arrays.asList(map.toArray());
