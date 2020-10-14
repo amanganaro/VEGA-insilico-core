@@ -52,11 +52,11 @@ public class InsilicoMoleculeNormalization {
         // aromaticity - not compliant with the one used in the previous
         // VEGA libraries
         // Uses Cycles.all() to find SSSR (CHECK: aggiungere un timeout?)
-//        ElectronDonation ElModel = ElectronDonation.cdk();
-//        CycleFinder RingFinder = Cycles.all();
+        ElectronDonation ElModel = ElectronDonation.cdk();
+        CycleFinder RingFinder = Cycles.all();
 
-        ElectronDonation ElModel = ElectronDonation.daylight();
-        CycleFinder RingFinder = Cycles.or(Cycles.all(), Cycles.all(6));
+//        ElectronDonation ElModel = ElectronDonation.daylight();
+//        CycleFinder RingFinder = Cycles.or(Cycles.all(), Cycles.all(6));
 
         Aromaticity Arom = new Aromaticity(ElModel, RingFinder);
         Arom.apply(mol);
@@ -88,7 +88,17 @@ public class InsilicoMoleculeNormalization {
                 logger.warn(ex.getMessage());
             }
         }
-        
+
+        // Some rings containing N atoms are wrongly seen as NOT aromatic, it happens when the N is seen
+        // as part of a thioamide group (which is set in the AtomType property), example compound:
+        // COC(=S)n1ccnc1
+        // This atom type is hence removed and replaced with a normal PLANAR3 type
+        for (IAtom a : Mol.atoms())
+            if (a.getAtomTypeName().equalsIgnoreCase("N.thioamide")) {
+                a.setAtomTypeName("N.planar3");
+                a.setHybridization(IAtomType.Hybridization.PLANAR3);
+            }
+
     }
         
     
