@@ -1,4 +1,4 @@
-package insilico.core.descriptor.pro.weights;
+package insilico.core.descriptor.pro.weights.basic;
 
 import insilico.core.descriptor.Descriptor;
 import org.openscience.cdk.interfaces.IAtom;

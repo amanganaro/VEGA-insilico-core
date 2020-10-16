@@ -1,13 +1,8 @@
 package insilico.core.descriptor.pro;
 
-import com.hp.hpl.jena.reasoner.rulesys.builtins.Sum;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
-import insilico.core.descriptor.pro.weights.*;
-import insilico.core.descriptor.weight.Electronegativity;
-import insilico.core.descriptor.weight.Mass;
-import insilico.core.descriptor.weight.Polarizability;
-import insilico.core.descriptor.weight.VanDerWaals;
+import insilico.core.descriptor.pro.weights.basic.*;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import lombok.extern.slf4j.Slf4j;
@@ -59,9 +54,9 @@ public class Constitutional extends DescriptorBlock {
         this.Add("nBt", "number of bonds (total)");
         this.Add("nBo", "number of non-H bonds");
         this.Add("nBm", "number of multiple bonds");
-        this.Add("nDblBo", "number of double bonds");
-        this.Add("nTrpBo", "number of triple bonds");
-        this.Add("nArBo", "number of aromatic bonds");
+        this.Add("nDB", "number of double bonds");
+        this.Add("nTB", "number of triple bonds");
+        this.Add("nAB", "number of aromatic bonds");
         this.Add("SCBO", "sum of conventional bond orders (H-depleted)");
 
         this.Add("nH", "number of Hydrogen atoms");
@@ -220,9 +215,9 @@ public class Constitutional extends DescriptorBlock {
             this.SetByName("nBt", nBO + nTotH);
             this.SetByName("nBo", nBO);
             this.SetByName("nBm", nMulBonds);
-            this.SetByName("nDblBo", nDblBonds);
-            this.SetByName("nTrpBo", nTrpBonds);
-            this.SetByName("nArBo", nArBonds);
+            this.SetByName("nDB", nDblBonds);
+            this.SetByName("nTB", nTrpBonds);
+            this.SetByName("nAB", nArBonds);
             this.SetByName("SCBO", scbo);
 
 
@@ -255,12 +250,21 @@ public class Constitutional extends DescriptorBlock {
 
                 double sum = 0;
                 for (int i=0; i<nSK; i++) {
-                    if (weights[i] == Descriptor.MISSING_VALUE)
+                    if (weights[i] == Descriptor.MISSING_VALUE) {
                         sum = Descriptor.MISSING_VALUE;
-                    else {
-                        sum += weights[i];
-                        if (H[i] > 0)
-                            sum += weightH * H[i];
+                        break;
+                    } else {
+                        if (w == 0) {
+                            // weight mass -> uses original values
+                            sum += weights[i];
+                            if (H[i] > 0)
+                                sum += weightH * H[i];
+                        } else {
+                            // all other weights -> use carbon-scaled values
+                            sum += weights[i] / weightC;
+                            if (H[i] > 0)
+                                sum += (weightH / weightC) * H[i];
+                        }
                     }
                 }
 

@@ -1,4 +1,4 @@
-package insilico.core.descriptor.pro.weights;
+package insilico.core.descriptor.pro.weights.basic;
 
 import insilico.core.descriptor.Descriptor;
 import org.openscience.cdk.interfaces.IAtom;
@@ -22,8 +22,8 @@ public class WeightsMass implements iBasicWeight {
         {"B", 10.81},
         {"C", 12.01},
         {"N", 14.01},
-        {"O", 16},
-        {"F", 19},
+        {"O", 16.00},
+        {"F", 19.00},
         {"Ne", 20.18},
         {"Na", 22.991},
         {"Mg", 24.305},
@@ -38,7 +38,7 @@ public class WeightsMass implements iBasicWeight {
         {"Sc", 44.956},
         {"Ti", 47.867},
         {"V", 50.942},
-        {"Cr", 52},
+        {"Cr", 52.00},
         {"Mn", 54.94},
         {"Fe", 55.85},
         {"Co", 58.93},
@@ -57,7 +57,7 @@ public class WeightsMass implements iBasicWeight {
         {"Zr", 91.224},
         {"Nb", 92.906},
         {"Mo", 95.94},
-        {"Tc", 98},
+        {"Tc", 98.00},
         {"Ru", 101.07},
         {"Rh", 102.906},
         {"Pd", 106.42},
@@ -75,7 +75,7 @@ public class WeightsMass implements iBasicWeight {
         {"Ce", 140.116},
         {"Pr", 140.908},
         {"Nd", 144.24},
-        {"Pm", 145},
+        {"Pm", 145.00},
         {"Sm", 150.36},
         {"Eu", 151.964},
         {"Gd", 157.25},
@@ -98,33 +98,33 @@ public class WeightsMass implements iBasicWeight {
         {"Tl", 204.38},
         {"Pb", 207.2},
         {"Bi", 208.98},
-        {"Po", 210},
-        {"At", 210},
-        {"Rn", 222},
-        {"Fr", 223},
-        {"Ra", 226},
-        {"Ac", 227},
+        {"Po", 210.00},
+        {"At", 210.00},
+        {"Rn", 222.00},
+        {"Fr", 223.00},
+        {"Ra", 226.00},
+        {"Ac", 227.00},
         {"Th", 232.038},
         {"Pa", 231.036},
         {"U", 238.029},
-        {"Np", 237},
-        {"Pu", 244},
-        {"Am", 243},
-        {"Cm", 247},
-        {"Bk", 247},
-        {"Cf", 251},
-        {"Es", 252},
-        {"Fm", 257},
-        {"Md", 258},
-        {"No", 259},
-        {"Lr", 262},
-        {"Rf", 261},
-        {"Db", 262},
-        {"Sg", 266},
-        {"Bh", 264},
-        {"Hs", 269},
-        {"Mt", 268},
-        {"Ds", 271}
+        {"Np", 237.00},
+        {"Pu", 244.00},
+        {"Am", 243.00},
+        {"Cm", 247.00},
+        {"Bk", 247.00},
+        {"Cf", 251.00},
+        {"Es", 252.00},
+        {"Fm", 257.00},
+        {"Md", 258.00},
+        {"No", 259.00},
+        {"Lr", 262.00},
+        {"Rf", 261.00},
+        {"Db", 262.00},
+        {"Sg", 266.00},
+        {"Bh", 264.00},
+        {"Hs", 269.00},
+        {"Mt", 268.00},
+        {"Ds", 271.00}
     };
 
 
@@ -162,7 +162,7 @@ public class WeightsMass implements iBasicWeight {
         try {
             for (Object[] o : mass) {
                 if (((String) o[0]).equalsIgnoreCase(AtomType))
-                    return (Double) o[1];
+                    return (double) o[1];
             }
         } catch (Throwable e) {
             return Descriptor.MISSING_VALUE;
