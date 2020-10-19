@@ -3,6 +3,7 @@ package insilico.core.descriptor.pro;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.pro.weights.basic.*;
+import insilico.core.descriptor.pro.weights.iBasicWeight;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import lombok.extern.slf4j.Slf4j;

@@ -1,6 +1,7 @@
 package insilico.core.descriptor.pro.weights.basic;
 
 import insilico.core.descriptor.Descriptor;
+import insilico.core.descriptor.pro.weights.iBasicWeight;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -13,6 +14,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class WeightsPolarizability implements iBasicWeight {
+
+    private static final String SYMBOL = "p";
+    private static final String NAME = "polarizability";
 
     private final static Object[][] mass = {
         {"H", 0.67},
@@ -84,7 +88,7 @@ public class WeightsPolarizability implements iBasicWeight {
         {"Ho", 23.6},
         {"Er", 22.7},
         {"Tm", 21.8},
-        {"Yb", 21},
+        {"Yb", 21.00},
         {"Lu", 21.9},
         {"Hf", 16.2},
         {"Ta", 13.1},
@@ -99,7 +103,7 @@ public class WeightsPolarizability implements iBasicWeight {
         {"Pb", 6.8},
         {"Bi", 7.4},
         {"Po", 6.8},
-        {"At", 6},
+        {"At", 6.00},
         {"Rn", 5.3},
         {"Fr", 48.7},
         {"Ra", 38.3},
@@ -110,7 +114,7 @@ public class WeightsPolarizability implements iBasicWeight {
         {"Np", 24.8},
         {"Pu", 24.5},
         {"Am", 23.3},
-        {"Cm", 23},
+        {"Cm", 23.00},
         {"Bk", 22.7},
         {"Cf", 20.5},
         {"Es", 19.7},
@@ -163,4 +167,47 @@ public class WeightsPolarizability implements iBasicWeight {
         return Descriptor.MISSING_VALUE;
     }
 
+    /**
+     * Return the weights for the molecule, scaled on Carbon.
+     *
+     * @param mol molecule to be processed
+     * @return array of scaled weights
+     */
+    public double[] getScaledWeights(IAtomContainer mol) {
+        double[] w = getWeights(mol);
+        for (int i=0; i<w.length; i++)
+            w[i] = w[i]  == Descriptor.MISSING_VALUE ? Descriptor.MISSING_VALUE :  w[i] / getWeight("C");
+        return w;
+    }
+
+
+    /**
+     * Return the weight of an atom type, scaled on Carbon.
+     *
+     * @param AtomType element symbol of the atom to be processed
+     * @return scaled weight
+     */
+    public double getScaledWeight(String AtomType) {
+
+        return getWeight(AtomType) == Descriptor.MISSING_VALUE ? Descriptor.MISSING_VALUE : ( getWeight(AtomType) / getWeight("C"));
+    }
+
+    /**
+     * Return the name of the weighting scheme
+     * @return name of the weighting scheme
+     */
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+
+    /**
+     * Return the symbol of the weighting scheme
+     * @return symbol of the weighting scheme
+     */
+    @Override
+    public String getSymbol() {
+        return SYMBOL;
+    }
 }

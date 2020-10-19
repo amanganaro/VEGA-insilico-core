@@ -1,6 +1,8 @@
 package insilico.core.molecule.tools;
 
+import insilico.core.descriptor.Descriptor;
 import insilico.core.tools.utils.MoleculeUtilities;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
@@ -14,16 +16,17 @@ import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import org.openscience.cdk.tools.manipulator.AtomTypeManipulator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Alberto
  */
+@Slf4j
 public class InsilicoMoleculeNormalization {
 
-    private static Logger logger = LoggerFactory.getLogger(InsilicoMoleculeNormalization.class);
+    // If true, nitro groups are normalized as in Dragon7: N(=O)=O
+    // Otherwise, nitro groups are normalized as [N+]([O-])=O
+    public static boolean DRAGON7_COMPLIANT_RESONANCE_NORMALIZATION = false;
 
     // molecole con DISCORDANZE fra vecchio e nuovo
     //
@@ -85,7 +88,7 @@ public class InsilicoMoleculeNormalization {
                 IAtomType type = matcher.findMatchingAtomType(Mol, a);
                 AtomTypeManipulator.configure(a, type);
             } catch (Exception ex) {
-                logger.warn(ex.getMessage());
+                log.warn(ex.getMessage());
             }
         }
 
@@ -141,7 +144,7 @@ public class InsilicoMoleculeNormalization {
 
 
         int idxN;
-        int idxDoubleO, idxTripleN;
+        int idxDoubleO, idxSingleOminus, idxTripleN;
 
         for (int i=0; i<Mol.getAtomCount(); i++) {
 
@@ -151,9 +154,17 @@ public class InsilicoMoleculeNormalization {
 
                 idxN = i;
                 idxDoubleO = -1;
+                idxSingleOminus = -1;
                 idxTripleN = -1;
-                int VD=0, Odbl=0, Ndbl=0, Ntriple=0;
+                int VD=0, Odbl=0, Ominusng=0, Ndbl=0, Ntriple=0;
                 int Cdbl=0, Ctriple=0;
+
+                int NCharge;
+                try {
+                    NCharge = Mol.getAtom(idxN).getFormalCharge();
+                } catch (Exception e) {
+                    NCharge = 0;
+                }
 
                 for (int j=0; j<Mol.getAtomCount(); j++) {
                     if (j == i)
@@ -165,6 +176,10 @@ public class InsilicoMoleculeNormalization {
                             if (ConnMatrix[i][j] == 2) {
                                 Odbl++;
                                 idxDoubleO = j;
+                            }
+                            if  ( (ConnMatrix[i][j] == 1) && (Mol.getAtom(j).getFormalCharge() == -1) ) {
+                                Ominusng++;
+                                idxSingleOminus = j;
                             }
                         }
 
@@ -192,33 +207,38 @@ public class InsilicoMoleculeNormalization {
                 }
 
 
-                // NO2 in O=N=O form, to be changed into O=[N+][O-]
-                if ((Odbl==2)) {
-                    int NCharge;
-                    try {
-                        NCharge = Mol.getAtom(idxN).getFormalCharge();
-                    } catch (Exception e) {
-                        NCharge = 0;
+                if (DRAGON7_COMPLIANT_RESONANCE_NORMALIZATION) {
+
+                    // As in Dragon: NO2 in O=[N+][O-] form changed to O=N=O
+                    if ((Odbl == 1) && (Ominusng == 1) && (NCharge > 0)) {
+                        Mol.getAtom(idxN).setFormalCharge(NCharge - 1);
+                        Mol.getAtom(idxSingleOminus).setFormalCharge(0);
+                        Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxSingleOminus)).setOrder(IBond.Order.DOUBLE);
+
+                        HasModified = true;
+                        log.info("Normalized a NO2 group to O=N=O form");
+                        continue;
                     }
 
-                    Mol.getAtom(idxN).setFormalCharge(NCharge + 1);
-                    Mol.getAtom(idxDoubleO).setFormalCharge(-1);
-                    Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
+                } else {
 
-                    HasModified = true;
-                    logger.info("Normalized a NO2 group");
-                    continue;
+                    // NO2 in O=N=O form, to be changed into O=[N+][O-]
+                    if ((Odbl == 2)) {
+                        Mol.getAtom(idxN).setFormalCharge(NCharge + 1);
+                        Mol.getAtom(idxDoubleO).setFormalCharge(-1);
+                        Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
+
+                        HasModified = true;
+                        log.info("Normalized a NO2 group to O=[N+][O-] form");
+                        continue;
+                    }
+
                 }
 
                 // N=N#N, to be changed into N=[N+]=[N-]
                 // C=N#N, to be changed into C=[N+]=[N-]
                 if ( ((Ndbl==1)&&(Ntriple==1)) || ((Cdbl==1)&&(Ntriple==1))) {
-                    int NCharge, NTripleCharge;
-                    try {
-                        NCharge = Mol.getAtom(idxN).getFormalCharge();
-                    } catch (Exception e) {
-                        NCharge = 0;
-                    }
+                    int NTripleCharge;
                     try {
                         NTripleCharge = Mol.getAtom(idxTripleN).getFormalCharge();
                     } catch (Exception e) {
@@ -230,7 +250,7 @@ public class InsilicoMoleculeNormalization {
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxTripleN)).setOrder(IBond.Order.DOUBLE);
 
                     HasModified = true;
-                    logger.info("Normalized a N=N#N / C=N#N group");
+                    log.info("Normalized a N=N#N / C=N#N group");
                     continue;
                 }
 
@@ -239,19 +259,13 @@ public class InsilicoMoleculeNormalization {
                 // N=N=O, to be changed into N=[N+][O-]
                 if ( ((Ctriple==1)&&(Odbl==1)) || ((Cdbl==1)&&(Odbl==1)) ||
                         ((Ndbl==1)&&(Odbl==1)) ){
-                    int NCharge;
-                    try {
-                        NCharge = Mol.getAtom(idxN).getFormalCharge();
-                    } catch (Exception e) {
-                        NCharge = 0;
-                    }
 
                     Mol.getAtom(idxN).setFormalCharge(NCharge + 1);
                     Mol.getAtom(idxDoubleO).setFormalCharge(-1);
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
 
                     HasModified = true;
-                    logger.info("Normalized a C#N=O / C=N=O / N=N=O group");
+                    log.info("Normalized a C#N=O / C=N=O / N=N=O group");
                 }
 
 

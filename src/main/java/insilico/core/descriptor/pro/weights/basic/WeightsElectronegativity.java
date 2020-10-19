@@ -1,6 +1,7 @@
 package insilico.core.descriptor.pro.weights.basic;
 
 import insilico.core.descriptor.Descriptor;
+import insilico.core.descriptor.pro.weights.iBasicWeight;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -14,6 +15,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  */
 public class WeightsElectronegativity implements iBasicWeight {
 
+    private static final String SYMBOL = "e";
+    private static final String NAME = "Sanderson electronegativity";
+
     private final static Object[][] mass = {
         {"H", 2.59},
         {"Li", 0.89},
@@ -22,7 +26,7 @@ public class WeightsElectronegativity implements iBasicWeight {
         {"C", 2.75},
         {"N", 3.19},
         {"O", 3.65},
-        {"F", 4},
+        {"F", 4.00},
         {"Ne", 4.5},
         {"Na", 0.56},
         {"Mg", 1.32},
@@ -115,6 +119,52 @@ public class WeightsElectronegativity implements iBasicWeight {
         }
 
         return Descriptor.MISSING_VALUE;
+    }
+
+
+    /**
+     * Return the weights for the molecule, scaled on Carbon.
+     *
+     * @param mol molecule to be processed
+     * @return array of scaled weights
+     */
+    public double[] getScaledWeights(IAtomContainer mol) {
+        double[] w = getWeights(mol);
+        for (int i=0; i<w.length; i++)
+            w[i] = w[i]  == Descriptor.MISSING_VALUE ? Descriptor.MISSING_VALUE :  w[i] / getWeight("C");
+        return w;
+    }
+
+
+    /**
+     * Return the weight of an atom type, scaled on Carbon.
+     *
+     * @param AtomType element symbol of the atom to be processed
+     * @return scaled weight
+     */
+    public double getScaledWeight(String AtomType) {
+
+        return getWeight(AtomType) == Descriptor.MISSING_VALUE ? Descriptor.MISSING_VALUE : ( getWeight(AtomType) / getWeight("C"));
+    }
+
+
+    /**
+     * Return the name of the weighting scheme
+     * @return name of the weighting scheme
+     */
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+
+    /**
+     * Return the symbol of the weighting scheme
+     * @return symbol of the weighting scheme
+     */
+    @Override
+    public String getSymbol() {
+        return SYMBOL;
     }
 
 }

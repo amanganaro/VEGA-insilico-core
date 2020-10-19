@@ -1,6 +1,7 @@
 package insilico.core.descriptor.pro.weights.basic;
 
 import insilico.core.descriptor.Descriptor;
+import insilico.core.descriptor.pro.weights.iBasicWeight;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -13,6 +14,9 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class WeightsMass implements iBasicWeight {
+
+    private static final String SYMBOL = "m";
+    private static final String NAME = "mass";
 
     private final static Object[][] mass = {
         {"H", 1.01},
@@ -170,5 +174,53 @@ public class WeightsMass implements iBasicWeight {
 
         return Descriptor.MISSING_VALUE;
     }
+
+
+    /**
+     * Return the weights for the molecule, scaled on Carbon.
+     *
+     * @param mol molecule to be processed
+     * @return array of scaled weights
+     */
+    public double[] getScaledWeights(IAtomContainer mol) {
+        double[] w = getWeights(mol);
+        for (int i=0; i<w.length; i++)
+            w[i] = w[i]  == Descriptor.MISSING_VALUE ? Descriptor.MISSING_VALUE :  w[i] / getWeight("C");
+        return w;
+    }
+
+
+    /**
+     * Return the weight of an atom type, scaled on Carbon.
+     *
+     * @param AtomType element symbol of the atom to be processed
+     * @return scaled weight
+     */
+    public double getScaledWeight(String AtomType) {
+
+        return getWeight(AtomType) == Descriptor.MISSING_VALUE ? Descriptor.MISSING_VALUE : ( getWeight(AtomType) / getWeight("C"));
+    }
+
+
+    /**
+     * Return the name of the weighting scheme
+     * @return name of the weighting scheme
+     */
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+
+    /**
+     * Return the symbol of the weighting scheme
+     * @return symbol of the weighting scheme
+     */
+    @Override
+    public String getSymbol() {
+        return SYMBOL;
+    }
+
+
 
 }
