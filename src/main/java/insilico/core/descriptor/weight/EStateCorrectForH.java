@@ -251,7 +251,7 @@ public class EStateCorrectForH {
     private void CalculateIntrinsicStateAndKHE(IAtomContainer m) {
         double Z=0, Zv=0;
         for (int i = 0; i <= m.getAtomCount() - 1; i++) {
-            Atom a = (Atom)m.getAtom(i);
+            IAtom a = (IAtom)m.getAtom(i);
 
             int period=(Integer)(periods.get(a.getSymbol()));
             double N = (double)period;

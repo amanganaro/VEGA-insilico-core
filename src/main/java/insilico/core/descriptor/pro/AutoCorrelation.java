@@ -81,115 +81,123 @@ public class AutoCorrelation extends DescriptorBlock {
     @Override
     public void Calculate(InsilicoMolecule mol) {
 
-        // Generate/clears descriptors
-        GenerateDescriptors();
-
-        // AC are calculated on H-filled molecules
-
-        IAtomContainer m;
         try {
-            IAtomContainer orig_m = mol.GetStructure();
-            m = Manipulator.AddHydrogens(orig_m);
-        } catch (InvalidMoleculeException | GenericFailureException e) {
-            log.warn("Invalid structure, unable to calculate: " + this.Name);
-            SetAllValues(Descriptor.MISSING_VALUE);
-            return;
-        }
 
-        // Gets matrices
-        int[][] TopoMatrix;
-        try {
-            TopoMatrix = TopoDistanceMatrix.getMatrix(m);
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-            SetAllValues(Descriptor.MISSING_VALUE);
-            return;
-        }
+            // Generate/clears descriptors
+            GenerateDescriptors();
 
-        int nSK = m.getAtomCount();
+            // AC are calculated on H-filled molecules
 
-        // Cycle for all found weighting schemes
-
-        for (iWeight curWeight : bWeights) {
-
-            // Sets needed weights
-            double[] w;
-
-            if (curWeight.getClass() == WeightsIState.class) {
-
-                // I-States
-                w = ((WeightsIState)curWeight).getWeights(m, true);
-
-                // correction for compatibility with D7
-                // H I-state is always 1
-                for (int i=0; i<nSK; i++) {
-                    if (m.getAtom(i).getSymbol().equalsIgnoreCase("H"))
-                        w[i] = 1;
-                }
-
-            } else {
-
-                // All other weights are basic weights (scaled values)
-                w = ((iBasicWeight) curWeight).getScaledWeights(m);
+            IAtomContainer m;
+            try {
+                IAtomContainer orig_m = mol.GetStructure();
+                m = Manipulator.AddHydrogens(orig_m);
+            } catch (InvalidMoleculeException | GenericFailureException e) {
+                log.warn("Invalid structure, unable to calculate: " + this.Name);
+                SetAllValues(Descriptor.MISSING_VALUE);
+                return;
             }
 
-            // If one or more weights are not available, sets all to missing value
-            boolean MissingWeight = false;
-            for (int i=0; i<nSK; i++)
-                if (w[i] == Descriptor.MISSING_VALUE)
-                    MissingWeight = true;
-            if (MissingWeight)
-                continue;
+            // Gets matrices
+            int[][] TopoMatrix;
+            try {
+                TopoMatrix = TopoDistanceMatrix.getMatrix(m);
+            } catch (Exception e) {
+                log.warn(e.getMessage());
+                SetAllValues(Descriptor.MISSING_VALUE);
+                return;
+            }
 
-            // Calculates weights averages
-            double wA = 0;
-            for (int i=0; i<nSK; i++)
-                wA += w[i];
-            wA = wA / ((double) nSK);
+            int nSK = m.getAtomCount();
 
-            // Calculates autocorrelations
-            for (int lag=1; lag<=MAXLAG; lag++) {
+            // Cycle for all found weighting schemes
 
-                double AC=0, ACS=0, MoranAC=0, GearyAC=0;
-                double denom = 0, delta = 0;
+            for (iWeight curWeight : bWeights) {
 
-                for (int i=0; i<nSK; i++) {
+                // Sets needed weights
+                double[] w;
 
-                    denom += Math.pow((w[i] - wA), 2);
+                if (curWeight.getClass() == WeightsIState.class) {
 
-                    for (int j=0; j<nSK; j++)
-                        if (TopoMatrix[i][j] == lag) {
-                            AC += w[i] * w[j];
-                            ACS += Math.abs((w[i]-wA) * (w[j]-wA));
-                            MoranAC += (w[i] - wA) * (w[j] - wA);
-                            GearyAC += Math.pow((w[i] - w[j]), 2);
-                            delta++;
-                        }
-                }
+                    // I-States
+                    w = ((WeightsIState)curWeight).getWeights(m, true);
 
-                if (delta > 0) {
-                    if (denom == 0) {
-                        MoranAC = 1;
-                        GearyAC = 0;
-                    } else {
-                        MoranAC = ((1 / delta) * MoranAC) / ((1 / ((double)nSK)) * denom);
-                        GearyAC = ((1 / (2 * delta)) * GearyAC) / ((1 / ((double)(nSK - 1))) * denom);
+                    // correction for compatibility with D7
+                    // H I-state is always 1
+                    for (int i=0; i<nSK; i++) {
+                        if (m.getAtom(i).getSymbol().equalsIgnoreCase("H"))
+                            w[i] = 1;
                     }
+
+                } else {
+
+                    // All other weights are basic weights (scaled values)
+                    w = ((iBasicWeight) curWeight).getScaledWeights(m);
                 }
 
-                // AC transformed in log form
-                AC /= 2.0;
-                AC = Math.log(1 + AC);
+                // If one or more weights are not available, sets all to missing value
+                boolean MissingWeight = false;
+                for (int i=0; i<nSK; i++)
+                    if (w[i] == Descriptor.MISSING_VALUE)
+                        MissingWeight = true;
+                if (MissingWeight)
+                    continue;
 
-                ACS /= 2.0;
+                // Calculates weights averages
+                double wA = 0;
+                for (int i=0; i<nSK; i++)
+                    wA += w[i];
+                wA = wA / ((double) nSK);
 
-                // Sets descriptors
-                SetByName("ATS" + lag + curWeight.getSymbol(), AC);
-                SetByName("ATSC" + lag + curWeight.getSymbol(), ACS);
-                SetByName("MATS" + lag + curWeight.getSymbol(), MoranAC);
-                SetByName("GATS" + lag + curWeight.getSymbol(), GearyAC);
+                // Calculates autocorrelations
+                for (int lag=1; lag<=MAXLAG; lag++) {
+
+                    double AC=0, ACS=0, MoranAC=0, GearyAC=0;
+                    double denom = 0, delta = 0;
+
+                    for (int i=0; i<nSK; i++) {
+
+                        denom += Math.pow((w[i] - wA), 2);
+
+                        for (int j=0; j<nSK; j++)
+                            if (TopoMatrix[i][j] == lag) {
+                                AC += w[i] * w[j];
+                                ACS += Math.abs((w[i]-wA) * (w[j]-wA));
+                                MoranAC += (w[i] - wA) * (w[j] - wA);
+                                GearyAC += Math.pow((w[i] - w[j]), 2);
+                                delta++;
+                            }
+                    }
+
+                    if (delta > 0) {
+                        if (denom == 0) {
+                            MoranAC = 1;
+                            GearyAC = 0;
+                        } else {
+                            MoranAC = ((1 / delta) * MoranAC) / ((1 / ((double)nSK)) * denom);
+                            GearyAC = ((1 / (2 * delta)) * GearyAC) / ((1 / ((double)(nSK - 1))) * denom);
+                        }
+                    }
+
+                    // AC transformed in log form
+                    AC /= 2.0;
+                    AC = Math.log(1 + AC);
+
+                    ACS /= 2.0;
+
+                    // Sets descriptors
+                    SetByName("ATS" + lag + curWeight.getSymbol(), AC);
+                    SetByName("ATSC" + lag + curWeight.getSymbol(), ACS);
+                    SetByName("MATS" + lag + curWeight.getSymbol(), MoranAC);
+                    SetByName("GATS" + lag + curWeight.getSymbol(), GearyAC);
+                }
             }
+
+        } catch (Throwable e) {
+            log.warn("Unable to calculate: " + this.Name + " - " + e.getMessage());
+            this.SetAllValues(Descriptor.MISSING_VALUE);
         }
+
     }
 
 

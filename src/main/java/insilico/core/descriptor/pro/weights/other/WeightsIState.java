@@ -61,7 +61,7 @@ public class WeightsIState implements iWeight {
         if (HasExplicitH) {
             int nH = 0;
             for (IAtom conn : mol.getConnectedAtomsList(a))
-                if (a.getAtomicNumber() == 1)
+                if (conn.getAtomicNumber() == 1)
                     nH++;
             D = mol.getConnectedBondsCount(a) - nH;
         } else {
@@ -81,7 +81,7 @@ public class WeightsIState implements iWeight {
         if (HasExplicitH) {
             int nH = 0;
             for (IAtom conn : mol.getConnectedAtomsList(a))
-                if (a.getAtomicNumber() == 1)
+                if (conn.getAtomicNumber() == 1)
                     nH++;
             DeltaV = count - nH;
         } else {
