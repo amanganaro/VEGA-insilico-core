@@ -3,16 +3,15 @@ package insilico.core.molecule.tools;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.tools.utils.MoleculeUtilities;
 import lombok.extern.slf4j.Slf4j;
+import org.openscience.cdk.CDKConstants;
+import org.openscience.cdk.RingSet;
 import org.openscience.cdk.aromaticity.Aromaticity;
 import org.openscience.cdk.aromaticity.ElectronDonation;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
 import org.openscience.cdk.graph.CycleFinder;
 import org.openscience.cdk.graph.Cycles;
 import org.openscience.cdk.graph.matrix.AdjacencyMatrix;
-import org.openscience.cdk.interfaces.IAtom;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IAtomType;
-import org.openscience.cdk.interfaces.IBond;
+import org.openscience.cdk.interfaces.*;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.tools.manipulator.AtomContainerManipulator;
 import org.openscience.cdk.tools.manipulator.AtomTypeManipulator;
@@ -58,11 +57,11 @@ public class InsilicoMoleculeNormalization {
         ElectronDonation ElModel = ElectronDonation.cdk();
         CycleFinder RingFinder = Cycles.all();
 
-//        ElectronDonation ElModel = ElectronDonation.daylight();
-//        CycleFinder RingFinder = Cycles.or(Cycles.all(), Cycles.all(6));
-
         Aromaticity Arom = new Aromaticity(ElModel, RingFinder);
         Arom.apply(mol);
+
+        // Finally check and fix some known problems with aromaticity
+        FixAromaticityProblems(mol);
 
         return(mol);
     }
@@ -273,6 +272,51 @@ public class InsilicoMoleculeNormalization {
         }
 
         return HasModified;
+    }
+
+
+    /**
+     * Fix some known problems on aromatic detection / setting.
+     *
+     * - Make aromatic the bond shared between two aromatic fused structures like in the example mol:
+     * CN1C=NC(N)=C2N=CN=C12
+     * for unknown reason, in CDK the bond is not set as aromatic
+     *
+     * @param Mol
+     */
+    private static void FixAromaticityProblems(IAtomContainer Mol) {
+
+        Cycles cycles = Cycles.sssr(Mol);
+        RingSet SSSR = (RingSet) cycles.toRingSet();
+
+        for (IBond b : Mol.bonds()) {
+
+            // if the bond is already aromatic, skip
+            if (b.getFlag(CDKConstants.ISAROMATIC))
+                continue;
+
+            // check all NON aromatic bonds shared between two rings
+            // if both rings are aromatic (all atoms with the aromatic flag), the bond is set as aromatic
+
+            IRingSet rings = SSSR.getRings(b);
+
+            if (rings.getAtomContainerCount() != 2)
+                continue;
+
+            boolean AllAromatic = true;
+            for (IAtomContainer curRing : rings.atomContainers())
+                for (IAtom a : curRing.atoms())
+                    if (!a.getFlag(CDKConstants.ISAROMATIC)) {
+                        AllAromatic = false;
+                        break;
+                    }
+
+            if (AllAromatic) {
+                b.setFlag(CDKConstants.ISAROMATIC, true);
+                log.info("Fixed an aromatic bond between fused aromatic rings");
+            }
+
+        }
     }
 
 }
