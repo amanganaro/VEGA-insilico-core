@@ -25,7 +25,7 @@ public class InsilicoMoleculeNormalization {
 
     // If true, nitro groups are normalized as in Dragon7: N(=O)=O
     // Otherwise, nitro groups are normalized as [N+]([O-])=O
-    public static boolean DRAGON7_COMPLIANT_RESONANCE_NORMALIZATION = false;
+    public static boolean DRAGON7_COMPLIANT_NORMALIZATION = false;
 
     // molecole con DISCORDANZE fra vecchio e nuovo
     //
@@ -206,7 +206,7 @@ public class InsilicoMoleculeNormalization {
                 }
 
 
-                if (DRAGON7_COMPLIANT_RESONANCE_NORMALIZATION) {
+                if (DRAGON7_COMPLIANT_NORMALIZATION) {
 
                     // As in Dragon: NO2 in O=[N+][O-] form changed to O=N=O
                     if ((Odbl == 1) && (Ominusng == 1) && (NCharge > 0)) {
@@ -282,6 +282,10 @@ public class InsilicoMoleculeNormalization {
      * CN1C=NC(N)=C2N=CN=C12
      * for unknown reason, in CDK the bond is not set as aromatic
      *
+     * - Set as aromatic all bonds in a ring that has all aromatic atoms, to fix problems like in the following PAH:
+     * c1ccc2c(c1)c4cccc3cccc2c34
+     * where a 5-member ring is fused to benzene rings
+     *
      * @param Mol
      */
     private static void FixAromaticityProblems(IAtomContainer Mol) {
@@ -317,6 +321,22 @@ public class InsilicoMoleculeNormalization {
             }
 
         }
+
+
+        for (IAtomContainer curRing : SSSR.atomContainers()) {
+            boolean AllAromatic = true;
+            for (IAtom a : curRing.atoms())
+                if (!a.getFlag(CDKConstants.ISAROMATIC)) {
+                    AllAromatic = false;
+                    break;
+                }
+            if (AllAromatic) {
+                for (IBond b : curRing.bonds())
+                    b.setFlag(CDKConstants.ISAROMATIC, true);
+            }
+
+        }
+
     }
 
 }
