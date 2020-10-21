@@ -11,7 +11,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-public class BurdenMatrix {
+public class BurdenMatrixOLD {
     /**
      * Calculates Burden matrix.<p>
      * Each element on the diagonal has the value of Z for the i-th atom
@@ -37,12 +37,6 @@ public class BurdenMatrix {
                 } else {
                     if (ConnMat[i][j] > 0) {
                         matrix[i][j] = Math.sqrt(ConnMat[i][j]);
-
-                        // Correction for terminal bonds (+0.1)
-                        int vd_i = molecule.getConnectedAtomsList(molecule.getAtom(i)).size();
-                        int vd_j = molecule.getConnectedAtomsList(molecule.getAtom(j)).size();
-                        if ( (vd_i == 1) || (vd_j == 1) )
-                            matrix[i][j] += 0.1;
                     } else {
                         matrix[i][j] = 0.001;
                     }
