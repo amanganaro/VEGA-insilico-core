@@ -147,7 +147,7 @@ public class GhoseCrippenACF {
     // Names of the undefined fragments in the ACF_NAMES list
     //
     public final static String[] ACF_UNDEFINED_NAMES = {
-            "U-000", "U-080", "U-105", "U-113", "U-114"
+            "U-000", "U-045", "U-080", "U-105", "U-113", "U-114"
     };
 
 
