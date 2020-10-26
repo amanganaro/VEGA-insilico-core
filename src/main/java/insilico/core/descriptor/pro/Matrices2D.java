@@ -32,6 +32,8 @@ public class Matrices2D extends DescriptorBlock {
             {"A", "adjacency matrix"},
             {"D", "topological distance matrix"},
             {"L", "laplace matrix"},
+            {"H2", "reciprocal squared distance matrix"},
+            {"D/Dt", "distance/detour matrix"},
             {"Dz", "Barysz matrix", "Z", "atomic number"},
             {"Dz", "Barysz matrix", "m", "mass"},
             {"Dz", "Barysz matrix", "v", "van der waals volume"},
@@ -51,11 +53,11 @@ public class Matrices2D extends DescriptorBlock {
     // ** topo distance
     // ** laplace
     // chi
-    // reciprocal squared distance
+    // ** reciprocal squared distance
     // detour
-    // distance / detour
+    // ** distance / detour
     // ** barysz - Z, m, v, e, p, i
-    // **burden - m, v, e, p, i, s [MANCA s]
+    // ** burden - m, v, e, p, i, s [MANCA s]
 
 
     /**
@@ -73,12 +75,17 @@ public class Matrices2D extends DescriptorBlock {
         DescList.clear();
 
         EigenvalueBasedDescriptors eig = new EigenvalueBasedDescriptors();
+        MatrixBasedDescriptors mat = new MatrixBasedDescriptors();
         for (String[] curMat : MATRICES) {
 
             if (curMat.length > 2) {
+                for (String[] desc : mat.NAMES)
+                    Add(desc[0] + curMat[0] + "(" + curMat[2] + ")", desc[1] + " from " + curMat[1] + " weighted by " + curMat[3]);
                 for (String[] desc : eig.NAMES)
                     Add(desc[0] + curMat[0] + "(" + curMat[2] + ")", desc[1] + " from " + curMat[1] + " weighted by " + curMat[3]);
             } else {
+                for (String[] desc : mat.NAMES)
+                    Add(desc[0] + curMat[0], desc[1] + " from " + curMat[1]);
                 for (String[] desc : eig.NAMES)
                     Add(desc[0] + curMat[0], desc[1] + " from " + curMat[1]);
             }
@@ -116,28 +123,39 @@ public class Matrices2D extends DescriptorBlock {
                 // Gets current matrix
                 String MatSymbol = curMat[0];
                 String MatSymbolForDesc = curMat[0] + (curMat.length>2? ("(" + curMat[2] + ")") : "");
-                double[][] eigMat = new double[nSK][nSK];
+                double[][] Mat = new double[nSK][nSK];
                 try {
 
                     if (MatSymbol.equalsIgnoreCase("A")) {
                         int[][] AdjMatrix = mol.GetMatrixAdjacency();
                         for (int i=0; i<nSK; i++)
                             for (int j=0; j<nSK; j++)
-                                eigMat[i][j] = AdjMatrix[i][j];
+                                Mat[i][j] = AdjMatrix[i][j];
                     }
 
                     if (MatSymbol.equalsIgnoreCase("D")) {
                         int[][] TopoMatrix = mol.GetMatrixTopologicalDistance();
                         for (int i=0; i<nSK; i++)
                             for (int j=0; j<nSK; j++)
-                                eigMat[i][j] = TopoMatrix[i][j];
+                                Mat[i][j] = TopoMatrix[i][j];
                     }
 
                     if (MatSymbol.equalsIgnoreCase("L")) {
                         int[][] LapMatrix = mol.GetMatrixLaplace();
                         for (int i=0; i<nSK; i++)
                             for (int j=0; j<nSK; j++)
-                                eigMat[i][j] = LapMatrix[i][j];
+                                Mat[i][j] = LapMatrix[i][j];
+                    }
+
+                    if (MatSymbol.equalsIgnoreCase("H2")) {
+                        int[][] TopoMatrix = mol.GetMatrixTopologicalDistance();
+                        for (int i=0; i<nSK; i++)
+                            for (int j=0; j<nSK; j++)
+                                Mat[i][j] = TopoMatrix[i][j] == 0 ? 0 : 1.0 / Math.pow(TopoMatrix[i][j], 2);
+                    }
+
+                    if (MatSymbol.equalsIgnoreCase("D/Dt")) {
+                        Mat = mol.GetMatrixDistanceDetour();
                     }
 
                     if (MatSymbol.equalsIgnoreCase("Dz")) {
@@ -151,11 +169,11 @@ public class Matrices2D extends DescriptorBlock {
                         if (curMat[2].equalsIgnoreCase("i")) BarLayer = 5;
                         for (int i=0; i<nSK; i++)
                             for (int j=0; j<nSK; j++)
-                                eigMat[i][j] = BarMat[i][j][BarLayer];
+                                Mat[i][j] = BarMat[i][j][BarLayer];
                     }
 
                     if (MatSymbol.equalsIgnoreCase("B")) {
-                        eigMat = mol.GetMatrixBurden();
+                        Mat = mol.GetMatrixBurden();
                         double[] w = new double[nSK];
                         if (curMat[2].equalsIgnoreCase("m"))
                             w = (new WeightsMass()).getScaledWeights(curMol);
@@ -169,7 +187,7 @@ public class Matrices2D extends DescriptorBlock {
                             w = (new WeightsIonizationPotential()).getScaledWeights(curMol);
                         // MANCA s
                         for (int i=0; i<nSK; i++)
-                            eigMat[i][i] = w[i];
+                            Mat[i][i] = w[i];
                     }
 
                 } catch (Exception e) {
@@ -178,12 +196,18 @@ public class Matrices2D extends DescriptorBlock {
                     return;
                 }
 
-                // Calculate standard eigenvalue-based descriptors
-                EigenvalueBasedDescriptors eig = new EigenvalueBasedDescriptors();
-                eig.Calculate(eigMat, nSK);
 
-                for (String k : eig.Descriptors.keySet())
-                    SetByName(k + MatSymbolForDesc, eig.Descriptors.get(k));
+                // Calculate standard matrix-based descriptors
+                MatrixBasedDescriptors matDesc = new MatrixBasedDescriptors();
+                matDesc.Calculate(Mat, nSK);
+                for (String k : matDesc.Descriptors.keySet())
+                    SetByName(k + MatSymbolForDesc, matDesc.Descriptors.get(k));
+
+                // Calculate standard eigenvalue-based descriptors
+                EigenvalueBasedDescriptors eigDesc = new EigenvalueBasedDescriptors();
+                eigDesc.Calculate(Mat, nSK);
+                for (String k : eigDesc.Descriptors.keySet())
+                    SetByName(k + MatSymbolForDesc, eigDesc.Descriptors.get(k));
 
             }
 
@@ -208,7 +232,10 @@ public class Matrices2D extends DescriptorBlock {
     }
 
 
+
     /**
+     * Inner class with the implementation of the set of eigenvalue-based descriptors, to be applied to all
+     * calculated matrices.
      *
      */
     private class EigenvalueBasedDescriptors {
@@ -223,14 +250,13 @@ public class Matrices2D extends DescriptorBlock {
                 {"SpDiam_", "Spectral diameter"}, // 6
                 {"SpAD_", "Spectral absolute deviation"}, // 7
                 {"SpMAD_", "Spectral mean absolute deviation"}, // 8
-//                {"", ""}, // 9
-//                {"", ""}, // 10
-//                {"", ""}, // 11
-//                {"", ""}, // 12
-//                {"", ""}, // 13
-//                {"", ""}, // 14
-//                {"", ""}, // 15
-//                {"", ""}, // 16
+                {"EE_", "Estrada-like index"}, // 9
+                {"SM1_", "Spectral moment of order 1"}, // 10
+                {"SM2_", "Spectral moment of order 2"}, // 11
+                {"SM3_", "Spectral moment of order 3"}, // 12
+                {"SM4_", "Spectral moment of order 4"}, // 13
+                {"SM5_", "Spectral moment of order 5"}, // 14
+                {"SM6_", "Spectral moment of order 6"}, // 15
         };
 
         public HashMap<String, Double> Descriptors;
@@ -253,18 +279,23 @@ public class Matrices2D extends DescriptorBlock {
                 return;
             }
 
+            // Eigenvalue based descriptors
             double SpAbs = 0;
             double SpPos = 0;
             double EigAve = 0;
             double EigMax = eigenvalues[0];
             double EigMin = eigenvalues[0];
+            double EigExpSum = 0;
             for (double val : eigenvalues) {
                 EigAve += val;
                 SpAbs += Math.abs(val);
                 if (val > 0)
                     SpPos += val;
-                if (val > EigMax) EigMax = val;
-                if (val< EigMin) EigMin = val;
+                if (val > EigMax)
+                    EigMax = val;
+                if (val< EigMin)
+                    EigMin = val;
+                EigExpSum += Math.exp(val);
             }
             EigAve = EigAve / (double) nSK;
             double SpPosA = SpPos / (double) nSK;
@@ -275,7 +306,21 @@ public class Matrices2D extends DescriptorBlock {
             for (double val : eigenvalues)
                 EigDev += Math.abs(val - EigAve);
             double NormEigDev = EigDev / (double) nSK;
+            double EstradaLike = Math.log(1 + EigExpSum);
 
+            // Eigenvalue spectral moments
+            double[] SpecMoments = new double[7];
+            for (double d : SpecMoments) d = 0;
+            for (double val : eigenvalues) {
+                for (int expIdx=1; expIdx<7; expIdx++)
+                    SpecMoments[expIdx] += Math.pow(val, expIdx);
+            }
+            SpecMoments[1] = Math.signum(SpecMoments[1]) * Math.log(1 + Math.abs(SpecMoments[1]));
+            SpecMoments[2] = Math.log(1 + SpecMoments[2]);
+            SpecMoments[3] = Math.signum(SpecMoments[3]) * Math.log(1 + Math.abs(SpecMoments[3]));
+            SpecMoments[4] = Math.log(1 + SpecMoments[4]);
+            SpecMoments[5] = Math.signum(SpecMoments[5]) * Math.log(1 + Math.abs(SpecMoments[5]));
+            SpecMoments[6] = Math.log(1 + SpecMoments[6]);
 
             Descriptors.put(NAMES[0][0], SpAbs);
             Descriptors.put(NAMES[1][0], SpPos);
@@ -286,8 +331,63 @@ public class Matrices2D extends DescriptorBlock {
             Descriptors.put(NAMES[6][0], EigDiam);
             Descriptors.put(NAMES[7][0], EigDev);
             Descriptors.put(NAMES[8][0], NormEigDev);
+            Descriptors.put(NAMES[9][0], EstradaLike);
+            Descriptors.put(NAMES[10][0], SpecMoments[1]);
+            Descriptors.put(NAMES[11][0], SpecMoments[2]);
+            Descriptors.put(NAMES[12][0], SpecMoments[3]);
+            Descriptors.put(NAMES[13][0], SpecMoments[4]);
+            Descriptors.put(NAMES[14][0], SpecMoments[5]);
+            Descriptors.put(NAMES[15][0], SpecMoments[6]);
         }
 
     }
+
+
+    /**
+     * Inner class with the implementation of the set of matrix-based descriptors, to be applied to all
+     * calculated matrices.
+     *
+     */
+    private class MatrixBasedDescriptors {
+
+        public final String[][] NAMES = {
+                {"Wi_", "Wiener-like index"}, // 0
+                {"WiA_", "Average Wiener-like index"}, // 1
+                {"AVS_", "Average vertex sum"}, // 2
+                {"H_", "Harary-like index"}, // 3
+        };
+
+        public HashMap<String, Double> Descriptors;
+
+
+        public void Calculate(double[][] Mat, int nSK) {
+
+            Descriptors = new HashMap<>();
+
+            double Wi = 0;
+            for (int i=0; i<nSK; i++)
+                Wi += Mat[i][i];
+            double Harary = 0;
+            for (int i=0; i<(nSK-1); i++)
+                for (int j=(i+1); j<nSK; j++) {
+                    Wi += Mat[i][j];
+                    Harary += 1.0 / Mat[i][j];
+                }
+            double WiAve = (2.0 * Wi) / (double) (nSK * (nSK + 1)); //// DA VEDERE
+
+            double AVS = 0;
+            for (int i=0; i<nSK; i++)
+                for (int j=0; j<nSK; j++)
+                    AVS += Mat[i][j];
+            AVS = AVS / (double) nSK;
+
+            Descriptors.put(NAMES[0][0], Wi);
+            Descriptors.put(NAMES[1][0], WiAve);
+            Descriptors.put(NAMES[2][0], AVS);
+            Descriptors.put(NAMES[3][0], Harary);
+        }
+
+    }
+
 
 }

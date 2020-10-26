@@ -90,6 +90,9 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         return MoleculeCache.GetStructure(SMILES, explicitHydrogen);
     }
 
+    public double GetMolecularWeight() throws InvalidMoleculeException {
+        return MoleculeCache.GetMolecularWeight(SMILES, explicitHydrogen);
+    }
 
     public RingSet GetSSSR() throws InvalidMoleculeException {
 

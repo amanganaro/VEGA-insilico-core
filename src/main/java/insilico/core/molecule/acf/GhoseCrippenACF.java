@@ -1,289 +1,211 @@
-package insilico.core.descriptor.blocks;
+package insilico.core.molecule.acf;
 
 import insilico.core.descriptor.Descriptor;
-import insilico.core.descriptor.DescriptorBlock;
-import insilico.core.exception.GenericFailureException;
-import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.tools.utils.logger.InsilicoLogger;
+import insilico.core.molecule.matrix.ConnectionAugMatrix;
 import org.openscience.cdk.CDKConstants;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 /**
- * Atom Centered Fragments (ACF) descriptors block.<p>
+ * Implementation of the Ghose-Crippen ACF, allowing to assign each atom to the specific fragment id.
  *
- * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-public class AtomCenteredFragments extends DescriptorBlock {
+public class GhoseCrippenACF {
 
-    private static final long serialVersionUID = 1L;
-
-    Logger logger = LoggerFactory.getLogger(AtomCenteredFragments.class);
-
-    private static final String BlockName = "Atom Centered Fragments";
-
-    // Names and description of ACF
-
-    private static String[] ACFNames = {
-            "U-000", "C-001", "C-002", "C-003", "C-004", "C-005",
-            "C-006", "C-007", "C-008", "C-009", "C-010", "C-011", "C-012",
-            "C-013", "C-014", "C-015", "C-016", "C-017", "C-018", "C-019",
-            "C-020", "C-021", "C-022", "C-023", "C-024", "C-025", "C-026",
-            "C-027", "C-028", "C-029", "C-030", "C-031", "C-032", "C-033",
-            "C-034", "C-035", "C-036", "C-037", "C-038", "C-039", "C-040",
-            "C-041", "C-042", "C-043", "C-044", "U-045", "H-046", "H-047",
-            "H-048", "H-049", "H-050", "H-051", "H-052", "H-053", "H-054",
-            "H-055", "O-056", "O-057", "O-058", "O-059", "O-060", "O-061",
-            "O-062", "O-063", "Se-064", "Se-065", "N-066", "N-067", "N-068",
-            "N-069", "N-070", "N-071", "N-072", "N-073", "N-074", "N-075",
-            "N-076", "N-077", "N-078", "N-079", "U-080", "F-081", "F-082",
-            "F-083", "F-084", "F-085", "Cl-086", "Cl-087", "Cl-088", "Cl-089",
-            "Cl-090", "Br-091", "Br-092", "Br-093", "Br-094", "Br-095",
-            "I-096", "I-097", "I-098", "I-099", "I-100", "F-101", "Cl-102",
-            "Br-103", "I-104", "U-105", "S-106", "S-107", "S-108", "S-109",
-            "S-110", "Si-111",  "B-112", "U-113", "U-114", "P-115", "P-116",
-            "P-117", "P-118", "P-119", "P-120" };
-
-    private static String[] ACFDescription = {
-            "undefined",
-            "CH3R / CH4",
-            "CH2R2",
-            "CHR3",
-            "CR4",
-            "CH3X",
-            "CH2RX",
-            "CH2X2",
-            "CHR2X",
-            "CHRX2",
-            "CHX3",
-            "CR3X",
-            "CR2X2",
-            "CRX3",
-            "CX4",
-            " =CH2",
-            " =CHR",
-            " =CR2",
-            " =CHX",
-            " =CRX",
-            " =CX2",
-            "#CH",
-            "#CR / R=C=R",
-            "#CX",
-            "R--CH--R",
-            "R--CR--R",
-            "R--CX--R",
-            "R--CH--X",
-            "R--CR--X",
-            "R--CX--X",
-            "X--CH--X",
-            "X--CR--X",
-            "X--CX--X",
-            "R--CH..X",
-            "R--CR..X",
-            "R--CX..X",
-            "Al-CH=X",
-            "Ar-CH=X",
-            "Al-C(=X)-Al",
-            "Ar-C(=X)-R",
-            "R-C(=X)-X / R-C#X / X=C=X",
-            "X-C(=X)-X",
-            "X--CH..X",
-            "X--CR..X",
-            "X--CX..X",
-            "undefined",
-            "H attached to C0(sp3) no X attached to next C",
-            "H attached to C1(sp3)/C0(sp2)",
-            "H attached to C2(sp3)/C1(sp2)/C0(sp)",
-            "H attached to C3(sp3)/C2(sp2)/C3(sp2)/C3(sp)",
-            "H attached to heteroatom",
-            "H attached to alpha-C",
-            "H attached to C0(sp3) with 1X attached to next C",
-            "H attached to C0(sp3) with 2X attached to next C",
-            "H attached to C0(sp3) with 3X attached to next C",
-            "H attached to C0(sp3) with 4X attached to next C",
-            "alcohol",
-            "phenol / enol / carboxyl OH",
-            "=O",
-            "Al-O-Al",
-            "Al-O-Ar / Ar-O-Ar / R..O..R / R-O-C=X",
-            "O--",
-            "O- (negatively charged)",
-            "R-O-O-R",
-            "Any-Se-Any",
-            "=Se",
-            "Al-NH2",
-            "Al2-NH",
-            "Al3-N",
-            "Ar-NH2 / X-NH2",
-            "Ar-NH-Al",
-            "Ar-NAl2",
-            "RCO-N< / >N-X=X",
-            "Ar2NH / Ar3N / Ar2N-Al / R..N..R",
-            "R#N / R=N-",
-            "R--N--R / R--N--X",
-            "Ar-NO2 / R--N(--R)--O / RO-NO",
-            "Al-NO2",
-            "Ar-N=X / X-N=X",
-            "N+ (positively charged)",
-            "undefined",
-            "F attached to C1(sp3)",
-            "F attached to C2(sp3)",
-            "F attached to C3(sp3)",
-            "F attached to C1(sp2)",
-            "F attached to C2(sp2)-C4(sp2)/C1(sp)/C4(sp3)/X",
-            "Cl attached to C1(sp3)",
-            "Cl attached to C2(sp3)",
-            "Cl attached to C3(sp3)",
-            "Cl attached to C1(sp2)",
-            "Cl attached to C2(sp2)-C4(sp2)/C1(sp)/C4(sp3)/X",
-            "Br attached to C1(sp3)",
-            "Br attached to C2(sp3)",
-            "Br attached to C3(sp3)",
-            "Br attached to C1(sp2)",
-            "Br attached to C2(sp2)-C4(sp2)/C1(sp)/C4(sp3)/X",
-            "I attached to C1(sp3)",
-            "I attached to C2(sp3)",
-            "I attached to C3(sp3)",
-            "I attached to C1(sp2)",
-            "I attached to C2(sp2)-C4(sp2)/C1(sp)/C4(sp3)/X",
-            "fluoride ion",
-            "chloride ion",
-            "bromide ion",
-            "iodide ion",
-            "undefined",
-            "R-SH",
-            "R2S / RS-SR",
-            "R=S",
-            "R-SO-R",
-            "R-SO2-R",
-            ">Si<",
-            ">B- as in boranes",
-            "undefined",
-            "undefined",
-            "P ylids",
-            "R3-P=X",
-            "X3-P=X (phosphate)",
-            "PX3 (phosphite)",
-            "PR3 (phosphine)",
-            "C-P(X)2=X (phosphonate)"
+    //
+    // Name and description of each ACF, as:
+    // Array index, Fragment Symbol, Fragment Description
+    //
+    public final static String[][] ACF_NAMES = {
+            { "0", "U-000", "undefined"},
+            { "1", "C-001", "CH3R / CH4"},
+            { "2", "C-002", "CH2R2"},
+            { "3", "C-003", "CHR3"},
+            { "4", "C-004", "CR4"},
+            { "5", "C-005", "CH3X"},
+            { "6", "C-006", "CH2RX"},
+            { "7", "C-007", "CH2X2"},
+            { "8", "C-008", "CHR2X"},
+            { "9", "C-009", "CHRX2"},
+            { "10", "C-010", "CHX3"},
+            { "11", "C-011", "CR3X"},
+            { "12", "C-012", "CR2X2"},
+            { "13", "C-013", "CRX3"},
+            { "14", "C-014", "CX4"},
+            { "15", "C-015", "=CH2"},
+            { "16", "C-016", "=CHR"},
+            { "17", "C-017", "=CR2"},
+            { "18", "C-018", "=CHX"},
+            { "19", "C-019", "=CRX"},
+            { "20", "C-020", "=CX2"},
+            { "21", "C-021", "#CH"},
+            { "22", "C-022", "#CR / R=C=R"},
+            { "23", "C-023", "#CX"},
+            { "24", "C-024", "R--CH--R"},
+            { "25", "C-025", "R--CR--R"},
+            { "26", "C-026", "R--CX--R"},
+            { "27", "C-027", "R--CH--X"},
+            { "28", "C-028", "R--CR--X"},
+            { "29", "C-029", "R--CX--X"},
+            { "30", "C-030", "X--CH--X"},
+            { "31", "C-031", "X--CR--X"},
+            { "32", "C-032", "X--CX--X"},
+            { "33", "C-033", "R--CH..X"},
+            { "34", "C-034", "R--CR..X"},
+            { "35", "C-035", "R--CX..X"},
+            { "36", "C-036", "Al-CH=X"},
+            { "37", "C-037", "Ar-CH=X"},
+            { "38", "C-038", "Al-C(=X)-Al"},
+            { "39", "C-039", "Ar-C(=X)-R"},
+            { "40", "C-040", "R-C(=X)-X / R-C#X / X=C=X"},
+            { "41", "C-041", "X-C(=X)-X"},
+            { "42", "C-042", "X--CH..X"},
+            { "43", "C-043", "X--CR..X"},
+            { "44", "C-044", "X--CX..X"},
+            { "45", "U-045", "undefined"},
+            { "46", "H-046", "H attached to C0(sp3) no X attached to next C"},
+            { "47", "H-047", "H attached to C1(sp3)/C0(sp2)"},
+            { "48", "H-048", "H attached to C2(sp3)/C1(sp2)/C0(sp)"},
+            { "49", "H-049", "H attached to C3(sp3)/C2(sp2)/C3(sp2)/C3(sp)"},
+            { "50", "H-050", "H attached to heteroatom"},
+            { "51", "H-051", "H attached to alpha-C"},
+            { "52", "H-052", "H attached to C0(sp3) with 1X attached to next C"},
+            { "53", "H-053", "H attached to C0(sp3) with 2X attached to next C"},
+            { "54", "H-054", "H attached to C0(sp3) with 3X attached to next C"},
+            { "55", "H-055", "H attached to C0(sp3) with 4X attached to next C"},
+            { "56", "O-056", "alcohol"},
+            { "57", "O-057", "phenol / enol / carboxyl OH"},
+            { "58", "O-058", "=O"},
+            { "59", "O-059", "Al-O-Al"},
+            { "60", "O-060", "Al-O-Ar / Ar-O-Ar / R..O..R / R-O-C=X"},
+            { "61", "O-061", "O--"},
+            { "62", "O-062", "O- (negatively charged)"},
+            { "63", "O-063", "R-O-O-R"},
+            { "64", "Se-064", "Any-Se-Any"},
+            { "65", "Se-065", "=Se"},
+            { "66", "N-066", "Al-NH2"},
+            { "67", "N-067", "Al2-NH"},
+            { "68", "N-068", "Al3-N"},
+            { "69", "N-069", "Ar-NH2 / X-NH2"},
+            { "70", "N-070", "Ar-NH-Al"},
+            { "71", "N-071", "Ar-NAl2"},
+            { "72", "N-072", "RCO-N< / >N-X=X"},
+            { "73", "N-073", "Ar2NH / Ar3N / Ar2N-Al / R..N..R"},
+            { "74", "N-074", "R#N / R=N-"},
+            { "75", "N-075", "R--N--R / R--N--X"},
+            { "76", "N-076", "Ar-NO2 / R--N(--R)--O / RO-NO"},
+            { "77", "N-077", "Al-NO2"},
+            { "78", "N-078", "Ar-N=X / X-N=X"},
+            { "79", "N-079", "N+ (positively charged)"},
+            { "80", "U-080", "undefined"},
+            { "81", "F-081", "F attached to C1(sp3)"},
+            { "82", "F-082", "F attached to C2(sp3)"},
+            { "83", "F-083", "F attached to C3(sp3)"},
+            { "84", "F-084", "F attached to C1(sp2)"},
+            { "85", "F-085", "F attached to C2(sp2)-C4(sp2)/C1(sp)/C4(sp3)/X"},
+            { "86", "Cl-086", "Cl attached to C1(sp3)"},
+            { "87", "Cl-087", "Cl attached to C2(sp3)"},
+            { "88", "Cl-088", "Cl attached to C3(sp3)"},
+            { "89", "Cl-089", "Cl attached to C1(sp2)"},
+            { "90", "Cl-090", "Cl attached to C2(sp2)-C4(sp2)/C1(sp)/C4(sp3)/X"},
+            { "91", "Br-091", "Br attached to C1(sp3)"},
+            { "92", "Br-092", "Br attached to C2(sp3)"},
+            { "93", "Br-093", "Br attached to C3(sp3)"},
+            { "94", "Br-094", "Br attached to C1(sp2)"},
+            { "95", "Br-095", "Br attached to C2(sp2)-C4(sp2)/C1(sp)/C4(sp3)/X"},
+            { "96", "I-096", "I attached to C1(sp3)"},
+            { "97", "I-097", "I attached to C2(sp3)"},
+            { "98", "I-098", "I attached to C3(sp3)"},
+            { "99", "I-099", "I attached to C1(sp2)"},
+            { "100", "I-100", "I attached to C2(sp2)-C4(sp2)/C1(sp)/C4(sp3)/X"},
+            { "101", "F-101", "fluoride ion"},
+            { "102", "Cl-102", "chloride ion"},
+            { "103", "Br-103", "bromide ion"},
+            { "104", "I-104", "iodide ion"},
+            { "105", "U-105", "undefined"},
+            { "106", "S-106", "R-SH"},
+            { "107", "S-107", "R2S / RS-SR"},
+            { "108", "S-108", "R=S"},
+            { "109", "S-109", "R-SO-R"},
+            { "110", "S-110", "R-SO2-R"},
+            { "111", "Si-111", ">Si<"},
+            { "112", "B-112", ">B- as in boranes"},
+            { "113", "U-113", "undefined"},
+            { "114", "U-114", "undefined"},
+            { "115", "P-115", "P ylids"},
+            { "116", "P-116", "R3-P=X"},
+            { "117", "P-117", "X3-P=X (phosphate)"},
+            { "118", "P-118", "PX3 (phosphite)"},
+            { "119", "P-119", "PR3 (phosphine)"},
+            { "120", "P-120", "C-P(X)2=X (phosphonate)"}
     };
 
-    // Private objects used inside the class only during calculation
-    private IAtomContainer CurMol;
-    private int nSK;
-    private double[][] ConnAugMatrix;
-    private boolean[] AtomAromatic;
 
-    /**
-     * Constructor.
-     */
-    public AtomCenteredFragments() {
-        super();
-        this.Name = AtomCenteredFragments.BlockName;
-    }
+    //
+    // Names of the undefined fragments in the ACF_NAMES list
+    //
+    public final static String[] ACF_UNDEFINED_NAMES = {
+            "U-000", "U-080", "U-105", "U-113", "U-114"
+    };
 
 
-    /**
-     * Calculate descriptors for the given molecule.
-     *
-     * @param mol molecule to be calculated
-     */
-    @Override
-    public void Calculate(InsilicoMolecule mol) {
+    private final IAtomContainer CurMol;
+    private final int nSK;
+    private final double[][] ConnAugMatrix;
+    private final boolean[] AtomAromatic;
+    private final boolean ExplicitHydrogen;
+    private final HashMap<Integer, Integer> NotMappedFragCount;
 
-        // Generate/clears descriptors
-        GenerateDescriptors();
+    private final int[] FragAtomId;
 
-        try {
-            CurMol = mol.GetStructure();
-        } catch (InvalidMoleculeException e) {
-            SetAllValues(Descriptor.MISSING_VALUE);
-            return;
-        }
 
-        // Gets matrices
-        try {
-            ConnAugMatrix = mol.GetMatrixConnectionAugmented();
-        } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
-            SetAllValues(Descriptor.MISSING_VALUE);
-            return;
-        }
+    public GhoseCrippenACF(IAtomContainer Mol, boolean HasExplicitHydrogen) {
 
-        int ACFSize = this.GetSize();
-
-        int[] FragCount = new int[ACFSize];
-        for (int i=0; i<ACFSize; i++)
-            FragCount[i] = 0;
-
-        // Inits basic data
-        nSK = CurMol.getAtomCount();
+        // Init all variables
+        this.CurMol = Mol;
+        this.ExplicitHydrogen = HasExplicitHydrogen;
+        nSK = Mol.getAtomCount();
+        NotMappedFragCount = new HashMap<>();
+        ConnAugMatrix = ConnectionAugMatrix.getMatrix(CurMol);
         AtomAromatic = new boolean[nSK];
         for (int i=0; i<nSK; i++)
             AtomAromatic[i] = CurMol.getAtom(i).getFlag(CDKConstants.ISAROMATIC);
 
-        // Searches fragments for each atom
-        for (int i=0; i<nSK; i++) {
-            CheckAtomFragments(i, FragCount);
-        }
+        // Init array of ACF id, all to MV
+        FragAtomId = new int[nSK];
+        for (int i : FragAtomId)
+            i = Descriptor.MISSING_VALUE;
 
-        // Fills descriptors DescList
-        for (int i=0; i<ACFSize; i++)
-            SetByIndex(i, FragCount[i]);
+        // Check all atoms and try to assign to an ACF
+        for (int AtomIdx=0; AtomIdx<nSK; AtomIdx++)
+            ProcessAtom(AtomIdx);
 
     }
 
-    @Override
-    protected void GenerateDescriptors() {
-        DescList.clear();
-        int ACFSize = ACFNames.length;
-        for (int i=0; i<ACFSize; i++)
-            Add(ACFNames[i], ACFDescription[i]);
-        SetAllValues(Descriptor.MISSING_VALUE);
+
+    public int[] GetACF() {
+        return this.FragAtomId;
     }
 
-    /**
-     * Clones the actual descriptor block
-     * @return a cloned copy of the actual object
-     * @throws CloneNotSupportedException
-     */
-    @Override
-    public DescriptorBlock CreateClone() throws CloneNotSupportedException {
-        AtomCenteredFragments block = new AtomCenteredFragments();
-        block.CloneDetailsFrom(this);
-        return block;
-    }
 
-    /**
-     * Returns if an atomic number corresponds to an electronegative
-     * atom (O, N, S, P, B, Si, Se or Halogens)
-     *
-     * @param AtomicNumber atomic number to be checked
-     * @return true if it is electronegative
-     */
-    private boolean IsAtomElectronegative(int AtomicNumber) {
-        boolean ans = false;
-        if ((AtomicNumber==7)||(AtomicNumber==8)||(AtomicNumber==15)||
-                (AtomicNumber==16)||(AtomicNumber==34)||(AtomicNumber==9)||
-                (AtomicNumber==5)||(AtomicNumber==14)||
-                (AtomicNumber==17)||(AtomicNumber==35)||(AtomicNumber==53)) {
-            // O, N, S, P, B, Si, Se or Halogens (F, Cl, Br, I)
-            ans = true;
-        }
-        return ans;
-    }
+    public HashMap<Integer, Integer> getNotMappedFragCount() { return this.NotMappedFragCount; }
 
-    /**
-     * Checks the atom number At from the CurMol (private object in this class)
-     * and assigns it to an ACF, updating the counter array given as
-     * parameter.
-     *
-     * @param At number of the atom to be checked
-     * @param FragCount counter array to be updated
-     */
-    private void CheckAtomFragments(int At, int[] FragCount) {
+
+    private void ProcessAtom(int AtomIndex) {
+
+        IAtom CurAt = CurMol.getAtom(AtomIndex);
+
+        // if H skip - it will be calculated from the attached atom
+        if (ExplicitHydrogen)
+            if (ConnAugMatrix[AtomIndex][AtomIndex] == 1)
+                return;
+
+        // if halogen skip - it will be calculated from the attached atom
+        if (IsAtomHalogen(CurAt.getAtomicNumber()))
+            return;
+
 
         int VD=0, nH=0, Charge=0;
         int nSingle=0, nDouble=0, nTriple=0, nArom=0;
@@ -299,12 +221,12 @@ public class AtomCenteredFragments extends DescriptorBlock {
         int C_OxiNumber=0, C_Hybridazion=0, C_CX=0;
 
         for (int j=0; j<nSK; j++) {
-            if (j==At)
+            if (j==AtomIndex)
                 continue;
-            if (ConnAugMatrix[At][j]>0) {
+            if ( (ConnAugMatrix[AtomIndex][j]>0) && (ConnAugMatrix[j][j] != 1) ) {
                 VD++;
                 int Z = (int)ConnAugMatrix[j][j];
-                double b = ConnAugMatrix[At][j];
+                double b = ConnAugMatrix[AtomIndex][j];
 
                 if (b==1) {
                     nSingle++;
@@ -342,12 +264,18 @@ public class AtomCenteredFragments extends DescriptorBlock {
                         // checks if is a pyrrole-like aromatic single bond
                         int elNegVD=0, elNegH=0, elNegCharge;
                         for (int k=0; k<nSK; k++)
-                            if (ConnAugMatrix[j][k]>0) {
+                            if ((ConnAugMatrix[j][k]>0) && (ConnAugMatrix[k][k]!=1)) {
                                 if (j==k) continue;
                                 elNegVD++;
                             }
                         try {
-                            elNegH = CurMol.getAtom(j).getImplicitHydrogenCount();
+                            if (ExplicitHydrogen) {
+                                for (IAtom connAt : CurMol.getConnectedAtomsList(CurMol.getAtom(j)))
+                                    if (connAt.getAtomicNumber() == 1)
+                                        elNegH++;
+                            } else {
+                                elNegH = CurMol.getAtom(j).getImplicitHydrogenCount();
+                            }
                         } catch (Exception e) {
                             elNegH = 0;
                         }
@@ -384,27 +312,56 @@ public class AtomCenteredFragments extends DescriptorBlock {
         }
 
         // counts H
-        try {
-            nH = CurMol.getAtom(At).getImplicitHydrogenCount();
-        } catch (Exception e) {
-            nH = 0;
+        if (ExplicitHydrogen) {
+            for (int j=0; j<nSK; j++) {
+                if (j==AtomIndex) continue;
+                if (ConnAugMatrix[j][AtomIndex] == 1)
+                    if (ConnAugMatrix[j][j] == 1)
+                        nH++;
+            }
+        } else {
+            try {
+                nH = CurAt.getImplicitHydrogenCount();
+            } catch (Exception e) {
+                nH = 0;
+            }
         }
 
         // formal charge
         try {
-            Charge = CurMol.getAtom(At).getFormalCharge();
+            Charge = CurAt.getFormalCharge();
         } catch (Exception e) {
             Charge = 0;
         }
 
         // If Carbon, calculates oxidation number and hybridization
-        if (ConnAugMatrix[At][At] == 6) {
+        if (ConnAugMatrix[AtomIndex][AtomIndex] == 6) {
 
             int c_VD=0;
             for (int j=0; j<nSK; j++) {
-                if (j==At) continue;
-                if (ConnAugMatrix[j][At]>0) {
+                if (j==AtomIndex) continue;
+                if ( (ConnAugMatrix[j][AtomIndex]>0) && (ConnAugMatrix[j][j] != 1) ) {
                     c_VD++;
+//                    if (IsAtomElectronegative((int)ConnMatrix[j][j])) {
+//                        // Electronegative heteroatom, bond value added to oxidation
+//                        double OxiAddVal = ConnMatrix[j][At];
+//                        if (OxiAddVal==1.5) {
+//                            // Checks for aromatic heteroatom with 2 pi electron
+//                            int he_VD=0;
+//                            for (int k=0; k<nSK; k++) {
+//                                if (k==j) continue;
+//                                if (ConnMatrix[j][k]>0) he_VD++;
+//                            }
+//                            int he_nH=0;
+//                            try {
+//                                he_nH = CurMol.getAtom(j).getHydrogenCount();
+//                            } catch (Exception e) {  }
+//                            he_VD += he_nH;
+//                            if (he_VD == 3)
+//                                OxiAddVal = 1;
+//                        }
+//                        C_OxiNumber += OxiAddVal;
+//                    }
                     if (ConnAugMatrix[j][j] == 6) {
                         // search for -C-X
                         for (int k=0; k<nSK; k++) {
@@ -436,7 +393,9 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
         if (nH > 0) {
 
-            if (ConnAugMatrix[At][At] == 6) {
+            int H_type = 0;
+
+            if (ConnAugMatrix[AtomIndex][AtomIndex] == 6) {
 
                 boolean IsAlphaCarbon = false;
 
@@ -445,13 +404,16 @@ public class AtomCenteredFragments extends DescriptorBlock {
                 if ((nSingle > 0) && (nDouble==0) && (nTriple==0) && (nArom==0)) {
 
                     for (int j=0; j<nSK; j++) {
-                        if (j==At)
+                        if (j==AtomIndex)
                             continue;
 
                         // -C
-                        if (ConnAugMatrix[At][j] > 0) {
+                        if (ConnAugMatrix[AtomIndex][j] > 0) {
 
-                            if ((ConnAugMatrix[At][j]==1) && (ConnAugMatrix[j][j]==6)) {
+                            if (ConnAugMatrix[j][j]==1)
+                                continue;
+
+                            if ((ConnAugMatrix[AtomIndex][j]==1) && (ConnAugMatrix[j][j]==6)) {
 
                                 int nCdX=0, nCtX=0, nCaX=0;
 
@@ -483,57 +445,75 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
                 if (IsAlphaCarbon) {
 
-                    FragCount[51]+=nH;
+                    H_type=51;
 
                 } else {
 
                     // C0sp3 (no X attached to next C)
                     if ((C_OxiNumber==0) && (C_Hybridazion==3) && (C_CX==0))
-                        FragCount[46]+=nH;
+                        H_type=46;
 
                     // C1sp3, C0sp2
                     if ( ((C_OxiNumber==1) && (C_Hybridazion==3)) ||
                             ((C_OxiNumber==0) && (C_Hybridazion==2)) )
-                        FragCount[47]+=nH;
+                        H_type=47;
 
                     // C2sp3, C1sp2, C0sp
                     if ( ((C_OxiNumber==2) && (C_Hybridazion==3)) ||
                             ((C_OxiNumber==1) && (C_Hybridazion==2)) ||
                             ((C_OxiNumber==0) && (C_Hybridazion==1)) )
-                        FragCount[48]+=nH;
+                        H_type=48;
 
                     // C3sp3, C2sp2, C2sp2, C3sp
                     if ( ((C_OxiNumber==3) && (C_Hybridazion==3)) ||
                             ((C_OxiNumber==2) && (C_Hybridazion==2)) ||
                             ((C_OxiNumber==3) && (C_Hybridazion==2)) ||
                             ((C_OxiNumber==3) && (C_Hybridazion==1)) )
-                        FragCount[49]+=nH;
+                        H_type=49;
 
                     // C0sp3 with 1 X atom attached to next C
                     if ((C_OxiNumber==0) && (C_Hybridazion==3) && (C_CX==1))
-                        FragCount[52]+=nH;
+                        H_type=52;
 
                     // C0sp3 with 2 X atom attached to next C
                     if ((C_OxiNumber==0) && (C_Hybridazion==3) && (C_CX==2))
-                        FragCount[53]+=nH;
+                        H_type=53;
 
                     // C0sp3 with 3 X atom attached to next C
                     if ((C_OxiNumber==0) && (C_Hybridazion==3) && (C_CX==3))
-                        FragCount[54]+=nH;
+                        H_type=54;
 
                     // C0sp3 with 4 X atom attached to next C
                     if ((C_OxiNumber==0) && (C_Hybridazion==3) && (C_CX==4))
-                        FragCount[55]+=nH;
+                        H_type=55;
 
                 }
 
             } else {
 
                 // H to heteroatom
-                FragCount[50]+=nH;
+                H_type=50;
 
             }
 
+            if (ExplicitHydrogen) {
+
+                // Sets the id for H atoms as they are explicit
+                for (int idxH=0; idxH<nSK; idxH++) {
+                    if (idxH == AtomIndex) continue;
+                    if ((ConnAugMatrix[AtomIndex][idxH] == 1) && (ConnAugMatrix[idxH][idxH] == 1) )
+                        FragAtomId[idxH] = H_type;
+                }
+
+            } else {
+
+                // Implicit H: counts the number of H and store the value in an hashmap, as these atoms
+                // can not be mapped directly on the molecule
+                int CountValue = nH;
+                if (NotMappedFragCount.containsKey(H_type))
+                    CountValue += NotMappedFragCount.get(H_type);
+                NotMappedFragCount.put(H_type, CountValue);
+            }
         }
 
 
@@ -542,36 +522,36 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
         // Search for halogens attached to current atom
         for (int j=0; j<nSK; j++) {
-            if (j==At) continue;
-            if (ConnAugMatrix[j][At]>0) {
+            if (j==AtomIndex) continue;
+            if (ConnAugMatrix[j][AtomIndex]>0) {
 
                 // F
                 if (ConnAugMatrix[j][j] == 9) {
 
-                    if (ConnAugMatrix[At][At] == 6) {
+                    if (ConnAugMatrix[AtomIndex][AtomIndex] == 6) {
                         // attached to C1sp3
                         if ((C_OxiNumber==1) && (C_Hybridazion==3))
-                        { FragCount[81]++; continue; }
+                        { FragAtomId[j] = 81; continue; }
 
                         // attached to C2sp3
                         if ((C_OxiNumber==2) && (C_Hybridazion==3))
-                        { FragCount[82]++; continue; }
+                        { FragAtomId[j] = 82; continue; }
 
                         // attached to C3sp3
                         if ((C_OxiNumber==3) && (C_Hybridazion==3))
-                        { FragCount[83]++; continue; }
+                        { FragAtomId[j] = 83; continue; }
 
                         // attached to C1sp2
                         if ((C_OxiNumber==1) && (C_Hybridazion==2))
-                        { FragCount[84]++; continue; }
+                        { FragAtomId[j] = 84; continue; }
 
                         // other cases fall into this fragment
-                        FragCount[85]++; continue;
+                        FragAtomId[j] = 85; continue;
 
                     } else {
 
                         // attached to heteroatom
-                        FragCount[85]++; continue;
+                        FragAtomId[j] = 85; continue;
 
                     }
                 }
@@ -579,30 +559,30 @@ public class AtomCenteredFragments extends DescriptorBlock {
                 // Cl
                 if (ConnAugMatrix[j][j] == 17) {
 
-                    if (ConnAugMatrix[At][At] == 6) {
+                    if (ConnAugMatrix[AtomIndex][AtomIndex] == 6) {
                         // attached to C1sp3
                         if ((C_OxiNumber==1) && (C_Hybridazion==3))
-                        { FragCount[86]++; continue; }
+                        { FragAtomId[j] = 86; continue; }
 
                         // attached to C2sp3
                         if ((C_OxiNumber==2) && (C_Hybridazion==3))
-                        { FragCount[87]++; continue; }
+                        { FragAtomId[j] = 87; continue; }
 
                         // attached to C3sp3
                         if ((C_OxiNumber==3) && (C_Hybridazion==3))
-                        { FragCount[88]++; continue; }
+                        { FragAtomId[j] = 88; continue; }
 
                         // attached to C1sp2
                         if ((C_OxiNumber==1) && (C_Hybridazion==2))
-                        { FragCount[89]++; continue; }
+                        { FragAtomId[j] = 89; continue; }
 
                         // other cases fall into this fragment
-                        FragCount[90]++; continue;
+                        FragAtomId[j] = 90; continue;
 
                     } else {
 
                         // attached to heteroatom
-                        FragCount[90]++; continue;
+                        FragAtomId[j] = 90; continue;
 
                     }
                 }
@@ -610,30 +590,30 @@ public class AtomCenteredFragments extends DescriptorBlock {
                 // Br
                 if (ConnAugMatrix[j][j] == 35) {
 
-                    if (ConnAugMatrix[At][At] == 6) {
+                    if (ConnAugMatrix[AtomIndex][AtomIndex] == 6) {
                         // attached to C1sp3
                         if ((C_OxiNumber==1) && (C_Hybridazion==3))
-                        { FragCount[91]++; continue; }
+                        { FragAtomId[j] = 91; continue; }
 
                         // attached to C2sp3
                         if ((C_OxiNumber==2) && (C_Hybridazion==3))
-                        { FragCount[92]++; continue; }
+                        { FragAtomId[j] = 92; continue; }
 
                         // attached to C3sp3
                         if ((C_OxiNumber==3) && (C_Hybridazion==3))
-                        { FragCount[93]++; continue; }
+                        { FragAtomId[j] = 93; continue; }
 
                         // attached to C1sp2
                         if ((C_OxiNumber==1) && (C_Hybridazion==2))
-                        { FragCount[94]++; continue; }
+                        { FragAtomId[j] = 94; continue; }
 
                         // other cases fall into this fragment
-                        FragCount[95]++; continue;
+                        FragAtomId[j] = 95; continue;
 
                     } else {
 
                         // attached to heteroatom
-                        FragCount[95]++; continue;
+                        FragAtomId[j] = 95; continue;
 
                     }
                 }
@@ -641,30 +621,30 @@ public class AtomCenteredFragments extends DescriptorBlock {
                 // I
                 if (ConnAugMatrix[j][j] == 53) {
 
-                    if (ConnAugMatrix[At][At] == 6) {
+                    if (ConnAugMatrix[AtomIndex][AtomIndex] == 6) {
                         // attached to C1sp3
                         if ((C_OxiNumber==1) && (C_Hybridazion==3))
-                        { FragCount[96]++; continue; }
+                        { FragAtomId[j] = 96; continue; }
 
                         // attached to C2sp3
                         if ((C_OxiNumber==2) && (C_Hybridazion==3))
-                        { FragCount[97]++; continue; }
+                        { FragAtomId[j] = 97; continue; }
 
                         // attached to C3sp3
                         if ((C_OxiNumber==3) && (C_Hybridazion==3))
-                        { FragCount[98]++; continue; }
+                        { FragAtomId[j] = 98; continue; }
 
                         // attached to C1sp2
                         if ((C_OxiNumber==1) && (C_Hybridazion==2))
-                        { FragCount[99]++; continue; }
+                        { FragAtomId[j] = 99; continue; }
 
                         // other cases fall into this fragment
-                        FragCount[100]++;
+                        FragAtomId[j] = 100; continue;
 
                     } else {
 
                         // attached to heteroatom
-                        FragCount[100]++;
+                        FragAtomId[j] = 100; continue;
 
                     }
                 }
@@ -676,151 +656,151 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
         //// Atom: C ///////////////////////////////////////////////////////////
 
-        if (ConnAugMatrix[At][At] == 6) {
+        if (ConnAugMatrix[AtomIndex][AtomIndex] == 6) {
 
             if ( ((nH==3) && (sR==1)) || (nH==4) )
-            { FragCount[1]++; return; }
+            { FragAtomId[AtomIndex] = 1; return; }
 
             if ((nH==2) && (sR==2))
-            { FragCount[2]++; return; }
+            { FragAtomId[AtomIndex] = 2; return; }
 
             if ((nH==1) && (sR==3))
-            { FragCount[3]++; return; }
+            { FragAtomId[AtomIndex] = 3; return; }
 
             if ((nH==0) && (sR==4))
-            { FragCount[4]++; return; }
+            { FragAtomId[AtomIndex] = 4; return; }
 
             if ((nH==3) && (sX==1))
-            { FragCount[5]++; return; }
+            { FragAtomId[AtomIndex] = 5; return; }
 
             if ((nH==2) && (sR==1) && (sX==1))
-            { FragCount[6]++; return; }
+            {FragAtomId[AtomIndex] = 6; return; }
 
             if ((nH==2) && (sX==2))
-            { FragCount[7]++; return; }
+            { FragAtomId[AtomIndex] = 7; return; }
 
             if ((nH==1) && (sR==2) && (sX==1))
-            { FragCount[8]++; return; }
+            { FragAtomId[AtomIndex] = 8; return; }
 
             if ((nH==1) && (sR==1) && (sX==2))
-            { FragCount[9]++; return; }
+            { FragAtomId[AtomIndex] = 9; return; }
 
             if ((nH==1) && (sX==3))
-            { FragCount[10]++; return; }
+            { FragAtomId[AtomIndex] = 10; return; }
 
             if ((nH==0) && (sR==3) && (sX==1))
-            { FragCount[11]++; return; }
+            { FragAtomId[AtomIndex] = 11; return; }
 
             if ((nH==0) && (sR==2) && (sX==2))
-            { FragCount[12]++; return; }
+            { FragAtomId[AtomIndex] = 12; return; }
 
             if ((nH==0) && (sR==1) && (sX==3))
-            { FragCount[13]++; return; }
+            { FragAtomId[AtomIndex] = 13; return; }
 
             if ((nH==0) && (sX==4))
-            { FragCount[14]++; return; }
+            { FragAtomId[AtomIndex] = 14; return; }
 
-            if ((nH==2) && (dR==1))
-            { FragCount[15]++; return; }
+            if ((nH==2) && (nDouble==1) && (dX==0))
+            { FragAtomId[AtomIndex] = 15; return; }
 
-            if ((nH==1) && (dR==1) && (sR==1))
-            { FragCount[16]++; return; }
+            if ((nH==1) && (nDouble==1) && (sR==1) && (dX==0))
+            { FragAtomId[AtomIndex] = 16; return; }
 
-            if ((nH==0) && (dR==1) && (sR==2))
-            { FragCount[17]++; return; }
+            if ((nH==0) && (nDouble==1) && (sR==2) && (dX==0))
+            { FragAtomId[AtomIndex] = 17; return; }
 
-            if ((nH==1) && (dR==1) && (sX==1))
-            { FragCount[18]++; return; }
+            if ((nH==1) && (nDouble==1) && (sX==1) && (dX==0))
+            { FragAtomId[AtomIndex] = 18; return; }
 
-            if ((nH==0) && (dR==1) && (sX==1) && (sR==1))
-            { FragCount[19]++; return; }
+            if ((nH==0) && (nDouble==1) && (sX==1) && (sR==1) && (dX==0))
+            { FragAtomId[AtomIndex] = 19; return; }
 
-            if ((nH==0) && (dR==1) && (sX==2))
-            { FragCount[20]++; return; }
+            if ((nH==0) && (nDouble==1) && (sX==2) && (dX==0))
+            { FragAtomId[AtomIndex] = 20; return; }
 
             if ((nH==1) && (tR==1))
-            { FragCount[21]++; return; }
+            { FragAtomId[AtomIndex] = 21; return; }
 
             if ( ((nH==0) && (tR==1) && (sR==1)) ||
                     ((nH==0) && (dR==2)) )
-            { FragCount[22]++; return; }
+            { FragAtomId[AtomIndex] = 22; return; }
 
             if ((nH==0) && (tR==1) && (sX==1))
-            { FragCount[23]++; return; }
+            { FragAtomId[AtomIndex] = 23; return; }
 
             if ((nH==1) && (VD==2) && (aR==2))
-            { FragCount[24]++; return; }
+            { FragAtomId[AtomIndex] = 24; return; }
 
             if ((nH==0) && (VD==3) && (aR>=2) && ((sR==1)||(aR==3)))
-            { FragCount[25]++; return; }
+            { FragAtomId[AtomIndex] = 25; return; }
 
             if ((nH==0) && (VD==3) && (aR==2) && (sX==1))
-            { FragCount[26]++; return; }
+            { FragAtomId[AtomIndex] = 26; return; }
 
             if ((nH==1) && (VD==2) && (aR==1) && (aX==1))
-            { FragCount[27]++; return; }
+            { FragAtomId[AtomIndex] = 27; return; }
 
             if ((nH==0) && (VD==3) && (aR>=1) && (aX==1) && ((sR==1)||(aR==2)))
-            { FragCount[28]++; return; }
+            { FragAtomId[AtomIndex] = 28; return; }
 
             if ((nH==0) && (VD==3) && (aR==1) && (aX==1) && (sX==1))
-            { FragCount[29]++; return; }
+            { FragAtomId[AtomIndex] = 29; return; }
 
             if ((nH==1) && (VD==2) && (aX==2))
-            { FragCount[30]++; return; }
+            { FragAtomId[AtomIndex] = 30; return; }
 
             if ((nH==0) && (VD==3) && (aX==2) && ((sR==1)||(aR==1)))
-            { FragCount[31]++; return; }
+            { FragAtomId[AtomIndex] = 31; return; }
 
             if ((nH==0) && (VD==3) && (aX==2) && (sX==1))
-            { FragCount[32]++; return; }
+            { FragAtomId[AtomIndex] = 32; return; }
 
 
             ///// da controllare (differenza fra -- e ..) ////////
 
             if ((nH==1) && (VD==2) && (aR==1) && (asX==1))
-            { FragCount[33]++; return; }
+            { FragAtomId[AtomIndex] = 33; return; }
 
             if ((nH==0) && (VD==3) && (((sR==1) && (aR==1))||(aR==2)) && (asX==1))
-            { FragCount[34]++; return; }
+            { FragAtomId[AtomIndex] = 34; return; }
 
             if ((nH==0) && (VD==3) && (sX==1) && (aR==1) && (asX==1))
-            { FragCount[35]++; return; }
+            { FragAtomId[AtomIndex] = 35; return; }
 
             ///////////////////////////////////////////////////////
 
 
             if ((nH==1) && (dX==1) && (sAl==1))
-            { FragCount[36]++; return; }
+            { FragAtomId[AtomIndex] = 36; return; }
 
             if ((nH==1) && (dX==1) && (sAr==1))
-            { FragCount[37]++; return; }
+            { FragAtomId[AtomIndex] = 37; return; }
 
             if ((nH==0) && (dX==1) && (sAl==2))
-            { FragCount[38]++; return; }
+            { FragAtomId[AtomIndex] = 38; return; }
 
             if ((nH==0) && (dX==1) && (sAr==1) && (sR>=1) &&(sX==0))
-            { FragCount[39]++; return; }
+            { FragAtomId[AtomIndex] = 39; return; }
 
             if (((nH==0) && (dX==1) && (sR==1) && (sX==1)) ||
                     ((nH==0) && (tX==1) && (sR==1)) ||
                     ((nH==0) && (dX==2)) )
-            { FragCount[40]++; return; }
+            { FragAtomId[AtomIndex] = 40; return; }
 
             if ((nH==0) && (dX==1) && (sX==2))
-            { FragCount[41]++; return; }
+            { FragAtomId[AtomIndex] = 41; return; }
 
 
             ///// da controllare (differenza fra -- e ..) ////////
 
             if ((nH==1) && (VD==2) && (aX==1) && (asX==1))
-            { FragCount[42]++; return; }
+            { FragAtomId[AtomIndex] = 42; return; }
 
             if ((nH==0) && (VD==3) && ((sR==1)||(aR==1)) && (aX==1) && (asX==1))
-            { FragCount[43]++; return; }
+            { FragAtomId[AtomIndex] = 43; return; }
 
             if ((nH==0) && (VD==3) && (sX==1) && (aX==1) && (asX==1))
-            { FragCount[44]++; return; }
+            { FragAtomId[AtomIndex] = 44; return; }
 
             ///////////////////////////////////////////////////////
 
@@ -832,23 +812,23 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
         //// Atom: O ///////////////////////////////////////////////////////////
 
-        if (ConnAugMatrix[At][At] == 8) {
+        if (ConnAugMatrix[AtomIndex][AtomIndex] == 8) {
 
             // Checks for particular O fragments linked to C or N
 
             for (int j=0; j<nSK; j++) {
-                if (j==At)
+                if (j==AtomIndex)
                     continue;
 
                 // Bound to C
 
-                if ((ConnAugMatrix[At][j]>0) && (ConnAugMatrix[j][j]==6)) {
+                if ((ConnAugMatrix[AtomIndex][j] > 0) && (ConnAugMatrix[j][j] == 6)) {
                     boolean c_Arom = AtomAromatic[j];
                     int c_VD = 0, c_dR=0, c_dO=0, c_dX=0;
                     for (int k=0; k<nSK; k++) {
                         if (k==j)
                             continue;
-                        if (ConnAugMatrix[j][k]>0)  {
+                        if ( (ConnAugMatrix[j][k] > 0) && (ConnAugMatrix[k][k] !=1 ))  {
                             c_VD++;
                             if (ConnAugMatrix[j][k] == 2) {
                                 if (IsAtomElectronegative((int)ConnAugMatrix[k][k]))
@@ -865,7 +845,7 @@ public class AtomCenteredFragments extends DescriptorBlock {
                     // R-O-C=X (for fragment O-060
 
                     if (((VD+nH)==2) && (nSingle==2) && (c_dX>0))
-                    { FragCount[60]++; return; }
+                    { FragAtomId[AtomIndex] = 60; return; }
 
 
                     // Particular OH groups
@@ -873,15 +853,15 @@ public class AtomCenteredFragments extends DescriptorBlock {
                     if (nH == 1) {
                         // Enol
                         if ((c_VD==3) && (!c_Arom) && (c_dR==1))
-                        { FragCount[57]++; return; }
+                        { FragAtomId[AtomIndex] = 57; return; }
 
                         // Phenol
                         if (c_Arom)
-                        { FragCount[57]++; return; }
+                        { FragAtomId[AtomIndex] = 57; return; }
 
                         // Carboxyl
                         if ((!c_Arom) && (c_VD==3) && (c_dO==1))
-                        { FragCount[57]++; return; }
+                        { FragAtomId[AtomIndex] = 57; return; }
 
                     }
 
@@ -890,12 +870,12 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
                 // Bound to N
 
-                if ((ConnAugMatrix[At][j]>0) && (ConnAugMatrix[j][j]==7)) {
+                if ((ConnAugMatrix[AtomIndex][j]>0) && (ConnAugMatrix[j][j]==7)) {
                     int n_VD = 0, n_dO=0, n_sOminus=0;
                     for (int k=0; k<nSK; k++) {
                         if (k==j)
                             continue;
-                        if (ConnAugMatrix[j][k]>0)  {
+                        if ( (ConnAugMatrix[j][k]>0) && (ConnAugMatrix[k][k] != 1))  {
                             n_VD++;
                             if (ConnAugMatrix[j][k] == 2) {
                                 if (ConnAugMatrix[k][k] == 8)
@@ -906,16 +886,18 @@ public class AtomCenteredFragments extends DescriptorBlock {
                                     int o_VD=0;
                                     for (int z=0; z<nSK; z++) {
                                         if (z==k) continue;
-                                        if (ConnAugMatrix[k][z]>0) o_VD++;
+                                        if ( (ConnAugMatrix[k][z] > 0) && (ConnAugMatrix[z][z] != 1)) o_VD++;
                                     }
                                     if (o_VD == 1) {
                                         int nH_O = 0;
-                                        try {
+                                        if (ExplicitHydrogen) {
+                                            for (IAtom connAt : CurMol.getConnectedAtomsList(CurMol.getAtom(k)))
+                                                if (connAt.getAtomicNumber() == 1)
+                                                    nH_O++;
+                                        } else {
                                             nH_O = CurMol.getAtom(k).getImplicitHydrogenCount();
-                                        } catch (Exception e) {
-                                            nH_O = 0;
                                         }
-                                        if (nH == 0)
+                                        if (nH_O == 0)
                                             n_sOminus++;
                                     }
                                 }
@@ -928,10 +910,10 @@ public class AtomCenteredFragments extends DescriptorBlock {
                     // in NO2 both oxygens are seen as O--
 
                     if ((VD==1) && (nH==0) && (nDouble==1) && (n_VD==3) && (n_sOminus==1))
-                    { FragCount[61]++; return; }
+                    { FragAtomId[AtomIndex] = 61; return; }
 
                     if ((VD==1) && (nH==0) && (n_VD==3) && (n_dO==1))
-                    { FragCount[61]++; return; }
+                    { FragAtomId[AtomIndex] = 61; return; }
 
                 }
 
@@ -939,19 +921,19 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
             // generic alcohol (even if not bound to C)
             if ((nSingle==1) && (nH==1))
-            { FragCount[56]++; return; }
+            { FragAtomId[AtomIndex] = 56; return; }
 
 
             if ((VD==1) && (nDouble==1))
-            { FragCount[58]++; return; }
+            { FragAtomId[AtomIndex] = 58; return; }
 
             if ((VD==2) && (nSingle==2)) {
                 for (int j=0; j<nSK; j++) {
-                    if (j==At)
+                    if (j==AtomIndex)
                         continue;
-                    if ((ConnAugMatrix[At][j]==1) && (ConnAugMatrix[j][j]==8)) {
+                    if ((ConnAugMatrix[AtomIndex][j]==1) && (ConnAugMatrix[j][j]==8)) {
                         // Found an oxygen, R-O-O
-                        FragCount[63]++;
+                        FragAtomId[AtomIndex] = 63;
                         return;
                     }
                 }
@@ -960,16 +942,16 @@ public class AtomCenteredFragments extends DescriptorBlock {
             if (((VD==2) && (sAl==1) && (sAr==1)) ||
                     ((VD==2) && (sAr==2)) ||
                     ((VD==2) && (aR==2)))
-            { FragCount[60]++; return; }
+            { FragAtomId[AtomIndex] = 60; return; }
 
             if ((VD==2) && (nSingle==2) && (sAr==0))
-            { FragCount[59]++; return; }
+            { FragAtomId[AtomIndex] = 59; return; }
 
             if (Charge == -2)
-            { FragCount[61]++; return; }
+            { FragAtomId[AtomIndex] = 61; return; }
 
             if (Charge == -1)
-            { FragCount[62]++; return; }
+            { FragAtomId[AtomIndex] = 62; return; }
 
             return;
         }
@@ -978,13 +960,13 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
         //// Atom: Se ///////////////////////////////////////////////////////////
 
-        if (ConnAugMatrix[At][At] == 34) {
+        if (ConnAugMatrix[AtomIndex][AtomIndex] == 34) {
 
             if ((VD==2) && (nSingle==2))
-            { FragCount[64]++; return; }
+            { FragAtomId[AtomIndex] = 64; return; }
 
             if ((VD==1) && (nDouble==1))
-            { FragCount[65]++; return; }
+            { FragAtomId[AtomIndex] = 65; return; }
 
             return;
         }
@@ -993,7 +975,7 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
         //// Atom: N ///////////////////////////////////////////////////////////
 
-        if (ConnAugMatrix[At][At] == 7) {
+        if (ConnAugMatrix[AtomIndex][AtomIndex] == 7) {
 
             // Checks for particular aromatic form
             boolean AromPyridineLike=false, AromPyrroleLike=false;
@@ -1009,21 +991,21 @@ public class AtomCenteredFragments extends DescriptorBlock {
             int nO=0, sOCR=0, sXdX=0;
 
             for (int j=0; j<nSK; j++) {
-                if (j==At)
+                if (j==AtomIndex)
                     continue;
-                if (ConnAugMatrix[At][j]>0) {
+                if (ConnAugMatrix[AtomIndex][j]>0) {
                     int Z = (int)ConnAugMatrix[j][j];
 
                     // O
                     if (Z==8) {
                         nO++;
                         for (int k=0; k<nSK; k++) {
-                            if ((k==j) || (k==At)) continue;
+                            if ((k==j) || (k==AtomIndex)) continue;
                             if ((ConnAugMatrix[k][j]>0) && (ConnAugMatrix[k][k]==6)) {
                                 int c_VD=0;
                                 for (int z=0; z<nSK; z++) {
                                     if (z==k) continue;
-                                    if (ConnAugMatrix[z][k]>0) c_VD++;
+                                    if ((ConnAugMatrix[z][k]>0) && (ConnAugMatrix[z][z] != 1)) c_VD++;
                                 }
                                 if (c_VD == 2)
                                     sOCR++;
@@ -1037,8 +1019,8 @@ public class AtomCenteredFragments extends DescriptorBlock {
                     if ((IsAtomElectronegative(Z)) || (Z==6) ) {
                         int x_VD=0, x_dX=0;
                         for (int k=0; k<nSK; k++) {
-                            if ((k==j) || (k==At)) continue;
-                            if (ConnAugMatrix[k][j]>0) {
+                            if ((k==j) || (k==AtomIndex)) continue;
+                            if ((ConnAugMatrix[k][j]>0) && (ConnAugMatrix[k][k] != 1)) {
                                 x_VD++;
                                 if (IsAtomElectronegative((int)ConnAugMatrix[k][k]))
                                     if (ConnAugMatrix[k][j] == 2)
@@ -1058,58 +1040,58 @@ public class AtomCenteredFragments extends DescriptorBlock {
                     ((VD==3) && (nH==0) && (aR==2) && (aX==1)) ||
                     ((VD==2) && (nH==0) && (nO==2)))
 //                || ((VD==2) && (nH==0) && (nO==2)))
-            { FragCount[76]++; return; }
+            { FragAtomId[AtomIndex] = 76; return; }
 
             if ((VD==3) && (nH==0) && (sAl==1) && (nO==2))
-            { FragCount[77]++; return; }
+            { FragAtomId[AtomIndex] = 77; return; }
 
             // N Charged +1
             if ((!AromPyrroleLike) && (!AromPyridineLike))
                 if (Charge==1)
-                { FragCount[79]++; return; }
+                { FragAtomId[AtomIndex] = 79; return; }
 
             // fragment with particular groups
             if (!AromPyrroleLike)
                 if (((VD==3) && (sOCR==1)) ||   // >N-OCR
                         (((VD+nH)==3) && (sXdX>0)))     // >N-X=X  NOTE: also >N-R=X for Dragon compatibility
-                { FragCount[72]++; return; }
+                { FragAtomId[AtomIndex] = 72; return; }
 
 
             if ((VD==1) && (nH==2) && (sAl==1))
-            { FragCount[66]++; return; }
+            { FragAtomId[AtomIndex] = 66; return; }
 
             if ((VD==2) && (nH==1) && (sAl==2))
-            { FragCount[67]++; return; }
+            { FragAtomId[AtomIndex] = 67; return; }
 
             if ((VD==3) && (nH==0) && (sAl==3))
-            { FragCount[68]++; return; }
+            { FragAtomId[AtomIndex] = 68; return; }
 
             if ((VD==1) && (nH==2) && ( (sAr==1) || (sX==1) ))
-            { FragCount[69]++; return; }
+            { FragAtomId[AtomIndex] = 69; return; }
 
-            if ((VD==2) && (nH==1) && (sAl==2))
-            { FragCount[70]++; return; }
+            if ((VD==2) && (nH==1) && (sAl==1) && (sAr==1))
+            { FragAtomId[AtomIndex] = 70; return; }
 
             if ((VD==3) && (nH==0) && (sAl==2) && (sAr==1))
-            { FragCount[71]++; return; }
+            { FragAtomId[AtomIndex] = 71; return; }
 
             if (((VD==2) && (nH==1) && (sAr==2)) ||
                     ((VD==3) && (nH==0) && (sAr==3)) ||
                     ((VD==3) && (nH==0) && (sAr==2) && (sAl==1)) ||
                     ((AromPyrroleLike)))
-            { FragCount[73]++; return; }
+            { FragAtomId[AtomIndex] = 73; return; }
 
             if (((VD==1) && (nH==0) && (tR==1)) ||
                     ((VD==2) && (nH==0) && (dR==1) && (sR==1)))
-            { FragCount[74]++; return; }
+            { FragAtomId[AtomIndex] = 74; return; }
 
             if (((AromPyridineLike)) ) // ||
 //                ((VD==2) && (aR==1) && (aX==1)))
-            { FragCount[75]++; return; }
+            { FragAtomId[AtomIndex] = 75; return; }
 
             if (((VD==2) && (nH==0) && (sAr==1) && (dX==1)) ||
                     ((VD==2) && (nH==0) && (sX==1) && (dX==1)))
-            { FragCount[78]++; return; }
+            { FragAtomId[AtomIndex] = 78; return; }
 
             return;
         }
@@ -1119,51 +1101,51 @@ public class AtomCenteredFragments extends DescriptorBlock {
         //// Halogen ions //////////////////////////////////////////////////////
 
         // F
-        if ((ConnAugMatrix[At][At] == 9) && (VD==0))
-        { FragCount[101]++; return; }
+        if ((ConnAugMatrix[AtomIndex][AtomIndex] == 9) && (VD==0))
+        { FragAtomId[AtomIndex] = 101; return; }
 
         // Cl
-        if ((ConnAugMatrix[At][At] == 17) && (VD==0))
-        { FragCount[102]++; return; }
+        if ((ConnAugMatrix[AtomIndex][AtomIndex] == 17) && (VD==0))
+        { FragAtomId[AtomIndex] = 102; return; }
 
         // Br
-        if ((ConnAugMatrix[At][At] == 35) && (VD==0))
-        { FragCount[103]++; return; }
+        if ((ConnAugMatrix[AtomIndex][AtomIndex] == 35) && (VD==0))
+        { FragAtomId[AtomIndex] = 103; return; }
 
         // I
-        if ((ConnAugMatrix[At][At] == 53) && (VD==0))
-        { FragCount[104]++; return; }
+        if ((ConnAugMatrix[AtomIndex][AtomIndex] == 53) && (VD==0))
+        { FragAtomId[AtomIndex] = 104; return; }
 
 
 
         //// Atom: S ///////////////////////////////////////////////////////////
 
-        if (ConnAugMatrix[At][At] == 16) {
+        if (ConnAugMatrix[AtomIndex][AtomIndex] == 16) {
 
             int nO=0;
 
             for (int j=0; j<nSK; j++) {
-                if (j==At) continue;
-                if (ConnAugMatrix[At][j]>0) {
+                if (j==AtomIndex) continue;
+                if (ConnAugMatrix[AtomIndex][j]>0) {
                     if (ConnAugMatrix[j][j]==8)
                         nO++;
                 }
             }
 
             if ((nH==1) && (sR==1))
-            { FragCount[106]++; return; }
+            { FragAtomId[AtomIndex] = 106; return; }
 
             if ((VD==2) && (nH==0))    // RSR is valid both for single and aromatic bonds (?)
-            { FragCount[107]++; return; }
+            { FragAtomId[AtomIndex] = 107; return; }
 
             if ((VD==1) && (nDouble==1))
-            { FragCount[108]++; return; }
+            { FragAtomId[AtomIndex] = 108; return; }
 
             if ((VD==3) && (nSingle==2) && (nO==1))
-            { FragCount[109]++; return; }
+            { FragAtomId[AtomIndex] = 109; return; }
 
             if ((VD==4) && (nSingle==2) && (nO>=2))
-            { FragCount[110]++; return; }
+            { FragAtomId[AtomIndex] = 110; return; }
 
             return;
         }
@@ -1172,10 +1154,10 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
         //// Atom: Si //////////////////////////////////////////////////////////
 
-        if (ConnAugMatrix[At][At] == 14) {
+        if (ConnAugMatrix[AtomIndex][AtomIndex] == 14) {
 
             if ((VD==4) && (nSingle==4))
-            { FragCount[111]++; return; }
+            { FragAtomId[AtomIndex] = 111; return; }
 
             return;
 
@@ -1185,10 +1167,10 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
         //// Atom: B //////////////////////////////////////////////////////////
 
-        if (ConnAugMatrix[At][At] == 5) {
+        if (ConnAugMatrix[AtomIndex][AtomIndex] == 5) {
 
             if ((VD==3) && (nSingle==3))
-            { FragCount[112]++; return; }
+            { FragAtomId[AtomIndex] = 112; return; }
 
             return;
 
@@ -1198,29 +1180,58 @@ public class AtomCenteredFragments extends DescriptorBlock {
 
         //// Atom: P //////////////////////////////////////////////////////////
 
-        if (ConnAugMatrix[At][At] == 15) {
+        if (ConnAugMatrix[AtomIndex][AtomIndex] == 15) {
 
             if ((VD==4) && (Charge==1))
-            { FragCount[115]++; return; }
+            { FragAtomId[AtomIndex] = 115; return; }
 
             if ((VD==4) && (dX==1) && (sR==3))
-            { FragCount[116]++; return; }
+            { FragAtomId[AtomIndex] = 116; return; }
 
             if ((VD==4) && (dX==1) && (sX==3))
-            { FragCount[117]++; return; }
+            { FragAtomId[AtomIndex] = 117; return; }
 
 
             if ((VD==3) && (sX==3))
-            { FragCount[118]++; return; }
+            { FragAtomId[AtomIndex] = 118; return; }
 
             if ((VD==3) && (sR==3))
-            { FragCount[119]++; return; }
+            { FragAtomId[AtomIndex] = 119; return; }
 
             if ((VD==4) && (dX==1) && (sR==1) && (sX==2))
-            { FragCount[120]++; return; }
+            { FragAtomId[AtomIndex] = 120; }
 
         }
     }
 
+
+    /**
+     * Return true if an atom is electronegative, i.e. one of the following:
+     * O, N, S, P, B, Si, Se or Halogens (F, Cl, Br, I)
+     *
+     * @param AtomicNumber
+     * @return
+     */
+    private static boolean IsAtomElectronegative(int AtomicNumber) {
+        if ((AtomicNumber==7)||(AtomicNumber==8)||(AtomicNumber==15)||
+                (AtomicNumber==16)||(AtomicNumber==34)||(AtomicNumber==9)||
+                (AtomicNumber==5)||(AtomicNumber==14)||
+                (AtomicNumber==17)||(AtomicNumber==35)||(AtomicNumber==53)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Return true if an atom is Halogen (F, Cl, Br, I)
+     *
+     * @param AtomicNumber
+     * @return
+     */
+    private static boolean IsAtomHalogen(int AtomicNumber) {
+        if ((AtomicNumber==9)||(AtomicNumber==17)||(AtomicNumber==35)||(AtomicNumber==53))
+            return true;
+        return false;
+    }
 
 }

@@ -3,6 +3,9 @@ package insilico.core.molecule;
 
 import insilico.core.alerts.Alert;
 import insilico.core.alerts.AlertList;
+import insilico.core.descriptor.Descriptor;
+import insilico.core.descriptor.pro.weights.basic.WeightsMass;
+import insilico.core.descriptor.pro.weights.iBasicWeight;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.exception.MatrixNotSupportedException;
@@ -40,6 +43,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
     private AlertList structuralAlerts;
     private SimilarityDescriptors similarityDescriptors;
     private ACFItemList ACF;
+    private Double MW;
 
 
     /**
@@ -60,6 +64,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         structuralAlerts = new AlertList();
         similarityDescriptors = null;
         ACF = null;
+        MW = null;
     }
 
     public InsilicoMoleculeCache() {
@@ -74,6 +79,38 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
 
     public void SetStructure(String newSMILES) throws InvalidMoleculeException {
         this.structure = GetStructure(newSMILES, newSMILES.contains("H"));
+    }
+
+    public double GetMolecularWeight(String SMILES, boolean explicitHydrogen) throws InvalidMoleculeException {
+
+        if (MW != null)
+            return MW;
+
+        IAtomContainer m = this.GetStructure(SMILES, explicitHydrogen);
+
+        int nSK = m.getAtomCount();
+        iBasicWeight ws = new WeightsMass();
+        double[] weights = ws.getWeights(m);
+
+        double sum = 0;
+        for (int i=0; i<nSK; i++) {
+            if (weights[i] == Descriptor.MISSING_VALUE) {
+                logger.warn("Missing value for calculation of molecular weight");
+                throw new InvalidMoleculeException("Missing value for calculation of molecular weight");
+            }
+            sum += weights[i];
+        }
+
+        // If H are implicit, calculate them
+        if (!explicitHydrogen) {
+            int nH = 0;
+            for (int i=0; i<nSK; i++)
+                nH += m.getAtom(i).getImplicitHydrogenCount();
+            sum += nH * ws.getWeight("H");
+        }
+
+        this.MW = sum;
+        return MW;
     }
 
     /**
