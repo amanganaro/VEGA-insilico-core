@@ -38,8 +38,8 @@ public class Constitutional extends DescriptorBlock {
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
-        this.Add("MW", "molecular weight");
-        this.Add("AMW", "average molecular weight");
+        this.Add("MW", "molecular weight (scaled on Carbon atom)");
+        this.Add("AMW", "average molecular weight (scaled on Carbon atom)");
         this.Add("Sv", "sum of atomic van der Waals volumes (scaled on Carbon atom)");
         this.Add("Mv", "mean atomic van der Waals volume (scaled on Carbon atom)");
         this.Add("Sp", "sum of atomic polarizabilities (scaled on Carbon atom)");
@@ -245,9 +245,8 @@ public class Constitutional extends DescriptorBlock {
                         throw new Exception("Weight not found");
                 }
 
-                double[] weights = ws.getWeights(curMol);
-                double weightH = ws.getWeight("H");
-                double weightC = ws.getWeight("C");
+                double[] weights = ws.getScaledWeights(curMol);
+                double weightH = ws.getScaledWeight("H");
 
                 double sum = 0;
                 for (int i=0; i<nSK; i++) {
@@ -255,17 +254,10 @@ public class Constitutional extends DescriptorBlock {
                         sum = Descriptor.MISSING_VALUE;
                         break;
                     } else {
-                        if (w == 0) {
-                            // weight mass -> uses original values
-                            sum += weights[i];
-                            if (H[i] > 0)
-                                sum += weightH * H[i];
-                        } else {
-                            // all other weights -> use carbon-scaled values
-                            sum += weights[i] / weightC;
-                            if (H[i] > 0)
-                                sum += (weightH / weightC) * H[i];
-                        }
+                        // all values INCLUDING MW are scaled on carbon
+                        sum += weights[i];
+                        if (H[i] > 0)
+                            sum += weightH * H[i];
                     }
                 }
 
