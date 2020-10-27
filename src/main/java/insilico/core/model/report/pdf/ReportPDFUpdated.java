@@ -231,7 +231,7 @@ public class ReportPDFUpdated {
 
         try {
             document = new Document(PageSize.A4);
-            doc_bos = new FileOutputStream(modelInfo.Version.get("Name") + ".pdf");
+            doc_bos = new FileOutputStream(modelInfo.getName() + ".pdf");
             writer = PdfWriter.getInstance(document, doc_bos);
             document.open();
         } catch (Exception e) {
@@ -379,8 +379,8 @@ public class ReportPDFUpdated {
             paragraph = new Paragraph(CurPar.toString(), fontTitle);
             cell.addElement(paragraph);
             CurPar = new StringBuilder();
-            CurPar.append(modelInfo.Version.get("Name")).append("\n");
-            CurPar.append(modelInfo.Version.get("Summary")).append("\n");
+            CurPar.append(modelInfo.getName()).append("\n");
+            CurPar.append(modelInfo.getSummary()).append("\n");
 //            for (InsilicoModelConsensusWrapper modelConsWrapper : modelConsWrappers) {
 //                CurPar.append("  ").append(modelConsWrapper.getModel().getInfo().getName()).append(" ").append(modelConsWrapper.getModel().getInfo().getVersion()).append("\n");
 //            }
@@ -392,7 +392,7 @@ public class ReportPDFUpdated {
             CurPar.append("\n\n");
             paragraph = new Paragraph(CurPar.toString(), fontBig);
             cell.addElement(paragraph);
-            CurPar = new StringBuilder("Core version: " + modelInfo.Version.get("Version"));
+            CurPar = new StringBuilder("Core version: " + modelInfo.getVersion());
             paragraph = new Paragraph(CurPar.toString(), fontGray);
             cell.addElement(paragraph);
             table.addCell(cell);

@@ -3,6 +3,7 @@ package insilico.core.model.trainingset;
 import insilico.core.alerts.AlertEncoding;
 import insilico.core.alerts.iAlertBlock;
 import insilico.core.exception.GenericFailureException;
+import insilico.core.model.InsilicoModelInfoUpdated;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModel;
 import insilico.core.molecule.InsilicoMolecule;
@@ -45,7 +46,7 @@ public class TrainingSetForKNNModels extends TrainingSet {
 
             // Info retrieved from model info object
             if (Model.getInfo().hasClassValues()) {
-                this.ClassValues = (HashMap<Double, String>) Model.getInfo().getClassValues().clone();
+                this.ClassValues = Model.getInfo().getClassValues();
                 this.hasClassValues = true;
             }
             this.Units = Model.getInfo().getUnits();
@@ -94,7 +95,6 @@ public class TrainingSetForKNNModels extends TrainingSet {
             SMILES = new String[MoleculesSize];
             Alerts = new String[MoleculesSize];
 
-            Descriptors = new float[MoleculesSize][DescriptorSize];
             DescriptorMin = new float[DescriptorSize];
             DescriptorMax = new float[DescriptorSize];
 
@@ -154,18 +154,19 @@ public class TrainingSetForKNNModels extends TrainingSet {
                     // Descriptors and alerts from model calculation
                     InsilicoModelOutput Res = Model.Execute(mol);
 
+                    float[] Descriptors = new float[DescriptorSize];
                     for (int d = 0; d < DescriptorSize; d++)
-                        this.Descriptors[i][d] = (float) Model.GetDescriptor(d);
+                        Descriptors[d] = (float) Model.GetDescriptor(d);
                     if (!DescMinMaxSet) {
                         for (int d = 0; d < DescriptorSize; d++) {
-                            DescriptorMin[d] = this.Descriptors[i][d];
-                            DescriptorMax[d] = this.Descriptors[i][d];
+                            DescriptorMin[d] = Descriptors[d];
+                            DescriptorMax[d] = Descriptors[d];
                         }
                         DescMinMaxSet = true;
                     } else {
                         for (int d = 0; d < DescriptorSize; d++) {
-                            DescriptorMin[d] = Math.min(this.Descriptors[i][d], DescriptorMin[d]);
-                            DescriptorMax[d] = Math.max(this.Descriptors[i][d], DescriptorMax[d]);
+                            DescriptorMin[d] = Math.min(Descriptors[d], DescriptorMin[d]);
+                            DescriptorMax[d] = Math.max(Descriptors[d], DescriptorMax[d]);
                         }
                     }
                 }

@@ -49,7 +49,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
     protected final static short AD_CALCULATED = 1;
 
 
-    protected InsilicoModelInfo Info;
+    protected InsilicoModelInfoUpdated Info;
     protected iTrainingSet TS;
     protected InsilicoMolecule CurMolecule;
     protected InsilicoModelOutput CurOutput;
@@ -90,7 +90,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
     public InsilicoModel(String ModelData)
             throws InitFailureException {
 
-        Info = new InsilicoModelInfo(getClass().getResource(ModelData));
+        Info = new InsilicoModelInfoUpdated(getClass().getResource(ModelData));
         TS = null; // TS is initialized in execute()
 
         ResultsName = new String[0];
@@ -240,7 +240,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
 
 
         // Step 2 - Alerts calculation
-        if (Info.hasAlerts()) {
+        if ( Info.hasAlerts() ) {
 
             // If alerts have been not previously calculated, they are reset
             // and calculated here
@@ -371,7 +371,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
      * @return the Info object of this model
      */
     @Override
-    public InsilicoModelInfo getInfo() {
+    public InsilicoModelInfoUpdated getInfo() {
         return Info;
     }
 

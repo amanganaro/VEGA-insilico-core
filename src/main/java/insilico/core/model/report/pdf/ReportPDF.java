@@ -23,6 +23,7 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.model.InsilicoModelConsensusOutput;
 import insilico.core.model.InsilicoModelInfo;
+import insilico.core.model.InsilicoModelInfoUpdated;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.report.pdf.classbarchart.ClassBarChart;
 import insilico.core.model.report.pdf.classbarchart.ClassBarDataPoint;
@@ -295,7 +296,7 @@ public class ReportPDF {
 
     }
 
-    private void WritePageHeader(InsilicoModelInfo Model, int Section) throws GenericFailureException {
+    private void WritePageHeader(InsilicoModelInfoUpdated Model, int Section) throws GenericFailureException {
 
         Image gif = null;
         PdfPTable table;
@@ -484,9 +485,9 @@ public class ReportPDF {
         for (InsilicoModelWrapper mw : modelWrappers) {
             if (!mw.isFlagForOutput())
                 continue;
-            InsilicoModelInfo curInfo = mw.getModel().getInfo();
+            InsilicoModelInfoUpdated curInfo = mw.getModel().getInfo();
             ModelTitle[modelIdx] = curInfo.getName() + " (version " + curInfo.getVersion() + ")\n";
-            ModelDesc[modelIdx] = curInfo.getDescriptionLong() + "\n"; ;
+            ModelDesc[modelIdx] = curInfo.getSummary() + "\n"; ;
             modelIdx++;
         }
 
@@ -883,7 +884,7 @@ public class ReportPDF {
 
             document.newPage();
             CurPage++;
-            WritePageHeader(ModelWrapper.getModel().getInfo(), 1);
+//            WritePageHeader(ModelWrapper.getModel().getInfo(), 1);
 
 
             //// PAGE 1 - results //////////////////////////////////////////
@@ -1185,14 +1186,14 @@ public class ReportPDF {
                 table = new PdfPTable(2);
 
                 try {
-                    if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
-                        URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
-                                TS.getId((int)curSimMol.getIndex()) + ".png" );
-                        gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
-                    } else {
+//                    if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
+//                        URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
+//                                TS.getId((int)curSimMol.getIndex()) + ".png" );
+//                        gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
+//                    } else {
                         InsilicoMolecule curMol = SmilesMolecule.Convert(TS.getSMILES((int)curSimMol.getIndex()));
                         gif = Image.getInstance(Depiction.DepictMolecule(curMol, 180, 180),null);
-                    }
+//                    }
                 } catch (Exception e) {
                     BufferedImage I = new BufferedImage(180, 180, BufferedImage.TYPE_INT_RGB);
                     Graphics2D g = I.createGraphics();
@@ -1625,14 +1626,14 @@ public class ReportPDF {
                         SimilarMolecule curSimMol = curSim.get(m);
 
                         try {
-                            if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
-                                URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
-                                        TS.getId((int)curSimMol.getIndex()) + ".png" );
-                                gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
-                            } else {
+//                            if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
+//                                URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
+//                                        TS.getId((int)curSimMol.getIndex()) + ".png" );
+//                                gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
+//                            } else {
                                 InsilicoMolecule curMol = SmilesMolecule.Convert(TS.getSMILES((int)curSimMol.getIndex()));
                                 gif = Image.getInstance(Depiction.DepictMolecule(curMol, 180, 180),null);
-                            }
+//                            }
                         } catch (Exception e) {
                             BufferedImage I = new BufferedImage(180, 180, BufferedImage.TYPE_INT_RGB);
                             Graphics2D g = I.createGraphics();
@@ -1789,8 +1790,8 @@ public class ReportPDF {
 
             ScatterChartDataSet ds1 = new ScatterChartDataSet(ScatterChartDataSet.DS_SCATTER);
             ds1.PointColor = new Color(0x00, 0x99, 0xFF);
-            for (int k=0; k<TS.getMoleculesSize(); k++)
-                ds1.Add(new ScatterChartDataPoint(TS.getDescriptor(k, DescIdx), TS.getExperimentalValue(k)));
+//            for (int k=0; k<TS.getMoleculesSize(); k++)
+//                ds1.Add(new ScatterChartDataPoint(TS.getDescriptor(k, DescIdx), TS.getExperimentalValue(k)));
 
             ScatterChartDataSet ds2 = new ScatterChartDataSet(ScatterChartDataSet.DS_SCATTER);
             ds2.PointShape = ScatterChartDataSet.SHAPE_CIRCLE_FILLED;
@@ -1840,10 +1841,10 @@ public class ReportPDF {
                 dsSim[s].PointSize = 2 + (int)Math.ceil(Math.pow(16, simMol.getSimilarity()*simMol.getSimilarity()));
                 dsSim[s].PointColor = Color.BLACK;
                 dsSim[s].PointColorFilling = Color.WHITE;
-                dsSim[s].Add(new ScatterChartDataPoint(TS.getDescriptor((int)simMol.getIndex(), DescIdx),
-                        TS.getExperimentalValue((int)simMol.getIndex()),
-                        TS.getDescriptor((int)simMol.getIndex(), DescIdx),
-                        TS.getPredictedValue((int)simMol.getIndex())));
+//                dsSim[s].Add(new ScatterChartDataPoint(TS.getDescriptor((int)simMol.getIndex(), DescIdx),
+//                        TS.getExperimentalValue((int)simMol.getIndex()),
+//                        TS.getDescriptor((int)simMol.getIndex(), DescIdx),
+//                        TS.getPredictedValue((int)simMol.getIndex())));
                 ch.DataSeries.add(dsSim[s]);
             }
 

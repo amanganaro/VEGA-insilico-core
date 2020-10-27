@@ -3,6 +3,7 @@ package insilico.core.model.trainingset;
 import insilico.core.alerts.AlertEncoding;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
+import insilico.core.model.InsilicoModelInfoUpdated;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModel;
 import insilico.core.molecule.InsilicoMolecule;
@@ -13,25 +14,23 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.similarity.SimilarityDescriptors;
 import insilico.core.similarity.SimilarityDescriptorsBuilder;
 import insilico.core.tools.utils.GeneralUtilities;
-import insilico.core.tools.utils.logger.InsilicoLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 
+@Slf4j
 public class TrainingSet implements Serializable, iTrainingSet {
 
     private static final long serialVersionUID = 1L;
     
-    Logger logger = LoggerFactory.getLogger(TrainingSet.class);
-
     public static final short MOLECULE_UNKNOWN_SET = -1;
     public static final short MOLECULE_TRAINING =1;
     public static final short MOLECULE_TEST =2;
+
+    protected String UnitConversion;
 
     protected int MoleculesSize;
     protected int MoleculesTrainSize;
@@ -42,12 +41,12 @@ public class TrainingSet implements Serializable, iTrainingSet {
     protected String[] SMILES;
     protected float[] Experimental;
     protected float[] Prediction;
+    protected float[] MW;
 
     protected int DescriptorSize;
     protected String[] DescriptorName;
     protected float[] DescriptorMin;
     protected float[] DescriptorMax;
-    protected float[][] Descriptors;
 
     protected String Units;
 
@@ -56,9 +55,10 @@ public class TrainingSet implements Serializable, iTrainingSet {
     protected ACFItemList ACFList;
 
     protected boolean hasClassValues;
-    protected HashMap<Double, String> ClassValues;
+    protected HashMap<Integer, String> ClassValues;
 
     protected final DecimalFormat Format;
+
 
     // Constructor
     public TrainingSet () {
@@ -75,13 +75,14 @@ public class TrainingSet implements Serializable, iTrainingSet {
         CAS = null;
         Status = null;
         SMILES = null;
+        UnitConversion = null;
         Experimental = null;
         Prediction = null;
+        MW = null;
         DescriptorSize = 0;
         DescriptorName = null;
         DescriptorMin = null;
         DescriptorMax = null;
-        Descriptors = null;
         Units = null;
         SimDescriptors = null;
         Alerts = null;
@@ -106,11 +107,19 @@ public class TrainingSet implements Serializable, iTrainingSet {
         return MoleculesTestSize;
     }
 
+    public String getUnitConversion() {
+        return UnitConversion;
+    }
+
+    public boolean hasUnitConversion() {
+        return UnitConversion != null;
+    }
+
     @Override
     public int getId(int Index) throws GenericFailureException {
         if((Id == null) || (Index < 0) || (Index >= Id.length)){
             String message = "Id object empty or wrong index in request to training set";
-            logger.error(message);
+            log.error(message);
             throw new GenericFailureException(message);
         }
         return Id[Index];
@@ -120,7 +129,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public String getCAS(int Index) throws GenericFailureException {
         if ((CAS == null) || (Index < 0) || (Index >= CAS.length)) {
             String message = "CAS object empty or wrong index in request to training set";
-            logger.error(message);
+            log.error(message);
             throw new GenericFailureException(message);
         }
         return CAS[Index];
@@ -130,7 +139,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public String getSMILES(int Index) throws GenericFailureException {
         if ((SMILES == null) || (Index < 0) || (Index >= SMILES.length)) {
             String message = "SMILES object empty or wrong index in request to training set";
-            logger.error(message);
+            log.error(message);
             throw new GenericFailureException(message);
         }
         return SMILES[Index];
@@ -140,7 +149,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public short getMoleculeSet(int Index) throws GenericFailureException {
         if ((Status == null) || (Index < 0) || (Index >= Status.length)) {
             String message = "Status object empty or wrong index in request to training set";
-            logger.error(message);
+            log.error(message);
             throw new GenericFailureException(message);
         }
         return Status[Index];
@@ -149,7 +158,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getExperimentalValue(int Index) throws GenericFailureException {
         if ((Experimental == null) || (Index < 0) || (Index >= Experimental.length)) {
-            logger.error("Experimental object empty or wrong index in request to training set");
+            log.error("Experimental object empty or wrong index in request to training set");
             throw new GenericFailureException("Experimental object empty or wrong index in request to training set");
         }
         return Experimental[Index];
@@ -158,7 +167,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getExperimentalValueFormatted(int Index) throws GenericFailureException {
         if ((Experimental == null) || (Index < 0) || (Index >= Experimental.length)) {
-            logger.error("Experimental object empty or wrong index in request to training set");
+            log.error("Experimental object empty or wrong index in request to training set");
             throw new GenericFailureException("Experimental object empty or wrong index in request to training set");
         }
 
@@ -169,7 +178,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getPredictedValue(int Index) throws GenericFailureException {
         if ((Prediction == null) || (Index < 0) || (Index >= Prediction.length)) {
-            logger.error("Prediction object empty or wrong index in request to training set");
+            log.error("Prediction object empty or wrong index in request to training set");
             throw new GenericFailureException("Prediction object empty or wrong index in request to training set");
         }
         return Prediction[Index];
@@ -178,12 +187,22 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getPredictedValueFormatted(int Index) throws GenericFailureException {
         if ((Prediction == null) || (Index < 0) || (Index >= Prediction.length)) {
-            logger.error("Prediction object empty or wrong index in request to training set");
+            log.error("Prediction object empty or wrong index in request to training set");
             throw new GenericFailureException("Prediction object empty or wrong index in request to training set");
         }
 
         double val = getPredictedValue(Index);
         return (FormatValue(val));
+    }
+
+    @Override
+    public double getMolecularWeight(int Index) throws GenericFailureException {
+        if ((MW == null) || (Index < 0) || (Index >= MW.length)) {
+            log.error("MW object empty or wrong index in request to training set");
+            throw new GenericFailureException("MW object empty or wrong index in request to training set");
+        }
+
+        return MW[Index];
     }
 
     @Override
@@ -201,7 +220,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getDescriptorMax(int Index) throws GenericFailureException {
         if ((DescriptorMax == null) || (Index < 0) || (Index >= DescriptorMax.length)) {
-            logger.error("DescriptorMax object empty or wrong index in request to training set");
+            log.error("DescriptorMax object empty or wrong index in request to training set");
             throw new GenericFailureException("DescriptorMax object empty or wrong index in request to training set");
         }
         return DescriptorMax[Index];
@@ -210,26 +229,16 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getDescriptorMin(int Index) throws GenericFailureException {
         if ((DescriptorMin == null) || (Index < 0) || (Index >= DescriptorMin.length)) {
-            logger.error("DescriptorMin object empty or wrong index in request to training set");
+            log.error("DescriptorMin object empty or wrong index in request to training set");
             throw new GenericFailureException("DescriptorMin object empty or wrong index in request to training set");
         }
         return DescriptorMin[Index];
     }
 
     @Override
-    public double getDescriptor(int MolIndex, int DescriptorIndex) throws GenericFailureException {
-        if ((Descriptors == null) || (MolIndex < 0) || (MolIndex >= Descriptors.length) ||
-                (DescriptorIndex < 0) || (DescriptorIndex >= Descriptors[0].length)) {
-            logger.error("Descriptors object empty or wrong index in request to training set");
-            throw new GenericFailureException("Descriptors object empty or wrong index in request to training set");
-        }
-        return Descriptors[MolIndex][DescriptorIndex];
-    }
-
-    @Override
     public SimilarityDescriptors getSimilarityDescriptor(int Index) throws GenericFailureException {
         if ((SimDescriptors == null) || (Index < 0) || (Index >= SimDescriptors.length)) {
-            logger.error("SimDescriptors object empty or wrong index in request to training set");
+            log.error("SimDescriptors object empty or wrong index in request to training set");
             throw new GenericFailureException("SimDescriptors object empty or wrong index in request to training set");
         }
         return SimDescriptors[Index];
@@ -238,7 +247,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getAlerts(int Index) throws GenericFailureException {
         if ((Alerts == null) || (Index < 0) || (Index >= Alerts.length)) {
-            logger.error("Alerts object empty or wrong index in request to training set");
+            log.error("Alerts object empty or wrong index in request to training set");
             throw new GenericFailureException("Alerts object empty or wrong index in request to training set");
         }
         return Alerts[Index];
@@ -247,7 +256,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public ACFItemList getACF() throws GenericFailureException {
         if (ACFList == null) {
-            logger.error("ACFList object empty or wrong index in request to training set");
+            log.error("ACFList object empty or wrong index in request to training set");
             throw new GenericFailureException("ACFList object empty or wrong index in request to training set");
         }
         return ACFList;
@@ -256,11 +265,11 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getClassLabel(double Value) throws GenericFailureException {
         if (!hasClassValues) {
-            logger.error("Requested class label for a dataset without classification info in request to training set");
+            log.error("Requested class label for a dataset without classification info in request to training set");
             throw new GenericFailureException("Requested class label for a dataset without classification info in request to training set");
         }
         if (!ClassValues.containsKey(Value)) {
-            logger.error("Class label not found (value = " + Value + ") in request to training set");
+            log.error("Class label not found (value = " + Value + ") in request to training set");
             throw new GenericFailureException("Class label not found (value = " + Value + ") in request to training set");
         }
         return ClassValues.get(Value);
@@ -285,7 +294,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
                 try {
                     return getClassLabel(value);
                 } catch (GenericFailureException e) {
-                    logger.error("Unable to format value " + value + " in request to training ");
+                    log.error("Unable to format value " + value + " in request to training ");
                     return "-";
                 }
             else
@@ -296,9 +305,12 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public void Build(String molFilePath, iInsilicoModel Model){
         try{
             if(Model.getInfo().hasClassValues()){
-                this.ClassValues = (HashMap<Double, String>) Model.getInfo().getClassValues().clone();
+                this.ClassValues = Model.getInfo().getClassValues();
                 this.hasClassValues = true;
             }
+
+            if (Model.getInfo().hasConversion())
+                this.UnitConversion = Model.getInfo().getConversion();
 
             // Read molecule format - 5 columns: Id, CAS, SMILES, Status (Training/Test), Experimental Value
             DataInputStream in;
@@ -340,7 +352,6 @@ public class TrainingSet implements Serializable, iTrainingSet {
             Prediction = new float[MoleculesSize];
             SMILES = new String[MoleculesSize];
             Alerts = new String[MoleculesSize];
-            Descriptors = new float[MoleculesSize][DescriptorSize];
             DescriptorMin = new float[MoleculesSize];
             DescriptorMax = new float[MoleculesSize];
 
@@ -370,6 +381,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
 
             // Smiles conversion, additional info
             SimDescriptors = new SimilarityDescriptors[MoleculesSize];
+            MW = new float[MoleculesSize];
             ACFList = new ACFItemList();
 
             SimilarityDescriptorsBuilder similarityDescriptorsBuilder = new SimilarityDescriptorsBuilder();
@@ -387,22 +399,23 @@ public class TrainingSet implements Serializable, iTrainingSet {
                     continue;
                 }
 
+                MW[i] = (float) mol.GetMolecularWeight();
+
                 InsilicoModelOutput Res = Model.Execute(mol);
 
+                float[] Descriptors = new float[DescriptorSize];
                 for (int d=0; d<DescriptorSize; d++)
-                    this.Descriptors[i][d] = (float)Model.GetDescriptor(d);
+                    Descriptors[d] = (float)Model.GetDescriptor(d);
                 if (!descMinMaxSet) {
                     for (int d=0; d<DescriptorSize; d++) {
-                        DescriptorMin[d] = this.Descriptors[i][d];
-                        DescriptorMax[d] = this.Descriptors[i][d];
+                        DescriptorMin[d] = Descriptors[d];
+                        DescriptorMax[d] = Descriptors[d];
                     }
                     descMinMaxSet = true;
                 } else {
                     for (int d=0; d<DescriptorSize; d++) {
-//                        DescriptorMin[d] = this.Descriptors[i][d]<DescriptorMin[d]?this.Descriptors[i][d]:DescriptorMin[d];
-//                        DescriptorMax[d] = this.Descriptors[i][d]>DescriptorMax[d]?this.Descriptors[i][d]:DescriptorMax[d];
-                        DescriptorMin[d] = Math.min(this.Descriptors[i][d], DescriptorMin[d]);
-                        DescriptorMax[d] = Math.max(this.Descriptors[i][d], DescriptorMax[d]);
+                        DescriptorMin[d] = Math.min(Descriptors[d], DescriptorMin[d]);
+                        DescriptorMax[d] = Math.max(Descriptors[d], DescriptorMax[d]);
 
                     }
                 }
@@ -435,7 +448,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
             in.close();
 
         } catch (Exception e){
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
             // TODO: 15/06/2020 sviluppare exception
         }
 
@@ -482,8 +495,6 @@ public class TrainingSet implements Serializable, iTrainingSet {
 
             if (IncludeAllInfo) {
                 s += "\t" + this.Alerts[i];
-                for (int d=0; d<this.DescriptorSize; d++)
-                    s += "\t" + this.Descriptors[i][d];
             }
             Out.println(s);
             Out.flush();

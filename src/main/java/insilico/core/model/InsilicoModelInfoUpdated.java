@@ -19,20 +19,75 @@ import java.util.List;
 public class InsilicoModelInfoUpdated {
 
     // VERSION
-    public final HashMap<String, String> Version = new HashMap<>();
+    private final HashMap<String, String> Version = new HashMap<>();
     public final static String Version_Name = "Name";
     public final static String Version_Key = "Key";
     public final static String Version_Summary = "Summary";
     public final static String Version_Version = "Version";
 
+    public String getName() {
+        return Version.get(Version_Name) == null ? "" : Version.get(Version_Name);
+    }
+
+    public String getKey() {
+        return Version.get(Version_Key) == null ? "" : Version.get(Version_Key);
+    }
+
+    public String getSummary() {
+        return Version.get(Version_Summary) == null ? "" : Version.get(Version_Summary);
+    }
+
+    public String getVersion() {
+        return Version.get(Version_Version) == null ? "" : Version.get(Version_Version);
+    }
+
+
+
     // VEGA
-    public final HashMap<String, String> Vega = new HashMap<>();
-    public final HashMap<String, String> ClassValues = new HashMap<>();
+    private final HashMap<String, String> Vega = new HashMap<>();
+    private final HashMap<Integer, String> ClassValues = new HashMap<>();
     public final static String Vega_TS = "TS";
     public final static String Vega_QMRF = "QMRF";
     public final static String Vega_HasAlerts = "HasAlerts";
     public final static String Vega_Units = "Units";
+    public final static String Vega_Conversion = "UnitConversion";
     public final static String Vega_ClassValues = "ClassValues";
+
+    public String getTrainingSetURL() {
+        return Vega.get(Vega_TS) == null ? "" : Vega.get(Vega_TS);
+    }
+
+    public String getQMRF() {
+        return Vega.get(Vega_QMRF) == null ? "" : Vega.get(Vega_QMRF);
+    }
+
+    public boolean hasAlerts() {
+        if (!Vega.containsKey(Vega_HasAlerts))
+            return false;
+        return Boolean.valueOf(Vega.get(Vega_HasAlerts));
+    }
+
+    public String getUnits() {
+        return Vega.get(Vega_Units) == null ? "" : Vega.get(Vega_Units);
+    }
+
+    public boolean hasConversion() {
+        return Vega.get(Vega_Conversion) == null;
+    }
+
+    public String getConversion() {
+        return Vega.get(Vega_Conversion) == null ? "" : Vega.get(Vega_Conversion);
+    }
+
+    public boolean hasClassValues() {
+        return !this.ClassValues.isEmpty();
+    }
+
+    public HashMap<Integer, String> getClassValues() {
+        return ClassValues;
+    }
+
+
 
     // GUIDE
     public final HashMap<String, String> Guide = new HashMap<>();
@@ -203,6 +258,12 @@ public class InsilicoModelInfoUpdated {
                 Vega.put(Vega_Units, null);
             }
 
+            if (hasTag(Vega_Conversion, element)) {
+                Vega.put(Vega_Conversion, getValue(Vega_Conversion,element));
+            } else {
+                Vega.put(Vega_Conversion, null);
+            }
+
             if (hasTag(Vega_ClassValues, element)) {
                 NodeList ClassValuesNode = element.getElementsByTagName("ClassValues");
                 Element node = (Element) ClassValuesNode.item(0);
@@ -211,11 +272,10 @@ public class InsilicoModelInfoUpdated {
                     Element n = (Element) Classes.item(i);
                     String ClassValue = getValue("Value", n);
                     String ClassLabel = getValue("Label", n);
-                    ClassValues.put(ClassValue, ClassLabel);
+                    ClassValues.put(Integer.valueOf(ClassValue), ClassLabel);
                 }
-            } else {
-                Vega.put(Vega_ClassValues, null);
             }
+
 
             // GUIDE TAGS
             nodes = doc.getElementsByTagName("Guide");

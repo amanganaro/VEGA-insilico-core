@@ -196,6 +196,8 @@ public class WeightsIState implements iWeight {
 
         //// I-State
         double IS = (Math.pow(2.0 / L, 2.0) * DeltaV + 1) / D;
+        if ( (Double.isInfinite(IS)) || (Double.isNaN(IS)) )
+            IS = Descriptor.MISSING_VALUE;
         return IS;
     }
 }

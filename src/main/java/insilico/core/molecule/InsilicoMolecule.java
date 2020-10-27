@@ -2,6 +2,7 @@ package insilico.core.molecule;
 
 import insilico.core.alerts.Alert;
 import insilico.core.alerts.AlertList;
+import insilico.core.descriptor.Descriptor;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.exception.MatrixNotSupportedException;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Basic molecule object
@@ -113,6 +115,17 @@ public class InsilicoMolecule implements Serializable, Cloneable {
             throw new InvalidMoleculeException();
         }
         return MoleculeCache.GetAllRings(SMILES, explicitHydrogen, warnings, errors);
+    }
+
+    public ArrayList<Descriptor> GetBasicDescriptors() throws InvalidMoleculeException {
+        return MoleculeCache.getBasicDescriptors(this);
+    }
+
+    public Descriptor GetBasicDescriptorByName(String Name) throws InvalidMoleculeException {
+        for (Descriptor d : this.GetBasicDescriptors())
+            if (d.getName().equalsIgnoreCase(Name))
+                return d;
+        return null;
     }
 
     public boolean HasSimilarityDescriptors() {

@@ -4,6 +4,10 @@ package insilico.core.molecule;
 import insilico.core.alerts.Alert;
 import insilico.core.alerts.AlertList;
 import insilico.core.descriptor.Descriptor;
+import insilico.core.descriptor.DescriptorBlock;
+import insilico.core.descriptor.pro.AtomCenteredFragments;
+import insilico.core.descriptor.pro.Constitutional;
+import insilico.core.descriptor.pro.Rings;
 import insilico.core.descriptor.pro.weights.basic.WeightsMass;
 import insilico.core.descriptor.pro.weights.iBasicWeight;
 import insilico.core.exception.GenericFailureException;
@@ -44,6 +48,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
     private SimilarityDescriptors similarityDescriptors;
     private ACFItemList ACF;
     private Double MW;
+    private ArrayList<Descriptor> basicDescriptors;
 
 
     /**
@@ -65,6 +70,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         similarityDescriptors = null;
         ACF = null;
         MW = null;
+        basicDescriptors = null;
     }
 
     public InsilicoMoleculeCache() {
@@ -147,6 +153,28 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         }
         return structure;
     }
+
+
+    public ArrayList<Descriptor> getBasicDescriptors(InsilicoMolecule mol) throws InvalidMoleculeException {
+        if (basicDescriptors == null) {
+
+            // Basic descriptors blocks
+            ArrayList<DescriptorBlock> blocks = new ArrayList<>();
+            blocks.add(new Constitutional());
+            blocks.add(new Rings());
+            blocks.add(new AtomCenteredFragments());
+
+            for (DescriptorBlock b : blocks)
+                b.Calculate(mol);
+
+            basicDescriptors = new ArrayList<>();
+            for (DescriptorBlock b : blocks)
+                for (Descriptor d : b.GetAllDescriptors())
+                    basicDescriptors.add(d);
+        }
+        return basicDescriptors;
+    }
+
 
     /**
      * GET SSR
