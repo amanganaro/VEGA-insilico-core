@@ -779,7 +779,7 @@ public class GhoseCrippenACF {
             if ((nH==0) && (dX==1) && (sAl==2))
             { FragAtomId[AtomIndex] = 38; return; }
 
-            if ((nH==0) && (dX==1) && (sAr==1) && (sR>=1) &&(sX==0))
+            if ((nH==0) && (dX==1) && (sAr>=1) && (sR>=1) &&(sX==0))
             { FragAtomId[AtomIndex] = 39; return; }
 
             if (((nH==0) && (dX==1) && (sR==1) && (sX==1)) ||
