@@ -1018,7 +1018,9 @@ public class GhoseCrippenACF {
                     // Electronegative
                     // NOTE: to be consistent with Dragon, also R is used
                     // instead of only electronegative atoms
-                    if ((IsAtomElectronegative(Z)) || (Z==6) ) {
+                    //
+                    // NOT ANYMORE (delete comment)
+                    if ((IsAtomElectronegative(Z))) {
                         int x_VD=0, x_dX=0;
                         for (int k=0; k<nSK; k++) {
                             if ((k==j) || (k==AtomIndex)) continue;
@@ -1044,7 +1046,7 @@ public class GhoseCrippenACF {
 //                || ((VD==2) && (nH==0) && (nO==2)))
             { FragAtomId[AtomIndex] = 76; return; }
 
-            if ((VD==3) && (nH==0) && (sAl==1) && (nO==2))
+            if ((VD==3) && (nH==0) && (sAr==0) && (nO==2))
             { FragAtomId[AtomIndex] = 77; return; }
 
             // N Charged +1
@@ -1055,7 +1057,7 @@ public class GhoseCrippenACF {
             // fragment with particular groups
             if (!AromPyrroleLike)
                 if (((VD==3) && (sOCR==1)) ||   // >N-OCR
-                        (((VD+nH)==3) && (sXdX>0)))     // >N-X=X  NOTE: also >N-R=X for Dragon compatibility
+                        (((VD+nH)==3) && (sXdX>0)))     // >N-X=X
                 { FragAtomId[AtomIndex] = 72; return; }
 
 
@@ -1065,7 +1067,7 @@ public class GhoseCrippenACF {
             if ((VD==2) && (nH==1) && (sAl==2))
             { FragAtomId[AtomIndex] = 67; return; }
 
-            if ((VD==3) && (nH==0) && (sAl==3))
+            if ((VD==3) && (nH==0) && (sAr==0))
             { FragAtomId[AtomIndex] = 68; return; }
 
             if ((VD==1) && (nH==2) && ( (sAr==1) || (sX==1) ))
@@ -1083,8 +1085,10 @@ public class GhoseCrippenACF {
                     ((AromPyrroleLike)))
             { FragAtomId[AtomIndex] = 73; return; }
 
+            // R=N- is matched also if it is R=NH
             if (((VD==1) && (nH==0) && (tR==1)) ||
-                    ((VD==2) && (nH==0) && (dR==1) && (sR==1)))
+                    ((VD==2) && (nH==0) && (dR==1) && (sR==1)) ||
+                    ((VD==1) && (nH==1) && (dR==1)))
             { FragAtomId[AtomIndex] = 74; return; }
 
             if (((AromPyridineLike)) ) // ||
@@ -1200,7 +1204,9 @@ public class GhoseCrippenACF {
             if ((VD==3) && (sR==3))
             { FragAtomId[AtomIndex] = 119; return; }
 
-            if ((VD==4) && (dX==1) && (sR==1) && (sX==2))
+            // consider as phosponate also PH(=X)(X)(X)
+            if ( ((VD==4) && (dX==1) && (sR==1) && (sX==2)) ||
+                    ((VD==3) && (dX==1) && (sX==2)))
             { FragAtomId[AtomIndex] = 120; }
 
         }
