@@ -290,7 +290,7 @@ public class GhoseCrippenACF {
 
                         if ((Z==7) && (elNegVD==3))
                             IsPyrroleLikeArom = true;
-                        if (Z==8)
+                        if ((Z==8) && (elNegVD==2))
                             IsPyrroleLikeArom = true;
                         if ((Z==16) && (elNegVD==2) )
                             IsPyrroleLikeArom = true;
@@ -782,7 +782,9 @@ public class GhoseCrippenACF {
             if ((nH==0) && (dX==1) && (sAr>=1) && (sR>=1) &&(sX==0))
             { FragAtomId[AtomIndex] = 39; return; }
 
+            // carboxyl-like fragment R-C(=X)-X is matched also if R = H
             if (((nH==0) && (dX==1) && (sR==1) && (sX==1)) ||
+                    ((nH==1) && (dX==1) && (sR==0) && (sX==1)) ||
                     ((nH==0) && (tX==1) && (sR==1)) ||
                     ((nH==0) && (dX==2)) )
             { FragAtomId[AtomIndex] = 40; return; }
@@ -859,8 +861,8 @@ public class GhoseCrippenACF {
                         if (c_Arom)
                         { FragAtomId[AtomIndex] = 57; return; }
 
-                        // Carboxyl
-                        if ((!c_Arom) && (c_VD==3) && (c_dO==1))
+                        // Carboxyl (matched also if R = H)
+                        if ((!c_Arom) && (c_VD<=3) && (c_dO==1))
                         { FragAtomId[AtomIndex] = 57; return; }
 
                     }
