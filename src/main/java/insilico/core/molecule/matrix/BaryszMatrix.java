@@ -1,12 +1,9 @@
 package insilico.core.molecule.matrix;
 
 import insilico.core.descriptor.Descriptor;
-import insilico.core.descriptor.pro.weights.basic.*;
-import insilico.core.descriptor.pro.weights.other.WeightsAtomicNumber;
-import insilico.core.descriptor.weight.VanDerWaals;
+import insilico.core.descriptor.blocks.weights.basic.WeightsMass;
+import insilico.core.descriptor.blocks.weights.other.WeightsAtomicNumber;
 import insilico.core.tools.utils.MoleculeUtilities;
-import org.openscience.cdk.Atom;
-import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -60,19 +57,19 @@ public class BaryszMatrix {
                     break;
                 case 2:
                     // v (van der waals volume)
-                    w = (new WeightsVanDerWaals()).getScaledWeights(mol);
+                    w = (new insilico.core.descriptor.blocks.weights.basic.WeightsVanDerWaals()).getScaledWeights(mol);
                     break;
                 case 3:
                     // e (sanderson electronegativity)
-                    w = (new WeightsElectronegativity()).getScaledWeights(mol);
+                    w = (new insilico.core.descriptor.blocks.weights.basic.WeightsElectronegativity()).getScaledWeights(mol);
                     break;
                 case 4:
-                    w = (new WeightsPolarizability()).getScaledWeights(mol);
+                    w = (new insilico.core.descriptor.blocks.weights.basic.WeightsPolarizability()).getScaledWeights(mol);
                     // p (polarizability)
                     break;
                 case 5:
                     // i (ionization potential)
-                    w = (new WeightsIonizationPotential()).getScaledWeights(mol);
+                    w = (new insilico.core.descriptor.blocks.weights.basic.WeightsIonizationPotential()).getScaledWeights(mol);
                     break;
                 default:
                     w = new double[nSK];

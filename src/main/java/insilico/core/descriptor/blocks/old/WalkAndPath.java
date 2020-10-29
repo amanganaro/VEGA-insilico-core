@@ -1,4 +1,4 @@
-package insilico.core.descriptor.blocks;
+package insilico.core.descriptor.blocks.old;
 
 import Jama.Matrix;
 import insilico.core.descriptor.Descriptor;
@@ -6,14 +6,16 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.interfaces.IBond.Order;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,14 +24,32 @@ import java.util.List;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-@Slf4j
 public class WalkAndPath extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
-    private final static String BlockName = "Walk and Path Descriptors";
-    private final static int MAX_PATH = 10;
-    private final static int MAX_PATH_PW = 5;
 
+    Logger logger = LoggerFactory.getLogger(WalkAndPath.class);
+
+    private final static String BlockName = "Walk and Path Descriptors";
+    private boolean defaultDescriptors;
+
+    public final static String PARAMETER_PATH_01 = "path01";
+    public final static String PARAMETER_PATH_02 = "path02";
+    public final static String PARAMETER_PATH_03 = "path03";
+    public final static String PARAMETER_PATH_04 = "path04";
+    public final static String PARAMETER_PATH_05 = "path05";
+    public final static String PARAMETER_PATH_06 = "path06";
+    public final static String PARAMETER_PATH_07 = "path07";
+    public final static String PARAMETER_PATH_08 = "path08";
+    public final static String PARAMETER_PATH_09 = "path09";
+    public final static String PARAMETER_PATH_10 = "path10";
+    
+    public final static String PARAMETER_INCLUDE_SRW = "calcSRW";
+    
+    public final static String PARAMETER_INCLUDE_INDICES = "calcInd";
+
+
+    
     /**
      * Constructor. This should not be used, no weight is specified. The 
      * overloaded constructors should be used instead.
@@ -37,27 +57,65 @@ public class WalkAndPath extends DescriptorBlock {
     public WalkAndPath() {
         super();
         this.Name = WalkAndPath.BlockName;
+        this.defaultDescriptors = true;
     }
+
+    public WalkAndPath(boolean defaultDescriptors) {
+        super();
+        this.Name = WalkAndPath.BlockName;
+        this.defaultDescriptors = defaultDescriptors;
+    }
+
+
+
 
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
-        for (int i = 2; i <= MAX_PATH_PW; i++)
-            Add("PW" + i, "path/walk " + i +" - Randic shape index");  // in Dragon PW descriptors are in the topological block
-        for (int i = 1; i <= MAX_PATH; i++)
-            Add("MWC" + i, "molecular walk count of order " + i);
-        for (int i = 1; i <= MAX_PATH; i++)
-            Add("SRW" + i, "self-returning walk count of order " + i);
-        for (int i = 1; i <= MAX_PATH; i++)
-            Add("MPC" + i, "molecular path count of order " + i);
-        for (int i = 1; i <= MAX_PATH; i++)
-            Add("piPC" + i, "molecular multiple path count of order " + i);
-        Add("piID", "conventional bond order ID number");
-        Add("TPC", "total path count");
-        Add("PCR", "ratio of multiple path count over path count");
+        ArrayList<Integer> pathsList = BuildPathsList();
+        for (Integer curPath : pathsList) {
+            Add("MWC" + curPath.toString(), "");
+            Add("MPC" + curPath.toString(), "");
+            Add("PW" + curPath.toString(), "");
+            Add("piPC" + curPath.toString(), "");
+        }
+        if (getBoolProperty(PARAMETER_INCLUDE_SRW)) {
+            int SRWMaxPath = pathsList.get(pathsList.size()-1);
+            for (int i=1; i<=SRWMaxPath; i++)
+                Add("SRW" + i, "");
+        }
+        if (getBoolProperty(PARAMETER_INCLUDE_INDICES)) {
+            // if these indices are included, all paths from 1 to 9 are
+            // automatically included and calculated
+            Add("piID", "");
+            Add("TPC", "");
+            Add("PCR", "");
+        }
         SetAllValues(Descriptor.MISSING_VALUE);
     }
+    
+    
+    private ArrayList<Integer> BuildPathsList() {
+        ArrayList<Integer> p = new ArrayList<>();
+        if (defaultDescriptors) {
+            setBoolProperty(PARAMETER_INCLUDE_INDICES, true);
+            setBoolProperty(PARAMETER_INCLUDE_SRW, true);
+        }
+        boolean All = getBoolProperty(PARAMETER_INCLUDE_INDICES);
+        if ((getBoolProperty(PARAMETER_PATH_01))||(All)) p.add(1);
+        if ((getBoolProperty(PARAMETER_PATH_02))||(All)) p.add(2);
+        if ((getBoolProperty(PARAMETER_PATH_03))||(All)) p.add(3);
+        if ((getBoolProperty(PARAMETER_PATH_04))||(All)) p.add(4);
+        if ((getBoolProperty(PARAMETER_PATH_05))||(All)) p.add(5);
+        if ((getBoolProperty(PARAMETER_PATH_06))||(All)) p.add(6);
+        if ((getBoolProperty(PARAMETER_PATH_07))||(All)) p.add(7);
+        if ((getBoolProperty(PARAMETER_PATH_08))||(All)) p.add(8);
+        if ((getBoolProperty(PARAMETER_PATH_09))||(All)) p.add(9);
+        if ((getBoolProperty(PARAMETER_PATH_10))||(All)) p.add(10);
 
+        return p;
+    }
+    
     
     /**
      * Calculate descriptors for the given molecule.
@@ -70,11 +128,14 @@ public class WalkAndPath extends DescriptorBlock {
         // Generate/clears descriptors
         GenerateDescriptors();
 
+        ArrayList<Integer> pathsList = BuildPathsList();
+        if (pathsList.isEmpty())
+            return;
+
         IAtomContainer m;
         try {
             m = mol.GetStructure();
         } catch (InvalidMoleculeException e) {
-            log.warn("Invalid structure, unable to calculate: " + this.Name);
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
@@ -84,7 +145,7 @@ public class WalkAndPath extends DescriptorBlock {
         try {
             AdjMat = mol.GetMatrixAdjacency();
         } catch (GenericFailureException e) {
-            log.warn(e.getMessage());
+            logger.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
@@ -97,7 +158,7 @@ public class WalkAndPath extends DescriptorBlock {
         double piID=0, TPC=0;
                 
         // Cycle for all found path schemes
-        for (int curPath = 1; curPath<= MAX_PATH; curPath++) {
+        for (Integer curPath : pathsList) {
             
             double CurPath=0, CurWalk=0, CurPW=0, CurMPC=0;
             int[] AtomWalk = GetAtomsWalks(curPath, AdjMatDbl);
@@ -110,11 +171,11 @@ public class WalkAndPath extends DescriptorBlock {
                 CurPW += (double)AtomPath[i][0] / (double)AtomWalk[i];
             }
             
-//            if (curPath == 1) {
-//                CurWalk /= 2;
-//            } else {
+            if (curPath == 1) {
+                CurWalk /= 2;
+            } else {
                 CurWalk = Math.log(1 + CurWalk);
-//            }
+            }
             CurPath /= 2;
             TPC += CurPath;
             CurMPC /= 2.0;
@@ -123,23 +184,30 @@ public class WalkAndPath extends DescriptorBlock {
             CurPW /= nSK;
             
             
-            SetByName("MWC" + curPath, CurWalk);
-            SetByName("piPC" + curPath, CurMPC);
-            SetByName("MPC" + curPath, Math.log(1+CurPath));
-            SetByName("PW" + curPath, CurPW);
+            SetByName("MWC" + curPath.toString(), CurWalk);
+            SetByName("piPC" + curPath.toString(), CurMPC);
+            SetByName("MPC" + curPath.toString(), CurPath);
+            SetByName("PW" + curPath.toString(), CurPW);
+            
         }
+        
+        if (getBoolProperty(PARAMETER_INCLUDE_INDICES)) {
 
-        piID = Math.log(1+piID+nSK);
-        TPC = Math.log(1+TPC+nSK);
+            piID = Math.log(1+piID+nSK);
+            TPC = Math.log(1+TPC+nSK);
 
-        double PCR = piID / TPC;
-        SetByName("piID", piID);
-        SetByName("TPC", TPC);
-        SetByName("PCR", PCR);
-
-        int[] MolSRW = GetSRWToLag(MAX_PATH, AdjMatDbl);
-        for (int i = 1; i<= MAX_PATH; i++)
-            SetByName("SRW" + i, Math.log(1+MolSRW[i]));
+            double PCR = piID / TPC;
+            SetByName("piID", piID);
+            SetByName("TPC", TPC);
+            SetByName("PCR", PCR);
+        }
+        
+        if (getBoolProperty(PARAMETER_INCLUDE_SRW)) {
+            int SRWMaxPath = pathsList.get(pathsList.size()-1);
+            int[] MolSRW = GetSRWToLag(SRWMaxPath, AdjMatDbl);
+            for (int i=1; i<=SRWMaxPath; i++)
+                SetByName("SRW" + i, MolSRW[i]);
+        }
 
     }
 
@@ -229,7 +297,7 @@ public class WalkAndPath extends DescriptorBlock {
             
             mWalks = mWalks.times(mAdj);
         }
-
+        
         return MolSRW;
     }
     

@@ -1,12 +1,13 @@
-package insilico.core.descriptor.blocks;
+package insilico.core.descriptor.blocks.old;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
-import insilico.core.descriptor.blocks.weights.basic.WeightsMass;
-import insilico.core.descriptor.blocks.weights.iBasicWeight;
+import insilico.core.descriptor.blocks.old.weight.Electronegativity;
+import insilico.core.descriptor.blocks.old.weight.Mass;
+import insilico.core.descriptor.blocks.old.weight.Polarizability;
+import insilico.core.descriptor.blocks.old.weight.VanDerWaals;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
-import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -14,10 +15,12 @@ import org.openscience.cdk.interfaces.IBond;
 
 /**
  * Constitutional descriptors block.<p>
+ * NOTE: by default, the molecular weight (MW and AMW) is calculated on
+ * carbon-scaled values (carbon mass equal to 1, all other values are scaled
+ * on carbon).
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-@Slf4j
 public class Constitutional extends DescriptorBlock {
 
     private static final long serialVersionUID = 1L;
@@ -38,48 +41,46 @@ public class Constitutional extends DescriptorBlock {
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
-        this.Add("MW", "molecular weight (scaled on Carbon atom)");
-        this.Add("AMW", "average molecular weight (scaled on Carbon atom)");
-        this.Add("Sv", "sum of atomic van der Waals volumes (scaled on Carbon atom)");
-        this.Add("Mv", "mean atomic van der Waals volume (scaled on Carbon atom)");
-        this.Add("Sp", "sum of atomic polarizabilities (scaled on Carbon atom)");
-        this.Add("Mp", "mean atomic polarizability (scaled on Carbon atom)");
-        this.Add("Se", "sum of atomic Sanderson electronegativities (scaled on Carbon atom)");
-        this.Add("Me", "mean atomic Sanderson electronegativity (scaled on Carbon atom)");
-        this.Add("Si", "sum of atomic ionic potential (scaled on Carbon atom)");
-        this.Add("Mi", "mean atomic ionic potential (scaled on Carbon atom)");
+        this.Add("MW", "");
+        this.Add("AMW", "");
+        this.Add("Sv", "");
+        this.Add("Mv", "");
+        this.Add("Sp", "");
+        this.Add("Mp", "");
+        this.Add("Se", "");
+        this.Add("Me", "");
 
-        this.Add("nAt", "number of atoms");
-        this.Add("nSk", "number of non-H atoms");
+        this.Add("nAt", "");
+        this.Add("nSk", "");
 
-        this.Add("nBt", "number of bonds (total)");
-        this.Add("nBo", "number of non-H bonds");
-        this.Add("nBm", "number of multiple bonds");
-        this.Add("nDB", "number of double bonds");
-        this.Add("nTB", "number of triple bonds");
-        this.Add("nAB", "number of aromatic bonds");
-        this.Add("SCBO", "sum of conventional bond orders (H-depleted)");
+        this.Add("nBt", ""); // Total no. of bonds
+        this.Add("nBo", ""); // no. of non-H bonds
+        this.Add("nBm", ""); // no. of multiple (order>1) bonds
+        this.Add("nDblBo", "");
+        this.Add("nTrpBo", "");
+        this.Add("nArBo", "");
+        this.Add("SCBO", "");
 
-        this.Add("nH", "number of Hydrogen atoms");
-        this.Add("nC", "number of Carbon atoms");
-        this.Add("nN", "number of Nitrogen atoms");
-        this.Add("nO", "number of Oxygen atoms");
-        this.Add("nP", "number of Phosphorous atoms");
-        this.Add("nS", "number of Sulfur atoms");
-        this.Add("nF", "number of Fluorine atoms");
-        this.Add("nCl", "number of Chlorine atoms");
-        this.Add("nBr", "number of Bromine atoms");
-        this.Add("nI", "number of Iodine atoms");
-        this.Add("nB", "number of Boron atoms");
+        this.Add("nH", "");
+        this.Add("nC", "");
+        this.Add("nN", "");
+        this.Add("nO", "");
+        this.Add("nP", "");
+        this.Add("nS", "");
+        this.Add("nF", "");
+        this.Add("nCl", "");
+        this.Add("nBr", "");
+        this.Add("nI", "");
+        this.Add("nB", "");
 
-        this.Add("HPerc", "percentage of H atoms");
-        this.Add("CPerc", "percentage of C atoms");
-        this.Add("NPerc", "percentage of N atoms");
-        this.Add("OPerc", "percentage of O atoms");
-        this.Add("XPerc", "percentage of halogen atoms");
+        this.Add("HPerc", "");
+        this.Add("CPerc", "");
+        this.Add("NPerc", "");
+        this.Add("OPerc", "");
+        this.Add("XPerc", "");
 
-        this.Add("nHet", "number of heteroatoms");
-        this.Add("nX", "number of halogen atoms");
+        this.Add("nHet", "");
+        this.Add("nX", "");
 
         SetAllValues(Descriptor.MISSING_VALUE);
     }
@@ -100,7 +101,6 @@ public class Constitutional extends DescriptorBlock {
         try {
             curMol = mol.GetStructure();
         } catch (InvalidMoleculeException e) {
-            log.warn("Invalid structure, unable to calculate: " + this.Name);
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
@@ -115,6 +115,7 @@ public class Constitutional extends DescriptorBlock {
             int nC=0, nN=0, nO=0, nP=0, nS=0;
             int nI=0, nF=0, nCl=0, nBr=0, nB=0;
             int nHet=0;
+            double mw=0, amw=0, sv=0, mv=0, sp=0, mp=0, se=0, me=0;
 
 
             //// Counts on atoms
@@ -216,83 +217,82 @@ public class Constitutional extends DescriptorBlock {
             this.SetByName("nBt", nBO + nTotH);
             this.SetByName("nBo", nBO);
             this.SetByName("nBm", nMulBonds);
-            this.SetByName("nDB", nDblBonds);
-            this.SetByName("nTB", nTrpBonds);
-            this.SetByName("nAB", nArBonds);
+            this.SetByName("nDblBo", nDblBonds);
+            this.SetByName("nTrpBo", nTrpBonds);
+            this.SetByName("nArBo", nArBonds);
             this.SetByName("SCBO", scbo);
 
 
-            for (int w=0; w<5; w++) {
+            // Weights sums
+            double[] wMass = Mass.getWeights(curMol);
+            double HMass = Mass.GetMass("H");
+            double[] wVdW = VanDerWaals.getWeights(curMol);
+            double HVdW = VanDerWaals.GetVdWVolume("H");
+            double[] wPol = Polarizability.getWeights(curMol);
+            double HPol = Polarizability.GetPolarizability("H");
+            double[] wEl = Electronegativity.getWeights(curMol);
+            double HEl = Electronegativity.GetElectronegativity("H");
 
-                iBasicWeight ws;
-                switch (w) {
-                    case 0:
-                        ws = new WeightsMass();
-                        break;
-                    case 1:
-                        ws = new insilico.core.descriptor.blocks.weights.basic.WeightsVanDerWaals();
-                        break;
-                    case 2:
-                        ws = new insilico.core.descriptor.blocks.weights.basic.WeightsPolarizability();
-                        break;
-                    case 3:
-                        ws = new insilico.core.descriptor.blocks.weights.basic.WeightsElectronegativity();
-                        break;
-                    case 4:
-                        ws = new insilico.core.descriptor.blocks.weights.basic.WeightsIonizationPotential();
-                        break;
-                    default:
-                        throw new Exception("Weight not found");
-                }
+            // for non-scaled molecular weight
+//            double[] wMassNS = new double[wMass.length];
+//            double CarbonWeight = 12.011;
+//            double HMassNS = HMass * CarbonWeight;
+//            for (int i=0; i<nSK; i++)
+//                wMassNS[i] = wMass[i] * CarbonWeight;
 
-                double[] weights = ws.getScaledWeights(curMol);
-                double weightH = ws.getScaledWeight("H");
+            for (int i=0; i<nSK; i++) {
+                if (wMass[i] == -999)
+                    mw = -999;
+                if (wVdW[i] == -999)
+                    sv = -999;
+                if (wPol[i] == -999)
+                    sp = -999;
+                if (wEl[i] == -999)
+                    se = -999;
+            }
 
-                double sum = 0;
-                for (int i=0; i<nSK; i++) {
-                    if (weights[i] == Descriptor.MISSING_VALUE) {
-                        sum = Descriptor.MISSING_VALUE;
-                        break;
-                    } else {
-                        // all values INCLUDING MW are scaled on carbon
-                        sum += weights[i];
-                        if (H[i] > 0)
-                            sum += weightH * H[i];
+            for (int i=0; i<nSK; i++) {
+                if (mw != -999) {
+                    mw += wMass[i];
+                    if (H[i]>0) {
+                        mw += HMass * H[i];
                     }
                 }
-
-                double ave = Descriptor.MISSING_VALUE;
-                if (sum != Descriptor.MISSING_VALUE)
-                    ave = sum/(nSK + nTotH);
-
-                switch (w) {
-                    case 0:
-                        this.SetByName("MW", sum);
-                        this.SetByName("AMW", ave);
-                        break;
-                    case 1:
-                        this.SetByName("Sv", sum);
-                        this.SetByName("Mv", ave);
-                        break;
-                    case 2:
-                        this.SetByName("Sp", sum);
-                        this.SetByName("Mp", ave);
-                        break;
-                    case 3:
-                        this.SetByName("Se", sum);
-                        this.SetByName("Me", ave);
-                        break;
-                    case 4:
-                        this.SetByName("Si", sum);
-                        this.SetByName("Mi", ave);
-                        break;
-                    default:
-                        throw new Exception("Weight not found");
+                if (sv != -999) {
+                    sv += wVdW[i];
+                    if (H[i]>0)
+                        sv += HVdW * H[i];
+                }
+                if (sp != -999) {
+                    sp += wPol[i];
+                    if (H[i]>0)
+                        sp += HPol * H[i];
+                }
+                if (se != -999) {
+                    se += wEl[i];
+                    if (H[i]>0)
+                        se += HEl * H[i];
                 }
             }
 
+            if (mw != -999)
+                amw = mw/(nSK + nTotH);
+            if (sv != -999)
+                mv = sv/(nSK + nTotH);
+            if (sp != -999)
+                mp = sp/(nSK + nTotH);
+            if (se != -999)
+                me = se/(nSK + nTotH);
+            this.SetByName("MW", mw);
+            this.SetByName("AMW", amw);
+            this.SetByName("Sv", sv);
+            this.SetByName("Mv", mv);
+            this.SetByName("Sp", sp);
+            this.SetByName("Mp", mp);
+            this.SetByName("Se", se);
+            this.SetByName("Me", me);
+
         } catch (Throwable e) {
-            log.warn("Unable to calculate: " + this.Name + " - " + e.getMessage());
             this.SetAllValues(Descriptor.MISSING_VALUE);
         }
 

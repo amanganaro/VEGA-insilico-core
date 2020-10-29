@@ -1,4 +1,4 @@
-package insilico.core.descriptor.blocks;
+package insilico.core.descriptor.blocks.old;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
@@ -36,10 +36,8 @@ public class Rings extends DescriptorBlock {
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
-        this.Add("nCIC", "number of rings (cyclomatic number)");
-        this.Add("nCIR", "number of circuits");
         for (int i=RING_SIZE_MIN; i<=RING_SIZE_MAX; i++)
-            this.Add("nR" + i, "number of " + i + "-membered rings");
+            this.Add("nR" + i, "");
         SetAllValues(Descriptor.MISSING_VALUE);
     }
     
@@ -58,14 +56,7 @@ public class Rings extends DescriptorBlock {
         GenerateDescriptors();
         
         try {
-
-            // get ring sets directly from molecule (cache)
-            IRingSet allRings = mol.GetAllRings();
-            IRingSet sssr = mol.GetSSSR();
-
-            int nCIC = sssr.getAtomContainerCount();
-            int nCIR = allRings.getAtomContainerCount();
-
+        
             int nSizes = RING_SIZE_MAX - RING_SIZE_MIN + 1;
             int[] RingCount = new int[nSizes];
             int[] RingSize = new int[nSizes];
@@ -74,6 +65,7 @@ public class Rings extends DescriptorBlock {
                 RingCount[i] = 0;
             }
             
+            IRingSet allRings = mol.GetAllRings();
             Iterator<IAtomContainer> RingsIterator = allRings.atomContainers().iterator();
             while (RingsIterator.hasNext()) {
                 IRing ring = (IRing)RingsIterator.next();
@@ -82,10 +74,8 @@ public class Rings extends DescriptorBlock {
                         RingCount[i]++;
                 }
             }
-
-            SetByName("nCIC", nCIC);
-            SetByName("nCIR", nCIR);
-            for (int i=0; i<nSizes; i++)
+            
+            for (int i=0; i<nSizes; i++) 
                 SetByName("nR" + RingSize[i], RingCount[i]);
             
         } catch (Throwable e) {
