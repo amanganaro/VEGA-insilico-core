@@ -43,7 +43,11 @@ public class P_VSA extends DescriptorBlock {
             W_LOGP,
             W_MOLAR_REFRACTIVITY,
             W_MASS,
-            W_IONIZATION
+            W_VDW,
+            W_ELECTRONEGATIVITY,
+            W_POLARIZABILITY,
+            W_IONIZATION,
+            W_I_STATE
     };
 
     private final static Object[][] RefBondLengths = {
@@ -204,8 +208,16 @@ public class P_VSA extends DescriptorBlock {
                 w = (new WeightsMolarRefractivityGC()).getWeightsForFragmentId(ACF);
             else if (curWeight[0].equalsIgnoreCase(W_MASS[0]))
                 w = (new WeightsMass()).getScaledWeights(m);
+            else if (curWeight[0].equalsIgnoreCase(W_VDW[0]))
+                w = (new WeightsVanDerWaals()).getScaledWeights(m);
+            else if (curWeight[0].equalsIgnoreCase(W_ELECTRONEGATIVITY[0]))
+                w = (new WeightsElectronegativity()).getScaledWeights(m);
+            else if (curWeight[0].equalsIgnoreCase(W_POLARIZABILITY[0]))
+                w = (new WeightsPolarizability()).getScaledWeights(m);
             else if (curWeight[0].equalsIgnoreCase(W_IONIZATION[0]))
                 w = (new WeightsIonizationPotential()).getScaledWeights(m);
+            else if (curWeight[0].equalsIgnoreCase(W_I_STATE[0]))
+                w = (new WeightsIState()).getWeights(m, true);
 
             int bins = GetBinSize(curWeight[0]);
             
@@ -232,8 +244,16 @@ public class P_VSA extends DescriptorBlock {
             return 8;
         if (curWeight.equalsIgnoreCase(W_MASS[0]))
             return 5;
+        if (curWeight.equalsIgnoreCase(W_VDW[0]))
+            return 4;
+        if (curWeight.equalsIgnoreCase(W_ELECTRONEGATIVITY[0]))
+            return 6;
+        if (curWeight.equalsIgnoreCase(W_POLARIZABILITY[0]))
+            return 4;
         if (curWeight.equalsIgnoreCase(W_IONIZATION[0]))
             return 4;
+        if (curWeight.equalsIgnoreCase(W_I_STATE[0]))
+            return 6;
         return 0;
     }
 
@@ -266,11 +286,37 @@ public class P_VSA extends DescriptorBlock {
 
         if (curWeight.equalsIgnoreCase(W_MASS[0])) {
             // Mass
-            if (value < 1) return 1;
+            if (value < 1.0) return 1;
             if (value < 1.2) return 2;
             if (value < 1.6) return 3;
-            if (value < 3) return 4;
+            if (value < 3.0) return 4;
             return 5;
+        }
+
+        if (curWeight.equalsIgnoreCase(W_VDW[0])) {
+            // VdW volume
+            if (value < 0.5) return 1;
+            if (value < 1.0) return 2;
+            if (value < 1.3) return 3;
+            return 4;
+        }
+
+        if (curWeight.equalsIgnoreCase(W_ELECTRONEGATIVITY[0])) {
+            // Sanderson electronegativity
+            if (value < 1.0) return 1;
+            if (value < 1.1) return 2;
+            if (value < 1.2) return 3;
+            if (value < 1.3) return 4;
+            if (value < 1.4) return 5;
+            return 6;
+        }
+
+        if (curWeight.equalsIgnoreCase(W_POLARIZABILITY[0])) {
+            // Polarizability
+            if (value < 0.4) return 1;
+            if (value < 1.0) return 2;
+            if (value < 2.0) return 3;
+            return 4;
         }
 
         if (curWeight.equalsIgnoreCase(W_IONIZATION[0])) {
@@ -279,6 +325,16 @@ public class P_VSA extends DescriptorBlock {
             if (value < 1.15) return 2;
             if (value < 1.25) return 3;
             return 4;
+        }
+
+        if (curWeight.equalsIgnoreCase(W_I_STATE[0])) {
+            // I-State
+            if (value < 1.0) return 1;
+            if (value < 1.5) return 2;
+            if (value < 2.0) return 3;
+            if (value < 2.5) return 4;
+            if (value < 3.0) return 5;
+            return 6;
         }
 
         return 0;
