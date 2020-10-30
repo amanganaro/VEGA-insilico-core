@@ -189,7 +189,12 @@ public class GhoseCrippenACF {
         return this.FragAtomId;
     }
 
-
+    /**
+     * Provide an hashmap with all the fragments (id, count) that are not directly mapped in the molecule. This is
+     * needed to retrieve H fragments when a H-depleted molecule is processed.
+     *
+     * @return
+     */
     public HashMap<Integer, Integer> getNotMappedFragCount() { return this.NotMappedFragCount; }
 
 
