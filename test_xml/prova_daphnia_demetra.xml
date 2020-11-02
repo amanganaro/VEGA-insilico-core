@@ -36,6 +36,7 @@ The model is a re-implementation of the original model developed inside the Deme
 		<Applicability_Domain>
 			<AD>
 				<Name>Similar_Molecules</Name>
+				<SimilarMols>3</SimilarMols>
 				<RangeTop>1 >= index > 0.75</RangeTop>
 				<DescriptionRangeTop>strongly similar compounds with known experimental value in the training set have been found</DescriptionRangeTop>
 				<RangeMid>0.75 >= index > 0.65</RangeMid>

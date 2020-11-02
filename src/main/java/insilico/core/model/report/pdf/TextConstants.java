@@ -14,8 +14,8 @@ public class TextConstants {
     public static final String AD_ACCURACY_TITLE = "Accuracy (average error) of prediction for similar molecules.";
     public static final String AD_ACCURACY_INTRO = "This index takes into account the error in prediction for the two most similar compounds found. Values near 0 mean that the predicted compounds falls in an area of the model's space where the model gives reliable predictions, otherwise the greater is the value, the worse the model behaves. Defined intervals are:";
 
-    public static final String AD_CONCORDANCE_TITLE = "Accuracy (average error) of prediction for similar molecules.";
-    public static final String AD_CONCORDANCE_INTRO = "This index takes into account the error in prediction for the two most similar compounds found. Values near 0 mean that the predicted compounds falls in an area of the model's space where the model gives reliable predictions, otherwise the greater is the value, the worse the model behaves. Defined intervals are:";
+    public static final String AD_CONCORDANCE_TITLE = "Concordance with similar molecules (average difference between target compound prediction and experimental values of similar molecules)";
+    public static final String AD_CONCORDANCE_INTRO = "This index takes into account the difference between the predicted value and the experimental values of the two most similar compounds. Values near 0 mean that the prediction made agrees with the experimental values found in the model's space, thus the prediction is reliable. Defined intervals are: ";
 
     public static final String AD_MAXIMUM_ERROR_PREDICTION_TITLE = "Maximum error of prediction among similar molecules.";
     public static final String AD_MAXIMUM_ERROR_PREDICTION_INTRO = "This index takes into account the maximum error in prediction among the two most similar compounds. Values near 0 means that the predicted compounds falls in an area of the model's space where the model gives reliable predictions without any outlier value. Defined intervals are:";

@@ -17,12 +17,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
@@ -381,14 +377,7 @@ public class ReportPDFUpdated {
             CurPar = new StringBuilder();
             CurPar.append(modelInfo.getName()).append("\n");
             CurPar.append(modelInfo.getSummary()).append("\n");
-//            for (InsilicoModelConsensusWrapper modelConsWrapper : modelConsWrappers) {
-//                CurPar.append("  ").append(modelConsWrapper.getModel().getInfo().getName()).append(" ").append(modelConsWrapper.getModel().getInfo().getVersion()).append("\n");
-//            }
-//            for (InsilicoModelWrapper modelWrapper : modelWrappers) {
-//                if (!modelWrapper.isFlagForOutput())
-//                    continue;
-//                CurPar.append("  ").append(modelWrapper.getModel().getInfo().getName()).append(" ").append(modelWrapper.getModel().getInfo().getVersion()).append("\n");
-//            }
+
             CurPar.append("\n\n");
             paragraph = new Paragraph(CurPar.toString(), fontBig);
             cell.addElement(paragraph);
@@ -462,6 +451,7 @@ public class ReportPDFUpdated {
                         break;
                     case "Concordance":
                         document.add(new Paragraph(TextConstants.AD_CONCORDANCE_TITLE, fontBold));
+                        document.add(new Paragraph("N° Similar Molecules: " + modelInfo.getSimilarMolsValue(), font));
                         document.add(new Paragraph(TextConstants.AD_CONCORDANCE_INTRO, font));
                         break;
                     case "Maximum_Error":
