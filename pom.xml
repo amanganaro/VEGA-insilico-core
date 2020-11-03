@@ -6,7 +6,7 @@
 
     <groupId>InSilico</groupId>
     <artifactId>Core</artifactId>
-    <version>0.5.1</version>
+    <version>0.5.5</version>
     <packaging>jar</packaging>
 
 
@@ -21,6 +21,7 @@
     </properties>
 
     <distributionManagement>
+
         <snapshotRepository>
             <id>nexus-snapshots</id>
             <url>http://tech.kode-datacenter.net:8081/repository/maven-snapshots/</url>
@@ -39,7 +40,16 @@
         </repository>
     </repositories>
 
+
+
     <dependencies>
+
+        <dependency>
+            <groupId>org.rosuda.REngine</groupId>
+            <artifactId>Rserve</artifactId>
+            <version>1.8.1</version>
+        </dependency>
+
         <dependency>
             <groupId>net.sf.jni-inchi</groupId>
             <artifactId>jni-inchi</artifactId>
@@ -101,15 +111,6 @@
             <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
-
-
-
-<!--        iText for PDF Reporting-->
-<!--        <dependency>-->
-<!--            <groupId>com.lowagie</groupId>-->
-<!--            <artifactId>itext</artifactId>-->
-<!--            <version>2.1.7</version>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>com.github.librepdf</groupId>

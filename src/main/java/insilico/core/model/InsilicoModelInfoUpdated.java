@@ -2,6 +2,7 @@ package insilico.core.model;
 
 import insilico.core.exception.InitFailureException;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 @Data
+@Slf4j
 public class InsilicoModelInfoUpdated {
 
     // VERSION
@@ -197,443 +199,476 @@ public class InsilicoModelInfoUpdated {
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(new DataInputStream(XMLSource.openStream()));
-
-//            doc.getDocumentElement().normalize();
-
+            NodeList nodes;
+            Element element;
             // VERSION TAGS
-            System.out.println(doc.getDocumentURI());
-            NodeList nodes = doc.getElementsByTagName("Version");
-            Element element = (Element) nodes.item(0);
+
+            try {
+                nodes = doc.getElementsByTagName("Version");
+                element = (Element) nodes.item(0);
 
 
-            if (hasTag(Version_Name, element)) {
-                Version.put(Version_Name, getValue(Version_Name, element));
-            }
+                if (hasTag(Version_Name, element)) {
+                    Version.put(Version_Name, getValue(Version_Name, element));
+                }
 
-            if (hasTag(Version_Key, element)) {
-                Version.put(Version_Key, getValue(Version_Key,element));
-            }
+                if (hasTag(Version_Key, element)) {
+                    Version.put(Version_Key, getValue(Version_Key,element));
+                }
 
-            if (hasTag(Version_Summary, element)) {
-                Version.put(Version_Summary, getValue(Version_Summary,element));
-            }
+                if (hasTag(Version_Summary, element)) {
+                    Version.put(Version_Summary, getValue(Version_Summary,element));
+                }
 
-            if (hasTag(Version_Version, element)) {
-                Version.put(Version_Version, getValue(Version_Version,element));
+                if (hasTag(Version_Version, element)) {
+                    Version.put(Version_Version, getValue(Version_Version,element));
+                }
+            } catch (Exception ex) {
+                log.warn("No tag <Version> in model xml");
+                log.warn(ex.getMessage());
             }
 
             // VEGA TAGS
 
-            nodes = doc.getElementsByTagName("Vega");
-            element = (Element) nodes.item(0);
+            try {
+                nodes = doc.getElementsByTagName("Vega");
+                element = (Element) nodes.item(0);
 
-            if (hasTag(Vega_TS, element)) {
-                Vega.put(Vega_TS, getValue(Vega_TS,element));
-            }
-
-
-            if (hasTag(Vega_QMRF, element)) {
-                Vega.put(Vega_QMRF, getValue(Vega_QMRF,element));
-            }
-
-            if (hasTag(Vega_HasAlerts, element)) {
-                Vega.put(Vega_HasAlerts, getValue(Vega_HasAlerts,element));
-            }
-
-            if (hasTag(Vega_Units, element)) {
-                Vega.put(Vega_Units, getValue(Vega_Units,element));
-            }
-
-            if (hasTag(Vega_Conversion, element)) {
-                Vega.put(Vega_Conversion, getValue(Vega_Conversion,element));
-            }
-
-            if (hasTag(Vega_ClassValues, element)) {
-                NodeList ClassValuesNode = element.getElementsByTagName("ClassValues");
-                Element node = (Element) ClassValuesNode.item(0);
-                NodeList Classes = node.getElementsByTagName("Class");
-                for (int i=0; i<Classes.getLength(); i++) {
-                    Element n = (Element) Classes.item(i);
-                    String ClassValue = getValue("Value", n);
-                    String ClassLabel = getValue("Label", n);
-                    ClassValues.put(Integer.valueOf(ClassValue), ClassLabel);
+                if (hasTag(Vega_TS, element)) {
+                    Vega.put(Vega_TS, getValue(Vega_TS,element));
                 }
+
+
+                if (hasTag(Vega_QMRF, element)) {
+                    Vega.put(Vega_QMRF, getValue(Vega_QMRF,element));
+                }
+
+                if (hasTag(Vega_HasAlerts, element)) {
+                    Vega.put(Vega_HasAlerts, getValue(Vega_HasAlerts,element));
+                }
+
+                if (hasTag(Vega_Units, element)) {
+                    Vega.put(Vega_Units, getValue(Vega_Units,element));
+                }
+
+                if (hasTag(Vega_Conversion, element)) {
+                    Vega.put(Vega_Conversion, getValue(Vega_Conversion,element));
+                }
+
+                if (hasTag(Vega_ClassValues, element)) {
+                    NodeList ClassValuesNode = element.getElementsByTagName("ClassValues");
+                    Element node = (Element) ClassValuesNode.item(0);
+                    NodeList Classes = node.getElementsByTagName("Class");
+                    for (int i=0; i<Classes.getLength(); i++) {
+                        Element n = (Element) Classes.item(i);
+                        String ClassValue = getValue("Value", n);
+                        String ClassLabel = getValue("Label", n);
+                        ClassValues.put(Integer.valueOf(ClassValue), ClassLabel);
+                    }
+                }
+            } catch (Exception ex) {
+                log.warn("No tag <Vega> in model xml");
+                log.warn(ex.getMessage());
             }
+
 
 
             // GUIDE TAGS
-            nodes = doc.getElementsByTagName("Guide");
-            element = (Element) nodes.item(0);
+            try {
 
-            if (hasTag(Guide_Description, element)) {
-                Guide.put(Guide_Description, getValue(Guide_Description,element));
-            }
+                nodes = doc.getElementsByTagName("Guide");
+                element = (Element) nodes.item(0);
 
-            if (hasTag(Guide_Model, element)) {
-                Guide.put(Guide_Model, getValue(Guide_Model,element));
-            }
-
-            if (hasTag(Guide_Descriptors, element)) {
-                Guide.put(Guide_Descriptors, getValue(Guide_Descriptors,element));
-            }
-
-            if (hasTag(Guide_Output, element)) {
-                Guide.put(Guide_Output, getValue(Guide_Output,element));
-            }
-
-            // todo AD work in progress
-
-
-
-            if (hasTag(Guide_Applicability_Domain, element)) {
-                NodeList ADNode = element.getElementsByTagName(Guide_Applicability_Domain);
-                Element node = (Element) ADNode.item(0);
-                if(hasTag(Guide_AD_SimilarMols, node)) {
-                    setSimilarMolsValue(getValue(Guide_AD_SimilarMols, node));
-                }
-                NodeList ADSingleNodes = node.getElementsByTagName("AD");
-                for (int i=0; i<ADSingleNodes.getLength(); i++) {
-
-                    HashMap<String, String> currentAD = new HashMap<>();
-                    Element n = (Element) ADSingleNodes.item(i);
-
-                    String name = getValue(Guide_AD_Name, n);
-                    currentAD.put(Guide_AD_Name, name);
-
-
-
-                    if(hasTag(Guide_AD_RangeTop, n)) {
-                        String rangeTop = getValue(Guide_AD_RangeTop, n);
-                        String descriptionRangeTop = getValue(Guide_AD_DescriptionRangeTop, n);
-                        currentAD.put(Guide_AD_RangeTop, rangeTop);
-                        currentAD.put(Guide_AD_DescriptionRangeTop, descriptionRangeTop);
-                    }
-
-
-                    if (hasTag(Guide_AD_RangeMid, n)) {
-                        String rangeMid = getValue(Guide_AD_RangeMid, n);
-                        String descriptionRangeMid = getValue(Guide_AD_DescriptionRangeMid, n);
-                        currentAD.put(Guide_AD_RangeMid, rangeMid);
-                        currentAD.put(Guide_AD_DescriptionRangeMid, descriptionRangeMid);
-                    }
-
-                    if (hasTag(Guide_AD_RangeBottom, n)){
-                        String rangeBottom = getValue(Guide_AD_RangeBottom, n);
-                        String descriptionRangeBottom = getValue(Guide_AD_DescriptionRangeBottom, n);
-                        currentAD.put(Guide_AD_RangeBottom, rangeBottom);
-                        currentAD.put(Guide_AD_DescriptionRangeBottom, descriptionRangeBottom);
-                    }
-
-                    Applicability_Domain.add(currentAD);
+                if (hasTag(Guide_Description, element)) {
+                    Guide.put(Guide_Description, getValue(Guide_Description,element));
                 }
 
-//                Guide.put(Guide_Description, getValue(,element));
-            } else {
-                Guide.put(Guide_Applicability_Domain, null);
+                if (hasTag(Guide_Model, element)) {
+                    Guide.put(Guide_Model, getValue(Guide_Model,element));
+                }
+
+                if (hasTag(Guide_Descriptors, element)) {
+                    Guide.put(Guide_Descriptors, getValue(Guide_Descriptors,element));
+                }
+
+                if (hasTag(Guide_Output, element)) {
+                    Guide.put(Guide_Output, getValue(Guide_Output,element));
+                }
+
+                // todo AD work in progress
+
+
+
+                if (hasTag(Guide_Applicability_Domain, element)) {
+
+                    NodeList ADNode = element.getElementsByTagName(Guide_Applicability_Domain);
+                    Element node = (Element) ADNode.item(0);
+                    if(hasTag(Guide_AD_SimilarMols, node)) {
+                        setSimilarMolsValue(getValue(Guide_AD_SimilarMols, node));
+                    }
+                    NodeList ADSingleNodes = node.getElementsByTagName("AD");
+                    for (int i=0; i<ADSingleNodes.getLength(); i++) {
+
+                        HashMap<String, String> currentAD = new HashMap<>();
+                        Element n = (Element) ADSingleNodes.item(i);
+
+                        String name = getValue(Guide_AD_Name, n);
+                        currentAD.put(Guide_AD_Name, name);
+
+
+                        if(hasTag(Guide_AD_RangeTop, n)) {
+                            String rangeTop = getValue(Guide_AD_RangeTop, n);
+                            String descriptionRangeTop = getValue(Guide_AD_DescriptionRangeTop, n);
+                            currentAD.put(Guide_AD_RangeTop, rangeTop);
+                            currentAD.put(Guide_AD_DescriptionRangeTop, descriptionRangeTop);
+                        }
+
+
+                        if (hasTag(Guide_AD_RangeMid, n)) {
+                            String rangeMid = getValue(Guide_AD_RangeMid, n);
+                            String descriptionRangeMid = getValue(Guide_AD_DescriptionRangeMid, n);
+                            currentAD.put(Guide_AD_RangeMid, rangeMid);
+                            currentAD.put(Guide_AD_DescriptionRangeMid, descriptionRangeMid);
+                        }
+
+                        if (hasTag(Guide_AD_RangeBottom, n)){
+                            String rangeBottom = getValue(Guide_AD_RangeBottom, n);
+                            String descriptionRangeBottom = getValue(Guide_AD_DescriptionRangeBottom, n);
+                            currentAD.put(Guide_AD_RangeBottom, rangeBottom);
+                            currentAD.put(Guide_AD_DescriptionRangeBottom, descriptionRangeBottom);
+                        }
+
+                        Applicability_Domain.add(currentAD);
+                    }
+
+                }
+
+                // todo alerts, si lasciano così?
+                if (hasTag(Guide_Alerts, element)) {
+                    Guide.put(Guide_Alerts, getValue(Guide_Alerts,element));
+                }
+            } catch (Exception ex) {
+                log.warn("No tag <Guide> in model XML");
+                log.warn(ex.getMessage());
             }
 
-            // todo alerts, si lasciano così?
-            if (hasTag(Guide_Alerts, element)) {
-                Guide.put(Guide_Alerts, getValue(Guide_Alerts,element));
-            }
+
+
 
 
             // REFERENCE TAGS
-            nodes = doc.getElementsByTagName("Reference");
-            element = (Element) nodes.item(0);
+            try {
+                nodes = doc.getElementsByTagName("Reference");
+                element = (Element) nodes.item(0);
 
-            if(hasTag(Reference_QMRF_Link, element)){
-                Reference.setQMRFLink(getValue(Reference_QMRF_Link, element));
-            }
-
-            List<HashMap<String, String>> referenceList = new ArrayList<>();
-
-            if(hasTag(Reference_SingleRef, element)) {
-                NodeList RefNode = element.getElementsByTagName(Reference_SingleRef);
-                for(int i = 0; i < RefNode.getLength(); i++){
-
-                    HashMap<String, String> currentRef = new HashMap<>();
-                    Element n = (Element) RefNode.item(i);
-
-                    if(hasTag(Reference_ReferenceName, n)){
-                        currentRef.put(Reference_ReferenceName, getValue(Reference_ReferenceName, n));
-                    }
-
-                    if(hasTag(Reference_ReferenceLink, n)){
-                        currentRef.put(Reference_ReferenceLink, getValue(Reference_ReferenceLink, n));
-                    }
-
-                    referenceList.add(currentRef);
+                if(hasTag(Reference_QMRF_Link, element)){
+                    Reference.setQMRFLink(getValue(Reference_QMRF_Link, element));
                 }
 
-                Reference.setReferenceList(referenceList);
+                List<HashMap<String, String>> referenceList = new ArrayList<>();
+
+                if(hasTag(Reference_SingleRef, element)) {
+                    NodeList RefNode = element.getElementsByTagName(Reference_SingleRef);
+                    for(int i = 0; i < RefNode.getLength(); i++){
+
+                        HashMap<String, String> currentRef = new HashMap<>();
+                        Element n = (Element) RefNode.item(i);
+
+                        if(hasTag(Reference_ReferenceName, n)){
+                            currentRef.put(Reference_ReferenceName, getValue(Reference_ReferenceName, n));
+                        }
+
+                        if(hasTag(Reference_ReferenceLink, n)){
+                            currentRef.put(Reference_ReferenceLink, getValue(Reference_ReferenceLink, n));
+                        }
+
+                        referenceList.add(currentRef);
+                    }
+
+                    Reference.setReferenceList(referenceList);
+                }
+            } catch (Exception ex) {
+                log.warn("No tag <Reference> in model XML");
+                log.warn(ex.getMessage());
             }
+
 
 
             // ENDPOINT TAGS
-            nodes = doc.getElementsByTagName("Endpoint");
-            element = (Element) nodes.item(0);
+            try {
+                nodes = doc.getElementsByTagName("Endpoint");
+                element = (Element) nodes.item(0);
 
-            if (hasTag(Endpoint_Unit_original, element)) {
-                Endpoint.put(Endpoint_Unit_original, getValue(Endpoint_Unit_original,element));
-            }
-            
-            if (hasTag(Endpoint_Unit, element)) {
-                Endpoint.put(Endpoint_Unit, getValue(Endpoint_Unit,element));
-            }
-            
-            if (hasTag(Endpoint_UnitFamily, element)) {
-                Endpoint.put(Endpoint_UnitFamily, getValue(Endpoint_UnitFamily,element));
-            }
-            
-            if (hasTag(Endpoint_Lambda, element)) {
-                Endpoint.put(Endpoint_Lambda, getValue(Endpoint_Lambda,element));
-            }
-            
-            if (hasTag(Endpoint_Classes, element)) {
-                Endpoint.put(Endpoint_Classes, getValue(Endpoint_Classes,element));
-            }
-            
-            if (hasTag(Endpoint_ClassesGUID, element)) {
-                Endpoint.put(Endpoint_ClassesGUID, getValue(Endpoint_ClassesGUID,element));
-            }
-            
-            if (hasTag(Endpoint_Endpoint_location1, element)) {
-                Endpoint.put(Endpoint_Endpoint_location1, getValue(Endpoint_Endpoint_location1,element));
-            }
-            
-            if (hasTag(Endpoint_Endpoint_location2, element)) {
-                Endpoint.put(Endpoint_Endpoint_location2, getValue(Endpoint_Endpoint_location2, element));
-            }
-            
-            if (hasTag(Endpoint_Endpoint, element)) {
-                Endpoint.put(Endpoint_Endpoint, getValue(Endpoint_Endpoint,element));
-            }
-            
-            if (hasTag(Endpoint_Endpoint_comment, element)) {
-                Endpoint.put(Endpoint_Endpoint_comment, getValue(Endpoint_Endpoint_comment,element));
-            }
-            
-            if (hasTag(Endpoint_Test_type, element)) {
-                Endpoint.put(Endpoint_Test_type, getValue(Endpoint_Test_type,element));
-            }
-            
-            if (hasTag(Endpoint_Duration_value, element)) {
-                Endpoint.put(Endpoint_Duration_value, getValue(Endpoint_Duration_value,element));
-            }
+                if (hasTag(Endpoint_Unit_original, element)) {
+                    Endpoint.put(Endpoint_Unit_original, getValue(Endpoint_Unit_original,element));
+                }
 
-            if (hasTag(Endpoint_Duration_unit, element)) {
-                Endpoint.put(Endpoint_Duration_unit, getValue(Endpoint_Duration_unit,element));
-            }
+                if (hasTag(Endpoint_Unit, element)) {
+                    Endpoint.put(Endpoint_Unit, getValue(Endpoint_Unit,element));
+                }
 
-            if (hasTag(Endpoint_Effect, element)) {
-                Endpoint.put(Endpoint_Effect, getValue(Endpoint_Effect,element));
-            }
+                if (hasTag(Endpoint_UnitFamily, element)) {
+                    Endpoint.put(Endpoint_UnitFamily, getValue(Endpoint_UnitFamily,element));
+                }
 
-            if (hasTag(Endpoint_Kingdom, element)) {
-                Endpoint.put(Endpoint_Kingdom, getValue(Endpoint_Kingdom,element));
-            }
+                if (hasTag(Endpoint_Lambda, element)) {
+                    Endpoint.put(Endpoint_Lambda, getValue(Endpoint_Lambda,element));
+                }
 
-            if (hasTag(Endpoint_Phylum, element)) {
-                Endpoint.put(Endpoint_Phylum, getValue(Endpoint_Phylum,element));
-            }
+                if (hasTag(Endpoint_Classes, element)) {
+                    Endpoint.put(Endpoint_Classes, getValue(Endpoint_Classes,element));
+                }
 
-            if (hasTag(Endpoint_Class, element)) {
-                Endpoint.put(Endpoint_Class, getValue(Endpoint_Class,element));
-            }
+                if (hasTag(Endpoint_ClassesGUID, element)) {
+                    Endpoint.put(Endpoint_ClassesGUID, getValue(Endpoint_ClassesGUID,element));
+                }
 
-            if (hasTag(Endpoint_Test_organisms_species, element)) {
-                Endpoint.put(Endpoint_Test_organisms_species, getValue(Endpoint_Test_organisms_species,element));
-            }
+                if (hasTag(Endpoint_Endpoint_location1, element)) {
+                    Endpoint.put(Endpoint_Endpoint_location1, getValue(Endpoint_Endpoint_location1,element));
+                }
 
-            if (hasTag(Endpoint_Sex, element)) {
-                Endpoint.put(Endpoint_Sex, getValue(Endpoint_Sex,element));
-            }
+                if (hasTag(Endpoint_Endpoint_location2, element)) {
+                    Endpoint.put(Endpoint_Endpoint_location2, getValue(Endpoint_Endpoint_location2, element));
+                }
 
-            if (hasTag(Endpoint_Route_of_administration, element)) {
-                Endpoint.put(Endpoint_Route_of_administration, getValue(Endpoint_Route_of_administration,element));
-            }
+                if (hasTag(Endpoint_Endpoint, element)) {
+                    Endpoint.put(Endpoint_Endpoint, getValue(Endpoint_Endpoint,element));
+                }
 
-            if (hasTag(Endpoint_Organ, element)) {
-                Endpoint.put(Endpoint_Organ, getValue(Endpoint_Organ,element));
-            }
+                if (hasTag(Endpoint_Endpoint_comment, element)) {
+                    Endpoint.put(Endpoint_Endpoint_comment, getValue(Endpoint_Endpoint_comment,element));
+                }
 
-            if (hasTag(Endpoint_Gene_name, element)) {
-                Endpoint.put(Endpoint_Gene_name, getValue(Endpoint_Gene_name,element));
-            }
+                if (hasTag(Endpoint_Test_type, element)) {
+                    Endpoint.put(Endpoint_Test_type, getValue(Endpoint_Test_type,element));
+                }
 
-            if (hasTag(Endpoint_Strain, element)) {
-                Endpoint.put(Endpoint_Strain, getValue(Endpoint_Strain,element));
-            }
+                if (hasTag(Endpoint_Duration_value, element)) {
+                    Endpoint.put(Endpoint_Duration_value, getValue(Endpoint_Duration_value,element));
+                }
 
-            if (hasTag(Endpoint_Metabolic_activation, element)) {
-                Endpoint.put(Endpoint_Metabolic_activation, getValue(Endpoint_Metabolic_activation,element));
-            }
+                if (hasTag(Endpoint_Duration_unit, element)) {
+                    Endpoint.put(Endpoint_Duration_unit, getValue(Endpoint_Duration_unit,element));
+                }
 
-            if (hasTag(Endpoint_Test_specificity, element)) {
-                Endpoint.put(Endpoint_Test_specificity, getValue(Endpoint_Test_specificity,element));
-            }
+                if (hasTag(Endpoint_Effect, element)) {
+                    Endpoint.put(Endpoint_Effect, getValue(Endpoint_Effect,element));
+                }
 
-            if (hasTag(Endpoint_Test_condition, element)) {
-                Endpoint.put(Endpoint_Test_condition, getValue(Endpoint_Test_condition,element));
-            }
+                if (hasTag(Endpoint_Kingdom, element)) {
+                    Endpoint.put(Endpoint_Kingdom, getValue(Endpoint_Kingdom,element));
+                }
 
-            if (hasTag(Endpoint_Type_of_method, element)) {
-                Endpoint.put(Endpoint_Type_of_method, getValue(Endpoint_Type_of_method,element));
-            }
+                if (hasTag(Endpoint_Phylum, element)) {
+                    Endpoint.put(Endpoint_Phylum, getValue(Endpoint_Phylum,element));
+                }
 
-            if (hasTag(Endpoint_Assay_provider, element)) {
-                Endpoint.put(Endpoint_Assay_provider, getValue(Endpoint_Assay_provider,element));
-            }
+                if (hasTag(Endpoint_Class, element)) {
+                    Endpoint.put(Endpoint_Class, getValue(Endpoint_Class,element));
+                }
 
-            if (hasTag(Endpoint_Test_guideline, element)) {
-                Endpoint.put(Endpoint_Test_guideline, getValue(Endpoint_Test_guideline,element));
+                if (hasTag(Endpoint_Test_organisms_species, element)) {
+                    Endpoint.put(Endpoint_Test_organisms_species, getValue(Endpoint_Test_organisms_species,element));
+                }
+
+                if (hasTag(Endpoint_Sex, element)) {
+                    Endpoint.put(Endpoint_Sex, getValue(Endpoint_Sex,element));
+                }
+
+                if (hasTag(Endpoint_Route_of_administration, element)) {
+                    Endpoint.put(Endpoint_Route_of_administration, getValue(Endpoint_Route_of_administration,element));
+                }
+
+                if (hasTag(Endpoint_Organ, element)) {
+                    Endpoint.put(Endpoint_Organ, getValue(Endpoint_Organ,element));
+                }
+
+                if (hasTag(Endpoint_Gene_name, element)) {
+                    Endpoint.put(Endpoint_Gene_name, getValue(Endpoint_Gene_name,element));
+                }
+
+                if (hasTag(Endpoint_Strain, element)) {
+                    Endpoint.put(Endpoint_Strain, getValue(Endpoint_Strain,element));
+                }
+
+                if (hasTag(Endpoint_Metabolic_activation, element)) {
+                    Endpoint.put(Endpoint_Metabolic_activation, getValue(Endpoint_Metabolic_activation,element));
+                }
+
+                if (hasTag(Endpoint_Test_specificity, element)) {
+                    Endpoint.put(Endpoint_Test_specificity, getValue(Endpoint_Test_specificity,element));
+                }
+
+                if (hasTag(Endpoint_Test_condition, element)) {
+                    Endpoint.put(Endpoint_Test_condition, getValue(Endpoint_Test_condition,element));
+                }
+
+                if (hasTag(Endpoint_Type_of_method, element)) {
+                    Endpoint.put(Endpoint_Type_of_method, getValue(Endpoint_Type_of_method,element));
+                }
+
+                if (hasTag(Endpoint_Assay_provider, element)) {
+                    Endpoint.put(Endpoint_Assay_provider, getValue(Endpoint_Assay_provider,element));
+                }
+
+                if (hasTag(Endpoint_Test_guideline, element)) {
+                    Endpoint.put(Endpoint_Test_guideline, getValue(Endpoint_Test_guideline,element));
+                }
+            } catch (Exception ex){
+                log.warn("No <Endpoint> tag in model XML");
+                log.warn(ex.getMessage());
             }
 
             // STATS
-            nodes = doc.getElementsByTagName("Stats");
-            element = (Element) nodes.item(0);
+            try {
+                nodes = doc.getElementsByTagName("Stats");
+                element = (Element) nodes.item(0);
 
-            if (hasTag(Stats_n_Train, element)) {
-                Stats.put(Stats_n_Train, getValue(Stats_n_Train,element));
+                if (hasTag(Stats_n_Train, element)) {
+                    Stats.put(Stats_n_Train, getValue(Stats_n_Train,element));
+                }
+
+                if (hasTag(Stats_R2_Train, element)) {
+                    Stats.put(Stats_R2_Train, getValue(Stats_R2_Train,element));
+                }
+
+                if (hasTag(Stats_RMSE_Train, element)) {
+                    Stats.put(Stats_RMSE_Train, getValue(Stats_RMSE_Train,element));
+                }
+
+                if (hasTag(Stats_R2adj_Train, element)) {
+                    Stats.put(Stats_R2adj_Train, getValue(Stats_R2adj_Train,element));
+                }
+
+                if (hasTag(Stats_Q2_Train, element)) {
+                    Stats.put(Stats_Q2_Train, getValue(Stats_Q2_Train,element));
+                }
+
+                if (hasTag(Stats_Fisher_Train, element)) {
+                    Stats.put(Stats_Fisher_Train, getValue(Stats_Fisher_Train,element));
+                }
+
+                if (hasTag(Stats_S_Train, element)) {
+                    Stats.put(Stats_S_Train, getValue(Stats_S_Train,element));
+                }
+
+                if (hasTag(Stats_Sdev_Train, element)) {
+                    Stats.put(Stats_Sdev_Train, getValue(Stats_Sdev_Train,element));
+                }
+
+                if (hasTag(Stats_SSR_Train, element)) {
+                    Stats.put(Stats_SSR_Train, getValue(Stats_SSR_Train,element));
+                }
+
+                if (hasTag(Stats_n_Invisible_training, element)) {
+                    Stats.put(Stats_n_Invisible_training, getValue(Stats_n_Invisible_training,element));
+                }
+
+                if (hasTag(Stats_R2_Invisible_training, element)) {
+                    Stats.put(Stats_R2_Invisible_training, getValue(Stats_R2_Invisible_training,element));
+                }
+
+                if (hasTag(Stats_RMSE_Invisible_training, element)) {
+                    Stats.put(Stats_RMSE_Invisible_training, getValue(Stats_RMSE_Invisible_training,element));
+                }
+
+                if (hasTag(Stats_Q2_Invisible_training, element)) {
+                    Stats.put(Stats_Q2_Invisible_training, getValue(Stats_Q2_Invisible_training,element));
+                }
+
+                if (hasTag(Stats_Fisher_Invisible_training, element)) {
+                    Stats.put(Stats_Fisher_Invisible_training, getValue(Stats_Fisher_Invisible_training,element));
+                }
+
+                if (hasTag(Stats_S_Invisible_training, element)) {
+                    Stats.put(Stats_S_Invisible_training, getValue(Stats_S_Invisible_training,element));
+                }
+
+                if (hasTag(Stats_n_Calibration, element)) {
+                    Stats.put(Stats_n_Calibration, getValue(Stats_n_Calibration,element));
+                }
+
+                if (hasTag(Stats_R2_Calibration, element)) {
+                    Stats.put(Stats_R2_Calibration, getValue(Stats_R2_Calibration, element));
+                }
+
+                if (hasTag(Stats_RMSE_Calibration, element)) {
+                    Stats.put(Stats_RMSE_Calibration, getValue(Stats_RMSE_Calibration,element));
+                }
+
+                if (hasTag(Stats_Q2_Calibration, element)) {
+                    Stats.put(Stats_Q2_Calibration, getValue(Stats_Q2_Calibration,element));
+                }
+
+                if (hasTag(Stats_Fisher_Calibration, element)) {
+                    Stats.put(Stats_Fisher_Calibration, getValue(Stats_Fisher_Calibration,element));
+                }
+
+                if (hasTag(Stats_S_calibration, element)) {
+                    Stats.put(Stats_S_calibration, getValue(Stats_S_calibration,element));
+                }
+
+
+                if (hasTag(Stats_n_Test, element)) {
+                    Stats.put(Stats_n_Test, getValue(Stats_n_Test,element));
+                }
+
+                if (hasTag(Stats_R2_Test, element)) {
+                    Stats.put(Stats_R2_Test, getValue(Stats_R2_Test,element));
+                }
+
+                if (hasTag(Stats_RMSE_Test, element)) {
+                    Stats.put(Stats_RMSE_Test, getValue(Stats_RMSE_Test,element));
+                }
+
+                if (hasTag(Stats_R2adj_Test, element)) {
+                    Stats.put(Stats_R2adj_Test, getValue(Stats_R2adj_Test,element));
+                }
+
+                if (hasTag(Stats_Fisher_Test, element)) {
+                    Stats.put(Stats_Fisher_Test, getValue(Stats_Fisher_Test,element));
+                }
+
+                if (hasTag(Stats_S_Test, element)) {
+                    Stats.put(Stats_S_Test, getValue(Stats_S_Test,element));
+                }
+
+                if (hasTag(Stats_Sdev_Test, element)) {
+                    Stats.put(Stats_Sdev_Test, getValue(Stats_Sdev_Test,element));
+                }
+
+                if (hasTag(Stats_SSR_Test, element)) {
+                    Stats.put(Stats_SSR_Test, getValue(Stats_Sdev_Test,element));
+                }
+
+                if (hasTag(Stats_Accuracy_Train, element)) {
+                    Stats.put(Stats_Accuracy_Train, getValue(Stats_Accuracy_Train,element));
+                }
+
+                if (hasTag(Stats_Specificity_Train, element)) {
+                    Stats.put(Stats_Specificity_Train, getValue(Stats_Specificity_Train,element));
+                }
+
+                if (hasTag(Stats_Sensitivity_Train, element)) {
+                    Stats.put(Stats_Sensitivity_Train, getValue(Stats_Sensitivity_Train,element));
+                }
+
+                if (hasTag(Stats_Accuracy_Test, element)) {
+                    Stats.put(Stats_Accuracy_Test, getValue(Stats_Accuracy_Test,element));
+                }
+
+                if (hasTag(Stats_Specificity_Test, element)) {
+                    Stats.put(Stats_Specificity_Test, getValue(Stats_Specificity_Test,element));
+                }
+
+                if (hasTag(Stats_Sensitivity_Test, element)) {
+                    Stats.put(Stats_Sensitivity_Test, getValue(Stats_Sensitivity_Test,element));
+                }
+            } catch (Exception ex) {
+                log.warn("No <Stats> tag in model XML");
+                log.warn(ex.getMessage());
             }
 
-            if (hasTag(Stats_R2_Train, element)) {
-                Stats.put(Stats_R2_Train, getValue(Stats_R2_Train,element));
-            }
-
-            if (hasTag(Stats_RMSE_Train, element)) {
-                Stats.put(Stats_RMSE_Train, getValue(Stats_RMSE_Train,element));
-            }
-
-            if (hasTag(Stats_R2adj_Train, element)) {
-                Stats.put(Stats_R2adj_Train, getValue(Stats_R2adj_Train,element));
-            }
-
-            if (hasTag(Stats_Q2_Train, element)) {
-                Stats.put(Stats_Q2_Train, getValue(Stats_Q2_Train,element));
-            }
-
-            if (hasTag(Stats_Fisher_Train, element)) {
-                Stats.put(Stats_Fisher_Train, getValue(Stats_Fisher_Train,element));
-            }
-
-            if (hasTag(Stats_S_Train, element)) {
-                Stats.put(Stats_S_Train, getValue(Stats_S_Train,element));
-            }
-
-            if (hasTag(Stats_Sdev_Train, element)) {
-                Stats.put(Stats_Sdev_Train, getValue(Stats_Sdev_Train,element));
-            }
-
-            if (hasTag(Stats_SSR_Train, element)) {
-                Stats.put(Stats_SSR_Train, getValue(Stats_SSR_Train,element));
-            }
-
-            if (hasTag(Stats_n_Invisible_training, element)) {
-                Stats.put(Stats_n_Invisible_training, getValue(Stats_n_Invisible_training,element));
-            }
-
-            if (hasTag(Stats_R2_Invisible_training, element)) {
-                Stats.put(Stats_R2_Invisible_training, getValue(Stats_R2_Invisible_training,element));
-            }
-
-            if (hasTag(Stats_RMSE_Invisible_training, element)) {
-                Stats.put(Stats_RMSE_Invisible_training, getValue(Stats_RMSE_Invisible_training,element));
-            }
-
-            if (hasTag(Stats_Q2_Invisible_training, element)) {
-                Stats.put(Stats_Q2_Invisible_training, getValue(Stats_Q2_Invisible_training,element));
-            }
-
-            if (hasTag(Stats_Fisher_Invisible_training, element)) {
-                Stats.put(Stats_Fisher_Invisible_training, getValue(Stats_Fisher_Invisible_training,element));
-            }
-
-            if (hasTag(Stats_S_Invisible_training, element)) {
-                Stats.put(Stats_S_Invisible_training, getValue(Stats_S_Invisible_training,element));
-            }
-
-            if (hasTag(Stats_n_Calibration, element)) {
-                Stats.put(Stats_n_Calibration, getValue(Stats_n_Calibration,element));
-            }
-
-            if (hasTag(Stats_R2_Calibration, element)) {
-                Stats.put(Stats_R2_Calibration, getValue(Stats_R2_Calibration, element));
-            }
-
-            if (hasTag(Stats_RMSE_Calibration, element)) {
-                Stats.put(Stats_RMSE_Calibration, getValue(Stats_RMSE_Calibration,element));
-            }
-
-            if (hasTag(Stats_Q2_Calibration, element)) {
-                Stats.put(Stats_Q2_Calibration, getValue(Stats_Q2_Calibration,element));
-            }
-
-            if (hasTag(Stats_Fisher_Calibration, element)) {
-                Stats.put(Stats_Fisher_Calibration, getValue(Stats_Fisher_Calibration,element));
-            }
-
-            if (hasTag(Stats_S_calibration, element)) {
-                Stats.put(Stats_S_calibration, getValue(Stats_S_calibration,element));
-            }
-
-
-            if (hasTag(Stats_n_Test, element)) {
-                Stats.put(Stats_n_Test, getValue(Stats_n_Test,element));
-            }
-
-            if (hasTag(Stats_R2_Test, element)) {
-                Stats.put(Stats_R2_Test, getValue(Stats_R2_Test,element));
-            }
-
-            if (hasTag(Stats_RMSE_Test, element)) {
-                Stats.put(Stats_RMSE_Test, getValue(Stats_RMSE_Test,element));
-            }
-            
-            if (hasTag(Stats_R2adj_Test, element)) {
-                Stats.put(Stats_R2adj_Test, getValue(Stats_R2adj_Test,element));
-            }
-            
-            if (hasTag(Stats_Fisher_Test, element)) {
-                Stats.put(Stats_Fisher_Test, getValue(Stats_Fisher_Test,element));
-            }
-            
-            if (hasTag(Stats_S_Test, element)) {
-                Stats.put(Stats_S_Test, getValue(Stats_S_Test,element));
-            }
-
-            if (hasTag(Stats_Sdev_Test, element)) {
-                Stats.put(Stats_Sdev_Test, getValue(Stats_Sdev_Test,element));
-            }
-
-            if (hasTag(Stats_SSR_Test, element)) {
-                Stats.put(Stats_SSR_Test, getValue(Stats_Sdev_Test,element));
-            }
-
-            if (hasTag(Stats_Accuracy_Train, element)) {
-                Stats.put(Stats_Accuracy_Train, getValue(Stats_Accuracy_Train,element));
-            }
-
-            if (hasTag(Stats_Specificity_Train, element)) {
-                Stats.put(Stats_Specificity_Train, getValue(Stats_Specificity_Train,element));
-            }
-
-            if (hasTag(Stats_Sensitivity_Train, element)) {
-                Stats.put(Stats_Sensitivity_Train, getValue(Stats_Sensitivity_Train,element));
-            }
-
-            if (hasTag(Stats_Accuracy_Test, element)) {
-                Stats.put(Stats_Accuracy_Test, getValue(Stats_Accuracy_Test,element));
-            }
-
-            if (hasTag(Stats_Specificity_Test, element)) {
-                Stats.put(Stats_Specificity_Test, getValue(Stats_Specificity_Test,element));
-            }
-
-            if (hasTag(Stats_Sensitivity_Test, element)) {
-                Stats.put(Stats_Sensitivity_Test, getValue(Stats_Sensitivity_Test,element));
-            }
 
         } catch (Exception e) {
             throw new InitFailureException("Unable to read model data from XML (" + e.getMessage() + ")");
