@@ -3,7 +3,6 @@ package insilico.core.model.trainingset;
 import insilico.core.alerts.AlertEncoding;
 import insilico.core.alerts.iAlertBlock;
 import insilico.core.exception.GenericFailureException;
-import insilico.core.model.InsilicoModelInfoUpdated;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModel;
 import insilico.core.molecule.InsilicoMolecule;
@@ -15,11 +14,8 @@ import insilico.core.similarity.SimilarityDescriptors;
 import insilico.core.similarity.SimilarityDescriptorsBuilder;
 import insilico.core.tools.utils.GeneralUtilities;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URL;
-import java.util.HashMap;
 
 /**
  * Needed by KNN models, it reads the dataset without calculating the model.
@@ -27,7 +23,9 @@ import java.util.HashMap;
  *
  * @author Alberto Manganaro <a.manganaro@kode-solutions.net>
  */
-public class TrainingSetForKNNModels extends TrainingSet {
+public class TrainingSetForKNNModels extends TrainingSet implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Boolean CalculateDescriptors;
 
@@ -200,5 +198,7 @@ public class TrainingSetForKNNModels extends TrainingSet {
 
         }
     }
+
+
 }
 

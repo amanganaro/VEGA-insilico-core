@@ -517,11 +517,12 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public static TrainingSet ReadFromSerializedFile(URL SourceFileURL) throws GenericFailureException {
         try {
             ObjectInputStream in = new ObjectInputStream(SourceFileURL.openStream());
-            TrainingSet TS = (TrainingSet)in.readObject();
+            TrainingSet TS = (TrainingSet) in.readObject();
             in.close();
             return TS;
         } catch (IOException | ClassNotFoundException e) {
             throw new GenericFailureException("Unable to load training set - " + e.getMessage());
         }
     }
+
 }

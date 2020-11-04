@@ -1,3 +1,5 @@
+package mains;
+
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.pro.Constitutional;
@@ -25,10 +27,9 @@ public class main {
 
     public static void main(String[]  args) throws IOException, InitFailureException, GenericFailureException {
 
-        URL url = new File(System.getProperty("user.dir") + "/test_xml/prova_daphnia_demetra.xml").toURI().toURL();
-        InsilicoModelInfoUpdated insilicoModelInfoUpdated = new InsilicoModelInfoUpdated(url);
-        ReportPDFUpdated report = new ReportPDFUpdated(true, url);
-        report.GenerateReport();
+//        URL url = new File(System.getProperty("user.dir") + "/test_xml/prova_daphnia_demetra.xml").toURI().toURL();
+//        InsilicoModelInfoUpdated insilicoModelInfoUpdated = new InsilicoModelInfoUpdated(url);
+//
 //
 //        InsilicoMoleculeNormalization.DRAGON7_COMPLIANT_NORMALIZATION = true;
 //
@@ -42,16 +43,6 @@ public class main {
 //        for (Descriptor d : b.GetAllDescriptors())
 //            System.out.println(d.getName() + "\t" + d.getFormattedValue());
 
-
-
     }
-
-
-
-
-
-
-
-
 
 }
