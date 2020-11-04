@@ -111,7 +111,7 @@ public class ReportPDFUpdated {
 
         // Init images
         try {
-            URL uImage = null;
+            URL uImage;
 
 //            uImage = new File("images/light_green.png").toURI().toURL();
             uImage = getClass().getClassLoader().getResource("images/light_green.png" );
@@ -238,18 +238,12 @@ public class ReportPDFUpdated {
 
     public void GenerateReport() throws GenericFailureException {
 
-//        if (document.isOpen()) {
-//            document.close();
-//        }
         document.setMarginMirroring(true);
         document.setMarginMirroringTopBottom(true);
         document.setMargins(50, 50, 25, 25);
         AddCover();
         WritePageGuide();
-//        WritePageHeader(modelInfo, 2);
-//        doc_bos.toByteArray();
         document.close();
-//        return doc_bos;
     }
 
 
@@ -520,8 +514,6 @@ public class ReportPDFUpdated {
             document.add(sectionBody);
             document.add(new Paragraph("\n"));
 
-//            document.add();
-//            document.add(new Paragraph(modelInfo.Reference.getQMRFLink(), fontLink));
 
             int curRef = 1;
             for(HashMap<String, String> singleRef : modelInfo.Reference.getReferenceList()) {

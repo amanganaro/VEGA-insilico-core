@@ -20,7 +20,7 @@ import java.util.HashMap;
 
 /**
  * E-States descriptors.
- * 
+ *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 @Slf4j
@@ -57,7 +57,7 @@ public class EStateIndices extends DescriptorBlock {
         super();
         this.Name = EStateIndices.BlockName;
     }
-    
+
 
     @Override
     protected final void GenerateDescriptors() {
@@ -111,7 +111,7 @@ public class EStateIndices extends DescriptorBlock {
 
     /**
      * Calculate descriptors for the given molecule.
-     * 
+     *
      * @param mol molecule to be calculated
      */
     @Override
@@ -139,7 +139,7 @@ public class EStateIndices extends DescriptorBlock {
         }
 
         int nSK = m.getAtomCount();
-        
+
         // Get I-States weights
         WeightsIState w_istate = new WeightsIState();
         double[] w_is = w_istate.getWeights(m, false);
@@ -171,9 +171,9 @@ public class EStateIndices extends DescriptorBlock {
         double Ss = 0, Ms = 0;
 
         for (int at=0; at<m.getAtomCount(); at++) {
-            
+
             IAtom curAt = m.getAtom(at);
-            
+
             // Count H
             int nH = 0;
             try {
@@ -181,15 +181,15 @@ public class EStateIndices extends DescriptorBlock {
             } catch (Exception e) {
                 log.warn("unable to get H count");
             }
-            
+
             // formal charge
             int Charge;
             try {
                 Charge = curAt.getFormalCharge();
             } catch (Exception e) {
                 Charge = 0;
-            }                    
-            
+            }
+
             // Count bonds
             int nBnd=0, nSng = 0, nDbl = 0, nTri = 0, nAr=0;
             for (IBond b : m.getConnectedBondsList(curAt)) {
@@ -210,11 +210,11 @@ public class EStateIndices extends DescriptorBlock {
                     nTri++;
                     nBnd++;
                 }
-            }            
-            
+            }
+
             // Sum of e-states
             Ss += w_es[at];
-            
+
             // Maximum and minimum Estate/HEstate
             Gmax = (Gmax== Descriptor.MISSING_VALUE) ? w_es[at] : (Math.max(w_es[at], Gmax));
             Gmin = (Gmin== Descriptor.MISSING_VALUE) ? w_es[at] : (Math.min(w_es[at], Gmin));
@@ -272,7 +272,7 @@ public class EStateIndices extends DescriptorBlock {
     /**
      * Clones the actual descriptor block
      * @return a cloned copy of the actual object
-     * @throws CloneNotSupportedException 
+     * @throws CloneNotSupportedException
      */
     @Override
     public DescriptorBlock CreateClone() throws CloneNotSupportedException {

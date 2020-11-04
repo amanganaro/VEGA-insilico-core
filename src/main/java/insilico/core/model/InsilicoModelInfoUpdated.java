@@ -295,10 +295,6 @@ public class InsilicoModelInfoUpdated {
                     Guide.put(Guide_Output, getValue(Guide_Output,element));
                 }
 
-                // todo AD work in progress
-
-
-
                 if (hasTag(Guide_Applicability_Domain, element)) {
 
                     NodeList ADNode = element.getElementsByTagName(Guide_Applicability_Domain);
@@ -347,6 +343,7 @@ public class InsilicoModelInfoUpdated {
                 if (hasTag(Guide_Alerts, element)) {
                     Guide.put(Guide_Alerts, getValue(Guide_Alerts,element));
                 }
+
             } catch (Exception ex) {
                 log.warn("No tag <Guide> in model XML");
                 log.warn(ex.getMessage());
@@ -668,8 +665,6 @@ public class InsilicoModelInfoUpdated {
                 log.warn("No <Stats> tag in model XML");
                 log.warn(ex.getMessage());
             }
-
-
         } catch (Exception e) {
             throw new InitFailureException("Unable to read model data from XML (" + e.getMessage() + ")");
         }
@@ -687,7 +682,7 @@ public class InsilicoModelInfoUpdated {
      */
     private static String getValue(String tag, Element element) {
         NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = (Node) nodes.item(0);
+        Node node = nodes.item(0);
         return node.getNodeValue();
     }
 

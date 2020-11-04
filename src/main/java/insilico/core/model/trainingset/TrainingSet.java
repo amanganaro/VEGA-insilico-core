@@ -25,7 +25,7 @@ import java.util.HashMap;
 public class TrainingSet implements Serializable, iTrainingSet {
 
     private static final long serialVersionUID = 1L;
-    
+
     public static final short MOLECULE_UNKNOWN_SET = -1;
     public static final short MOLECULE_TRAINING =1;
     public static final short MOLECULE_TEST =2;
@@ -551,12 +551,11 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public static TrainingSet ReadFromSerializedFile(URL SourceFileURL) throws GenericFailureException {
         try {
             ObjectInputStream in = new ObjectInputStream(SourceFileURL.openStream());
-            TrainingSet TS = (TrainingSet) in.readObject();
+            TrainingSet TS = (TrainingSet)in.readObject();
             in.close();
             return TS;
         } catch (IOException | ClassNotFoundException e) {
             throw new GenericFailureException("Unable to load training set - " + e.getMessage());
         }
     }
-
 }
