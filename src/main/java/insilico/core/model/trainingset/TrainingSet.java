@@ -302,8 +302,33 @@ public class TrainingSet implements Serializable, iTrainingSet {
         }
     }
 
-    public void Build(String molFilePath, iInsilicoModel Model){
+
+    /**
+     * Overload of the Build() method, to be used for normal models (predicted values are calculated directly
+     * inside the method), while for KNN models the full method with the PredictionFromTxt parameter should be used.
+     *
+     * @param molFilePath
+     * @param Model
+     */
+    public void Build(String molFilePath, iInsilicoModel Model) {
+        Build(molFilePath, Model, false);
+    }
+
+
+    /**
+     * Build the training set, reading the data from the text file provided as parameter.
+     *
+     * PredictionFromTxt parameter should be set to true for models that can not directly calculate predictions
+     * on their own training set (for now, this is true just for KNN models).
+     *
+     * @param molFilePath full URI of the input text file
+     * @param Model insilicoModel to be used
+     * @param PredictionFromTxt true if predicted values are found in the text file, otherwise they are calculated
+     */
+    public void Build(String molFilePath, iInsilicoModel Model, boolean PredictionFromTxt){
+
         try{
+
             if(Model.getInfo().hasClassValues()){
                 this.ClassValues = Model.getInfo().getClassValues();
                 this.hasClassValues = true;
@@ -313,6 +338,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
                 this.UnitConversion = Model.getInfo().getConversion();
 
             // Read molecule format - 5 columns: Id, CAS, SMILES, Status (Training/Test), Experimental Value
+            // Additionally, a 6th column can be present with the already calculated predicted value
             DataInputStream in;
             BufferedReader bufferedReader;
             URL tsURL = getClass().getResource(molFilePath);
@@ -375,6 +401,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
                 else
                     Status[index] = MOLECULE_UNKNOWN_SET;
                 Experimental[index] = Float.parseFloat(parsedString[4]);
+                if (PredictionFromTxt)
+                    Prediction[index] = Float.valueOf(parsedString[5]);
                 index++;
             }
             in.close();
@@ -399,31 +427,37 @@ public class TrainingSet implements Serializable, iTrainingSet {
                     continue;
                 }
 
+                // Similarity objects
+                SimDescriptors[i] = similarityDescriptorsBuilder.Calculate(mol);
+
                 MW[i] = (float) mol.GetMolecularWeight();
 
                 InsilicoModelOutput Res = Model.Execute(mol);
 
-                float[] Descriptors = new float[DescriptorSize];
-                for (int d=0; d<DescriptorSize; d++)
-                    Descriptors[d] = (float)Model.GetDescriptor(d);
-                if (!descMinMaxSet) {
-                    for (int d=0; d<DescriptorSize; d++) {
-                        DescriptorMin[d] = Descriptors[d];
-                        DescriptorMax[d] = Descriptors[d];
-                    }
-                    descMinMaxSet = true;
-                } else {
-                    for (int d=0; d<DescriptorSize; d++) {
-                        DescriptorMin[d] = Math.min(Descriptors[d], DescriptorMin[d]);
-                        DescriptorMax[d] = Math.max(Descriptors[d], DescriptorMax[d]);
+                if (DescriptorSize > 0) {
+                    float[] Descriptors = new float[DescriptorSize];
+                    for (int d=0; d<DescriptorSize; d++)
+                        Descriptors[d] = (float)Model.GetDescriptor(d);
+                    if (!descMinMaxSet) {
+                        for (int d=0; d<DescriptorSize; d++) {
+                            DescriptorMin[d] = Descriptors[d];
+                            DescriptorMax[d] = Descriptors[d];
+                        }
+                        descMinMaxSet = true;
+                    } else {
+                        for (int d=0; d<DescriptorSize; d++) {
+                            DescriptorMin[d] = Math.min(Descriptors[d], DescriptorMin[d]);
+                            DescriptorMax[d] = Math.max(Descriptors[d], DescriptorMax[d]);
 
+                        }
                     }
                 }
 
                 this.Alerts[i] = AlertEncoding.MergeAlertIds(Model.GetCalculatedAlert());
 
                 // prediction from calculation
-                this.Prediction[i] = (float) Res.getMainResultValue();
+                if (!PredictionFromTxt)
+                    this.Prediction[i] = (float) Res.getMainResultValue();
 
                 // ACF are calculated only for training set molecules
                 if (!(Status[i] == MOLECULE_TRAINING))

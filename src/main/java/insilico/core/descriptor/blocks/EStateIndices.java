@@ -102,7 +102,7 @@ public class EStateIndices extends DescriptorBlock {
         // Indices
         Add("Ss", "sum of E-states (without hydrogen)");
         Add("Ms", "mean of E-states (without hydrogen)");
-        Add("Gmax","minimum E-State value"); // max E-state
+        Add("Gmax","maximum E-State value"); // max E-state
         Add("Gmin","minimum E-State value"); // min E-state
 
         SetAllValues(Descriptor.MISSING_VALUE);
