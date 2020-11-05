@@ -18,6 +18,7 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.matrix.*;
 import insilico.core.molecule.tools.Manipulator;
 import insilico.core.similarity.SimilarityDescriptors;
+import insilico.core.similarity.SimilarityDescriptorsBuilder;
 import org.openscience.cdk.RingSet;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.Cycles;
@@ -220,10 +221,12 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         return !(similarityDescriptors == null);
     }
 
-    public SimilarityDescriptors GetSimilarityDescriptors() {return similarityDescriptors;}
-
-    public void SetSimilarityDescriptors(SimilarityDescriptors similarityDescriptors){
-        this.similarityDescriptors = similarityDescriptors;
+    public SimilarityDescriptors GetSimilarityDescriptors(InsilicoMolecule Mol) {
+        if (similarityDescriptors == null) {
+            SimilarityDescriptorsBuilder sb = new SimilarityDescriptorsBuilder();
+            similarityDescriptors = sb.Calculate(Mol);
+        }
+        return similarityDescriptors;
     }
 
     public boolean HasACF(){return !(ACF == null);}

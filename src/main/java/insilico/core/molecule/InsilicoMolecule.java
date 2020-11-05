@@ -133,11 +133,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         return MoleculeCache.HasSimilarityDescriptors();
     }
 
-    public SimilarityDescriptors GetSimilarityDescriptors() {return MoleculeCache.GetSimilarityDescriptors();}
-
-    public void SetSimilarityDescriptors(SimilarityDescriptors similarityDescriptors){
-        MoleculeCache.SetSimilarityDescriptors(similarityDescriptors);
-    }
+    public SimilarityDescriptors GetSimilarityDescriptors() {return MoleculeCache.GetSimilarityDescriptors(this);}
 
     public boolean HasACF(){
         return MoleculeCache.HasACF();

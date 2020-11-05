@@ -71,7 +71,7 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
                 } catch (InvalidMoleculeException ex) {
                     throw new GenericFailureException("Unable to calculace ACF - " + ex.getMessage());
                 }
-                molecule.SetSimilarityDescriptors(SimBuild.Calculate(molecule));
+//                molecule.SetSimilarityDescriptors(SimBuild.Calculate(molecule));
                 try {
                     molecule.PurgeAlerts();
                     molecule.AddAlert(alertsEngine.CalculateAlerts(molecule));

@@ -209,12 +209,12 @@ public abstract class InsilicoModel implements iInsilicoModel {
                 if (!CurMolecule.HasSimilarityDescriptors()) {
                     SimilarityDescriptorsBuilder SimBuild = new SimilarityDescriptorsBuilder();
                     // TODO: 15/06/2020 Corretto?
-                    CurMolecule.SetSimilarityDescriptors(SimBuild.Calculate(CurMolecule, LocalDescEngine));
+//                    CurMolecule.SetSimilarityDescriptors(SimBuild.Calculate(CurMolecule, LocalDescEngine));
                 }
             } else {
                 if (!CurMolecule.HasSimilarityDescriptors()) {
                     SimilarityDescriptorsBuilder SimBuild = new SimilarityDescriptorsBuilder();
-                    CurMolecule.SetSimilarityDescriptors(SimBuild.Calculate(CurMolecule, DescEngine));
+//                    CurMolecule.SetSimilarityDescriptors(SimBuild.Calculate(CurMolecule, DescEngine));
                 }
                 DescriptorStatus = CalculateDescriptors(DescEngine);
             }
