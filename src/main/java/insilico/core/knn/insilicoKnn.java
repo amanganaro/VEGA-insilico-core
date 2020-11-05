@@ -19,9 +19,9 @@ import java.util.Arrays;
  * Absract class
  * @author Alberto Manganaro <a.manganaro@kode-solutions.net>
  */
-public abstract class InsilicoKnn {
+public abstract class insilicoKnn {
 
-    Logger logger = LoggerFactory.getLogger(InsilicoKnn.class);
+    Logger logger = LoggerFactory.getLogger(insilicoKnn.class);
 
     protected int NeighboursNumber;
     protected double MinSimilarity;
@@ -38,7 +38,7 @@ public abstract class InsilicoKnn {
     /**
      * Constructor
      */
-    public InsilicoKnn(){
+    public insilicoKnn(){
         SimDescEngine = new SimilarityDescriptorsBuilder();
         SimCalculator = new Similarity();
 
