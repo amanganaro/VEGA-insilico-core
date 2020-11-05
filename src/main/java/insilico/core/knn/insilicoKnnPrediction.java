@@ -5,7 +5,7 @@ import insilico.core.similarity.SimilarMolecule;
 
 import java.util.ArrayList;
 
-public class InsilicoKnnPrediction {
+public class insilicoKnnPrediction {
 
     public final static short KNN_MISSING_EQUAL_CLASSESS = -3;
     public final static short KNN_MISSING_RANGE = -2;
@@ -19,7 +19,7 @@ public class InsilicoKnnPrediction {
     private short Status;
 
     // CONSTRUCTOR
-    public InsilicoKnnPrediction() {
+    public insilicoKnnPrediction() {
         Prediction = Descriptor.MISSING_VALUE;
         Status = KNN_ERROR;
         Neighbours = new ArrayList<>();

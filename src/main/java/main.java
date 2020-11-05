@@ -1,25 +1,16 @@
-package mains;
 
-import insilico.core.descriptor.Descriptor;
-import insilico.core.descriptor.DescriptorBlock;
-import insilico.core.descriptor.pro.Constitutional;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import insilico.core.model.InsilicoModelInfoUpdated;
 
-import insilico.core.model.report.pdf.ReportPDFUpdated;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
-import insilico.core.molecule.tools.InsilicoMoleculeNormalization;
+import insilico.core.similarity.Similarity;
 import lombok.extern.slf4j.Slf4j;
+import org.openscience.cdk.smiles.SmilesParser;
 
 
 import java.io.*;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static insilico.core.model.InsilicoModelInfoUpdated.Guide_AD_SimilarMols;
+import java.util.Arrays;
 
 
 @Slf4j
@@ -27,21 +18,24 @@ public class main {
 
     public static void main(String[]  args) throws IOException, InitFailureException, GenericFailureException {
 
-//        URL url = new File(System.getProperty("user.dir") + "/test_xml/prova_daphnia_demetra.xml").toURI().toURL();
-//        InsilicoModelInfoUpdated insilicoModelInfoUpdated = new InsilicoModelInfoUpdated(url);
-//
-//
-//        InsilicoMoleculeNormalization.DRAGON7_COMPLIANT_NORMALIZATION = true;
-//
-////        String SMI = "CN1C=NC(N)=C2N=CN=C12";
-//        String SMI = "COC(=O)C1C2CCC(CC1OC(=O)C1=CC=CC=C1)N2C";
-//        InsilicoMolecule mol = SmilesMolecule.Convert(SMI);
-//        System.out.println(mol.GetSMILES());
-//
-//        DescriptorBlock b = new Constitutional();
-//        b.Calculate(mol);
-//        for (Descriptor d : b.GetAllDescriptors())
-//            System.out.println(d.getName() + "\t" + d.getFormattedValue());
+        Similarity sim = new Similarity();
+
+        String smiles1 = "C(CCCC)C";
+        String smiles2 = "C(CCCC)CCC";
+
+        InsilicoMolecule mol1 = SmilesMolecule.Convert(smiles1);
+        InsilicoMolecule mol2 = SmilesMolecule.Convert(smiles2);
+
+        sim.Calculate(mol1.GetSimilarityDescriptors(), mol2.GetSimilarityDescriptors());
+
+
+
+
+//        for(String smiles : smilesList) {
+//            mol.GetSimilarityDescriptors();
+//            sim.Calculate()
+//        }
+
 
     }
 

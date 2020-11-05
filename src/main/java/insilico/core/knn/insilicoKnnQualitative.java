@@ -11,62 +11,66 @@ import java.util.HashMap;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-public class InsilicoKnnQualitative extends InsilicoKnn{
+public class insilicoKnnQualitative extends insilicoKnn {
 
-    public InsilicoKnnQualitative(){
+    public insilicoKnnQualitative() {
         super();
     }
 
 
     @Override
-    protected InsilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours, iTrainingSet TrainSet) throws GenericFailureException {
+    protected insilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours,
+                                                        iTrainingSet TrainSet) throws GenericFailureException {
 
         HashMap<Double, Double> ClassWeights = new HashMap<>();
 
-        for(SimilarMolecule curMol : Neighbours) {
+        for (SimilarMolecule curMol : Neighbours) {
 
-            // Weight of similar molecule
+            // Calculate weight of the similar molecule
             double curWeight = Math.pow(curMol.getSimilarity(), EnhanceWeightFactor);
 
-            // update current class occurences
-            double curClass = TrainSet.getExperimentalValue((int) curMol.getIndex());
-            if(ClassWeights.containsKey(curClass)){
-                double val = ClassWeights.get((curClass) + curWeight);
+            // Update current class occurences
+            double curClass = TrainSet.getExperimentalValue((int)curMol.getIndex());
+            if (ClassWeights.containsKey(curClass)) {
+                double val = ClassWeights.get(curClass) + curWeight;
                 ClassWeights.put(curClass, val);
-            } else {
+            } else
                 ClassWeights.put(curClass, curWeight);
-            }
         }
 
         // Classification result
         double MaxClass = 0;
         boolean firstLoop = true;
         boolean eq = false;
-
         for (Double key : ClassWeights.keySet()) {
-            if(firstLoop){
+            if (firstLoop) {
                 MaxClass = key;
                 firstLoop = false;
                 continue;
             }
 
-            if(ClassWeights.get(key) > ClassWeights.get(MaxClass)){
+            if (ClassWeights.get(key) > ClassWeights.get(MaxClass)) {
                 MaxClass = key;
                 eq = false;
-            } else if (ClassWeights.get(key).equals(ClassWeights.get(MaxClass)))
+            } else if (ClassWeights.get(key) == ClassWeights.get(MaxClass)) {
                 eq = true;
+            }
         }
 
-        if (eq) {
-            InsilicoKnnPrediction prediction = new InsilicoKnnPrediction();
-            prediction.setStatus(InsilicoKnnPrediction.KNN_MISSING_EQUAL_CLASSESS);
-            return prediction;
+        if (eq == true) {
+
+            insilicoKnnPrediction Prediction = new insilicoKnnPrediction();
+            Prediction.setStatus(insilicoKnnPrediction.KNN_MISSING_EQUAL_CLASSESS);
+            return Prediction;
+
         } else {
-            InsilicoKnnPrediction prediction = new InsilicoKnnPrediction();
-            prediction.setPrediction(MaxClass);
-            prediction.setNeighbours(Neighbours);
-            prediction.setStatus(InsilicoKnnPrediction.KNN_NORMAL_PREDICTION);
-            return prediction;
+
+            insilicoKnnPrediction Prediction = new insilicoKnnPrediction();
+            Prediction.setPrediction(MaxClass);
+            Prediction.setNeighbours(Neighbours);
+            Prediction.setStatus(insilicoKnnPrediction.KNN_NORMAL_PREDICTION);
+            return Prediction;
+
         }
 
     }
