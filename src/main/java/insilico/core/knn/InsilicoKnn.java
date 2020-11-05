@@ -227,7 +227,7 @@ public abstract class InsilicoKnn {
         SimilarMols = new SimilarMolecule[TrainSet.getMoleculesSize()];
 
         // Obtain similarity for all molecules
-        for (int i = 0; i < TrainSet.getDescriptorSize(); i++){
+        for (int i = 0; i < TrainSet.getMoleculesSize(); i++){
             double curSim;
             try {
                 curSim = sim.Calculate(mol.GetSimilarityDescriptors(), TrainSet.getSimilarityDescriptor(i));

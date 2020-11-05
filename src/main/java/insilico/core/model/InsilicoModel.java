@@ -9,6 +9,7 @@ import insilico.core.descriptor.DescriptorsEngine;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.model.trainingset.TrainingSet;
 import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.acf.ACFBuilder;
