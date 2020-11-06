@@ -67,6 +67,7 @@ public abstract class insilicoKnn {
             try {
                 curSim = SIM.Calculate(Mol.GetSimilarityDescriptors(),
                         TrainSet.getSimilarityDescriptor(idx));
+                log.debug( idx + ": Calculated similarity for " + Mol.GetSMILES() + " vs " + TrainSet.getSMILES(idx) + ": " + curSim);
 
                 // If similarity is equal to 1, checks if mols are really identical
                 if (curSim == 1.0) {
