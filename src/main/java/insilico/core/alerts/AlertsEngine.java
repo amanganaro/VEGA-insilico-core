@@ -1,6 +1,6 @@
 package insilico.core.alerts;
 
-import insilico.core.alerts.builders.*;
+import insilico.core.alerts.builders.SACarcinogenicityAntares;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.AlertBlockNotFoundException;
 import insilico.core.exception.GenericFailureException;
@@ -48,93 +48,93 @@ public class AlertsEngine {
 
         if (!this.hasAlertBlock(AlertBlockId)) {
             switch (AlertBlockId) {
-                case InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA:
-                    Alerts.add(new SABenigniBossa());
-                    break;
-                case InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA_ADDITIONAL:
-                    Alerts.add(new SABenigniBossaAdditional());
-                    break;
-                case InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY:
-                    Alerts.add(new SAMutagenSarpy());
-                    break;
-                case InsilicoConstants.SA_BLOCK_MUTAGEN_CRS4:
-                    Alerts.add(new SAMutagenCRS4());
-                    break;
-                case InsilicoConstants.SA_BLOCK_MUTAGEN_IRFMN:
-                    Alerts.add(new SAMutagenIRFMN());
-                    break;
-                case InsilicoConstants.SA_BLOCK_BCF_IRFMN:
-                    Alerts.add(new SABCFIRFMN());
-                    break;
-                case InsilicoConstants.SA_BLOCK_BCF_IRFMN_THRESHOLD:
-                    Alerts.add(new SABCFIRFMNThreshold());
-                    break;
-                case InsilicoConstants.SA_BLOCK_LOGP_MEYLAN:
-                    Alerts.add(new SAMeylanLogPFragments());
-                    break;
-                case InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_ADDITIONAL:
-                    Alerts.add(new SAMeylanLogPAdditionalFragments());
-                    break;
-                case InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_CORRECTION:
-                    Alerts.add(new SAMeylanLogPCorrectionFragments());
-                    break;
-                case InsilicoConstants.SA_BLOCK_BCF_CAESAR:
-                    Alerts.add(new SABCFCaesar());
-                    break;
-                case InsilicoConstants.SA_BLOCK_FISH_IRFMN:
-                    Alerts.add(new SAFishIRFMN());
-                    break;
-                case InsilicoConstants.SA_BLOCK_READY_BIO_IRFMN:
-                    Alerts.add(new SAReadyBioIRFMN());
-                    break;
-                case InsilicoConstants.SA_BLOCK_PERSISTENCE_SEDIMENT_IRFMN:
-                    Alerts.add(new SAPersistenceSediment());
-                    break;
-                case InsilicoConstants.SA_BLOCK_PERSISTENCE_WATER_IRFMN:
-                    Alerts.add(new SAPersistenceWater());
-                    break;
-                case InsilicoConstants.SA_BLOCK_PERSISTENCE_SOIL_IRFMN:
-                    Alerts.add(new SAPersistenceSoil());
-                    break;
+//                case InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA:
+//                    Alerts.add(new SABenigniBossa());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA_ADDITIONAL:
+//                    Alerts.add(new SABenigniBossaAdditional());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY:
+//                    Alerts.add(new SAMutagenSarpy());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_MUTAGEN_CRS4:
+//                    Alerts.add(new SAMutagenCRS4());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_MUTAGEN_IRFMN:
+//                    Alerts.add(new SAMutagenIRFMN());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_BCF_IRFMN:
+//                    Alerts.add(new SABCFIRFMN());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_BCF_IRFMN_THRESHOLD:
+//                    Alerts.add(new SABCFIRFMNThreshold());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_LOGP_MEYLAN:
+//                    Alerts.add(new SAMeylanLogPFragments());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_ADDITIONAL:
+//                    Alerts.add(new SAMeylanLogPAdditionalFragments());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_CORRECTION:
+//                    Alerts.add(new SAMeylanLogPCorrectionFragments());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_BCF_CAESAR:
+//                    Alerts.add(new SABCFCaesar());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_FISH_IRFMN:
+//                    Alerts.add(new SAFishIRFMN());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_READY_BIO_IRFMN:
+//                    Alerts.add(new SAReadyBioIRFMN());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_PERSISTENCE_SEDIMENT_IRFMN:
+//                    Alerts.add(new SAPersistenceSediment());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_PERSISTENCE_WATER_IRFMN:
+//                    Alerts.add(new SAPersistenceWater());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_PERSISTENCE_SOIL_IRFMN:
+//                    Alerts.add(new SAPersistenceSoil());
+//                    break;
                 case InsilicoConstants.SA_BLOCK_CARC_ANTARES:
                     Alerts.add(new SACarcinogenicityAntares());
                     break;
-                case InsilicoConstants.SA_BLOCK_CARC_ISSCANCGX:
-                    Alerts.add(new SACarcinogenicityIsscanCgx());
-                    break;
-                case InsilicoConstants.SA_BLOCK_ESTROGEN_BIND_CERAPP:
-                    Alerts.add(new SAEstrogenBindCerapp());
-                    break;
-                case InsilicoConstants.SA_BLOCK_HEPATOTOXICITY:
-                    Alerts.add(new SAHepatotoxicity());
-                    break;
-                case InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY_18K:
-                    Alerts.add(new SAMutagenSarpy18K());
-                    break;
-                case InsilicoConstants.SA_BLOCK_ANDROGEN_BIND_COMPARA_SARPY:
-                    Alerts.add(new SAAndrogenBindComparaIRFMN());
-                    break;
-                case InsilicoConstants.SA_BLOCK_ALGAE_COMBASE:
-                    Alerts.add(new SACombaseAlgae());
-                    break;
-                case InsilicoConstants.SA_BLOCK_MICROBES_COMBASE:
-                    Alerts.add(new SACombaseMicrobes());
-                    break;
-                case InsilicoConstants.SA_BLOCK_DAPHNIA_COMBASE:
-                    Alerts.add(new SACombaseDaphnia());
-                    break;
-                case InsilicoConstants.SA_BLOCK_FISH_COMBASE:
-                    Alerts.add(new SACombaseFish());
-                    break;
-                case InsilicoConstants.SA_BLOCK_REPROTOX_VERMEER:
-                    Alerts.add(new SAReprotoxVermeer());
-                    break;
-                case InsilicoConstants.SA_BLOCK_SKIN_SENS_VERMEER:
-                    Alerts.add(new SASkinVermeer());
-                    break;
-                case InsilicoConstants.SA_BLOCK_NEPHROTOX_VERMEER:
-                    Alerts.add(new SANephroVermeer());
-                    break;
+//                case InsilicoConstants.SA_BLOCK_CARC_ISSCANCGX:
+//                    Alerts.add(new SACarcinogenicityIsscanCgx());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_ESTROGEN_BIND_CERAPP:
+//                    Alerts.add(new SAEstrogenBindCerapp());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_HEPATOTOXICITY:
+//                    Alerts.add(new SAHepatotoxicity());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY_18K:
+//                    Alerts.add(new SAMutagenSarpy18K());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_ANDROGEN_BIND_COMPARA_SARPY:
+//                    Alerts.add(new SAAndrogenBindComparaIRFMN());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_ALGAE_COMBASE:
+//                    Alerts.add(new SACombaseAlgae());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_MICROBES_COMBASE:
+//                    Alerts.add(new SACombaseMicrobes());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_DAPHNIA_COMBASE:
+//                    Alerts.add(new SACombaseDaphnia());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_FISH_COMBASE:
+//                    Alerts.add(new SACombaseFish());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_REPROTOX_VERMEER:
+//                    Alerts.add(new SAReprotoxVermeer());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_SKIN_SENS_VERMEER:
+//                    Alerts.add(new SASkinVermeer());
+//                    break;
+//                case InsilicoConstants.SA_BLOCK_NEPHROTOX_VERMEER:
+//                    Alerts.add(new SANephroVermeer());
+//                    break;
                 default:
                     throw new InitFailureException("Alert block with id " + AlertBlockId + " not available");
             }

@@ -4,10 +4,9 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
+import insilico.core.exception.InvalidMoleculeException;
+import org.openscience.cdk.isomorphism.Pattern;
+import org.openscience.cdk.smarts.SmartsPattern;
 
 /**
  *
@@ -15,7 +14,7 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
  */
 public class SACarcinogenicityAntares extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     
     private final static String[] CarcSMARTS = {
         "CN[N+]=O", // 1 - LR=5.53
@@ -172,11 +171,12 @@ public class SACarcinogenicityAntares extends AlertBlockFromSMARTS implements iA
 
         try {
 
-            SA = new QueryAtomContainer[CarcSMARTS.length];
+            SA = new Pattern[CarcSMARTS.length];
             
             int idx = 0;
             for (String s : CarcSMARTS) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s).setPrepare(false);
+//                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
                 idx++;
             }
             
@@ -193,10 +193,10 @@ public class SACarcinogenicityAntares extends AlertBlockFromSMARTS implements iA
         try {
 
             for (int i=0; i<CarcSMARTS.length; i++) 
-                if (Matches(SA[i])) 
+                if (SA[i].matches(CurMol.GetStructure()))
                     Res.add((Alert)Alerts.get(i).clone());
             
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
             return null;
         }
         

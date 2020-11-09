@@ -173,6 +173,12 @@
                     <target>11</target>
                     <release>11</release>
 
+                    <excludes>
+                        <exclude>insilico/core/alerts/builders/toberefactored/*.java</exclude>
+                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>
+                        <exclude>insilico/core/molecule/matrix/old/*.java</exclude>
+                    </excludes>
+
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
