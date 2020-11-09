@@ -1,10 +1,10 @@
 package insilico.core.similarity;
 
 import insilico.core.descriptor.DescriptorsEngine;
-import insilico.core.descriptor.blocks.Constitutional;
 import insilico.core.descriptor.blocks.FunctionalGroups;
 import insilico.core.exception.DescriptorNotFoundException;
 import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.similarity.descriptors.simConstitutional;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.fingerprint.*;
 
@@ -20,6 +20,11 @@ public class SimilarityDescriptorsBuilder {
     private FunctionalGroups FGDescriptors;
     private IFingerprinter FP;
     private int FPType;
+
+    // FP parameters
+    // introduced to be consistent with previous insilico/CDK version
+    public final static int PARAM_FP_SIZE = Fingerprinter.DEFAULT_SIZE;
+    public final static int PARAM_FP_DEPTH = 8;
 
     // Fingeprints types
     public final static int FP_DEFAULT = 1;
@@ -48,16 +53,16 @@ public class SimilarityDescriptorsBuilder {
     public final void SetFingerPrint(int FingerPrintType) {
         switch (FingerPrintType) {
             case FP_DEFAULT:
-                FP = new Fingerprinter();
+                FP = new Fingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
                 break;
             case FP_EXTENDED:
-                FP = new ExtendedFingerprinter();
+                FP = new ExtendedFingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
                 break;
             case FP_GRAPHONLY:
-                FP = new GraphOnlyFingerprinter();
+                FP = new GraphOnlyFingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
                 break;
             case FP_HYBRIDIZATION:
-                FP = new HybridizationFingerprinter();
+                FP = new HybridizationFingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
                 break;
             case FP_ESTATE:
                 FP = new EStateFingerprinter();
@@ -85,7 +90,7 @@ public class SimilarityDescriptorsBuilder {
     }
 
     /**
-     * Returns the type of fingeprint actually selected.
+     * Returns the type of fingerprint actually selected.
      * @return the type of fingerprint
      */
     public int GetFingerPrintType() {
@@ -109,13 +114,13 @@ public class SimilarityDescriptorsBuilder {
         SimilarityDescriptors DescObj = new SimilarityDescriptors();
 
         // Calculate constitutional (or uses the cached objects)
-        Constitutional curConst;
-        if ( (DescEngine == null) || (!DescEngine.hasDescriptorBlock(Constitutional.class)) ){
-            curConst = new Constitutional();
+        simConstitutional curConst;
+        if ( (DescEngine == null) || (!DescEngine.hasDescriptorBlock(simConstitutional.class)) ){
+            curConst = new simConstitutional();
             curConst.Calculate(Mol);
             DescObj.Constitutional = curConst.GetAllValues();
         } else {
-            curConst = (Constitutional)DescEngine.GetDescriptorBlock(Constitutional.class);
+            curConst = (simConstitutional)DescEngine.GetDescriptorBlock(simConstitutional.class);
         }
         DescObj.Constitutional = curConst.GetAllValues();
 
