@@ -47,7 +47,7 @@ public class InsilicoModelInfoUpdated {
 
     // VEGA
     private final HashMap<String, String> Vega = new HashMap<>();
-    private final HashMap<Integer, String> ClassValues = new HashMap<>();
+    private final HashMap<Double, String> ClassValues = new HashMap<>();
     public final static String Vega_TS = "TS";
     public final static String Vega_QMRF = "QMRF";
     public final static String Vega_HasAlerts = "HasAlerts";
@@ -85,7 +85,7 @@ public class InsilicoModelInfoUpdated {
         return !this.ClassValues.isEmpty();
     }
 
-    public HashMap<Integer, String> getClassValues() {
+    public HashMap<Double, String> getClassValues() {
         return ClassValues;
     }
 
@@ -263,7 +263,7 @@ public class InsilicoModelInfoUpdated {
                         Element n = (Element) Classes.item(i);
                         String ClassValue = getValue("Value", n);
                         String ClassLabel = getValue("Label", n);
-                        ClassValues.put(Integer.valueOf(ClassValue), ClassLabel);
+                        ClassValues.put(Double.valueOf(ClassValue), ClassLabel);
                     }
                 }
             } catch (Exception ex) {

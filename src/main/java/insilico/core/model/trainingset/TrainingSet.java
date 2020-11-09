@@ -55,7 +55,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     protected ACFItemList ACFList;
 
     protected boolean hasClassValues;
-    protected HashMap<Integer, String> ClassValues;
+    protected HashMap<Double, String> ClassValues;
 
     protected final DecimalFormat Format;
 
@@ -268,6 +268,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
             log.error("Requested class label for a dataset without classification info in request to training set");
             throw new GenericFailureException("Requested class label for a dataset without classification info in request to training set");
         }
+//        int value_to_check = ;
         if (!ClassValues.containsKey(Value)) {
             log.error("Class label not found (value = " + Value + ") in request to training set");
             throw new GenericFailureException("Class label not found (value = " + Value + ") in request to training set");

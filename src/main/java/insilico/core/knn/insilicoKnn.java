@@ -83,8 +83,8 @@ public abstract class insilicoKnn {
                     curSim = 0.38;
 
             } catch (Throwable e) {
-                log.warn("AD similarity calculation: unable to calculate for training set molecule "
-                        + idx + ": " + TrainSet.getSMILES(idx));
+//                log.warn("AD similarity calculation: unable to calculate for training set molecule "
+//                        + idx + ": " + TrainSet.getSMILES(idx));
                 curSim = 0;
             }
             SimilarMols[idx] = new SimilarMolecule(idx, curSim);

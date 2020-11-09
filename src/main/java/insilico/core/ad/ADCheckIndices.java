@@ -107,8 +107,8 @@ public class ADCheckIndices {
                     curSim = 0.38;
                 
             } catch (Throwable e) {
-                logger.warn("AD similarity calculation: unable to calculate for training set molecule "
-                        + idx + ": " + TrainSet.getSMILES(idx));
+//                logger.warn("AD similarity calculation: unable to calculate for training set molecule "
+//                        + idx + ": " + TrainSet.getSMILES(idx));
                 curSim = 0;
             }
             SimilarMols[idx] = new SimilarMolecule(idx, curSim);
