@@ -24,7 +24,8 @@ public class ModelANNFromPMML {
     private final FieldName outputField;
     protected boolean verbose;
 
-    public ModelANNFromPMML(InputStream PmmlSource, Model model, String outputField) throws InitFailureException {
+
+    public ModelANNFromPMML(InputStream PmmlSource, String outputField) throws InitFailureException {
 
         try {
 
@@ -32,10 +33,11 @@ public class ModelANNFromPMML {
             PMML pmml = unmarshal(PmmlSource);
 
             // Create the evaluator object
-            // TODO: modelEvaluatorFactory.newModelEvaluator(pmml, model) we must define model
-            ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-            ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model);
-            evaluator = (Evaluator)modelEvaluator;
+            ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml);
+            ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
+//            ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
+            evaluator = modelEvaluator;
+//            Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelEvaluator()
 
         } catch (Exception e) {
             throw new InitFailureException("Unable to init PMML model - " + e.getMessage());
