@@ -57,6 +57,8 @@ public class SimilarityDescriptorsBuilder {
                 break;
             case FP_EXTENDED:
                 FP = new ExtendedFingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
+                // Option needed to be compliant with prev CDK fingerprinter
+                ((ExtendedFingerprinter)FP).setHashPseudoAtoms(true);
                 break;
             case FP_GRAPHONLY:
                 FP = new GraphOnlyFingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
@@ -155,6 +157,7 @@ public class SimilarityDescriptorsBuilder {
         // Calculate fp
         try {
             DescObj.Fingerprint = FP.getFingerprint(Mol.GetStructure());
+
         } catch (Throwable ex) {
             DescObj.Fingerprint = null;
         }

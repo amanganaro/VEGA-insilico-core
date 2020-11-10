@@ -63,6 +63,9 @@ public class InsilicoMoleculeNormalization {
         // Finally check and fix some known problems with aromaticity
         FixAromaticityProblems(mol);
 
+        // Marks rings (needed by SMARTS matching)
+        Cycles.markRingAtomsAndBonds(mol);
+
         return(mol);
     }
 

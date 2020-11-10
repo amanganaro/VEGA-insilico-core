@@ -195,6 +195,7 @@ public class FunctionalGroups extends DescriptorBlock {
             try {
                 Queries[i] = SmartsPattern.create(FG_SMARTS[i][3]).setPrepare(false);
             } catch (Exception e) {
+                log.warn("Unable to parse SMARTS in functional groups: " + FG_SMARTS[i][3]);
                 Queries[i] = null;
             }
         }
