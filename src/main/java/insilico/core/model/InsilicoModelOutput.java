@@ -12,6 +12,7 @@ public class InsilicoModelOutput implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public final static short OUTPUT_OK_AD_NOT_APPLICABLE = 3;
     public final static short OUTPUT_OK_AD_MISSING = 2;
     public final static short OUTPUT_OK = 1;
     public final static short OUTPUT_NOT_CALCULATED = 0;

@@ -28,7 +28,8 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "[C;!R][$([C;D2]),$([C;D3](=N)(C)[C,c])]=NOC",  // 3
             "[OH]CC(=O)C[O;D2]",  // 4
             "n1oncc1",  // 5
-            "[N;R]=[C;R]([R,R2])[R,R2]",  // 6
+            "[N;R1]=[C;R1]([R,R2])[R,R2]",  // 6
+//            "[N;R]=[C;R]([R,R2])[R,R2]",  // 6 OLD CDK
 //        "[$([N;D1]),$([N;D2]-*),$([N;D3](-*)-*)]=C([R])[R]",  // 6
             "CC(=O)NC(C(=O)[OH])C[S;D2]",  // 7
 //        "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)]", // 8 wrong?
@@ -36,7 +37,8 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "*=C(C#N)C(=O)[O;D2]", // 9
             "[OH][C;H1,H2]C([O;D2])[C;H1,H2][OH]", // 10
             "*[S;R](=O)[N;R]=[C;R][N;R]", // 11
-            "[*;R][C,c;R](=O)[O,o;R][*;R]", // 12
+//            "[*;R][C,c;R](=O)[O,o;R][*;R]", // 12 COMPLIANCE WITH OLDER CDK
+            "[*;R1][C,c;R1](=O)[O,o;R1][*;R1]", // 12
             "*C(=O)NC(=O)NC(=O)*", // 13
             "*C(=O)C=CC(=O)[A]", // 14
             "C(-*)(-*)=NOC(=O)*", // 15
@@ -66,7 +68,8 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "N=C(C#N)C#N", // 37
             "[OH]CC(=O)[OH]", // 38
             "*-[CH]=N-O-C(=O)-*", // 39
-            "[c;!$(c([*;R])([*;R])([*;R]))]1[c;!$(c([*;R])([*;R])([*;R]))][c;!$(c([*;R])([*;R])([*;R]))]n[c;!$(c([*;R])([*;R])([*;R]))][c;!$(c([*;R])([*;R])([*;R]))]1", // 40
+//            "[c;!$(c([*;R])([*;R])([*;R]))]1[c;!$(c([*;R])([*;R])([*;R]))][c;!$(c([*;R])([*;R])([*;R]))]n[c;!$(c([*;R])([*;R])([*;R]))][c;!$(c([*;R])([*;R])([*;R]))]1", // 40 OLD CDK
+            "[c;!$(c([*;R1])([*;R1])([*;R1]))]1[c;!$(c([*;R1])([*;R1])([*;R1]))][c;!$(c([*;R1])([*;R1])([*;R1]))]n[c;!$(c([*;R1])([*;R1])([*;R1]))][c;!$(c([*;R1])([*;R1])([*;R1]))]1", // 40
 //        "[!a](@[!a])(@[!a])@[!a](@[!a])@[!a]", // 41 wrong?
             "[$([C;!a](@[C;!a])(@[C;!a])@[C;!a])]@[$([C;!a](@[C;!a])(@[C;!a])@[C;!a])]", // 41
             "[C;!$(C(=O)[OH])][OH]", // 42
@@ -83,13 +86,16 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "[C;D2](C(=O)-*)C(=O)N", // 52
             "NC=N[$(c1ncsc1),$(c1cncs1),$(c1sccn1)]", // 53
             "[N;R][C;R]([N;R])=N[a]", // 54
-            "C(-*)(-*)(c1ccccc1)c1ccccc1", // 55
+            "C(-*)(-*)(c1ccccc1)c1ccccc1", // 55 NOT WORKING IN CDK OLD
+//            "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][R1;a][$([R1;a]);!$([R1;a][OH])][$([R1;a][OH]),$([R1;a][R1;a][OH])]", // 56 OLD CDK
             "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][R;a][$([R;a]);!$([R;a][OH])][$([R;a][OH]),$([R;a][R;a][OH])]", // 56
             "[R;a](C(=O)[OH])[R;a](C(=O)[OH])", // 57
-            "[R;a]([N+](=O)[O-])[$([R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R;a][R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R;a][R;a][R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)])]",  // 58
+//            "[R;a]([N+](=O)[O-])[$([R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R;a][R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R;a][R;a][R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)])]",  // 58 OLD CDK
+            "[R1;a]([N+](=O)[O-])[$([R1;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R1;a][R1;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R1;a][R1;a][R1;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)])]",  // 58
             "[R;a]([OH])[R;a]C(=O)[O;D2]", // 59
             "*-N-C(=O)-C([Cl,Br,F,I])[Cl,Br,F,I]", // 60
-            "[$([C,c](=O)1[N,n][C,c](=O)[*;R][*;R]1);!$(C(=O)1NC(=O)C=C1)]", // 61
+//            "[$([C,c](=O)1[N,n][C,c](=O)[*;R][*;R]1);!$(C(=O)1NC(=O)C=C1)]", // 61 CDK OLD
+            "[$([C,c](=O)1[N,n][C,c](=O)[*;R1][*;R1]1);!$(C(=O)1NC(=O)C=C1)]", // 61
             "C(=O)[C,$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][N;D3]([a])[a]", // 62
             "[n;R](=O)[$([n;R]),$([*;R][n;R]),$([*;R][*;R][n;R])]", // 63
             "[a]-N(C(=O)-*)C(=O)-*", // 64
@@ -100,15 +106,18 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "CSC[$(S(=O)(C)-*)]", // 69
 //        "[a;R](N(=O)-*)[a;R][NH]C(=O)C", // 70
             "SSSSSS", // 70
-            "[$(S(=O)(=O)(N)[a;R][a;R]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R][a;R][a;R]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R][a;R][a;R][a;R]S(=O)(=O)(N))]", // 71
-            "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][$([a;R][a;R][a;R]C(=O)[O;D2]),$([a;R][a;R][a;R][a;R]C(=O)[O;D2])]", // 72
+//            "[$(S(=O)(=O)(N)[a;R][a;R]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R][a;R][a;R]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R][a;R][a;R][a;R]S(=O)(=O)(N))]", // 71 OLD CDK
+            "[$(S(=O)(=O)(N)[a;R1][a;R1]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R1][a;R1][a;R1]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R1][a;R1][a;R1][a;R1]S(=O)(=O)(N))]", // 71
+//            "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][$([a;R][a;R][a;R]C(=O)[O;D2]),$([a;R][a;R][a;R][a;R]C(=O)[O;D2])]", // 72 OLD CDK
+            "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][$([a;R1][a;R][a;R1]C(=O)[O;D2]),$([a;R1][a;R1][a;R1][a;R1]C(=O)[O;D2])]", // 72
             "S(=O)(=O)(N)C(C)N", // 73
             "[OH][a;R][a;R]C(=O)[OH]", // 74
             "c1ccccc1CCN", // 75
             "[$(C(=O)([OH])[A]C(=O)[OH]),$(C(=O)([OH])[A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A][A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A][A][A][A][A]C(=O)[OH])]", // 76
             "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),O]C(=O)NN=O", // 77
             "S(=O)[$(C([Cl,Br,F,I])[Cl,Br,F,I])]", // 78
-            "[a;R](-*)[a;R]c(n)n", // 79
+//            "[a;R](-*)[a;R]c(n)n", // 79 OLD CDK
+            "[a;R1](-*)[a;R1]c(n)n", // 79
             "C(=O)N(O)C(=O)", // 80
             "C-S-C(=N-*)-[$(S(=O))]", // 81
             "[$(P=O)]-S-C-[$(S=O)]", // 82
@@ -309,6 +318,16 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
                             continue;
                         GlobalCoefficient += SMARTSCoeff[i] * 1; // not related to number of matches
                         Res.add((Alert)Alerts.get(i).clone());
+                        continue;
+                    }
+
+                    if (i == 55) {
+                        // not working in old CDK - skip to be compliant
+                        continue;
+                    }
+
+                    if (i == 58) {
+                        // not working in old CDK - skip to be compliant
                         continue;
                     }
 
