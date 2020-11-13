@@ -19,6 +19,7 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implements iAlertBlock {
 
     private Pattern[] SA;
+    private Pattern SA_MEYC42_CORR;
     private double GlobalCoefficient;
 
     private final static String[] SMARTSFragments = {
@@ -263,6 +264,9 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
 
         try {
 
+            // additional fragment for MEYC42 to be consistent with prev CDK version
+            SA_MEYC42_CORR = SmartsPattern.create("C1CC1").setPrepare(false);
+
             SA = new Pattern[SMARTSFragments.length];
 
             for (int i=0; i<SMARTSFragments.length; i++)
@@ -285,6 +289,7 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
         try {
 
             for (int i=0; i<SA.length; i++) {
+
                 if (SA[i].matches(CurMol.GetStructure())) {
 
                     int nMatches = SA[i].matchAll(CurMol.GetStructure()).countUnique();
@@ -361,7 +366,16 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
 
                     Res.add((Alert)Alerts.get(i).clone());
                     GlobalCoefficient += SMARTSCoeff[i] * nMatches;
+                } else if (i == 41) {
+                    // special case for MEYC42 if not matched
+                    // check for the additiona SMARTS to be compliant with prev CDK
+                    if (SA_MEYC42_CORR.matches(CurMol.GetStructure())) {
+                        int nMatches = SA_MEYC42_CORR.matchAll(CurMol.GetStructure()).countUnique();
+                        Res.add((Alert)Alerts.get(i).clone());
+                        GlobalCoefficient += SMARTSCoeff[i] * nMatches;
+                    }
                 }
+
             }
 
         } catch (CloneNotSupportedException | InvalidMoleculeException e) {

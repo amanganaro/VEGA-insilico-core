@@ -7,6 +7,7 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.tools.utils.MoleculeUtilities;
+import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -187,7 +188,7 @@ public class InformationContent extends DescriptorBlock {
         for (IBond bnd : m.bonds())
             bic_denom += MoleculeUtilities.Bond2Double(bnd);
         bic_denom = Math.log(bic_denom) / Math.log(2);
-        
+
         for (int CurLag=1; CurLag<=MaxPath; CurLag++) {
 
             // Create belonging class for each atom(vertex)
