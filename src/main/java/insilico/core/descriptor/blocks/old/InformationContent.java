@@ -200,10 +200,17 @@ public class InformationContent extends DescriptorBlock {
                     if (i==j) continue;
                     if (TopoDistMat[i][j] == CurLag) {
                         IAtom atEnd =  m.getAtom(j);
-                        ShortestPaths sps = new ShortestPaths(m, atStart);
-                        List<IAtom> sp = Arrays.asList(sps.atomsTo(atEnd));
+
+                        // This should be the correct way to refactor the old code
+                        // but with new CDK results are different compared to CDK 1.4.9
+                        // so we use the old getShortestPath method, its source code has been taken
+                        // and put as static method in this same class
+
+//                        ShortestPaths sps = new ShortestPaths(m, atStart);
+//                        List<IAtom> sp = Arrays.asList(sps.atomsTo(atEnd));
+
                         // OLD DEPRECATED METHOD
-//                        List<IAtom> sp = PathTools.getShortestPath(m, atStart, atEnd);
+                        List<IAtom> sp = getShortestPath(m, atStart, atEnd);
 
                         String bufPath = "" + sp.get(0).getAtomicNumber();  
                         for (int k=0; k<(sp.size()-1); k++) {
@@ -280,7 +287,76 @@ public class InformationContent extends DescriptorBlock {
         
         return true;
     }
-    
+
+    /**
+     * This method is taken from CDK 1.4.9 and used for these descriptors for retro-compatibility
+     *
+     * @param atomContainer
+     * @param start
+     * @param end
+     * @return
+     */
+    private static List<IAtom> getShortestPath(IAtomContainer atomContainer, IAtom start, IAtom end) {
+        int natom = atomContainer.getAtomCount();
+        int endNumber = atomContainer.indexOf(end);
+//        int endNumber = atomContainer.getAtomNumber(end);
+        int startNumber = atomContainer.indexOf(start);
+//        int startNumber = atomContainer.getAtomNumber(start);
+        int[] dist = new int[natom];
+        int[] previous = new int[natom];
+        for (int i = 0; i < natom; i++) {
+            dist[i] = 99999999;
+            previous[i] = -1;
+        }
+        dist[atomContainer.indexOf(start)] = 0;
+//        dist[atomContainer.getAtomNumber(start)] = 0;
+
+        List<IAtom> Slist = new ArrayList<IAtom>();
+        List<Integer> Qlist = new ArrayList<Integer>();
+        for (int i = 0; i < natom; i++) Qlist.add(i);
+
+        while (true) {
+            if (Qlist.size() == 0) break;
+
+            // extract min
+            int u = 999999;
+            int index = 0;
+            for (Integer tmp : Qlist) {
+                if (dist[tmp] < u) {
+                    u = dist[tmp];
+                    index = tmp;
+                }
+            }
+            Qlist.remove(Qlist.indexOf(index));
+            Slist.add(atomContainer.getAtom(index));
+            if (index == endNumber) break;
+
+            // relaxation
+            List<IAtom> connected = atomContainer.getConnectedAtomsList(atomContainer.getAtom(index));
+            for (IAtom aConnected : connected) {
+                int anum = atomContainer.indexOf(aConnected);
+//                int anum = atomContainer.getAtomNumber(aConnected);
+                if (dist[anum] > dist[index] + 1) { // all edges have equals weights
+                    dist[anum] = dist[index] + 1;
+                    previous[anum] = index;
+                }
+            }
+        }
+
+        ArrayList<IAtom> tmp = new ArrayList<IAtom>();
+        int tmpSerial = endNumber;
+        while (true) {
+            tmp.add(0, atomContainer.getAtom(tmpSerial));
+            tmpSerial = previous[tmpSerial];
+            if (tmpSerial == startNumber) {
+                tmp.add(0, atomContainer.getAtom(tmpSerial));
+                break;
+            }
+        }
+        return tmp;
+    }
+
+
 
     private static double Log(int base,double x) {
         double Logbx = Math.log10(x)/Math.log10((double)base);
