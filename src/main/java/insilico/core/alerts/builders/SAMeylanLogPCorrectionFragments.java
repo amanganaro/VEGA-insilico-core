@@ -368,9 +368,10 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
                     GlobalCoefficient += SMARTSCoeff[i] * nMatches;
                 } else if (i == 41) {
                     // special case for MEYC42 if not matched
-                    // check for the additiona SMARTS to be compliant with prev CDK
+                    // check for the additional SMARTS to be compliant with prev CDK
+                    // matches no. is set to 3 to be consistent with the wrongly matched SMARTS in prev CDK
                     if (SA_MEYC42_CORR.matches(CurMol.GetStructure())) {
-                        int nMatches = SA_MEYC42_CORR.matchAll(CurMol.GetStructure()).countUnique();
+                        int nMatches = SA_MEYC42_CORR.matchAll(CurMol.GetStructure()).countUnique() * 3;
                         Res.add((Alert)Alerts.get(i).clone());
                         GlobalCoefficient += SMARTSCoeff[i] * nMatches;
                     }
