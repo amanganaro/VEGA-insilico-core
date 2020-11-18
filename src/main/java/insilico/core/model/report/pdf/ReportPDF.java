@@ -39,7 +39,6 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import insilico.core.similarity.SimilarMolecule;
 import insilico.core.tools.utils.ModelUtilities;
-import insilico.core.tools.utils.logger.InsilicoLogger;
 import insilico.core.version.InsilicoInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,83 +139,83 @@ public class ReportPDF {
        try {
            URL uImage = null;
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_green.png" );
+           uImage = getClass().getResource("/images/light_green.png" );
            Img_circle_green = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_yellow.png" );
+           uImage = getClass().getResource("/images/light_yellow.png" );
            Img_circle_yellow = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_orange.png" );
+           uImage = getClass().getResource("/images/light_orange.png" );
            Img_circle_orange = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_red.png" );
+           uImage = getClass().getResource("/images/light_red.png" );
            Img_circle_red = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_gray.png" );
+           uImage = getClass().getResource("/images/light_gray.png" );
            Img_circle_gray = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/stars_0.png" );
+           uImage = getClass().getResource("/images/stars_0.png" );
            Img_stars_0 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/stars_1.png" );
+           uImage = getClass().getResource("/images/stars_1.png" );
            Img_stars_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/stars_2.png" );
+           uImage = getClass().getResource("/images/stars_2.png" );
            Img_stars_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/stars_3.png" );
+           uImage = getClass().getResource("/images/stars_3.png" );
            Img_stars_3 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/assessment_ok.png" );
+           uImage = getClass().getResource("/images/assessment_ok.png" );
            Img_assessment_good = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/assessment_bad.png" );
+           uImage = getClass().getResource("/images/assessment_bad.png" );
            Img_assessment_bad = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/assessment_non-optimal.png" );
+           uImage = getClass().getResource("/images/assessment_non-optimal.png" );
            Img_assessment_non_optimal = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/vega_header.png" );
+           uImage = getClass().getResource("/images/vega_header.png" );
            Img_header = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
            if (HiRes) {
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_1.png" );
+               uImage = getClass().getResource("/images/hi_report_top_section_1.png" );
                Img_title_1_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_2.png" );
+               uImage = getClass().getResource("/images/hi_report_top_section_2.png" );
                Img_title_2_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_3_1.png" );
+               uImage = getClass().getResource("/images/hi_report_top_section_3_1.png" );
                Img_title_3_1_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_3_2.png" );
+               uImage = getClass().getResource("/images/hi_report_top_section_3_2.png" );
                Img_title_3_2_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_4_1.png" );
+               uImage = getClass().getResource("/images/hi_report_top_section_4_1.png" );
                Img_title_4_1_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_4_2.png" );
+               uImage = getClass().getResource("/images/hi_report_top_section_4_2.png" );
                Img_title_4_2_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
            } else {
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_1.png" );
+               uImage = getClass().getResource("/images/report_top_section_1.png" );
                Img_title_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_2.png" );
+               uImage = getClass().getResource("/images/report_top_section_2.png" );
                Img_title_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_3_1.png" );
+               uImage = getClass().getResource("/images/report_top_section_3_1.png" );
                Img_title_3_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_3_2.png" );
+               uImage = getClass().getResource("/images/report_top_section_3_2.png" );
                Img_title_3_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_4_1.png" );
+               uImage = getClass().getResource("/images/report_top_section_4_1.png" );
                Img_title_4_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_4_2.png" );
+               uImage = getClass().getResource("/images/report_top_section_4_2.png" );
                Img_title_4_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
            }
@@ -392,9 +391,9 @@ public class ReportPDF {
             // Header
             URL uBanner = null;
             if (HiResMode)
-                uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/hi_vega_report_cover_top.png" );
+                uBanner = getClass().getResource("/images/hi_vega_report_cover_top.png" );
             else
-                uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/vega_report_cover_top.png" );
+                uBanner = getClass().getResource("/images/vega_report_cover_top.png" );
             gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
             table = new PdfPTable(1);
             cell = new PdfPCell(gif, true);
@@ -407,9 +406,9 @@ public class ReportPDF {
 
             // Footer
             if (HiResMode)
-                uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/hi_vega_report_cover_bottom.png" );
+                uBanner = getClass().getResource("/images/hi_vega_report_cover_bottom.png" );
             else
-                uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/vega_report_cover_bottom.png" );
+                uBanner = getClass().getResource("/images/vega_report_cover_bottom.png" );
             gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
             table = new PdfPTable(1);
             cell = new PdfPCell(gif, true);
@@ -504,9 +503,9 @@ public class ReportPDF {
                 // Header
                 URL uBanner = null;
                 if (HiResMode)
-                    uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/hi_vega_report_references_top.png" );
+                    uBanner = getClass().getResource("/images/hi_vega_report_references_top.png" );
                 else
-                    uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/vega_report_references_top.png" );
+                    uBanner = getClass().getResource("/images/vega_report_references_top.png" );
                 gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
                 table = new PdfPTable(1);
                 cell = new PdfPCell(gif, true);
@@ -519,9 +518,9 @@ public class ReportPDF {
 
                 // Footer
                 if (HiResMode)
-                    uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/hi_vega_report_references_bottom.png" );
+                    uBanner = getClass().getResource("/images/hi_vega_report_references_bottom.png" );
                 else
-                    uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/vega_report_references_bottom.png" );
+                    uBanner = getClass().getResource("/images/vega_report_references_bottom.png" );
                 gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
                 table = new PdfPTable(1);
                 cell = new PdfPCell(gif, true);
@@ -1186,12 +1185,15 @@ public class ReportPDF {
                 table = new PdfPTable(2);
 
                 try {
+
+                    //todo
 //                    if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
 //                        URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
 //                                TS.getId((int)curSimMol.getIndex()) + ".png" );
 //                        gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
 //                    } else {
                         InsilicoMolecule curMol = SmilesMolecule.Convert(TS.getSMILES((int)curSimMol.getIndex()));
+
                         gif = Image.getInstance(Depiction.DepictMolecule(curMol, 180, 180),null);
 //                    }
                 } catch (Exception e) {
@@ -1626,6 +1628,8 @@ public class ReportPDF {
                         SimilarMolecule curSimMol = curSim.get(m);
 
                         try {
+
+                            // todo
 //                            if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
 //                                URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
 //                                        TS.getId((int)curSimMol.getIndex()) + ".png" );
@@ -1790,6 +1794,8 @@ public class ReportPDF {
 
             ScatterChartDataSet ds1 = new ScatterChartDataSet(ScatterChartDataSet.DS_SCATTER);
             ds1.PointColor = new Color(0x00, 0x99, 0xFF);
+
+            //todo
 //            for (int k=0; k<TS.getMoleculesSize(); k++)
 //                ds1.Add(new ScatterChartDataPoint(TS.getDescriptor(k, DescIdx), TS.getExperimentalValue(k)));
 
@@ -1841,6 +1847,8 @@ public class ReportPDF {
                 dsSim[s].PointSize = 2 + (int)Math.ceil(Math.pow(16, simMol.getSimilarity()*simMol.getSimilarity()));
                 dsSim[s].PointColor = Color.BLACK;
                 dsSim[s].PointColorFilling = Color.WHITE;
+
+                //todo 17.11.2020
 //                dsSim[s].Add(new ScatterChartDataPoint(TS.getDescriptor((int)simMol.getIndex(), DescIdx),
 //                        TS.getExperimentalValue((int)simMol.getIndex()),
 //                        TS.getDescriptor((int)simMol.getIndex(), DescIdx),

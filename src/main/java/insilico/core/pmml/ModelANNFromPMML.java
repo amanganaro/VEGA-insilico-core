@@ -43,7 +43,7 @@ public class ModelANNFromPMML {
             throw new InitFailureException("Unable to init PMML model - " + e.getMessage());
         }
 
-        this.outputField = new FieldName(outputField);
+        this.outputField = FieldName.create(outputField);
         this.verbose = false;
     }
 

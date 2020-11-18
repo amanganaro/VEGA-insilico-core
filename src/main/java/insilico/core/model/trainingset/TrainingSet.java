@@ -42,11 +42,13 @@ public class TrainingSet implements Serializable, iTrainingSet {
     protected float[] Experimental;
     protected float[] Prediction;
     protected float[] MW;
-
     protected int DescriptorSize;
     protected String[] DescriptorName;
     protected float[] DescriptorMin;
     protected float[] DescriptorMax;
+    protected float[][] Descriptors;
+
+
 
     protected String Units;
 
@@ -236,6 +238,16 @@ public class TrainingSet implements Serializable, iTrainingSet {
     }
 
     @Override
+    public double getDescriptor(int MolIndex, int DescriptorIndex) throws GenericFailureException {
+        if ((Descriptors == null) || (MolIndex < 0) || (MolIndex >= Descriptors.length) ||
+                (DescriptorIndex < 0) || (DescriptorIndex >= Descriptors[0].length)) {
+            log.error("Descriptors object empty or wrong index in request to training set");
+            throw new GenericFailureException("Descriptors object empty or wrong index in request to training set");
+        }
+        return Descriptors[MolIndex][DescriptorIndex];
+    }
+
+    @Override
     public SimilarityDescriptors getSimilarityDescriptor(int Index) throws GenericFailureException {
         if ((SimDescriptors == null) || (Index < 0) || (Index >= SimDescriptors.length)) {
             log.error("SimDescriptors object empty or wrong index in request to training set");
@@ -312,7 +324,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
      * @param Model
      */
     public void Build(String molFilePath, iInsilicoModel Model) {
-        Build(molFilePath, Model, false);
+        Build(molFilePath, Model, false, false);
     }
 
 
@@ -326,7 +338,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
      * @param Model insilicoModel to be used
      * @param PredictionFromTxt true if predicted values are found in the text file, otherwise they are calculated
      */
-    public void Build(String molFilePath, iInsilicoModel Model, boolean PredictionFromTxt){
+    public void Build(String molFilePath, iInsilicoModel Model, boolean PredictionFromTxt, boolean CalculateDescriptors){
 
         try{
 
@@ -381,6 +393,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
             Alerts = new String[MoleculesSize];
             DescriptorMin = new float[MoleculesSize];
             DescriptorMax = new float[MoleculesSize];
+            if(CalculateDescriptors)
+                Descriptors = new float[MoleculesSize][DescriptorSize];
 
             // reset reader
             in.close();
@@ -403,7 +417,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
                     Status[index] = MOLECULE_UNKNOWN_SET;
                 Experimental[index] = Float.parseFloat(parsedString[4]);
                 if (PredictionFromTxt)
-                    Prediction[index] = Float.valueOf(parsedString[5]);
+                    Prediction[index] = Float.parseFloat(parsedString[5]);
                 index++;
             }
             in.close();
@@ -436,6 +450,12 @@ public class TrainingSet implements Serializable, iTrainingSet {
                 InsilicoModelOutput Res = Model.Execute(mol);
 
                 if (DescriptorSize > 0) {
+
+                    if(CalculateDescriptors){
+                        for (int d=0; d<DescriptorSize; d++)
+                            this.Descriptors[i][d] = (float)Model.GetDescriptor(d);
+                    }
+
                     float[] Descriptors = new float[DescriptorSize];
                     for (int d=0; d<DescriptorSize; d++)
                         Descriptors[d] = (float)Model.GetDescriptor(d);
@@ -453,6 +473,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
                         }
                     }
                 }
+
 
                 this.Alerts[i] = AlertEncoding.MergeAlertIds(Model.GetCalculatedAlert());
 
@@ -552,7 +573,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public static TrainingSet ReadFromSerializedFile(URL SourceFileURL) throws GenericFailureException {
         try {
             ObjectInputStream in = new ObjectInputStream(SourceFileURL.openStream());
-            TrainingSet TS = (TrainingSet)in.readObject();
+            TrainingSet TS = (TrainingSet) in.readObject();
             in.close();
             return TS;
         } catch (IOException | ClassNotFoundException e) {

@@ -22,7 +22,7 @@ public class InsilicoInfo {
     private int Minor;
     private int Revision;
 
-    private static final String XMLSource = "/insilico/core/version/version.xml";
+    private static final String XMLSource = "/version/version.xml";
 
     /**
      * Constructor. Builds the info object by reading the data retrieved
