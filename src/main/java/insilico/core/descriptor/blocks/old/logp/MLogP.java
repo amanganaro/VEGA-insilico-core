@@ -593,7 +593,7 @@ public class MLogP extends DescriptorBlock {
             // Skips rings fised with benzene
             if (!SkipRing) {
                 for (int at=0; at<R.getAtomCount(); at++) {
-                    Atom At = (Atom) R.getAtom(at);
+                    IAtom At = R.getAtom(at);
                     for (int r=0; r<MolRings.getAtomContainerCount(); r++) {
                         if (r == i) continue;
                         IRing curR = (IRing)MolRings.getAtomContainer(r);

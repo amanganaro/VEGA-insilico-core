@@ -38,18 +38,11 @@
             <id>maven-group</id>
             <url>http://tech.kode-datacenter.net:8081/repository/maven-group/</url>
         </repository>
-
     </repositories>
 
 
 
     <dependencies>
-
-        <dependency>
-            <groupId>InSilico</groupId>
-            <artifactId>VegaModels-DaphniaDemetra</artifactId>
-            <version>0.2.1</version>
-        </dependency>
 
         <dependency>
             <groupId>net.sf.jni-inchi</groupId>

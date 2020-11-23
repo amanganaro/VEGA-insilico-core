@@ -7,6 +7,7 @@ import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.*;
 
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +35,8 @@ public class ModelANNFromPMML {
 
             // Create the evaluator object
             ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml);
-            ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
-//            ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
-            evaluator = modelEvaluator;
+            //            ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
+            evaluator = modelEvaluatorBuilder.build();
 //            Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelEvaluator()
 
         } catch (Exception e) {
@@ -78,8 +78,19 @@ public class ModelANNFromPMML {
         // Evaluate model
         Map<FieldName, ?> outputs = evaluator.evaluate(arguments);
 
-        // Retrieve result
-        return (Double)(outputs.get(outputField));
+        try {
+            return (Double)(outputs.get(outputField));
+        } catch (Exception ex){
+
+            String result = outputs.values().toArray()[0].toString();
+            if(result.contains("{result=")) {
+                String value = result.substring(8, result.lastIndexOf("}"));
+                return Double.parseDouble(value);
+            } else {
+                throw new Exception(ex.getMessage()); }
+
+        }
+
     }
 
 
