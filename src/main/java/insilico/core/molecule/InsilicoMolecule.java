@@ -71,6 +71,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         InsilicoMolecule mol = (InsilicoMolecule) super.clone();
         mol.errors = (InsilicoMoleculeMessages) this.errors.Clone();
         mol.warnings = (InsilicoMoleculeMessages) this.warnings.Clone();
+        mol.MoleculeCache = (InsilicoMoleculeCache) this.MoleculeCache.clone();
         mol.ClearCache();
         return mol;
     }

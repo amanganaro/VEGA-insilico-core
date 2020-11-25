@@ -33,7 +33,7 @@ public class KmFactor extends DescriptorBlock {
     private final String Benzene = "c1ccccc1";
 
     // Array with: index, name, coefficient, SMARTS (if needed, null otherwise)
-    private final Object[][] KmFragments = {
+    private final static Object[][] KmFragments = {
             {1, "Nitroso [-N-N=O]", -0.42851048, "O=[N;!R]-[N;!R;$([N;D3]([C,a])[C,a]),$([N;D2][C,a]),$([N;D1])]"},
             {2, "Linear C4 terminal chain [CCC-CH3]", 0.03412373, "[C;D2][C;D2][C;D2][CH3;D1]"},
             {3, "Aliphatic alcohol [-OH]", -0.06155701, null},

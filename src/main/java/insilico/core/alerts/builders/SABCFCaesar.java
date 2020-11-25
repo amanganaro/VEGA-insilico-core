@@ -4,9 +4,12 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
@@ -22,8 +25,8 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
     private String[] FragSMARTS;
     private String FragSMARTS_5_add;
     
-    private QueryAtomContainer[] SA;
-    private QueryAtomContainer SA_5_add;
+    private Pattern[] SA;
+    private Pattern SA_5_add;
     
     
     
@@ -224,12 +227,12 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
 
         try {
 
-            SA = new QueryAtomContainer[nFragments];
+//            SA = new QueryAtomContainer[nFragments];
             
             for (int i=0; i<nFragments; i++) 
-                SA[i] = SMARTSParser.parse(FragSMARTS[i], DefaultChemObjectBuilder.getInstance());
+                SA[i] = SmartsPattern.create(FragSMARTS[i], DefaultChemObjectBuilder.getInstance());
 
-            SA_5_add = SMARTSParser.parse(FragSMARTS_5_add, DefaultChemObjectBuilder.getInstance());
+            SA_5_add = SmartsPattern.create(FragSMARTS_5_add, DefaultChemObjectBuilder.getInstance());
             
         } catch (Exception e) {
             throw new InitFailureException("Unable to initialize SMARTS");
@@ -239,6 +242,7 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
     
     @Override
     protected AlertList CalculateSAMatches() throws GenericFailureException {
+
         AlertList Res = new AlertList();
         
         try {
@@ -248,29 +252,29 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
                 
                 if (i==0) {
                     // SA 1
-                    if (MatchesNumber(SA[i]) >= 6)
+                    if ((SA[i].matchAll(CurMol.GetStructure()).countUnique()) >= 6)
                         Res.add((Alert)Alerts.get(i).clone());
                 } else if (i==1) {
                     // SA 2
-                    if (MatchesNumber(SA[i]) >= 2)
+                    if ((SA[i].matchAll(CurMol.GetStructure()).countUnique()) >= 2)
                         Res.add((Alert)Alerts.get(i).clone());
                 } else if (i==4) {
                     // SA 5 has two separate SMARTS
-                    if (Matches(SA[i]))
-                        if (MatchesNumber(SA_5_add) >= 3)
+                    if ((SA[i].matches(CurMol.GetStructure())))
+                        if ((SA_5_add.matchAll(CurMol.GetStructure()).countUnique()) >= 3)
                             Res.add((Alert)Alerts.get(i).clone());
                 } else if (i==6) {
                     // SA 7
-                    if (MatchesNumber(SA[i]) >= 3)
+                    if ((SA[i].matchAll(CurMol.GetStructure()).countUnique()) >= 3)
                         Res.add((Alert)Alerts.get(i).clone());
                 } else if (i==9) {
                     // SA 10
-                    if (MatchesNumber(SA[i]) >= 10)
+                    if ((SA[i].matchAll(CurMol.GetStructure()).countUnique()) >= 10)
                         Res.add((Alert)Alerts.get(i).clone());
                 } else {
                     
                     // All other rules are normal matches
-                    if (Matches(SA[i]))
+                    if ((SA[i].matches(CurMol.GetStructure())))
                         Res.add((Alert)Alerts.get(i).clone());
                     
                 }
@@ -280,7 +284,7 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
             // Polar groups (3 blocks to be checked hierarchically)
             boolean PolarGroupFound = false;
             for (int i=20; i<25; i++) {
-                if (Matches(SA[i])) {
+                if ((SA[i].matches(CurMol.GetStructure()))) {
                     Res.add((Alert)Alerts.get(i).clone());
                     PolarGroupFound = true;
                 }
@@ -288,17 +292,17 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
 
             if (!PolarGroupFound)
                 for (int i=25; i<28; i++) {
-                    if (Matches(SA[i])) {
+                    if ((SA[i].matches(CurMol.GetStructure()))) {
                         Res.add((Alert)Alerts.get(i).clone());
                         PolarGroupFound = true;
                     }
                 }
             
             if (!PolarGroupFound)
-            if (Matches(SA[28])) 
+            if ((SA[28].matches(CurMol.GetStructure())))
                 Res.add((Alert)Alerts.get(28).clone());
             
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
             return null;
         }
         
