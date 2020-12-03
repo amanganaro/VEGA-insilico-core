@@ -181,7 +181,7 @@ public class FragmenterCRS4 {
 
         List<IAtomContainer> Results = new ArrayList<>();
 
-        SmartsPattern rotata = SmartsPattern.create("[!$([NH]!@C(=O))&!D1&!$(*#*)]-&!@[!$([NH]!@C(=O))&!D1&!$(*#*)]");
+        SmartsPattern rotata = SmartsPattern.create("[!$([NH]!@C(=O))&!D1&!$(*#*)]-&!@[!$([NH]!@C(=O))&!D1&!$(*#*)]").setPrepare(false);
 //        SMARTSQueryTool rotata = new SMARTSQueryTool("[!$([NH]!@C(=O))&!D1&!$(*#*)]-&!@[!$([NH]!@C(=O))&!D1&!$(*#*)]", DefaultChemObjectBuilder.getInstance());
         rotata.setPrepare(false);
         List mappings;

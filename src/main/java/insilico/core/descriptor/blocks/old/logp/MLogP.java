@@ -482,24 +482,28 @@ public class MLogP extends DescriptorBlock {
         // Starting from N atom
 
         if (MolRings.contains(mol.getAtom(atom))) {
-            IRing R = (IRing)MolRings.getRings(mol.getAtom(atom)).getAtomContainer(0);
-            if (R.getAtomCount()==4) {
-                int N=0, C=0, CdblO=0, Other=0;
-                for (int i=0; i<4; i++) {
-                    if (AreEqual(R.getAtom(i).getSymbol(),"N"))
-                        N++;
-                    else if (AreEqual(R.getAtom(i).getSymbol(),"C")) {
-                        C++;
-                        for (int k=0; k<nAtoms; k++)
-                            if ( (AreEqual(GetName(mol,k),"O")) && (ConnMatrix[mol.indexOf(R.getAtom(i))][k]==2) ) {
-                                CdblO++;
-                            }
-                    } else
-                        Other++;
+//            IRing R = (IRing)MolRings.getRings(mol.getAtom(atom)).getAtomContainer(0);
+            for (IAtomContainer ac : MolRings.getRings(mol.getAtom(atom)).atomContainers() )  {
+                IRing R = (IRing)ac;
+                if (R.getAtomCount()==4) {
+                    int N=0, C=0, CdblO=0, Other=0;
+                    for (int i=0; i<4; i++) {
+                        if (AreEqual(R.getAtom(i).getSymbol(),"N"))
+                            N++;
+                        else if (AreEqual(R.getAtom(i).getSymbol(),"C")) {
+                            C++;
+                            for (int k=0; k<nAtoms; k++)
+                                if ( (AreEqual(GetName(mol,k),"O")) && (ConnMatrix[mol.indexOf(R.getAtom(i))][k]==2) ) {
+                                    CdblO++;
+                                }
+                        } else
+                            Other++;
+                    }
+                    if ( (N==1) && (C==3) && (CdblO==1) )
+                        return 1;
                 }
-                if ( (N==1) && (C==3) && (CdblO==1) )
-                    return 1;
             }
+
         }
 
         return 0;

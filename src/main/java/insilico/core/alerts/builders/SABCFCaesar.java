@@ -228,11 +228,13 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
         try {
 
 //            SA = new QueryAtomContainer[nFragments];
-            
-            for (int i=0; i<nFragments; i++) 
-                SA[i] = SmartsPattern.create(FragSMARTS[i], DefaultChemObjectBuilder.getInstance());
+            SA = new Pattern[nFragments];
 
-            SA_5_add = SmartsPattern.create(FragSMARTS_5_add, DefaultChemObjectBuilder.getInstance());
+
+            for (int i=0; i<nFragments; i++) 
+                SA[i] = SmartsPattern.create(FragSMARTS[i], DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+
+            SA_5_add = SmartsPattern.create(FragSMARTS_5_add, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
             
         } catch (Exception e) {
             throw new InitFailureException("Unable to initialize SMARTS");

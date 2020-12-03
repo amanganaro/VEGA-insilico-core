@@ -1,4 +1,4 @@
-package insilico.core.descriptor.blocks;
+package insilico.core.descriptor.blocks.pro;
 
 import Jama.EigenvalueDecomposition;
 import Jama.Matrix;

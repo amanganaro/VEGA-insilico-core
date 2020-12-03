@@ -4,12 +4,13 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import insilico.core.tools.utils.logger.InsilicoLogger;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.util.ArrayList;
 
@@ -19,18 +20,18 @@ import java.util.ArrayList;
  *
  * @author User
  */
+@Slf4j
 public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iAlertBlock {
 
-    Logger logger = LoggerFactory.getLogger(SABenigniBossaAdditional.class);
-    
+
     public static String KEY_BBSA_IS_MUTAGEN = "bb_muta";
     public static String KEY_BBSA_IS_CARCINOGEN = "bb_carc";
 
     public class BBAlert {
         private final ArrayList<String> SMARTS;
         private final ArrayList<String> PreSMARTS;
-        private final ArrayList<QueryAtomContainer> ParsedSMARTS;
-        private final ArrayList<QueryAtomContainer> ParsedPreSMARTS;
+        private final ArrayList<Pattern> ParsedSMARTS;
+        private final ArrayList<Pattern> ParsedPreSMARTS;
         private String Id;
         private String Name;
         private String Description;
@@ -49,17 +50,17 @@ public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iA
         public void InitSMARTS() throws InitFailureException {
             for (String curSMARTS : SMARTS) {
                 try {
-                    ParsedSMARTS.add(SMARTSParser.parse(curSMARTS, DefaultChemObjectBuilder.getInstance()));
+                    ParsedSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    logger.warn("unable to initialize " + Id + ": " + curSMARTS);
+                    log.warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
                 }
             }
             for (String curSMARTS : PreSMARTS) {
                 try {
-                    ParsedPreSMARTS.add(SMARTSParser.parse(curSMARTS, DefaultChemObjectBuilder.getInstance()));
+                    ParsedPreSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    logger.warn("unable to initialize " + Id + ": " + curSMARTS);
+                    log.warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
                 }
             }            
@@ -73,7 +74,7 @@ public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iA
             return SMARTS;
         }
 
-        public ArrayList<QueryAtomContainer> getParsedSMARTS() {
+        public ArrayList<Pattern> getParsedSMARTS() {
             return ParsedSMARTS;
         }
 
@@ -85,7 +86,7 @@ public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iA
             return PreSMARTS;
         }
 
-        public ArrayList<QueryAtomContainer> getParsedPreSMARTS() {
+        public ArrayList<Pattern> getParsedPreSMARTS() {
             return ParsedPreSMARTS;
         }
 
@@ -193,15 +194,15 @@ public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iA
                 if (BB.getParsedPreSMARTS().isEmpty())
                     PreScreen = true;
                 else
-                    for (QueryAtomContainer q : BB.getParsedPreSMARTS())
-                        if (Matcher.matches(q)) {
+                    for (Pattern q : BB.getParsedPreSMARTS())
+                        if (q.matches(CurMol.GetStructure())) {
                             PreScreen = true;
                             break;
                         }
                 
                 if (PreScreen)
-                    for (QueryAtomContainer q : BB.getParsedSMARTS())
-                        if (Matcher.matches(q)) {
+                    for (Pattern q : BB.getParsedSMARTS())
+                        if (q.matches(CurMol.GetStructure())) {
                             Res.add((Alert)Alerts.get(i).clone());
                             break;
                         }

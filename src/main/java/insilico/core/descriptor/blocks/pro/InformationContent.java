@@ -1,4 +1,4 @@
-package insilico.core.descriptor.blocks;
+package insilico.core.descriptor.blocks.pro;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;

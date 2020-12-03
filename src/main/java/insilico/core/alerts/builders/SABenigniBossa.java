@@ -7,17 +7,18 @@ import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.tools.CustomQueryMatcher;
-import insilico.core.tools.utils.logger.InsilicoLogger;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.*;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.UniversalIsomorphismTester;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.ringsearch.RingPartitioner;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,9 +29,9 @@ import java.util.List;
  * 
  * @author User
  */
+@Slf4j
 public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock {
 
-    private Logger logger = LoggerFactory.getLogger(SABenigniBossa.class);
     
     public static String KEY_BBSA_IS_MUTAGEN = "bb_muta";
     public static String KEY_BBSA_IS_CARCINOGEN = "bb_carc";
@@ -114,8 +115,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
     public class BBAlert {
         private final ArrayList<String> SMARTS;
         private final ArrayList<String> PreSMARTS;
-        private final ArrayList<QueryAtomContainer> ParsedSMARTS;
-        private final ArrayList<QueryAtomContainer> ParsedPreSMARTS;
+        private final ArrayList<Pattern> ParsedSMARTS;
+        private final ArrayList<Pattern> ParsedPreSMARTS;
         private String Id;
         private String Name;
         private String Description;
@@ -134,17 +135,17 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         public void InitSMARTS() throws InitFailureException {
             for (String curSMARTS : SMARTS) {
                 try {
-                    ParsedSMARTS.add(SMARTSParser.parse(curSMARTS, DefaultChemObjectBuilder.getInstance()));
+                    ParsedSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    logger.warn("unable to initialize " + Id + ": " + curSMARTS);
+                    log.warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
                 }
             }
             for (String curSMARTS : PreSMARTS) {
                 try {
-                    ParsedPreSMARTS.add(SMARTSParser.parse(curSMARTS, DefaultChemObjectBuilder.getInstance()));
+                    ParsedPreSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    logger.warn("unable to initialize " + Id + ": " + curSMARTS);
+                    log.warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
                 }
             }            
@@ -158,7 +159,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
             return SMARTS;
         }
 
-        public ArrayList<QueryAtomContainer> getParsedSMARTS() {
+        public ArrayList<Pattern> getParsedSMARTS() {
             return ParsedSMARTS;
         }
 
@@ -170,7 +171,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
             return PreSMARTS;
         }
 
-        public ArrayList<QueryAtomContainer> getParsedPreSMARTS() {
+        public ArrayList<Pattern> getParsedPreSMARTS() {
             return ParsedPreSMARTS;
         }
 
@@ -291,7 +292,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
                 List<?> ringsets = RingPartitioner.partitionRings(sssrings);
                 // This partitions ring into fused rings sets
-                
+
                 for (int ii = 0; ii < ringsets.size(); ii++) {
                     IRingSet ringset = (IRingSet) ringsets.get(ii);
 
@@ -300,11 +301,11 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
                     int heteroaromatic_ring_count = 0;
                     int aromatic_ring_count = 0;
-                    
+
                     for (int j = 0; j < ringset.getAtomContainerCount(); j++) {
 
                         IRing ring = (IRing) ringset.getAtomContainer(j);
-                        
+
                         int ar=0, har=0;
                         for (int k = 0; k < ring.getAtomCount(); k++) {
                             IAtom a = ring.getAtom(k);
@@ -314,7 +315,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                                     har++;
                             }
                         }
-                        
+
                         if (ar == ring.getAtomCount()) {
                             aromatic_ring_count++;
                             if (har > 0)
@@ -415,15 +416,15 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 if (BB.getParsedPreSMARTS().isEmpty())
                     PreScreen = true;
                 else
-                    for (QueryAtomContainer q : BB.getParsedPreSMARTS())
-                        if (Matcher.matches(q)) {
+                    for (Pattern q : BB.getParsedPreSMARTS())
+                        if (q.matches(CurMol.GetStructure())) {
                             PreScreen = true;
                             break;
                         }
-                
+
                 if (PreScreen)
-                    for (QueryAtomContainer q : BB.getParsedSMARTS())
-                        if (Matcher.matches(q)) {
+                    for (Pattern q : BB.getParsedSMARTS())
+                        if (q.matches(CurMol.GetStructure())) {
                             Res.add((Alert)Alerts.get(i).clone());
                             break;
                         }
@@ -447,7 +448,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         
         // Init
         try {
-            Matcher = new CustomQueryMatcher(mol);
+
+//            Matcher = new CustomQueryMatcher(mol);
             if (!IsInitialized) {
                 InitSMARTS();
                 IsInitialized = true;
@@ -597,20 +599,25 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 // all other normal alerts
                 BBAlert BB = BBAlertList.get(i);
                 double curBBMax = 0;
-                for (QueryAtomContainer q : BB.getParsedSMARTS()) {
+                for (Pattern q : BB.getParsedSMARTS()) {
                     UniversalIsomorphismTester tester = new UniversalIsomorphismTester();
-                    List<IAtomContainer> matches = tester.getOverlaps(mol.GetStructure(), q);
+                    List<IAtomContainer> matches = tester.getOverlaps(mol.GetStructure(), (IAtomContainer) q);
                     int max = 0;
-                    for (IAtomContainer ac : matches)
-                        if (ac.getAtomCount() > max) 
+                    double num = 0;
+                    for (IAtomContainer ac : matches) {
+                        num = (double) q.matchAll(ac).countUnique();
+                        if (ac.getAtomCount() > max)
                             max = ac.getAtomCount();
-                    double buf = (double)max / (double)q.getAtomCount();
+                    }
+
+                    double buf = (double)max / num ;
                     if (buf>curBBMax) curBBMax = buf;
                 }
                 Res[i] = curBBMax;
                 
             }
         } catch (InvalidMoleculeException | CDKException e) {
+//        } catch (Exception e) {
             throw new GenericFailureException("Error during matching: " + e.getMessage());
         }        
         

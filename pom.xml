@@ -6,7 +6,7 @@
 
     <groupId>InSilico</groupId>
     <artifactId>Core</artifactId>
-    <version>0.6.2</version>
+    <version>1.3.0</version>
     <packaging>jar</packaging>
 
 
@@ -161,6 +161,18 @@
 
         <plugins>
 
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-jar-plugin</artifactId>-->
+<!--                <configuration>-->
+<!--                    <excludes>-->
+<!--                        <exclude>insilico/core/descriptor/blocks/old/*.java</exclude>-->
+<!--                        <exclude>insilico/core/descriptor/blocks/pro/*.java</exclude>-->
+<!--                    </excludes>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
@@ -177,8 +189,13 @@
 
                     <excludes>
                         <exclude>insilico/core/alerts/builders/toberefactored/*.java</exclude>
-                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>
+<!--                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>-->
                         <exclude>insilico/core/molecule/matrix/old/*.java</exclude>
+<!--                        <exclude>insilico/core/descriptor/blocks/pro/**</exclude>-->
+                        <exclude>insilico/core/descriptor/blocks/old/**</exclude>
+<!--                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>-->
+<!--                        <exclude>insilico/core/descriptor/blocks/old/weight/*.java</exclude>-->
+<!--                        <exclude>insilico/core/descriptor/blocks/old/*.java</exclude>-->
                     </excludes>
 
                     <annotationProcessorPaths>

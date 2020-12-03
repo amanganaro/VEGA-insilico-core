@@ -2,9 +2,7 @@ package insilico.core.descriptor.blocks.weights.other;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.blocks.weights.iWeight;
-import insilico.core.molecule.tools.AtomicNumber;
 import insilico.core.molecule.tools.Manipulator;
-import org.openscience.cdk.Atom;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 

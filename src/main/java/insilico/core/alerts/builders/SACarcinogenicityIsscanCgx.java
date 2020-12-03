@@ -4,9 +4,12 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
@@ -15,7 +18,7 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
  */
 public class SACarcinogenicityIsscanCgx extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     
     private final static String[] CarcSMARTS = {
         "O=NNCC", // 1 - LR=inf
@@ -88,11 +91,11 @@ public class SACarcinogenicityIsscanCgx extends AlertBlockFromSMARTS implements 
 
         try {
 
-            SA = new QueryAtomContainer[CarcSMARTS.length];
+            SA = new Pattern[CarcSMARTS.length];
             
             int idx = 0;
             for (String s : CarcSMARTS) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
@@ -109,10 +112,10 @@ public class SACarcinogenicityIsscanCgx extends AlertBlockFromSMARTS implements 
         try {
 
             for (int i=0; i<CarcSMARTS.length; i++) 
-                if (Matches(SA[i])) 
+                if ((SA[i]).matches(CurMol.GetStructure()))
                     Res.add((Alert)Alerts.get(i).clone());
             
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
             return null;
         }
         
