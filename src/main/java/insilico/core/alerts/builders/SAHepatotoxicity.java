@@ -4,12 +4,15 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
@@ -18,7 +21,7 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
  */
 public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     private int nRules;
 
     private final static String[] SMARTSActive = {
@@ -254,16 +257,16 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
 
         try {
 
-            SA = new QueryAtomContainer[nRules];
+            SA = new Pattern[nRules];
             
             int idx = 0;
             for (String s : SMARTSActive) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
 
             for (String s : SMARTSInactive) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
@@ -280,12 +283,13 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
         try {
 
             for (int i=0; i<nRules; i++) {
-                int matches = MatchesNumber(SA[i]);
+
+                int matches = SA[i].matchAll(CurMol.GetStructure()).countUnique();
                 if (matches > 0)
                     Res.add((Alert)Alerts.get(i).clone());
             }
                         
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (InvalidMoleculeException | CloneNotSupportedException e) {
             return null;
         }
         
