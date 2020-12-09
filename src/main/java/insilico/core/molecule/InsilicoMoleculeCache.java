@@ -229,6 +229,10 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         return similarityDescriptors;
     }
 
+    public void SetSimilarityDescriptors(SimilarityDescriptors SimilarityDescriptors) {
+        this.similarityDescriptors = SimilarityDescriptors;
+    }
+
     public boolean HasACF(){return !(ACF == null);}
     public ACFItemList  GetACF(){return ACF;}
     public void SetACF(ACFItemList ACFItems){
