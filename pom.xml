@@ -50,13 +50,34 @@
             <version>0.8</version>
         </dependency>
 
+
         <dependency>
             <groupId>org.openscience.cdk</groupId>
             <artifactId>cdk-bundle</artifactId>
             <version>2.3</version>
         </dependency>
 
-<!--        Logger -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.0-jre</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.25.0-GA</version>
+        </dependency>
+
+
+
+        <!--        Logger -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -70,38 +91,76 @@
         </dependency>
 
 
-        <!--        <dependency>-->
-<!--            <groupId>org.apache.logging.log4j</groupId>-->
-<!--            <artifactId>log4j</artifactId>-->
-<!--            <version>2.11.2</version>-->
+        <!--        JPMML FOR MARKUP LANGUAGE-->
+<!--        <dependency>-->
+<!--            <groupId>org.jpmml</groupId>-->
+<!--            <artifactId>jpmml</artifactId>-->
+<!--            <version>1.0.22</version>-->
+<!--            <type>pom</type>-->
 <!--        </dependency>-->
 
 
-        <!--        JPMML FOR MARKUP LANGUAGE-->
-        <dependency>
-            <groupId>org.jpmml</groupId>
-            <artifactId>jpmml</artifactId>
-            <version>1.0.22</version>
-            <type>pom</type>
-        </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.jpmml/pmml-evaluator -->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.jpmml/pmml-evaluator &ndash;&gt;-->
         <dependency>
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-evaluator</artifactId>
             <version>1.5.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
 
         <dependency>
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-model</artifactId>
             <version>1.5.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-agent</artifactId>
             <version>1.5.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Thanks for using https://jar-download.com -->
 

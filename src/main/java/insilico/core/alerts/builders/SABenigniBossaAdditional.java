@@ -5,12 +5,9 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import lombok.extern.slf4j.Slf4j;
-import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
-
 
 import java.util.ArrayList;
 
@@ -22,8 +19,7 @@ import java.util.ArrayList;
  */
 @Slf4j
 public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iAlertBlock {
-
-
+    
     public static String KEY_BBSA_IS_MUTAGEN = "bb_muta";
     public static String KEY_BBSA_IS_CARCINOGEN = "bb_carc";
 
@@ -50,7 +46,7 @@ public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iA
         public void InitSMARTS() throws InitFailureException {
             for (String curSMARTS : SMARTS) {
                 try {
-                    ParsedSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
+                    ParsedSMARTS.add(SmartsPattern.create(curSMARTS).setPrepare(false));
                 } catch (Exception ex) {
                     log.warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
@@ -58,7 +54,7 @@ public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iA
             }
             for (String curSMARTS : PreSMARTS) {
                 try {
-                    ParsedPreSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
+                    ParsedPreSMARTS.add(SmartsPattern.create(curSMARTS).setPrepare(false));
                 } catch (Exception ex) {
                     log.warn("unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);

@@ -8,9 +8,12 @@ import insilico.core.alerts.AlertEncoding;
 import insilico.core.alerts.iAlertBlock;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
@@ -19,7 +22,7 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
  */
 public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     private int nRules;
 
     private final static String[] All_15_act_inf ={
@@ -249,28 +252,28 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
 
         try {
 
-            SA = new QueryAtomContainer[nRules];
+            SA = new Pattern[nRules];
             
             int idx = 0;
             for (String s : All_15_act_inf) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             for (String s : All_15_act_noninf) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
 
             for (String s : All_15_inact_inf) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             for (String s : All_15_inact_noninf) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             for (String s : Act6) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] =  SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
@@ -287,12 +290,12 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
         try {
 
             for (int i=0; i<nRules; i++) {
-                int matches = MatchesNumber(SA[i]);
+                int matches = (SA[i].matchAll(CurMol.GetStructure()).countUnique());
                 if (matches > 0)
                     Res.add((Alert)Alerts.get(i).clone());
             }
                         
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (InvalidMoleculeException | CloneNotSupportedException e) {
             return null;
         }
         

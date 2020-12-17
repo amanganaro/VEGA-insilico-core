@@ -243,6 +243,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
     public void PurgeAlerts(){structuralAlerts = new AlertList();}
 
     public void AddAlert(Alert alert){structuralAlerts.add(alert);}
+
     public void AddAlert(AlertList alert) {
         for (Alert a: alert.getSAList())
             structuralAlerts.add(a);

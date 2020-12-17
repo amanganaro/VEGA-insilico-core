@@ -52,6 +52,9 @@ public class AlertsEngine {
                 case InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA:
                     Alerts.add(new SABenigniBossa());
                     break;
+                case InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA_ADDITIONAL:
+                    Alerts.add(new SABenigniBossaAdditional());
+                    break;
 
 //                case InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY:
 //                    Alerts.add(new SAMutagenSarpy());
@@ -83,36 +86,48 @@ public class AlertsEngine {
                 case InsilicoConstants.SA_BLOCK_FISH_IRFMN:
                     Alerts.add(new SAFishIRFMN());
                     break;
-//                case InsilicoConstants.SA_BLOCK_READY_BIO_IRFMN:
-//                    Alerts.add(new SAReadyBioIRFMN());
-//                    break;
-//                case InsilicoConstants.SA_BLOCK_PERSISTENCE_SEDIMENT_IRFMN:
-//                    Alerts.add(new SAPersistenceSediment());
-//                    break;
-//                case InsilicoConstants.SA_BLOCK_PERSISTENCE_WATER_IRFMN:
-//                    Alerts.add(new SAPersistenceWater());
-//                    break;
-//                case InsilicoConstants.SA_BLOCK_PERSISTENCE_SOIL_IRFMN:
-//                    Alerts.add(new SAPersistenceSoil());
-//                    break;
+                case InsilicoConstants.SA_BLOCK_READY_BIO_IRFMN:
+                    Alerts.add(new SAReadyBioIRFMN());
+                    break;
+                case InsilicoConstants.SA_BLOCK_PERSISTENCE_SEDIMENT_IRFMN:
+                    Alerts.add(new SAPersistenceSediment());
+                    break;
+                case InsilicoConstants.SA_BLOCK_PERSISTENCE_WATER_IRFMN:
+                    Alerts.add(new SAPersistenceWater());
+                    break;
+                case InsilicoConstants.SA_BLOCK_SKIN_SENS_NCSTOX:
+                    Alerts.add(new SASkinNcstox());
+                    break;
+                case InsilicoConstants.SA_BLOCK_PERSISTENCE_SOIL_IRFMN:
+                    Alerts.add(new SAPersistenceSoil());
+                    break;
                 case InsilicoConstants.SA_BLOCK_CARC_ANTARES:
                     Alerts.add(new SACarcinogenicityAntares());
                     break;
                 case InsilicoConstants.SA_BLOCK_CARC_ISSCANCGX:
                     Alerts.add(new SACarcinogenicityIsscanCgx());
                     break;
-//                case InsilicoConstants.SA_BLOCK_ESTROGEN_BIND_CERAPP:
-//                    Alerts.add(new SAEstrogenBindCerapp());
-//                    break;
+                case InsilicoConstants.SA_BLOCK_ESTROGEN_BIND_CERAPP:
+                    Alerts.add(new SAEstrogenBindCerapp());
+                    break;
                 case InsilicoConstants.SA_BLOCK_HEPATOTOXICITY:
                     Alerts.add(new SAHepatotoxicity());
                     break;
-//                case InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY_18K:
-//                    Alerts.add(new SAMutagenSarpy18K());
-//                    break;
-//                case InsilicoConstants.SA_BLOCK_ANDROGEN_BIND_COMPARA_SARPY:
-//                    Alerts.add(new SAAndrogenBindComparaIRFMN());
-//                    break;
+                case InsilicoConstants.SA_BLOCK_MICRONUCLEUS_INVITRO_MODEL:
+                    Alerts.add(new SAMicroNucleusModel());
+                    break;
+                case InsilicoConstants.SA_BLOCK_MICRONUCLEUS_INVIVO:
+                    Alerts.add(new SAMicronucleusInVivo());
+                    break;
+                case InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY_18K:
+                    Alerts.add(new SAMutagenSarpy18K());
+                    break;
+                case InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY:
+                    Alerts.add(new SAMutagenSarpy());
+                    break;
+                case InsilicoConstants.SA_BLOCK_ANDROGEN_BIND_COMPARA_SARPY:
+                    Alerts.add(new SAAndrogenBindComparaIRFMN());
+                    break;
 //                case InsilicoConstants.SA_BLOCK_ALGAE_COMBASE:
 //                    Alerts.add(new SACombaseAlgae());
 //                    break;

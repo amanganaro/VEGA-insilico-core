@@ -4,12 +4,15 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
@@ -18,7 +21,7 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
  */
 public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     private boolean[] Multiple;
     private boolean[] Single;
     private int nRules;
@@ -182,20 +185,20 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
 
         try {
 
-            SA = new QueryAtomContainer[nRules];
+            SA = new Pattern[nRules];
             
             int idx = 0;
             for (String s : SMARTSFragsNP) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             for (String s : SMARTSChemClassNP) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
 
             for (String s : SMARTSFragsVP) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
@@ -212,7 +215,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
         try {
 
             for (int i=0; i<nRules; i++) {
-                int matches = MatchesNumber(SA[i]);
+                int matches = SA[i].matchAll(CurMol.GetStructure()).countUnique();
                 if (Single[i]) {
                     if (matches == 1)
                         Res.add((Alert)Alerts.get(i).clone());
@@ -223,7 +226,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
                     Res.add((Alert)Alerts.get(i).clone());
             }
             
-        } catch (CDKException | CloneNotSupportedException e) {
+    } catch (CloneNotSupportedException | InvalidMoleculeException e) {
             return null;
         }
         
@@ -235,7 +238,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
         int idx = 1;
 
         for (int i=0; i<SMARTSFragsNP.length; i++) {
-            String s = (String)SMARTSFragsNP[i];
+            String s = SMARTSFragsNP[i];
             try {
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_SOIL_" + (idx) + ".png");
@@ -246,7 +249,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
         }
 
         for (int i=0; i<SMARTSFragsVP.length; i++) {
-            String s = (String)SMARTSFragsVP[i];
+            String s = SMARTSFragsVP[i];
             try {
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_SOIL_" + (idx) + ".png");

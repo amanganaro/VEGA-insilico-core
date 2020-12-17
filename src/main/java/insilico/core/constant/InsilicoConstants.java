@@ -59,6 +59,9 @@ public class InsilicoConstants {
         public static final int SA_BLOCK_TODIVINE_FISH_CHRONIC = 46;
         public static final int SA_BLOCK_TODIVINE_ANDROGEN = 47;
         public static final int SA_BLOCK_TODIVINE_ESTROGEN = 48;
+        public static final int SA_BLOCK_MICRONUCLEUS_INVIVO = 49;
+        public static final int SA_BLOCK_SKIN_SENS_NCSTOX = 50;
+        public static final int SA_BLOCK_MOA_IRFMN = 51;
 
         // Property keys used for read-across in Alert objects
         public static final String KEY_ALERT_SHOW_SIMILAR_MOLS = "ra_sim";
@@ -122,6 +125,7 @@ public class InsilicoConstants {
 
         public static final String KEY_ALERT_MICRONUCLEUS_ACTIVE = "mn_act";
         public static final String KEY_ALERT_MICRONUCLEUS_INACTIVE = "mn_inact";
+        public static final String KEY_ALERT_MICRONUCLEUS_INVIVO_SA_BLOCK = "mn_alertblock";
 
         public static final String KEY_ALERT_AR_COMPARA_SARPY_ALL15_ACT_INF = "er_a15_ai";
         public static final String KEY_ALERT_AR_COMPARA_SARPY_ALL15_ACT_NONINF = "er_a15_an";
