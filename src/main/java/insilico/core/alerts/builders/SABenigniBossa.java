@@ -132,7 +132,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 try {
                     ParsedSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    log.warn("unable to initialize " + Id + ": " + curSMARTS);
+                    log.warn("SMARTS: unable to initialize " + Id + ": " + curSMARTS);
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
                 }
             }
@@ -140,7 +140,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 try {
                     ParsedPreSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    log.warn("unable to initialize " + Id + ": " + curSMARTS);
+                    log.warn("PRE SMARTS: unable to initialize " + Id + ": " + curSMARTS);
+                    log.warn(ex.getMessage());
                     throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
                 }
             }
@@ -667,7 +668,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
             curAlert.addSMARTS(Sulphonic);
         }
 
-        curAlert.addPreSMARTS("P(=O)([!$([OH1,SH1])])(O)O)");
+        curAlert.addPreSMARTS("P(=O)([!$([OH1,SH1])])(O)O");
         for (int sub1=0; sub1<SA2_substituents_mod.length; sub1++)
             for (int sub2=0; sub2<SA2_substituents_mod.length; sub2++) {
                 String Sub1 = SA2_substituents_mod[sub1][1];

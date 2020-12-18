@@ -56,9 +56,6 @@ public class AlertsEngine {
                     Alerts.add(new SABenigniBossaAdditional());
                     break;
 
-//                case InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY:
-//                    Alerts.add(new SAMutagenSarpy());
-//                    break;
 //                case InsilicoConstants.SA_BLOCK_MUTAGEN_CRS4:
 //                    Alerts.add(new SAMutagenCRS4());
 //                    break;
