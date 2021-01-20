@@ -1,5 +1,6 @@
 package insilico.core.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import insilico.core.ad.item.iADIndex;
 import insilico.core.ad.reasoning.iReasoningItem;
 import insilico.core.alerts.AlertList;
@@ -8,6 +9,7 @@ import insilico.core.similarity.SimilarMolecule;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class InsilicoModelOutput implements Serializable {
 
     private static final long serialVersionUID = 1L;

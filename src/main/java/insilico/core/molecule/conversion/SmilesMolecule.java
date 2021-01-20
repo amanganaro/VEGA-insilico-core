@@ -207,7 +207,7 @@ public class SmilesMolecule {
      * @param SMILES String
      * @return
      */
-    private static Boolean IsDisconnected(String SMILES){
+    public static Boolean IsDisconnected(String SMILES){
         Boolean res = false;
         if (SMILES.contains("."))
             res = true;

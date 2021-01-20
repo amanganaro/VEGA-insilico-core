@@ -1,5 +1,6 @@
 package insilico.core.molecule;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import insilico.core.alerts.Alert;
 import insilico.core.alerts.AlertList;
 import insilico.core.descriptor.Descriptor;
@@ -15,6 +16,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.Visibility;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -23,6 +25,7 @@ import java.util.ArrayList;
  * It stores basic information for the molecule structure and all its related messages
  */
 @Slf4j
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public class InsilicoMolecule implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;

@@ -1,7 +1,10 @@
 package insilico.core.ad.item;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 import java.io.Serializable;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 public interface iADIndex extends Serializable {
 
     public String GetIndexName();

@@ -1,5 +1,7 @@
 package insilico.core.molecule;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -8,6 +10,8 @@ import java.util.ArrayList;
  *
  * @author Alberto Manganaro <a.manganaro@kode-solutions.net>
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+
 public class InsilicoMoleculeMessages implements Serializable, Cloneable {
 
     private ArrayList<String> messages;

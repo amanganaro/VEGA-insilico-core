@@ -1,6 +1,7 @@
 package insilico.core.molecule;
 
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import insilico.core.alerts.Alert;
 import insilico.core.alerts.AlertList;
 import insilico.core.descriptor.Descriptor;
@@ -19,6 +20,7 @@ import insilico.core.molecule.matrix.*;
 import insilico.core.molecule.tools.Manipulator;
 import insilico.core.similarity.SimilarityDescriptors;
 import insilico.core.similarity.SimilarityDescriptorsBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.RingSet;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.Cycles;
@@ -33,9 +35,10 @@ import java.util.ArrayList;
 /**
  * Class to wrap InsilicoMolecule structures' cached data
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@Slf4j
 public class InsilicoMoleculeCache implements Serializable, Cloneable {
 
-    private Logger logger = LoggerFactory.getLogger(InsilicoMoleculeCache.class);
 
     private static final long serialVersionUID = 1L;
 
@@ -100,7 +103,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         double sum = 0;
         for (int i=0; i<nSK; i++) {
             if (weights[i] == Descriptor.MISSING_VALUE) {
-                logger.warn("Missing value for calculation of molecular weight");
+                log.warn("Missing value for calculation of molecular weight");
                 throw new InvalidMoleculeException("Missing value for calculation of molecular weight");
             }
             sum += weights[i];
@@ -136,7 +139,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         } catch (MoleculeConversionException ex) {
             structure = null;
             String err = "Failed SMILES conversion while requesting CDK Molecule for SMILES: " + SMILES;
-            logger.warn(err);
+            log.warn(err);
             throw new InvalidMoleculeException(err);
         }
 
@@ -146,7 +149,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
             } catch (GenericFailureException ex) {
                 structure = null;
                 String err = "Failed normalization while requesting CDK Molecule for SMILES: " + SMILES;
-                logger.warn(err);
+                log.warn(err);
                 throw new InvalidMoleculeException(err);
             }
         }
@@ -210,7 +213,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
             } catch (CDKException ex) {
 
                 errors.AddMessage("Unable to perceive all rings");
-                logger.warn("Unable to find all rings for molecule " + SMILES);
+                log.warn("Unable to find all rings for molecule " + SMILES);
                 throw new InvalidMoleculeException("unable to find all rings");
             }
         }
@@ -289,7 +292,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
 
         } catch (InvalidMoleculeException ex){
             String msg = "Unable to build matrix " + MatrixClass.getName() + ", invalid molecule structure for " + SMILES;
-            logger.warn(msg);
+            log.warn(msg);
             throw new GenericFailureException(msg);
         }
 
@@ -298,7 +301,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
             return matrix;
         } else {
             String msg = "Unable to build matrix " + MatrixClass.getName() + " for molecule " + SMILES;
-            logger.warn(msg);
+            log.warn(msg);
             throw new GenericFailureException(msg);
         }
     }

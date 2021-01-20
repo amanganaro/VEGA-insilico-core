@@ -190,6 +190,12 @@
             <version>1.3.20</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.8</version>
+        </dependency>
+
 <!--        OpenJavax for java 11-->
         <!-- https://mvnrepository.com/artifact/org.openjfx/javafx-swing -->
         <dependency>
@@ -202,6 +208,12 @@
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>5.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>InSilico</groupId>
+            <artifactId>VegaModels-DaphniaDemetra</artifactId>
+            <version>0.2.1</version>
         </dependency>
 
     </dependencies>
