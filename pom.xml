@@ -216,12 +216,6 @@
             <version>5.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>InSilico</groupId>
-            <artifactId>VegaModels-DaphniaDemetra</artifactId>
-            <version>0.2.1</version>
-        </dependency>
-
     </dependencies>
 
     <build>

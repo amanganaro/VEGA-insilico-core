@@ -40,6 +40,9 @@ import insilico.core.molecule.tools.Depiction;
 import insilico.core.similarity.SimilarMolecule;
 import insilico.core.tools.utils.ModelUtilities;
 import insilico.core.version.InsilicoInfo;
+import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.smiles.SmilesParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1950,10 +1953,11 @@ public class ReportPDF {
                 String FragSMILES = DescItem.getFragments()[i];
 
                 try {
-                    InsilicoMolecule curMol = SmilesMolecule.Convert(FragSMILES);
-                    gif = Image.getInstance(Depiction.DepictMolecule(curMol, 100, 100),null);
-                    if (curMol.IsValid())
-                        FragSMILES = curMol.GetSMILES();
+                    SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+                    smilesParser.kekulise(false);
+                    IAtomContainer CurFragment = smilesParser.parseSmiles(FragSMILES);
+                    gif = Image.getInstance(Depiction.DepictMolecule(CurFragment, 100, 100),null);
+                    FragSMILES = SmilesMolecule.GenerateSmiles(CurFragment);
                 } catch (Exception e) {
                     BufferedImage I = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
                     Graphics2D g = I.createGraphics();
