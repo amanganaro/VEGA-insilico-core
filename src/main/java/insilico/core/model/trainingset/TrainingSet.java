@@ -491,7 +491,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
                     boolean ToBeAdded = true;
                     for (int z=0; z<ACFList.size(); z++)
                         if (acf.getACF().compareTo(ACFList.get(z).getACF()) == 0) {
-                            ACFList.get(z).setFrequency(ACFList.get(z).getFrequency() + 1);
+                            int fr = ACFList.get(z).getFrequency() + 1;
+                            ACFList.get(z).setFrequency(fr);
                             ToBeAdded = false;
                             break;
                         }
