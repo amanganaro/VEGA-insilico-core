@@ -9,6 +9,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import insilico.core.alerts.AlertsEngine;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.model.InsilicoModel;
 import insilico.core.model.InsilicoModelInfoUpdated;
 import insilico.core.model.runner.InsilicoModelConsensusWrapper;
 import insilico.core.model.runner.InsilicoModelWrapper;
@@ -88,7 +89,7 @@ public class GuidePDFGenerator {
 
 
     // CONSTRUCTOR
-    public GuidePDFGenerator(boolean HiRes, URL xmlSource) throws InitFailureException {
+    public GuidePDFGenerator(boolean HiRes, InsilicoModel model) throws InitFailureException {
         this.HiResMode = HiRes;
         FetchImageObjects(HiRes);
         CreateFonts();
@@ -99,8 +100,7 @@ public class GuidePDFGenerator {
 
         Format_3D = new DecimalFormat("0.###", InternationalSymbols);
 
-        modelInfo = new InsilicoModelInfoUpdated(xmlSource);
-
+        modelInfo = model.getInfo();
         SAEngine = new AlertsEngine();
 
         InitReport(modelInfo);
@@ -229,14 +229,16 @@ public class GuidePDFGenerator {
             document = new Document(PageSize.A4);
             doc_bos = new FileOutputStream(modelInfo.getName() + ".pdf");
             writer = PdfWriter.getInstance(document, doc_bos);
+
             document.open();
+            GenerateReport();
         } catch (Exception e) {
             throw new InitFailureException("Unable to create PDF document (" + e.getMessage() + ")");
         }
 
     }
 
-    public void GenerateReport() throws GenericFailureException {
+    private void GenerateReport() throws GenericFailureException {
 
         document.setMarginMirroring(true);
         document.setMarginMirroringTopBottom(true);

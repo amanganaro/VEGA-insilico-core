@@ -10,7 +10,8 @@ import java.util.ArrayList;
  *
  * @author Alberto Manganaro <a.manganaro@kode-solutions.net>
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 
 public class InsilicoMoleculeMessages implements Serializable, Cloneable {
 

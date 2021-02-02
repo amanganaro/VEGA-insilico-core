@@ -1,5 +1,8 @@
 package insilico.core.ad.item;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import lombok.NoArgsConstructor;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
@@ -10,6 +13,9 @@ import static insilico.core.constant.MessagesAD.*;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
+@NoArgsConstructor
 public abstract class ADIndex implements iADIndex {
 
     private static final long serialVersionUID = 1L;

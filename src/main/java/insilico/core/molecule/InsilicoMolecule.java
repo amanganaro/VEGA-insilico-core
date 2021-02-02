@@ -25,7 +25,8 @@ import java.util.ArrayList;
  * It stores basic information for the molecule structure and all its related messages
  */
 @Slf4j
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class InsilicoMolecule implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;

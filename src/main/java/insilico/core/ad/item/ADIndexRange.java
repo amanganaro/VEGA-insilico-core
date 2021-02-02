@@ -1,10 +1,13 @@
 package insilico.core.ad.item;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import insilico.core.constant.MessagesAD;
 
 /**
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class ADIndexRange extends ADIndex {
 
     private static final long serialVersionUID = 1L;

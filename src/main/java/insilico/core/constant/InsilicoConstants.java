@@ -1,6 +1,9 @@
 package insilico.core.constant;
 
-public class InsilicoConstants {
+import java.io.Serializable;
+
+public class InsilicoConstants implements Serializable {
+
 
         // For Training set molecules
         public static final short MOLECULE_UNKNOWN_SET = -1;

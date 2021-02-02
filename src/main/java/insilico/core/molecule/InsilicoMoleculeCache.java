@@ -35,7 +35,8 @@ import java.util.ArrayList;
 /**
  * Class to wrap InsilicoMolecule structures' cached data
  */
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 @Slf4j
 public class InsilicoMoleculeCache implements Serializable, Cloneable {
 

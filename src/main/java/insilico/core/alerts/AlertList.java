@@ -5,7 +5,8 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class AlertList implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;

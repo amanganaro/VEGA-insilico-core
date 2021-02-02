@@ -1,11 +1,20 @@
 package insilico.core.constant;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
+import java.io.Serializable;
+
 /**
  * Static String repository for messages used in AD classes.
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-public class MessagesAD {
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
+public class MessagesAD implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
 
     public static String AD_CLASS_LOW =
             "LOW reliability";
