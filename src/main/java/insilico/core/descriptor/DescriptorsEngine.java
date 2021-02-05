@@ -2,9 +2,11 @@ package insilico.core.descriptor;
 
 import insilico.core.exception.DescriptorNotFoundException;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.Data;
 
 import java.util.ArrayList;
 
+@Data
 public class DescriptorsEngine {
 
     private ArrayList<DescriptorBlock> Descriptors;
