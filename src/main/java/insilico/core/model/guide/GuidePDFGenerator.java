@@ -316,7 +316,7 @@ public class GuidePDFGenerator {
 
     protected void AddCover() throws GenericFailureException {
 
-        Image gif = null;
+        Image gif;
         PdfPTable table;
         PdfPCell cell;
         Paragraph paragraph;
@@ -327,47 +327,48 @@ public class GuidePDFGenerator {
 
             double y_pos = 0;
 
-            // Header
+////             Header
             URL uBanner = null;
-            if (HiResMode)
-                uBanner = getClass().getClassLoader().getResource("images/hi_vega_report_cover_top.png");
-            else
-                uBanner = getClass().getClassLoader().getResource("images/vega_report_cover_top.png");
-            gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
+//            if (HiResMode)
+//                uBanner = getClass().getClassLoader().getResource("images/vega_header.png");
+//            else
+//                uBanner = getClass().getClassLoader().getResource("images/vega_header.png");
+//            gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
             table = new PdfPTable(1);
-            cell = new PdfPCell(gif, true);
+            cell = new PdfPCell();
             cell.setPaddingBottom(4);
             cell.setHorizontalAlignment(ALIGN_CENTER);
             cell.setBorderColor(new Color(255,255,255));
             table.addCell(cell);
             table.setTotalWidth(w-20);
             y_pos = table.writeSelectedRows(0, -1, 10, h-10, writer.getDirectContent());
-
-            // Footer
-            if (HiResMode)
-                uBanner = getClass().getClassLoader().getResource("images/hi_vega_report_cover_bottom.png" );
-            else
-                uBanner = getClass().getClassLoader().getResource("images/vega_report_cover_bottom.png" );
-            gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
-            table = new PdfPTable(1);
-            cell = new PdfPCell(gif, true);
-            cell.setHorizontalAlignment(ALIGN_CENTER);
-            cell.setBorderColor(new Color(255,255,255));
-            table.addCell(cell);
-            table.setTotalWidth(w-20);
-            int GifHeight = Math.round((w-20) * (gif.getHeight() / gif.getWidth()));
-            table.writeSelectedRows(0, -1, 10, 10 + GifHeight, writer.getDirectContent());
+//
+//             Footer
+//            if (HiResMode)
+//                uBanner = getClass().getClassLoader().getResource("images/hi_vega_report_cover_bottom.png" );
+//            else
+//                uBanner = getClass().getClassLoader().getResource("images/vega_report_cover_bottom.png" );
+//            gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
+//            table = new PdfPTable(1);
+//            cell = new PdfPCell();
+//            cell.setHorizontalAlignment(ALIGN_CENTER);
+//            cell.setBorderColor(new Color(255,255,255));
+//            table.addCell(cell);
+//            table.setTotalWidth(w-20);
+//            int GifHeight = Math.round((w-20) * (gif.getHeight() / gif.getWidth()));
+//            table.writeSelectedRows(0, -1, 10, 10 + GifHeight, writer.getDirectContent());
 
             // Mid contents
             long MidTable_Left = Math.round(10 + (w-20) * 0.096);
             long MidTable_Width = Math.round((w-20) * 0.858);
             table = new PdfPTable(1);
             cell = new PdfPCell();
+            cell.setPaddingTop(100);
             cell.setHorizontalAlignment(ALIGN_LEFT);
             cell.setBorderColor(new Color(255,255,255));
-            cell.setPadding(10);
+            cell.setPadding(25);
             cell.setBackgroundColor(new Color(240,240,240));
-            StringBuilder CurPar = new StringBuilder("Prediction and Applicability Domain analysis for model(s):\n\n");
+            StringBuilder CurPar = new StringBuilder("Guide for model:\n\n");
             paragraph = new Paragraph(CurPar.toString(), fontTitle);
             cell.addElement(paragraph);
             CurPar = new StringBuilder();
@@ -377,7 +378,7 @@ public class GuidePDFGenerator {
             CurPar.append("\n\n");
             paragraph = new Paragraph(CurPar.toString(), fontBig);
             cell.addElement(paragraph);
-            CurPar = new StringBuilder("Core version: " + modelInfo.getVersion());
+            CurPar = new StringBuilder("Version: " + modelInfo.getVersion());
             paragraph = new Paragraph(CurPar.toString(), fontGray);
             cell.addElement(paragraph);
             table.addCell(cell);

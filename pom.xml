@@ -230,6 +230,12 @@
 <!--            <version>0.2.2</version>-->
 <!--        </dependency>-->
 
+        <dependency>
+            <groupId>InSilico</groupId>
+            <artifactId>VegaModels-DaphniaDemetraV2</artifactId>
+            <version>0.4</version>
+        </dependency>
+
 
     </dependencies>
 

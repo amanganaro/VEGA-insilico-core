@@ -111,7 +111,7 @@ The model is a re-implementation of the original model developed inside the Deme
 		<QMRF_Link>QMRF Link</QMRF_Link>
 	</Reference>
 	
-	<Endpoint>jnn01
+	<Endpoint>
 		<Endpoint>Acute Toxicity</Endpoint>
 		<Duration_value>48</Duration_value>
 		<Duration_unit>hours</Duration_unit>
