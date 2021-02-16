@@ -14,14 +14,19 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.similarity.SimilarityDescriptors;
 import insilico.core.similarity.SimilarityDescriptorsBuilder;
 import insilico.core.tools.utils.GeneralUtilities;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 @Slf4j
+@Data
 public class TrainingSet implements Serializable, iTrainingSet {
 
     private static final long serialVersionUID = 1L;
@@ -32,34 +37,34 @@ public class TrainingSet implements Serializable, iTrainingSet {
 
     protected String UnitConversion;
 
-    protected int MoleculesSize;
-    protected int MoleculesTrainSize;
-    protected int MoleculesTestSize;
-    protected int[] Id;
-    protected String[] CAS;
-    protected short[] Status;
-    protected String[] SMILES;
-    protected float[] Experimental;
-    protected float[] Prediction;
-    protected float[] MW;
-    protected int DescriptorSize;
-    protected String[] DescriptorName;
-    protected float[] DescriptorMin;
-    protected float[] DescriptorMax;
-    protected float[][] Descriptors;
+    private int MoleculesSize;
+    private int MoleculesTrainSize;
+    private int MoleculesTestSize;
+    private int[] Id;
+    private String[] CAS;
+    private short[] Status;
+    private String[] SMILES;
+    private float[] Experimental;
+    private float[] Prediction;
+    private float[] MW;
+    private int DescriptorSize;
+    private String[] DescriptorName;
+    private float[] DescriptorMin;
+    private float[] DescriptorMax;
+    private float[][] Descriptors;
 
 
 
-    protected String Units;
+    private String Units;
 
-    protected SimilarityDescriptors[] SimDescriptors;
-    protected String[] Alerts;
-    protected ACFItemList ACFList;
+    private SimilarityDescriptors[] SimDescriptors;
+    private String[] Alerts;
+    private ACFItemList ACFList;
 
-    protected boolean hasClassValues;
-    protected HashMap<Double, String> ClassValues;
+    private boolean hasClassValues;
+    private HashMap<Double, String> ClassValues;
 
-    protected final DecimalFormat Format;
+    private final DecimalFormat Format;
 
 
     // Constructor
@@ -137,7 +142,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
         return CAS[Index];
     }
 
-    @Override
+//    @Override
     public String getSMILES(int Index) throws GenericFailureException {
         if ((SMILES == null) || (Index < 0) || (Index >= SMILES.length)) {
             String message = "SMILES object empty or wrong index in request to training set";
@@ -145,6 +150,14 @@ public class TrainingSet implements Serializable, iTrainingSet {
             throw new GenericFailureException(message);
         }
         return SMILES[Index];
+    }
+
+    public List<String> GetSmilesAsList() {
+        return new ArrayList<>(Arrays.asList(this.SMILES));
+    }
+
+    public String[] GetSmilesArray(){
+        return this.SMILES;
     }
 
     @Override
@@ -165,6 +178,11 @@ public class TrainingSet implements Serializable, iTrainingSet {
         }
         return Experimental[Index];
     }
+
+    public float[] getExperimentalAsArray(){
+        return this.Experimental;
+    }
+
 
     @Override
     public String getExperimentalValueFormatted(int Index) throws GenericFailureException {
