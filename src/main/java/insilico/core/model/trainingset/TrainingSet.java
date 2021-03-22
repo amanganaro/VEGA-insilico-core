@@ -37,34 +37,34 @@ public class TrainingSet implements Serializable, iTrainingSet {
 
     protected String UnitConversion;
 
-    private int MoleculesSize;
-    private int MoleculesTrainSize;
-    private int MoleculesTestSize;
-    private int[] Id;
-    private String[] CAS;
-    private short[] Status;
-    private String[] SMILES;
-    private float[] Experimental;
-    private float[] Prediction;
-    private float[] MW;
-    private int DescriptorSize;
-    private String[] DescriptorName;
-    private float[] DescriptorMin;
-    private float[] DescriptorMax;
-    private float[][] Descriptors;
+    public int MoleculesSize;
+    public int MoleculesTrainSize;
+    public int MoleculesTestSize;
+    public int[] Id;
+    public String[] CAS;
+    public short[] Status;
+    public String[] SMILES;
+    public float[] Experimental;
+    public float[] Prediction;
+    public float[] MW;
+    public int DescriptorSize;
+    public String[] DescriptorName;
+    public float[] DescriptorMin;
+    public float[] DescriptorMax;
+    public float[][] Descriptors;
 
 
 
-    private String Units;
+    public String Units;
 
-    private SimilarityDescriptors[] SimDescriptors;
-    private String[] Alerts;
-    private ACFItemList ACFList;
+    public SimilarityDescriptors[] SimDescriptors;
+    public String[] Alerts;
+    public ACFItemList ACFList;
 
-    private boolean hasClassValues;
-    private HashMap<Double, String> ClassValues;
+    public boolean hasClassValues;
+    public HashMap<Double, String> ClassValues;
 
-    private final DecimalFormat Format;
+    public final DecimalFormat Format;
 
 
     // Constructor

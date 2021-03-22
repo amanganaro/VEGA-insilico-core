@@ -99,6 +99,7 @@ public class InsilicoModelInfoUpdated {
     public final static String Guide_Descriptors = "Descriptors";
     public final static String Guide_Alerts = "Alerts";
     public final static String Guide_Output = "Output";
+    public final static String Guide_Structural_Alerts = "Structural_Alerts";
 
     // APPLICABILITY DOMAIN INSIDE GUIDE
     public final List<HashMap<String, String>> Applicability_Domain = new ArrayList<>();
@@ -158,6 +159,20 @@ public class InsilicoModelInfoUpdated {
     public final static String Stats_n_Train = "n_Train";
     public final static String Stats_R2_Train = "R2_Train";
     public final static String Stats_RMSE_Train = "RMSE_Train";
+    public final static String Stats_n_Test = "n_Test";
+    public final static String Stats_R2_Test = "R2_Test";
+    public final static String Stats_RMSE_Test = "RMSE_Test";
+    public final static String Stats_Accuracy_Train = "Accuracy_Train";
+    public final static String Stats_Specificity_Train = "Specificity_Train";
+    public final static String Stats_Sensitivity_Train = "Sensitivity_Train";
+    public final static String Stats_Accuracy_Test = "Accuracy_Test";
+    public final static String Stats_Specificity_Test = "Specificity_Test";
+    public final static String Stats_Sensitivity_Test = "Sensitivity_Test";
+    public final static String Stats_Not_Predicted_Test = "Not_Predicted_Test";
+    public final static String Stats_Not_Predicted_Train = "Not_Predicted_Train";
+    public final static String Stats_Not_Predicted = "Not_Predicted";
+
+
     public final static String Stats_R2adj_Train = "R2adj_Train";
     public final static String Stats_Q2_Train = "Q2_Train";
     public final static String Stats_Fisher_Train = "Fisher_Train";
@@ -176,22 +191,11 @@ public class InsilicoModelInfoUpdated {
     public final static String Stats_Q2_Calibration = "Q2_Calibration";
     public final static String Stats_Fisher_Calibration = "Fisher_Calibration";
     public final static String Stats_S_calibration = "S_calibration";
-    public final static String Stats_n_Test = "n_Test";
-    public final static String Stats_R2_Test = "R2_Test";
-    public final static String Stats_RMSE_Test = "RMSE_Test";
     public final static String Stats_R2adj_Test = "R2adj_Test";
     public final static String Stats_Fisher_Test = "Fisher_Test";
     public final static String Stats_S_Test = "S_Test";
     public final static String Stats_Sdev_Test = "Sdev_Test";
     public final static String Stats_SSR_Test = "SSR_Test";
-    public final static String Stats_Accuracy_Train = "Accuracy_Train";
-    public final static String Stats_Specificity_Train = "Specificity_Train";
-    public final static String Stats_Sensitivity_Train = "Sensitivity_Train";
-    public final static String Stats_Accuracy_Test = "Accuracy_Test";
-    public final static String Stats_Specificity_Test = "Specificity_Test";
-    public final static String Stats_Sensitivity_Test = "Sensitivity_Test";
-
-
 
     public InsilicoModelInfoUpdated(URL XMLSource) throws InitFailureException {
 
@@ -343,6 +347,10 @@ public class InsilicoModelInfoUpdated {
                 if (hasTag(Guide_Alerts, element)) {
                     Guide.put(Guide_Alerts, getValue(Guide_Alerts,element));
                 }
+
+                if(hasTag(Guide_Structural_Alerts, element))
+                    Guide.put(Guide_Structural_Alerts, getValue(Guide_Structural_Alerts, element));
+
 
             } catch (Exception ex) {
                 log.warn("No tag <Guide> in model XML");
@@ -661,6 +669,19 @@ public class InsilicoModelInfoUpdated {
                 if (hasTag(Stats_Sensitivity_Test, element)) {
                     Stats.put(Stats_Sensitivity_Test, getValue(Stats_Sensitivity_Test,element));
                 }
+
+                if(hasTag(Stats_Not_Predicted, element)){
+                    Stats.put(Stats_Not_Predicted, getValue(Stats_Not_Predicted,element));
+                }
+
+                if(hasTag(Stats_Not_Predicted_Test, element)){
+                    Stats.put(Stats_Not_Predicted_Test, getValue(Stats_Not_Predicted_Test,element));
+                }
+
+                if(hasTag(Stats_Not_Predicted_Train, element)){
+                    Stats.put(Stats_Not_Predicted_Train, getValue(Stats_Not_Predicted_Train,element));
+                }
+
             } catch (Exception ex) {
                 log.warn("No <Stats> tag in model XML");
                 log.warn(ex.getMessage());

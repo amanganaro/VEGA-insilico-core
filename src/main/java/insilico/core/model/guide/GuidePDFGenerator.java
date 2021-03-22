@@ -398,13 +398,14 @@ public class GuidePDFGenerator {
         try {
             document.newPage();
             CurPage++;
+            int index = 1;
             WritePageHeader("1. MODEL EXPLANATION");
 
 
             // 1.1 Introduction
             PdfPCell cell = new PdfPCell();
             cell.setHorizontalAlignment(ALIGN_LEFT);
-            Paragraph sectionTitle = new Paragraph("1.1 \t INTRODUCTION", fontBigUnderline);
+            Paragraph sectionTitle = new Paragraph("1." + index + "\t INTRODUCTION", fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph("\n", font));
@@ -412,9 +413,10 @@ public class GuidePDFGenerator {
             Paragraph sectionBody = new Paragraph(modelInfo.Guide.get("Description"), font);
             document.add(sectionBody);
             document.add(new Paragraph("\n\n\n", font));
+            index++;
 
             // 1.2 Details
-            sectionTitle = new Paragraph("1.2 \t MODEL DETAILS", fontBigUnderline);
+            sectionTitle = new Paragraph("1." + index + " \t MODEL DETAILS", fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph("\n", font));
@@ -425,9 +427,10 @@ public class GuidePDFGenerator {
             Paragraph endpointModel = new Paragraph(modelInfo.Guide.get("Descriptors"), font);
             document.add(endpointModel);
             document.add(new Paragraph("\n\n\n", font));
+            index++;
 
             // 1.3 Applicability Domain
-            sectionTitle = new Paragraph("1.3 \t APPLICABILITY DOMAIN", fontBigUnderline);
+            sectionTitle = new Paragraph("1." + index + " \t APPLICABILITY DOMAIN", fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
 
@@ -442,6 +445,10 @@ public class GuidePDFGenerator {
                         document.add(new Paragraph(TextConstants.AD_SIMILAR_MOLECULES_TITLE, fontBold));
                         document.add(new Paragraph(TextConstants.AD_SIMILAR_MOLECULES_INTRO, font));
                         break;
+                    case "Accuracy_DM":
+                        document.add(new Paragraph(TextConstants.AD_ACCURACY_DM_TITLE, fontBold));
+                        document.add(new Paragraph(TextConstants.AD_ACCURACY_DM_INTRO, font));
+                        break;
                     case "Accuracy":
                         document.add(new Paragraph(TextConstants.AD_ACCURACY_TITLE, fontBold));
                         document.add(new Paragraph(TextConstants.AD_ACCURACY_INTRO, font));
@@ -451,6 +458,10 @@ public class GuidePDFGenerator {
                         document.add(new Paragraph("N° Similar Molecules: " + modelInfo.getSimilarMolsValue(), font));
                         document.add(new Paragraph(TextConstants.AD_CONCORDANCE_INTRO, font));
                         break;
+                    case "Reliability":
+                        document.add(new Paragraph(TextConstants.AD_RELIABILITY_TITLE, fontBold));
+                        document.add(new Paragraph(TextConstants.AD_RELIABILITY_INTRO, font));
+                        break;
                     case "Maximum_Error":
                         document.add(new Paragraph(TextConstants.AD_MAXIMUM_ERROR_PREDICTION_TITLE, fontBold));
                         document.add(new Paragraph(TextConstants.AD_MAXIMUM_ERROR_PREDICTION_INTRO, font));
@@ -458,6 +469,10 @@ public class GuidePDFGenerator {
                     case "ACF_SimCheck":
                         document.add(new Paragraph(TextConstants.AD_ACF_TITLE, fontBold));
                         document.add(new Paragraph(TextConstants.AD_ACF_INTRO, font));
+                        break;
+                    case "NMN_concordance":
+                        document.add(new Paragraph(TextConstants.AD_NNM_CONCORDANCE_TITLE, fontBold));
+                        document.add(new Paragraph(TextConstants.AD_NNM_CONCORDANCE_INTRO, font));
                         break;
                     case "Model_Descriptors_Range_Check":
                         document.add(new Paragraph(TextConstants.AD_DESCRIPTORS_RANGE_CHECK_TITLE, fontBold));
@@ -467,7 +482,13 @@ public class GuidePDFGenerator {
                         document.add(new Paragraph(TextConstants.AD_GLOBAL_INDEX_TITLE, fontBold));
                         document.add(new Paragraph(TextConstants.AD_GLOBAL_INDEX_INTRO, font));
                         break;
+                    case "SA_Concordance":
+                        document.add(new Paragraph(TextConstants.AD_STRUCTURAL_ALERT_CONCORDANCE_TITLE, fontBold));
+                        document.add(new Paragraph(TextConstants.AD_STRUCTURAL_ALERT_CONCORDANCE_INTRO, font));
 
+                    case "LogP_reliability":
+                        document.add(new Paragraph(TextConstants.AD_LOGP_RELIABILITY_TITLE, fontBold));
+                        document.add(new Paragraph(TextConstants.AD_LOGP_RELIABILITY_INTRO, font));
                 }
                 document.add(new Paragraph("\n", font));
 
@@ -506,8 +527,23 @@ public class GuidePDFGenerator {
                 document.add(new Paragraph("\n",font));
             }
 
+            // 1.4 Structural Alerts
+            if(modelInfo.hasAlerts()){
+                sectionTitle = new Paragraph("1." + index + "\t STRUCTURAL ALERTS", fontBigUnderline);
+                sectionTitle.setIndentationLeft(1);
+                document.add(sectionTitle);
+                document.add(new Paragraph("\n", font));
+//                document.add(new Paragraph())
+                sectionBody = new Paragraph();
+                sectionBody.add(new Paragraph(modelInfo.getGuide().get("Structural_Alerts"), font));
+                document.add(sectionBody);
+                document.add(new Paragraph("\n"));
+                index++;
+            }
+
+
             // 1.4 References
-            sectionTitle = new Paragraph("1.4 \t REFERENCES", fontBigUnderline);
+            sectionTitle = new Paragraph("1." + index + "\t REFERENCES", fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph("\n"));
@@ -526,8 +562,13 @@ public class GuidePDFGenerator {
                 document.add(new Paragraph("\n"));
                 curRef++;
             }
+            index++;
 
-            sectionTitle = new Paragraph("1.5 MODEL STATISTICS", fontBigUnderline);
+            // INSERT ALERT HERE
+            if(modelInfo.hasAlerts()){
+            }
+
+            sectionTitle = new Paragraph("1." + index + "\t MODEL STATISTICS", fontBigUnderline);
             sectionTitle.add("\n");
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);

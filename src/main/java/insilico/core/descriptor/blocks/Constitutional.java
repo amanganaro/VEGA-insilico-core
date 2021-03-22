@@ -24,7 +24,6 @@ public class Constitutional extends DescriptorBlock {
     private static final String BlockName = "Constitutional Descriptors";
 
 
-
     /**
      * Constructor. Sets by default MW calculation with scaled values.
      */
@@ -32,8 +31,6 @@ public class Constitutional extends DescriptorBlock {
         super();
         this.Name = Constitutional.BlockName;
     }
-
-
 
     @Override
     protected final void GenerateDescriptors() {

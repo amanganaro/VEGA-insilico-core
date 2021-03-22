@@ -3,6 +3,7 @@ package insilico.core.molecule.conversion.file;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.custom.CustomMDLWriter;
 import insilico.core.tools.utils.logger.InsilicoLogger;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +18,8 @@ import java.util.ArrayList;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public abstract class MoleculeFile {
-
-    Logger logger = LoggerFactory.getLogger(MoleculeFile.class);
-
 
     protected String FileName;
     protected BufferedReader reader;
@@ -79,7 +78,7 @@ public abstract class MoleculeFile {
             reader.close();
             isFileOpen = false;
         } catch (IOException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
         }
     }
 
