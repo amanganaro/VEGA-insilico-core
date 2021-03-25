@@ -109,9 +109,13 @@ public class InsilicoModelInfoUpdated {
     public final static String Guide_AD_RangeTop = "RangeTop";
     public final static String Guide_AD_RangeMid = "RangeMid";
     public final static String Guide_AD_RangeBottom = "RangeBottom";
+    public final static String Guide_AD_RangeMidTop = "RangeMidTop";
+    public final static String Guide_AD_RangeMidBottom = "RangeMidBottom";
     public final static String Guide_AD_DescriptionRangeTop = "DescriptionRangeTop";
     public final static String Guide_AD_DescriptionRangeMid = "DescriptionRangeMid";
     public final static String Guide_AD_DescriptionRangeBottom = "DescriptionRangeBottom";
+    public final static String Guide_AD_DescriptionRangeMidTop = "DescriptorRangeMidTop";
+    public final static String Guide_AD_DescriptionRangeMidBottom = "DescriptorRangeMidBottom";
 
 
     // REFERENCE
@@ -337,6 +341,23 @@ public class InsilicoModelInfoUpdated {
                             currentAD.put(Guide_AD_RangeBottom, rangeBottom);
                             currentAD.put(Guide_AD_DescriptionRangeBottom, descriptionRangeBottom);
                         }
+
+                        if (hasTag(Guide_AD_RangeMidTop, n)){
+                            String rangeBottom = getValue(Guide_AD_RangeMidTop, n);
+                            String descriptionRangeBottom = getValue(Guide_AD_DescriptionRangeMidTop, n);
+                            currentAD.put(Guide_AD_RangeMidTop, rangeBottom);
+                            currentAD.put(Guide_AD_DescriptionRangeMidTop, descriptionRangeBottom);
+                        }
+
+
+                        if (hasTag(Guide_AD_RangeMidBottom, n)){
+                            String rangeBottom = getValue(Guide_AD_RangeMidBottom, n);
+                            String descriptionRangeBottom = getValue(Guide_AD_DescriptionRangeMidBottom, n);
+                            currentAD.put(Guide_AD_RangeMidBottom, rangeBottom);
+                            currentAD.put(Guide_AD_DescriptionRangeMidBottom, descriptionRangeBottom);
+                        }
+                        
+                        
 
                         Applicability_Domain.add(currentAD);
                     }

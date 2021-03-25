@@ -49,7 +49,7 @@ public class TextConstants {
     public static final String AD_STRUCTURAL_ALERT_CONCORDANCE_INTRO = "This index takes into account the concordance between the prediction provided by the k-NN model and the alerts found. Defined values are: ";
 
     public static final String AD_LOGP_RELIABILITY_TITLE = "LogP reliability ";
-    public static final String AD_LOGP_RELIABILITY_INTRO = "This index takes into account the reliability of the logP value used in the model. Note that the Meylan BCF model is strongly based on the logP prediction of the compound, thus this index is highly relevant for the assessment of the final prediction. The reliability of the logP value comes from the assessment of the VEGA LogP model (that provides the used logP value), which is also provided in the “Prediction summary” section of the report. Defined intervals are: ";
+    public static final String AD_LOGP_RELIABILITY_INTRO = "This index takes into account the reliability of the logP value used in the model. Note that the Meylan BCF model is strongly based on the logP prediction of the compound, thus this index is highly relevant for the assessment of the final prediction. The reliability of the logP value comes from the assessment of the VEGA LogP model (that provides the used logP value), which is also provided in the 'Prediction summary' section of the report. Defined intervals are:";
 
     public static final String STATS_INTRO = "Following, statistics obtained applying the model to its original dataset:";
 

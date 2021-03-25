@@ -217,17 +217,17 @@
             <version>5.2</version>
         </dependency>
 
-        <dependency>
-            <groupId>InSilico</groupId>
-            <artifactId>VegaModels-MutagenicityCaesar</artifactId>
-            <version>0.2.2</version>
-        </dependency>
-
 <!--        <dependency>-->
 <!--            <groupId>InSilico</groupId>-->
-<!--            <artifactId>VegaModels-CarcinogenicityCaesar</artifactId>-->
-<!--            <version>0.2.1</version>-->
+<!--            <artifactId>VegaModels-MutagenicityCaesar</artifactId>-->
+<!--            <version>0.2.2</version>-->
 <!--        </dependency>-->
+
+        <dependency>
+            <groupId>InSilico</groupId>
+            <artifactId>VegaModels-CarcinogenicityCaesar</artifactId>
+            <version>0.2.1</version>
+        </dependency>
 
 <!--        <dependency>-->
 <!--            <groupId>InSilico</groupId>-->
@@ -281,7 +281,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <source>11</source>
+                    <source>15</source>
                     <target>11</target>
                     <release>11</release>
 
@@ -290,9 +290,11 @@
 <!--                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>-->
 <!--                        <exclude>insilico/core/molecule/matrix/old/*.java</exclude>-->
 <!--                        <exclude>insilico/core/descriptor/blocks/pro/**</exclude>-->
-<!--                        <exclude>insilico/core/descriptor/blocks/old/**</exclude>-->
-<!--                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>-->
-<!--                        <exclude>insilico/core/descriptor/blocks/old/weight/*.java</exclude>-->
+                        <exclude>insilico/core/descriptor/blocks/old/*.java</exclude>
+                        <exclude>insilico/core/descriptor/blocks/old/*</exclude>
+                        <exclude>insilico/core/descriptor/blocks/old/AtomCenteredFragments.java</exclude>
+                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>
+                        <exclude>insilico/core/descriptor/blocks/old/weight/*.java</exclude>
 <!--                        <exclude>insilico/core/descriptor/blocks/old/*.java</exclude>-->
                     </excludes>
 
