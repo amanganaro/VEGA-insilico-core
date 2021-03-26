@@ -522,6 +522,20 @@ public class GuidePDFGenerator {
                     cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_DescriptionRangeBottom), font));
                     table.addCell(cell);
                 }
+
+                if(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMidBottom) != null) {
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMidBottom), font));
+                    table.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_DescriptionRangeMidBottom), font));
+                    table.addCell(cell);
+                }
+
+                if(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMidTop) != null) {
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMidTop), font));
+                    table.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_DescriptionRangeMidTop), font));
+                    table.addCell(cell);
+                }
                 document.add(table);
 
                 document.add(new Paragraph("\n",font));
