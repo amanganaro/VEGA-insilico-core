@@ -100,6 +100,7 @@ public class InsilicoModelInfoUpdated {
     public final static String Guide_Alerts = "Alerts";
     public final static String Guide_Output = "Output";
     public final static String Guide_Structural_Alerts = "Structural_Alerts";
+    public final static String Guide_Coral_Weights = "Coral_Weights";
 
     // APPLICABILITY DOMAIN INSIDE GUIDE
     public final List<HashMap<String, String>> Applicability_Domain = new ArrayList<>();
@@ -200,6 +201,8 @@ public class InsilicoModelInfoUpdated {
     public final static String Stats_S_Test = "S_Test";
     public final static String Stats_Sdev_Test = "Sdev_Test";
     public final static String Stats_SSR_Test = "SSR_Test";
+
+    public final static String Stats_Notes = "Stats_Notes";
 
     public InsilicoModelInfoUpdated(URL XMLSource) throws InitFailureException {
 
@@ -371,6 +374,9 @@ public class InsilicoModelInfoUpdated {
 
                 if(hasTag(Guide_Structural_Alerts, element))
                     Guide.put(Guide_Structural_Alerts, getValue(Guide_Structural_Alerts, element));
+
+                if(hasTag(Guide_Coral_Weights, element))
+                    Guide.put(Guide_Coral_Weights, getValue(Guide_Coral_Weights, element));
 
 
             } catch (Exception ex) {
@@ -702,6 +708,9 @@ public class InsilicoModelInfoUpdated {
                 if(hasTag(Stats_Not_Predicted_Train, element)){
                     Stats.put(Stats_Not_Predicted_Train, getValue(Stats_Not_Predicted_Train,element));
                 }
+
+
+
 
             } catch (Exception ex) {
                 log.warn("No <Stats> tag in model XML");

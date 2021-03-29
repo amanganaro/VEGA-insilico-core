@@ -541,6 +541,46 @@ public class GuidePDFGenerator {
                 document.add(new Paragraph("\n",font));
             }
 
+            // 1.4 Coral Correlation weights
+            if(modelInfo.Guide.get(InsilicoModelInfoUpdated.Guide_Coral_Weights) != null){
+                sectionTitle = new Paragraph("1." + index + "\t CORAL Correlation Weights", fontBigUnderline);
+                sectionTitle.setIndentationLeft(1);
+                document.add(sectionTitle);
+                document.add(new Paragraph("\n", font));
+
+                PdfPTable table;
+                float[] widths = {20, 30};
+                table = new PdfPTable(widths);
+                table.setWidthPercentage(50);
+                table.setWidths(widths);
+                cell.setPaddingBottom(2);
+                cell.setPaddingLeft(5);
+                cell.setPaddingRight(3);
+                cell.setExtraParagraphSpace(2);
+//                cell.setl
+
+                cell = new PdfPCell(new Paragraph("SAk", fontBold));
+                table.addCell(cell);
+                cell = new PdfPCell(new Paragraph("CW(SAk)", fontBold));
+                table.addCell(cell);
+
+
+                String[] coralArray = modelInfo.getGuide().get(InsilicoModelInfoUpdated.Guide_Coral_Weights).replaceAll("\n", "\t").trim().split("\t");
+                for(int i = 0; i < coralArray.length; i = i + 2){
+                    cell = new PdfPCell(new Paragraph(coralArray[i].trim(), font));
+                    cell.setPaddingLeft(15);
+                    table.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(String.valueOf(Double.valueOf(coralArray[i+1])).trim(), font));
+                    cell.setPaddingLeft(15);
+                    table.addCell(cell);
+                }
+
+
+                document.add(table);
+                document.add(new Paragraph("\n"));
+                index++;
+            }
+
             // 1.4 Structural Alerts
             if(modelInfo.hasAlerts()){
                 sectionTitle = new Paragraph("1." + index + "\t STRUCTURAL ALERTS", fontBigUnderline);
@@ -605,6 +645,11 @@ public class GuidePDFGenerator {
             sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_n_Test) + "        ", font);
             sectionBody.add("\t" + "R2 = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_R2_Test) + "        ");
             sectionBody.add("\t" + "RMSE = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_RMSE_Test) + "        ");
+
+            sectionBody.add("\n");
+            if(modelInfo.getStats().get("Stats_Notes") != null){
+                sectionBody.add(new Paragraph(modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_Notes), font));
+            }
 
             document.add(sectionBody);
 
