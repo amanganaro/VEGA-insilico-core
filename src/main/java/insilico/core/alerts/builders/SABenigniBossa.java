@@ -5,12 +5,11 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.molecule.tools.CustomQueryMatcher;
 import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.*;
 import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.ringsearch.RingPartitioner;
@@ -132,17 +131,17 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 try {
                     ParsedSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    log.warn("SMARTS: unable to initialize " + Id + ": " + curSMARTS);
-                    throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
+                    log.warn(String.format(StringSelector.getString("sa_exception_smarts_initialization_with_index"), Id, curSMARTS));
+                    throw new InitFailureException(String.format(StringSelector.getString("sa_exception_smarts_initialization_with_index"), Id, curSMARTS));
                 }
             }
             for (String curSMARTS : PreSMARTS) {
                 try {
                     ParsedPreSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    log.warn("PRE SMARTS: unable to initialize " + Id + ": " + curSMARTS);
+                    log.warn(String.format(StringSelector.getString("sa_exception_presmarts_initialization_with_index"), Id, curSMARTS));
                     log.warn(ex.getMessage());
-                    throw new InitFailureException("unable to initialize " + Id + ": " + curSMARTS);
+                    throw new InitFailureException(String.format(StringSelector.getString("sa_exception_smarts_initialization_with_index"), Id, curSMARTS));
                 }
             }
         }
@@ -217,7 +216,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
 
     public SABenigniBossa() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA, "Benigni/Bossa (from ToxTree 2.6) rule set");
+        super(InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA, StringSelector.getString("sa_benigni_bossa_initialization"));
     }
 
 
@@ -280,7 +279,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
             try {
                 sssrings = CurMol.GetSSSR();
             } catch (InvalidMoleculeException ex) {
-                throw new GenericFailureException("Invalid molecule, unable to calculate SSSR");
+                throw new GenericFailureException(StringSelector.getString("sa_benigni_bossa_sssr_fail"));
             }
             int nrings = sssrings.getAtomContainerCount();
 
@@ -342,7 +341,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                         try {
                             alist = CurMol.GetStructure().getConnectedAtomsList(a);
                         } catch (InvalidMoleculeException ex) {
-                            throw new GenericFailureException("Invalid molecule, unable to calculate connected atoms list");
+                            throw new GenericFailureException(StringSelector.getString("sa_benigni_bossa_atom_list_fail"));
                         }
                         for (int k=0; k<alist.size(); k++) {
                             IAtom b = alist.get(k);
@@ -439,7 +438,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
     public double[] getOverlapsPerc(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
 
         if (!mol.IsValid())
-            throw new InvalidMoleculeException("Given molecule is not marked as valid");
+            throw new InvalidMoleculeException(StringSelector.getString("sa_molecule_invalid_marked"));
         CurMol = mol;
 
         // Init
@@ -450,7 +449,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 IsInitialized = true;
             }
         } catch (Exception e) {
-            throw new GenericFailureException("Unable to init matcher: " + e.getMessage());
+            throw new GenericFailureException(String.format(StringSelector.getString("sa_benigni_bossa_init_matcher_fail"), e.getMessage()));
         }
 
         // Code for SA 18-19-20 (ring based)
@@ -465,7 +464,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
             try {
                 sssrings = mol.GetSSSR();
             } catch (InvalidMoleculeException ex) {
-                throw new GenericFailureException("Invalid molecule, unable to calculate SSSR");
+                throw new GenericFailureException(StringSelector.getString("sa_benigni_bossa_sssr_fail"));
             }
             int nrings = sssrings.getAtomContainerCount();
 
@@ -527,7 +526,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                         try {
                             alist = mol.GetStructure().getConnectedAtomsList(a);
                         } catch (InvalidMoleculeException ex) {
-                            throw new GenericFailureException("Invalid molecule, unable to calculate connected atoms list");
+                            throw new GenericFailureException(StringSelector.getString("sa_benigni_bossa_linked_atom_fail"));
                         }
                         for (int k=0; k<alist.size(); k++) {
                             IAtom b = alist.get(k);
@@ -608,7 +607,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
             }
         } catch (InvalidMoleculeException  e) {
-            throw new GenericFailureException("Error during matching: " + e.getMessage());
+            throw new GenericFailureException(String.format(StringSelector.getString("sa_benigni_bossa_matcher_fail"), e.getMessage()));
         }
 
         return Res;
@@ -625,8 +624,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA1");
-        curAlert.setName("Acyl halides");
-        curAlert.setDescription("Acyl halide RC(=O)[Br,Cl,F,I], where R is not OH or SH.");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa1_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa1_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[!$([OH1,SH1])]C(=O)[Br,Cl,F,I]");
@@ -656,8 +655,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA2");
-        curAlert.setName("Alkyl (C<5) or benzyl ester of sulphonic or phosphonic acid");
-        curAlert.setDescription("Methyl, ethyl, propyl, butyl or benzyl esters of sulphonic or phosphonic acid. <br>P(=O)(O)(O)R or S(=O)(O)(O)R where R is not S or O <br> The alkyl chains can have halogen substituents.");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa2_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa2_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -685,8 +684,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA3");
-        curAlert.setName("N-methylol derivatives");
-        curAlert.setDescription("N-methylol derivatives");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa3_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa3_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[CX4H2](N)([OX2H1])");
@@ -712,8 +711,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA4");
-        curAlert.setName("Monohaloalkene");
-        curAlert.setDescription("This alert contains halogenated olefins where at least one hydrogen or alkyl group is attached to each carbon atom.");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa4_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa4_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         for (String s_left : SA4_left)
@@ -728,8 +727,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         String SA5_smarts = "[F,Cl,Br,I][CX4H2][CX4H2][N,S][CX4H2][CX4H2][F,Cl,Br,I]";
         curAlert = new BBAlert();
         curAlert.setId("SA5");
-        curAlert.setName("S or N mustard");
-        curAlert.setDescription("S or N mustard");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa5_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa5_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(SA5_smarts);
@@ -741,8 +740,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA6");
-        curAlert.setName("Propiolactones and propiosultones");
-        curAlert.setDescription("Propiolactones and propiosultones");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa6_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa6_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[O,S]=C1[O,S]CC1");
@@ -755,8 +754,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA7");
-        curAlert.setName("Epoxides and aziridines");
-        curAlert.setDescription("Epoxides and aziridines");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa7_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa7_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("C1[O,N]C1");
@@ -795,8 +794,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA8");
-        curAlert.setName("Aliphatic halogens");
-        curAlert.setDescription("This alert contains non tertiary aliphatic halogens. Substances fired by Alerts SA2, SA4, SA5 and SA20 should be also excluded.");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa8_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa8_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(b8.toString());
@@ -808,8 +807,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA9");
-        curAlert.setName("Alkyl nitrite");
-        curAlert.setDescription("Alkyl nitrite");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa9_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa9_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("O=[NX2]OC");
@@ -821,8 +820,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA10");
-        curAlert.setName("alfa, beta unsaturated carbonyls");
-        curAlert.setDescription("alfa, beta unsaturated carbonyls");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa10_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa10_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -841,8 +840,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA11");
-        curAlert.setName("Simple aldehyde");
-        curAlert.setDescription("Aliphatic and aromatic aldehydes. The alfa,beta-unsaturated aldehydes are excluded");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa11_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa11_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[#6][$([CH;D2]);!$(CC=C)](=O)");
@@ -854,8 +853,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA12");
-        curAlert.setName("Quinones");
-        curAlert.setDescription("Quinones");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa12_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa12_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("O=[#6]1[#6]=,:[#6][#6](=O)[#6]=,:[#6]1");
@@ -868,8 +867,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA13");
-        curAlert.setName("Hydrazine");
-        curAlert.setDescription("This applies to molecules that contain a NN group not in a ring, and not NN=O. Chemicals fired by alert SA22 should be excluded from this alert. Chemicals with a quaternary protonated nitrogen, should be excluded.");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa13_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa13_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[N+0]!@;-[N+0](=[!O;!N])");
@@ -886,8 +885,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA14");
-        curAlert.setName("Aliphatic azo and azoxy");
-        curAlert.setDescription("Aliphatic azo and azoxy. Chemicals fired by alert SA22 should be excluded from this alert.");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa14_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa14_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -907,8 +906,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA15");
-        curAlert.setName("Isocyanate and isothiocyanate groups");
-        curAlert.setDescription("Isocyanate and isothiocyanate groups");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa15_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa15_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[NX2]=C=[O,S]");
@@ -920,8 +919,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA16");
-        curAlert.setName("Alkyl carbamate and thiocarbamate");
-        curAlert.setDescription("Alkyl carbamate and thiocarbamate");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa16_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa16_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -943,8 +942,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA17");
-        curAlert.setName("Thiocarbonyl (Nongenotoxic carcinogens)");
-        curAlert.setDescription("Thiocarbonyl (Nongenotoxic carcinogens)");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa17_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa17_description"));
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[#7X3][#6](=[SX1])[!$([O,S][CX4])!$([OH,SH])!$([O-,S-])]");
@@ -956,8 +955,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA18");
-        curAlert.setName("Polycyclic Aromatic Hydrocarbons");
-        curAlert.setDescription("Polycyclic Aromatic Hydrocarbons, with three or more fused rings. Does not include heterocyclic compounds");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa18_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa18_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         // No SMARTS, checked through code
@@ -969,8 +968,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA19");
-        curAlert.setName("Heterocyclic Polycyclic Aromatic Hydrocarbons");
-        curAlert.setDescription("Heterocyclic Polycyclic Aromatic Hydrocarbons (3 or more fused rings).");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa19_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa19_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         // No SMARTS, checked through code
@@ -982,8 +981,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA20");
-        curAlert.setName("(Poly) Halogenated Cycloalkanes (Nongenotoxic carcinogens)");
-        curAlert.setDescription("(Poly) Halogenated Cycloalkanes (Nongenotoxic carcinogens)");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa20_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa20_description"));
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
         // No SMARTS, checked through code
@@ -995,8 +994,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA21");
-        curAlert.setName("Alkyl and aryl N-nitroso groups");
-        curAlert.setDescription("Alkyl and aryl N-nitroso groups");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa21_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa21_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -1012,8 +1011,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA22");
-        curAlert.setName("Azide and triazene groups");
-        curAlert.setDescription("Azide and triazene groups");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa22_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa22_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[N]=[N]-[N]");
@@ -1026,8 +1025,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA23");
-        curAlert.setName("Aliphatic N-nitro");
-        curAlert.setDescription("Aliphatic N-nitro. The possibility to have an aromatic substituent on the nitrogen should be excluded.");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa23_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa23_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[C!r][NH1]N(=O)O");
@@ -1040,8 +1039,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA24");
-        curAlert.setName("alfa,beta unsaturated alkoxy");
-        curAlert.setDescription("alfa,beta unsaturated alkoxy");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa24_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa24_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -1056,13 +1055,13 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         //// SA 25 (idx 24)
 
         Object[][] sa28_exclusion_rules = {
-                {"Ortho-disubstitution","a(a[A;!#1])(a[A;!#1])","[H]C=1C([H])=C(C)C(=C(C)C=1([H]))N([H])OC=O","", false},
-                {"Carboxylic acid substituent at ortho position","aa[CX3](=O)[OX2H1]","O=C(O)C1=CC=CC=C1(N)","", false},
-                {"-SO3H on the same ring","aa[SX4](=[OX1])(=[OX1])([O])","NC=1C=CC=CC=1S(=O)(=O)[O-]","", false},
-                {"-SO3H on the same ring","aaa[SX4](=[OX1])(=[OX1])([O])","NC=1C=CC=C(C=1)S(=O)(=O)[O-]","", false},
-                {"-SO3H on the same ring","aaaa[SX4](=[OX1])(=[OX1])([O])","O=S(=O)([O-])C1=CC=C(N)C=C1","", false},
-                {"-SO3H on the same ring","aaaaa[SX4](=[OX1])(=[OX1])([O])","","", false},
-                {"-SO3H on the same ring","aaaaaa[SX4](=[OX1])(=[OX1])([O])","","", false},
+                {StringSelector.getString("sa_benigni_bossa_rule1"),"a(a[A;!#1])(a[A;!#1])","[H]C=1C([H])=C(C)C(=C(C)C=1([H]))N([H])OC=O","", false},
+                {StringSelector.getString("sa_benigni_bossa_rule2"),"aa[CX3](=O)[OX2H1]","O=C(O)C1=CC=CC=C1(N)","", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aa[SX4](=[OX1])(=[OX1])([O])","NC=1C=CC=CC=1S(=O)(=O)[O-]","", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaa[SX4](=[OX1])(=[OX1])([O])","NC=1C=CC=C(C=1)S(=O)(=O)[O-]","", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaa[SX4](=[OX1])(=[OX1])([O])","O=S(=O)([O-])C1=CC=C(N)C=C1","", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaaa[SX4](=[OX1])(=[OX1])([O])","","", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaaaa[SX4](=[OX1])(=[OX1])([O])","","", false},
         };
 
         StringBuilder b25 = new StringBuilder();
@@ -1079,7 +1078,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         b25.append("]");
 
         StringBuilder e25 = new StringBuilder();
-        e25.append("Aromatic nitroso group. However, the following structures should be excluded:");
+        e25.append(StringSelector.getString("sa_benigni_bossa_rule_append"));
         Object old = "";
         for (int i=0; i < sa28_exclusion_rules.length;i++) {
             if (old.equals(sa28_exclusion_rules[i][0])) continue;
@@ -1090,7 +1089,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA25");
-        curAlert.setName("Aromatic nitroso group");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa25_name"));
         curAlert.setDescription(e25.toString());
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
@@ -1104,8 +1103,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA26");
-        curAlert.setName("Aromatic ring N-oxide");
-        curAlert.setDescription("Aromatic ring N-oxide");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa26_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa26_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[n+]!@[O-]");
@@ -1120,20 +1119,20 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 // {"Nitro uncharged","[N](=O)=O"} // VEGA normalizes nitro groups to [N+]([O-])=O
         };
         Object[][] sa27_exclusion_rules = {
-                {"Ortho-disubstitution","a(a[A;!#1;!H])(a[A;!#1;!H])", false},
-                {"Carboxylic acid substituent at ortho position","aa[CX3](=O)[OX2H1]", false},
-                {"-SO3H on the same ring","aa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
-                {"-SO3H on the same ring","aaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
-                {"-SO3H on the same ring","aaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
-                {"-SO3H on the same ring","aaaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
-                {"-SO3H on the same ring","aaaaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false}
+                {StringSelector.getString("sa_benigni_bossa_rule1"),"a(a[A;!#1;!H])(a[A;!#1;!H])", false},
+                {StringSelector.getString("sa_benigni_bossa_rule2"),"aa[CX3](=O)[OX2H1]", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
+                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false}
         };
 
         StringBuilder b27 = new StringBuilder();
         b27.append("[a");
         for (int i=0; i < sa27_exclusion_rules.length;i++) {
             b27.append(";");
-            if (!((Boolean)sa27_exclusion_rules[i][2]).booleanValue())
+            if (!(Boolean) sa27_exclusion_rules[i][2])
                 b27.append("!");
             b27.append("$(");
             b27.append(sa27_exclusion_rules[i][1]);
@@ -1148,17 +1147,17 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         }
         b27.append("])");
 
-        StringBuilder e27 = new StringBuilder();
-        e27.append("Nitro aromatic. However: ");
-        e27.append("Aromatic nitro groups with ortho-disubstitution or with a carboxylic acid substituent in ortho position should be excluded. ");
-        e27.append("Please note that a molecule like this <b>CC1=CC=CC(=C1[N+](=O)[O-])[N+](=O)[O-]</b> should be included in the alert: one of the two nitro groups is ortho disubstituted, but the other one is ortho-monosubstituted. ");
-        e27.append("Also the following molecule <b>CC2=CC=CC(CCC1=CC=CC(=C1)[N+](=O)[O-])=C2[N+](=O)[O-]</b> Should fire the alert (one nitro group is ortho disubstituted, but the other is not). ");
-        e27.append("If a sulfonic acid group (-SO3H) is present on the ring that contains also the nitro group, the substance should be excluded. ");
+//        StringBuilder e27 = new StringBuilder();
+//        e27.append("Nitro aromatic. However: ");
+//        e27.append("Aromatic nitro groups with ortho-disubstitution or with a carboxylic acid substituent in ortho position should be excluded. ");
+//        e27.append("Please note that a molecule like this <b>CC1=CC=CC(=C1[N+](=O)[O-])[N+](=O)[O-]</b> should be included in the alert: one of the two nitro groups is ortho disubstituted, but the other one is ortho-monosubstituted. ");
+//        e27.append("Also the following molecule <b>CC2=CC=CC(CCC1=CC=CC(=C1)[N+](=O)[O-])=C2[N+](=O)[O-]</b> Should fire the alert (one nitro group is ortho disubstituted, but the other is not). ");
+//        e27.append("If a sulfonic acid group (-SO3H) is present on the ring that contains also the nitro group, the substance should be excluded. ");
 
         curAlert = new BBAlert();
         curAlert.setId("SA27");
-        curAlert.setName("Nitro aromatic");
-        curAlert.setDescription(e27.toString());
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa27_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa27_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addPreSMARTS("[N+][O-]");
@@ -1177,11 +1176,11 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 //        };	
 
         String[][] sa28_amines = {
-                {"Primary amine","[N+0;H2;D1]"},
-                {"Hydroxyl amine","[N+0;H1;D2][OH;D1]"},
-                {"Hydroxyl amine","[N+0;H0;D3]([OH;D1])C"},
-                {"Hydroxyl amine ester","[N+0;H1;D2]OC=O"},
-                {"Hydroxyl amine ester","[N+0;H0;D3](C)OC=O"}
+                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule1"),"[N+0;H2;D1]"},
+                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule1"),"[N+0;H1;D2][OH;D1]"},
+                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule2"),"[N+0;H0;D3]([OH;D1])C"},
+                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule2"),"[N+0;H1;D2]OC=O"},
+                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule3"),"[N+0;H0;D3](C)OC=O"}
         };
         // Note: sa28_exclusion_rules array has been already defined above
 
@@ -1201,17 +1200,17 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         }
         b28.append("]");
 
-        StringBuilder e28 = new StringBuilder();
-        e28.append("Primary aromatic amine, hydroxyl amine and its derived esters (with restrictions). However: ");
-        e28.append("Aromatic amino groups with ortho disubstitutions or with a carboxylic acid substituent in ortho position are excluded. ");
-        e28.append("If a sulfonic acid group (-SO3H) is present on the ring that contains also the amino group, the substance should be excluded from the alert. ");
-        e28.append("The following structures should also be included: O=C=NC1=CC=CC=C1 and C([H])([H])=NC1=CC=CC=C1. ");
-        e28.append("The possibility that the Nitrogen atom of hydroxyl amine is part of a cycle, should be excluded.");
+//        StringBuilder e28 = new StringBuilder();
+//        e28.append("Primary aromatic amine, hydroxyl amine and its derived esters (with restrictions). However: ");
+//        e28.append("Aromatic amino groups with ortho disubstitutions or with a carboxylic acid substituent in ortho position are excluded. ");
+//        e28.append("If a sulfonic acid group (-SO3H) is present on the ring that contains also the amino group, the substance should be excluded from the alert. ");
+//        e28.append("The following structures should also be included: O=C=NC1=CC=CC=C1 and C([H])([H])=NC1=CC=CC=C1. ");
+//        e28.append("The possibility that the Nitrogen atom of hydroxyl amine is part of a cycle, should be excluded.");
 
         curAlert = new BBAlert();
         curAlert.setId("SA28");
-        curAlert.setName("Primary aromatic amine, hydroxyl amine and its derived esters (with restrictions)");
-        curAlert.setDescription(e28.toString());
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa28_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa28_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(b28.toString());
@@ -1230,11 +1229,11 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 //            {"Aromatic mono- and dialkylamine","[NX3;v3]([CH2][CH3])([CH2][CH3])"},
 //        };      
         String[][] amines = {
-                {"Aromatic mono- and dialkylamine","[N+0;H1;D2][CH3]"},
-                {"Aromatic mono- and dialkylamine","[N+0;H0;D3]([CH3])([CH3])"},
-                {"Aromatic mono- and dialkylamine","[N+0;H1;D2][CH2][CH3]"},
-                {"Aromatic mono- and dialkylamine","[N+0;H0;D3]([CH3])([CH2][CH3])"},
-                {"Aromatic mono- and dialkylamine","[N+0;H0;D3]([CH2][CH3])([CH2][CH3])"},
+                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H1;D2][CH3]"},
+                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H0;D3]([CH3])([CH3])"},
+                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H1;D2][CH2][CH3]"},
+                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H0;D3]([CH3])([CH2][CH3])"},
+                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H0;D3]([CH2][CH3])([CH2][CH3])"},
         };
         // Note: sa28_exclusion_rules array has been already defined above
 
@@ -1254,15 +1253,15 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         }
         b28bis.append("]");
 
-        StringBuilder e28bis = new StringBuilder();
-        e28bis.append("Mono- or di- methyl or ethyl aromatic amines, are included. However:");
-        e28bis.append("Aromatic amino groups with ortho-disubstitution or with a carboxylic acid substituent in ortho position should be excluded. ");
-        e28bis.append("If a sulfonic acid group (-SO3H) is present on the ring that contains also the amino group, the substance should be excluded from the alert.");
+//        StringBuilder e28bis = new StringBuilder();
+//        e28bis.append("Mono- or di- methyl or ethyl aromatic amines, are included. However:");
+//        e28bis.append("Aromatic amino groups with ortho-disubstitution or with a carboxylic acid substituent in ortho position should be excluded. ");
+//        e28bis.append("If a sulfonic acid group (-SO3H) is present on the ring that contains also the amino group, the substance should be excluded from the alert.");
 
         curAlert = new BBAlert();
         curAlert.setId("SA28bis");
-        curAlert.setName("Aromatic mono- and dialkylamine");
-        curAlert.setDescription(e28bis.toString());
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa28bis_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa28bis_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(b28bis.toString());
@@ -1289,15 +1288,15 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         b28ter.append("$([N+0;H0;D3]([CH3])[CH1](=O))");
         b28ter.append("]");
 
-        StringBuilder e28ter = new StringBuilder();
-        e28ter.append("Aromatic N-acyl amine. However:");
-        e28ter.append("Aromatic amino groups with ortho-disubstitution or with a carboxylic acid substituent in ortho position should be excluded. ");
-        e28ter.append("If a sulfonic acid group (-SO3H) is present on the ring that contains also the amino group, the substance should be excluded from the alert.");
+//        StringBuilder e28ter = new StringBuilder();
+//        e28ter.append("Aromatic N-acyl amine. However:");
+//        e28ter.append("Aromatic amino groups with ortho-disubstitution or with a carboxylic acid substituent in ortho position should be excluded. ");
+//        e28ter.append("If a sulfonic acid group (-SO3H) is present on the ring that contains also the amino group, the substance should be excluded from the alert.");
 
         curAlert = new BBAlert();
         curAlert.setId("SA28ter");
-        curAlert.setName("Aromatic N-acyl amine");
-        curAlert.setDescription(e28ter.toString());
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa28ter_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa28ter_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(b28ter.toString());
@@ -1309,8 +1308,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA29");
-        curAlert.setName("Aromatic diazo");
-        curAlert.setDescription("Aromatic diazo. If a sulfonic acid group (-SO3H) is present on each of the rings that contain the diazo group, the substance should be not classified.");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa29_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa29_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -1346,8 +1345,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA30");
-        curAlert.setName("Coumarins and Furocoumarins");
-        curAlert.setDescription("Coumarins and Furocoumarins");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa30_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa30_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("O=c1ccc2ccccc2(o1)");
@@ -1361,11 +1360,11 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         // Some exclusion rules removed, they were only in ToxTree (not in the
         // original paper) and correspond to previous alerts
 
-        String hydroxyl = "3 or more hydroxyl groups";
+        String hydroxyl = StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_hydroxil");
         String[][] exclusion_rules_Hal = {
                 //{title, smarts, example}
-                {"Structures with 2 halogens ortho","[Cl,Br,I,F]cc[Cl,Br,I,F]","FC1=CC=CC=C1Cl"},
-                {"Structures with 2 halogens meta","[Cl,Br,I,F]ccc[Cl,Br,I,F]","C=1C=C(C=C(C=1)Br)Cl"},
+                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_ortho"),"[Cl,Br,I,F]cc[Cl,Br,I,F]","FC1=CC=CC=C1Cl"},
+                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_meta"),"[Cl,Br,I,F]ccc[Cl,Br,I,F]","C=1C=C(C=C(C=1)Br)Cl"},
                 {hydroxyl,"[Cl,Br,I,F]c1c([OX2H])c([OX2H])c([OX2H])cc1",""},
                 {hydroxyl,"[Cl,Br,I,F]c1c([OX2H])c([OX2H])cc([OX2H])c1",""},
                 {hydroxyl,"[Cl,Br,I,F]c1c([OX2H])c([OX2H])ccc1([OX2H])",""},
@@ -1373,6 +1372,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 {hydroxyl,"[Cl,Br,I,F]c1c([OX2H])cc([OX2H])cc1([OX2H])",""},
                 {hydroxyl,"[Cl,Br,I,F]c1cc([OX2H])c([OX2H])c([OX2H])c1",""}
         };
+
+
         Object[][] sa31a_exclusion_rules = {
                 //{title, smarts, example,rulename, result}
 //            {"Nitro aromatic","c[N+](=O)[O-]","O=[N+]([O-])C=1C=CC=C(C=1)Cl","SA27_gen", false},
@@ -1384,9 +1385,9 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 //            {"Aromatic mono- and dialkylamine","c[NX3v3]([CH2][CH3])([CH2][CH3])","CCN(CC)C=1C=CC=C(Cl)C=1","",false}, 
 //            {"Aromatic N-acyl amine","cNC(=O)[#1,CH3]","CC(=O)NC=1C=CC=C(C=1)Cl","SA28ter_gen", false},
 //            {"Aromatic diazo","cN=[N]a","C1=CC=C(C=C1)N=NC=2C=CC=C(C=2)Cl","SA29_gen", false},
-                {"Biphenyls","c!@[cR1r6]1ccccc1","C1=CC=C(C=C1)C2=CC=CC=C2Cl","", false},
-                {"Diphenyls","c!@*!@c1ccccc1","c1c(Cl)c(ccc1Cc2ccc(cc2))","", false},
-                {"Not in fused rings","[R2]","C=1C=CC=2C(C=1)=CC=CC=2Cl","", false}
+                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_biph"),"c!@[cR1r6]1ccccc1","C1=CC=C(C=C1)C2=CC=CC=C2Cl","", false},
+                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_diph"),"c!@*!@c1ccccc1","c1c(Cl)c(ccc1Cc2ccc(cc2))","", false},
+                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_not_in"),"[R2]","C=1C=CC=2C(C=1)=CC=CC=2Cl","", false}
         };
 
         StringBuilder b31a = new StringBuilder();
@@ -1396,7 +1397,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
             if (i<5)
                 for (int j=0; j < sa31a_exclusion_rules.length;j++) {
                     b31a.append(";");
-                    if (!((Boolean)sa31a_exclusion_rules[j][4]).booleanValue())
+                    if (!(Boolean) sa31a_exclusion_rules[j][4])
                         b31a.append("!");
                     b31a.append("$(");
                     b31a.append(sa31a_exclusion_rules[j][1]);
@@ -1419,14 +1420,15 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         b31a.append(")");
 
         StringBuilder e31a = new StringBuilder();
-        e31a.append("Halogenated benzene  (Nongenotoxic carcinogens). ");
-        e31a.append("The rule applies only to halogenated benezenes (not naphtalenes, etc.), but it should allow for the presence of other rings in the same molecule. ");
-        e31a.append("However, the following structures should be excluded:");
+//        e31a.append("Halogenated benzene  (Nongenotoxic carcinogens). ");
+//        e31a.append("The rule applies only to halogenated benezenes (not naphtalenes, etc.), but it should allow for the presence of other rings in the same molecule. ");
+//        e31a.append("However, the following structures should be excluded:");
+        e31a.append(StringSelector.getString("sa_benigni_bossa_sa31a_description1"));
         for (int i=0; i < exclusion_rules_Hal.length;i++) {
             if (i>0) e31a.append(", ");
             e31a.append(exclusion_rules_Hal[i][0]);
         }
-        e31a.append(" with 3 or more hydroxyl groups. ");
+        e31a.append(StringSelector.getString("sa_benigni_bossa_sa31a_description2"));
 
         old = "";
         for (int i=0; i < sa31a_exclusion_rules.length;i++) {
@@ -1438,7 +1440,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA31a");
-        curAlert.setName("Halogenated benzene  (Nongenotoxic carcinogens)");
+        curAlert.setName((StringSelector.getString("sa_benigni_bossa_sa31a_name")));
         curAlert.setDescription(e31a.toString());
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
@@ -1451,8 +1453,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA31b");
-        curAlert.setName("Halogenated PAH (naphthalenes, biphenyls, diphenyls)  (Nongenotoxic carcinogens)");
-        curAlert.setDescription("Halogenated PAH (naphthalenes, biphenyls, diphenyls)  (Nongenotoxic carcinogens)");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa31b_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa31b_description"));
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[Cl,Br,F,I]c1ccc2ccccc2(c1)");
@@ -1466,8 +1468,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA31c");
-        curAlert.setName("Halogenated dibenzodioxins  (Nongenotoxic carcinogens)");
-        curAlert.setDescription("Halogenated dibenzodioxins  (Nongenotoxic carcinogens). Only the chemicals with at least one halogen in one of the four lateral positions should fire.");
+        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa31c_name"));
+        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa31c_description"));
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("c1ccc2Oc3cc(ccc3(Oc2(c1)))[Cl,Br,F,I]");

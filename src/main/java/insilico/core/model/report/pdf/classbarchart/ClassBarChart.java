@@ -1,5 +1,6 @@
 package insilico.core.model.report.pdf.classbarchart;
 
+import insilico.core.localization.StringSelector;
 import org.xmlcml.euclid.Axis;
 
 import java.awt.*;
@@ -266,7 +267,7 @@ public class ClassBarChart {
         graphics.setColor(GridColor);
         FontMetrics fontMetrics = graphics.getFontMetrics(CurFont);
 
-        String strVal = "prediction";
+        String strVal = StringSelector.getString("chart_prediction");
         int strX = x - fontMetrics.stringWidth(strVal)/2;
         int strY = AxisLineY + fontMetrics.getHeight() + 15;
         graphics.drawString(strVal, strX, strY);
@@ -277,7 +278,7 @@ public class ClassBarChart {
         graphics.drawString(strVal, strX, strY);
 
         if (HasInterval) {
-            strVal = "safe prediction";
+            strVal = StringSelector.getString("chart_safe_prediction");
             strX = cx1 - fontMetrics.stringWidth(strVal)/2;
             strY = AxisLineY + fontMetrics.getHeight() + 15;
             graphics.drawString(strVal, strX, strY);

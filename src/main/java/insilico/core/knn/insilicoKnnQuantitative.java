@@ -37,8 +37,8 @@ public class insilicoKnnQuantitative extends insilicoKnn {
             weight += curWeight;
 
             // Update ranges (min and max
-            min = curNeighExp < min ? curNeighExp : min;
-            max = curNeighExp > max ? curNeighExp : max;
+            min = Math.min(curNeighExp, min);
+            max = Math.max(curNeighExp, max);
         }
 
         // Normalize prediction on weight sum

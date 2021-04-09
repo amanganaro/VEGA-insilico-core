@@ -1,5 +1,7 @@
 package insilico.core.ad.reasoning;
 
+import insilico.core.localization.StringSelector;
+
 import java.util.ArrayList;
 
 public class UncertaintyClassBar {
@@ -22,7 +24,7 @@ public class UncertaintyClassBar {
         XValue = 0;
         XValueAsString = "";
         XValueInterval = 0;
-        AxisName = "predicted values";
+        AxisName = StringSelector.getString("predicted_values_string");
     }
 
     /**

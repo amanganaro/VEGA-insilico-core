@@ -2,13 +2,14 @@ package insilico.core.descriptor.blocks.weights.other;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.blocks.weights.iWeight;
+import insilico.core.localization.StringSelector;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class WeightsQuantumNumber implements iWeight {
 
     private static final String SYMBOL = "deltaV";
-    private static final String NAME = "Quantum number";
+    private static final String NAME = StringSelector.getString("descriptors_quantumnum_name");
 
     private final static Object[][] quantum = {
         {"H",1},

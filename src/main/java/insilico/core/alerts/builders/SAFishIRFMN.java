@@ -5,6 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
@@ -99,7 +100,7 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
     
     
     public SAFishIRFMN() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_FISH_IRFMN, "Rules for fish toxicity classification (IRFMN)");
+        super(InsilicoConstants.SA_BLOCK_FISH_IRFMN, StringSelector.getString("sa_fish_irfmn_initialization"));
     }
     
     
@@ -110,8 +111,8 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
         
         for (int i=0; i<SMARTSCategory1.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("Toxicity class 1 alert no. " + (i+1));
-            curSA.setDescription("Structural alert for fish toxicity defined by the SMARTS: " + SMARTSCategory1[i] + ". It is related to toxicity values less than 1 mg/l.");
+            curSA.setName(StringSelector.getString("sa_fish_irfmn_smarts1_name") + (i+1));
+            curSA.setDescription(String.format(StringSelector.getString("sa_fish_irfmn_smarts1_description"), SMARTSCategory1[i]));
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_FISH_TOX_LESS_1, true);
             Alerts.add(curSA);
             idx++;
@@ -119,8 +120,8 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
 
         for (int i=0; i<SMARTSCategory2.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("Toxicity class 2 alert no. " + (i+1));
-            curSA.setDescription("Structural alert for fish toxicity defined by the SMARTS: " + SMARTSCategory2[i] + ". It is related to toxicity values between 1 mg/l and 10 mg/l.");
+            curSA.setName(StringSelector.getString("sa_fish_irfmn_smarts2_name") + (i+1));
+            curSA.setDescription(String.format(StringSelector.getString("sa_fish_irfmn_smarts2_description"), SMARTSCategory2[i]));
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_FISH_TOX_1_10, true);
             Alerts.add(curSA);
             idx++;
@@ -128,8 +129,8 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
         
         for (int i=0; i<SMARTSCategory3.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("Toxicity class 3 alert no. " + (i+1));
-            curSA.setDescription("Structural alert for fish toxicity defined by the SMARTS: " + SMARTSCategory3[i] + ". It is related to toxicity values between 10 mg/l and 100 mg/l.");
+            curSA.setName(StringSelector.getString("sa_fish_irfmn_smarts3_name") + (i+1));
+            curSA.setDescription(String.format(StringSelector.getString("sa_fish_irfmn_smarts3_description"), SMARTSCategory3[i]));
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_FISH_TOX_10_100, true);
             Alerts.add(curSA);
             idx++;
@@ -161,7 +162,7 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
             }
             
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
         }    
     }
 

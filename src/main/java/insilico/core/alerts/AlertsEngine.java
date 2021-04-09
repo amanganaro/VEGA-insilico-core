@@ -6,6 +6,7 @@ import insilico.core.exception.AlertBlockNotFoundException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
 
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class AlertsEngine {
         for (iAlertBlock a : Alerts)
             if (a.getId() == AlertBlockId)
                 return a;
-        throw new AlertBlockNotFoundException("Alert block with id " + AlertBlockId + " not found");
+        throw new AlertBlockNotFoundException(String.format(StringSelector.getString("sa_alert_not_found"),AlertBlockId));
     }
 
     public boolean hasAlertBlock(int AlertBlockId) {
@@ -147,7 +148,7 @@ public class AlertsEngine {
 //                    Alerts.add(new SANephroVermeer());
 //                    break;
                 default:
-                    throw new InitFailureException("Alert block with id " + AlertBlockId + " not available");
+                    throw new InitFailureException(String.format(StringSelector.getString("sa_alert_not_available"), AlertBlockId));
             }
         }
 

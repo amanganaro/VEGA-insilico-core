@@ -2,12 +2,13 @@ package insilico.core.ad;
 
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
+import insilico.core.localization.StringSelector;
 import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.similarity.SimilarMolecule;
 import insilico.core.similarity.Similarity;
-import insilico.core.tools.utils.logger.InsilicoLogger;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +23,9 @@ import java.util.Arrays;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class ADCheckIndices {
 
-    Logger logger = LoggerFactory.getLogger(ADCheckIndices.class);
     
     /** Number of molecules to be showed to user in final report */
     protected int MoleculesToShowSize;
@@ -79,8 +80,8 @@ public class ADCheckIndices {
         
         if ((TrainSet == null)||(TrainSet.getMoleculesSize()==0)) {
             SimilarMols = null;
-            logger.warn("Unable to retrieve training set for AD similarity calculation");
-            throw new GenericFailureException("Unable to retrieve training set");
+            log.warn(StringSelector.getString("ad_checkindices_logwarn"));
+            throw new GenericFailureException(StringSelector.getString("ad_checkindices_exception"));
         }
         
         Similarity SIM = new Similarity();
@@ -107,7 +108,7 @@ public class ADCheckIndices {
                     curSim = 0.38;
                 
             } catch (Throwable e) {
-//                logger.warn("AD similarity calculation: unable to calculate for training set molecule "
+//                log.warn("AD similarity calculation: unable to calculate for training set molecule "
 //                        + idx + ": " + TrainSet.getSMILES(idx));
                 curSim = 0;
             }
@@ -134,24 +135,24 @@ public class ADCheckIndices {
         
         ArrayList<SimilarMolecule> list = new ArrayList<>();
 
-        for (int i=0; i<SimilarMols.length; i++) {
-            
+        for (SimilarMolecule similarMol : SimilarMols) {
+
             if (OnlyFromTraining) {
                 try {
-                    short curSet = TrainSet.getMoleculeSet((int)SimilarMols[i].getIndex());
+                    short curSet = TrainSet.getMoleculeSet((int) similarMol.getIndex());
                     if (curSet == InsilicoConstants.MOLECULE_TRAINING)
                         continue;
                 } catch (GenericFailureException e) {
                     continue;
                 }
             }
-            
+
             if (SkipExperimental) {
-                if (SimilarMols[i].getSimilarity() == 1.0)
+                if (similarMol.getSimilarity() == 1.0)
                     continue;
             }
-            
-            list.add(SimilarMols[i]);
+
+            list.add(similarMol);
             if (list.size() == Size)
                 break;
         }

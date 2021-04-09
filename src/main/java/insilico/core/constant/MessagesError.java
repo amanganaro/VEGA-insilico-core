@@ -1,5 +1,7 @@
 package insilico.core.constant;
 
+import insilico.core.localization.StringSelector;
+
 /**
  * Static String repository for error messages used in model and molecule classes.
  *
@@ -7,15 +9,10 @@ package insilico.core.constant;
  */
 public class MessagesError {
 
-    public static String MODEL_INVALID_MOLECULE =
-            "Unable to calculate model, input molecule is not valid";
-    public static String MODEL_DESCRIPTORS_MISSING =
-            "Unable to calculate some molecular descriptors, model can not be executed";
-    public static String MODEL_NOT_CALCULATED_ERROR =
-            "An error occurred during model execution";
-    public static String MODEL_AD_NOT_CALCULATED =
-            "Unable to perform Applicability Domain check";
-    public static String MODEL_ASSESSMENT_FOR_NOT_CALCULATED_MOLECULE =
-            "Model has not been calculated, an error has occurred";
+    public static String MODEL_INVALID_MOLECULE = StringSelector.getString("msg_model_invalid_molecule");
+    public static String MODEL_DESCRIPTORS_MISSING =StringSelector.getString("msg_model_descriptors_missing");
+    public static String MODEL_NOT_CALCULATED_ERROR =StringSelector.getString("msg_model_not_calculated_error");
+    public static String MODEL_AD_NOT_CALCULATED =StringSelector.getString("msg_ad_not_calculated");
+    public static String MODEL_ASSESSMENT_FOR_NOT_CALCULATED_MOLECULE = StringSelector.getString("msg_model_assessment_for_not_calculated_molecule");
 
 }

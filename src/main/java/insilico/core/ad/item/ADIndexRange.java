@@ -2,6 +2,7 @@ package insilico.core.ad.item;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import insilico.core.constant.MessagesAD;
+import insilico.core.localization.StringSelector;
 
 /**
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
@@ -36,7 +37,7 @@ public class ADIndexRange extends ADIndex {
 
     @Override
     public String GetIndexValueFormatted() {
-        return IndexValue==1?"True":"False";
+        return IndexValue==1? StringSelector.getString("bool_formatted_true") : StringSelector.getString("bool_formatted_false");
     }
 
     /**

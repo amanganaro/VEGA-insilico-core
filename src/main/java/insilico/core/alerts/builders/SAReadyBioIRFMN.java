@@ -5,6 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
@@ -210,7 +211,7 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
     
     
     public SAReadyBioIRFMN() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_READY_BIO_IRFMN, "Rules for ready biodegradability (IRFMN)");
+        super(InsilicoConstants.SA_BLOCK_READY_BIO_IRFMN, StringSelector.getString("sa_ready_bio_irfmn_initialization"));
     }
     
     
@@ -221,8 +222,10 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
         
         for (int i=0; i<SMARTSNonRB.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("Non RB alert no. " + (i+1) + " " + DescriptionNonRB[i]);
-            curSA.setDescription("Structural alert related to non ready biodegradability activity, defined by the SMARTS: " + SMARTSNonRB[i] + ".");
+            curSA.setName(String.format(StringSelector.getString("sa_ready_nio_irfmn_name_nonready"), i+1, DescriptionNonRB[i]));
+            curSA.setDescription(String.format(StringSelector.getString("sa_ready_nio_irfmn_description_nonready"), SMARTSNonRB[i]));
+
+
             curSA.setImageURL("/insilico/core/alerts/png/readybio/READYBIO_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_READY_BIO_NON_RB, true);
             Alerts.add(curSA);
@@ -231,8 +234,8 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
 
         for (int i=0; i<SMARTSNonRBUncertain.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("Possible non RB alert no. " + (i+1) + " " + DescriptionNonRBUncertain[i]);
-            curSA.setDescription("Structural alert related to possible non ready biodegradability activity, defined by the SMARTS: " + SMARTSNonRBUncertain[i] + ".");
+            curSA.setName(String.format(StringSelector.getString("sa_ready_nio_irfmn_name_possiblenonready"), i+1, DescriptionNonRBUncertain[i]));
+            curSA.setDescription(String.format(StringSelector.getString("sa_ready_nio_irfmn_description_possiblenonready"), SMARTSNonRBUncertain[i]));
             curSA.setImageURL("/insilico/core/alerts/png/readybio/READYBIO_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_READY_BIO_NON_RB_POSSIBLE, true);
             Alerts.add(curSA);
@@ -241,8 +244,8 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
         
         for (int i=0; i<SMARTSRB.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("RB alert no. " + (i+1) + " " + DescriptionRB[i]);
-            curSA.setDescription("Structural alert related to ready biodegradability activity, defined by the SMARTS: " + SMARTSRB[i] + ".");
+            curSA.setName(String.format(StringSelector.getString("sa_ready_nio_irfmn_name_ready"), i+1, SMARTSRB[i]));
+            curSA.setDescription(String.format(StringSelector.getString("sa_ready_nio_irfmn_description_ready"), SMARTSRB[i]));
             curSA.setImageURL("/insilico/core/alerts/png/readybio/READYBIO_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_READY_BIO_RB, true);
             Alerts.add(curSA);
@@ -251,8 +254,8 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
 
         for (int i=0; i<SMARTSRBUncertain.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("Possible RB alert no. " + (i+1 + " " + DescriptionRBUncertain[i]));
-            curSA.setDescription("Structural alert related to possible ready biodegradability activity, defined by the SMARTS: " + SMARTSRBUncertain[i] + ".");
+            curSA.setName(String.format(StringSelector.getString("sa_ready_nio_irfmn_name_possible_ready"), i+1, SMARTSRBUncertain[i]));
+            curSA.setDescription(String.format(StringSelector.getString("sa_ready_nio_irfmn_description_possible_ready"), SMARTSRBUncertain[i]));
             curSA.setImageURL("/insilico/core/alerts/png/readybio/READYBIO_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_READY_BIO_RB_POSSIBLE, true);
             Alerts.add(curSA);
@@ -290,7 +293,7 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
             }
             
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -326,7 +329,7 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "READYBIO_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -337,7 +340,7 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "READYBIO_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -348,7 +351,7 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "READYBIO_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -359,7 +362,7 @@ public class SAReadyBioIRFMN extends AlertBlockFromSMARTS implements iAlertBlock
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "READYBIO_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

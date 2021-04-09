@@ -3,6 +3,7 @@ package insilico.core.alerts;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.tools.CustomQueryMatcher;
 import org.openscience.cdk.exception.CDKException;
@@ -56,7 +57,7 @@ public abstract class AlertBlockFromSMARTS extends AlertBlock {
     public AlertList Calculate(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
 
         if (!mol.IsValid())
-            throw new InvalidMoleculeException("Given molecule is not marked as valid");
+            throw new InvalidMoleculeException(StringSelector.getString("sa_molecule_invalid_marked"));
         CurMol = mol;
 
         // Init
@@ -67,7 +68,7 @@ public abstract class AlertBlockFromSMARTS extends AlertBlock {
                 IsInitialized = true;
             }
         } catch (Exception e) {
-            throw new GenericFailureException("Unable to init matcher: " + e.getMessage());
+            throw new GenericFailureException(String.format(StringSelector.getString("sa_invalid_molecule_err"), e.getMessage()));
         }
 
         // Calls method for checking alerts

@@ -5,6 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
@@ -119,7 +120,7 @@ public class SASkinNcstox extends AlertBlockFromSMARTS implements iAlertBlock {
     
     
     public SASkinNcstox() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_SKIN_SENS_NCSTOX, "Rules for Skin Sensitization (LLNA) classification (IRFMN/NCSTOX)");
+        super(InsilicoConstants.SA_BLOCK_SKIN_SENS_NCSTOX, StringSelector.getString("sa_skin_ncstox_initialization"));
     }
     
     
@@ -130,9 +131,13 @@ public class SASkinNcstox extends AlertBlockFromSMARTS implements iAlertBlock {
         
         for (int i=0; i<SMARTS.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("Skin sensitizer alert no. " + (i+1));
+            curSA.setName(String.format(StringSelector.getString("sa_skin_ncstox_name"), i+1));
             curSA.setDescription("Structural alert for Skin sensitization related to " + 
                     (SMARTS[i][1].equalsIgnoreCase(KEY_ALERT_SKIN_SENS)?"active":"inactive") + " compounds defined by the SMARTS: " + SMARTS[i][0]);
+            curSA.setDescription(String.format(StringSelector.getString("sa_skin_ncstox_description"),
+                    SMARTS[i][1].equalsIgnoreCase(KEY_ALERT_SKIN_SENS)? StringSelector.getString("sa_skin_ncstox_active"):StringSelector.getString("sa_skin_ncstox_nonactive"),
+                    SMARTS[i][0]));
+
             curSA.setImageURL("/insilico/core/alerts/png/skinvermeer/SKIN_VER_" + (idx+1) + ".png");
             curSA.setBoolProperty(SMARTS[i][1], true);
             Alerts.add(curSA);
@@ -157,13 +162,13 @@ public class SASkinNcstox extends AlertBlockFromSMARTS implements iAlertBlock {
             }
             
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
         }    
     }
 
     
     @Override
-    protected AlertList CalculateSAMatches() throws GenericFailureException {
+    protected AlertList CalculateSAMatches() {
         AlertList Res = new AlertList();
         
         try {
@@ -187,12 +192,12 @@ public class SASkinNcstox extends AlertBlockFromSMARTS implements iAlertBlock {
         int idx = 1;
 
         for (int i=0; i<SMARTS.length; i++) {
-            String s = (String)SMARTS[i][0];
+            String s = SMARTS[i][0];
             try {
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "SKIN_NCSTOX_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

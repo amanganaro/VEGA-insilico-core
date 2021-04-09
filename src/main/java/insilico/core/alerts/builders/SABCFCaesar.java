@@ -5,6 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
@@ -31,7 +32,7 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
     
     
     public SABCFCaesar() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_BCF_CAESAR, "Rules for outliers and moieties for Caesar BCF model");
+        super(InsilicoConstants.SA_BLOCK_BCF_CAESAR, StringSelector.getString("sa_bcf_caesar_rules"));
     }
     
     
@@ -47,161 +48,161 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
 
         //// Fragments for outlier
 
-        FragNames[0] = "6 Cl atoms in the molecule (SO 01)";
-        FragDescription[0] = "Compounds with six or more Cl atoms fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[0] = StringSelector.getString("sa_bcf_caesar_frag_name_0");
+        FragDescription[0] = StringSelector.getString("sa_bcf_caesar_frag_description_0");
         FragPNGNames[0] = "sa1.png";
         FragSMARTS[0] = "[Cl]";   
 
-        FragNames[1] = "2 t-butyl linked to aromatic (SO 02)";
-        FragDescription[1] = "Compounds with two or more t-butyl linked to aromatic ring fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[1] = StringSelector.getString("sa_bcf_caesar_frag_name_1");
+        FragDescription[1] = StringSelector.getString("sa_bcf_caesar_frag_description_1");
         FragPNGNames[1] = "sa2.png";
         FragSMARTS[1] = "aC([CH3])([CH3])[CH3]";   
 
-        FragNames[2] = "Si atom in the molecule (SO 03)";
-        FragDescription[2] = "Compounds with Si atoms fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[2] = StringSelector.getString("sa_bcf_caesar_frag_name_2");
+        FragDescription[2] = StringSelector.getString("sa_bcf_caesar_frag_description_2");
         FragPNGNames[2] = "sa3.png";
         FragSMARTS[2] = "[Si]";   
 
-        FragNames[3] = "Sn atom in the molecule  (SO 04)";
-        FragDescription[3] = "Compounds with Sn atoms fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[3] = StringSelector.getString("sa_bcf_caesar_frag_name_3");
+        FragDescription[3] = StringSelector.getString("sa_bcf_caesar_frag_description_3");
         FragPNGNames[3] = "sa4.png";
         FragSMARTS[3] = "[Sn]";   
 
-        FragNames[4] = "O linked to aromatic and 3 Br/Cl linked to aromatic  (SO 05)";
-        FragDescription[4] = "Compounds with one or more O atoms linked to aromatic ring and three or more Br or Cl atoms linked to aromatic ring fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[4] = StringSelector.getString("sa_bcf_caesar_frag_name_4");
+        FragDescription[4] = StringSelector.getString("sa_bcf_caesar_frag_description_4");
         FragPNGNames[4] = "sa5.png";
         FragSMARTS[4] = "[O,o][a]";
         FragSMARTS_5_add = "[Cl,Br]a";
 
-        FragNames[5] = "Azo group liked to aromatic (SO 06)";
-        FragDescription[5] = "Compounds with one or more azo groups liked to aromatic rings fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[5] = StringSelector.getString("sa_bcf_caesar_frag_name_5");
+        FragDescription[5] = StringSelector.getString("sa_bcf_caesar_frag_description_5");
         FragPNGNames[5] = "sa6.png";
-        FragSMARTS[5] = "[a]N=N[a]";   
+        FragSMARTS[5] = "[a]N=N[a]";
 
-        FragNames[6] = "3 Nitro-groups linked to aromatic (SO 07)";
-        FragDescription[6] = "Compounds with three or more nitro-groups linked to Ar fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[6] = StringSelector.getString("sa_bcf_caesar_frag_name_6");
+        FragDescription[6] = StringSelector.getString("sa_bcf_caesar_frag_description_6");
         FragPNGNames[6] = "sa7.png";
-        FragSMARTS[6] = "[N+](=O)([O-])a";   
+        FragSMARTS[6] = "[N+](=O)([O-])a";
 
-        FragNames[7] = "Peroxide (SO 08)";
-        FragDescription[7] = "Compounds with one or more peroxide fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[7] = StringSelector.getString("sa_bcf_caesar_frag_name_7");
+        FragDescription[7] = StringSelector.getString("sa_bcf_caesar_frag_description_7");
         FragPNGNames[7] = "sa8.png";
-        FragSMARTS[7] = "*O-O*";   
+        FragSMARTS[7] = "*O-O*";
 
-        FragNames[8] = "Phosphinothioyl-oxy-imino (SO 09)";
-        FragDescription[8] = "Compounds with one or more phosphinothioyl-oxy-imino fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[8] = StringSelector.getString("sa_bcf_caesar_frag_name_8");
+        FragDescription[8] = StringSelector.getString("sa_bcf_caesar_frag_description_8");
         FragPNGNames[8] = "sa9.png";
-        FragSMARTS[8] = "*OP(=S)(O*)O[C,c][N,n]*";   
+        FragSMARTS[8] = "*OP(=S)(O*)O[C,c][N,n]*";
 
-        FragNames[9] = "10 F atoms in the molecule (SO 10)";
-        FragDescription[9] = "Compounds with ten or more F atoms fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[9] = StringSelector.getString("sa_bcf_caesar_frag_name_9");
+        FragDescription[9] = StringSelector.getString("sa_bcf_caesar_frag_description_9");
         FragPNGNames[9] = "sa10.png";
-        FragSMARTS[9] = "[F]";   
+        FragSMARTS[9] = "[F]";
 
-        FragNames[10] = "Phosphorodithioate (SO 11)";
-        FragDescription[10] = "Compounds with one or more phosphorodithioate fall into a chemical category that results out of the applicability domain of the model.";
+        FragNames[10] = StringSelector.getString("sa_bcf_caesar_frag_name_10");
+        FragDescription[10] = StringSelector.getString("sa_bcf_caesar_frag_description_10");
         FragPNGNames[10] = "sa11.png";
         FragSMARTS[10] = "*OP(=S)(O*)S";   
 
         //// Fragments only for reasoning
 
-        FragNames[11] = "Moiety (SMILES: O=Cc1ccccc1) (SR 01)";
-        FragDescription[11] = "This chemical contains a moiety defined by SMILES O=Cc1ccccc1, which has been found only in non-bioaccumulative compounds (24 chemicals), even when the logP value was higher than 3.";
+        FragNames[11] = StringSelector.getString("sa_bcf_caesar_frag_name_11");
+        FragDescription[11] = StringSelector.getString("sa_bcf_caesar_frag_description_11");
         FragPNGNames[11] = "o12.png";
-        FragSMARTS[11] = "O=Cc1ccccc1";   
+        FragSMARTS[11] = "O=Cc1ccccc1";
 
-        FragNames[12] = "Carbonyl residue (SR 02)";
-        FragDescription[12] = "This chemical contains a carbonyl residue. This residue has been found to be present in a very large (112) number of non-bioaccumulative compounds, even when the logP value was higher than 3.";
+        FragNames[12] = StringSelector.getString("sa_bcf_caesar_frag_name_12");
+        FragDescription[12] = StringSelector.getString("sa_bcf_caesar_frag_description_12");
         FragPNGNames[12] = "o13.png";
-        FragSMARTS[12] = "C=O";   
+        FragSMARTS[12] = "C=O";
 
-        FragNames[13] = "PO2 residue (SR 03)";
-        FragDescription[13] = "This chemical contains the O-P=O residue, which has been found only in non-bioaccumulative compounds (45 chemicals), even when the logP value was higher than 3.";
+        FragNames[13] = StringSelector.getString("sa_bcf_caesar_frag_name_13");
+        FragDescription[13] = StringSelector.getString("sa_bcf_caesar_frag_description_13");
         FragPNGNames[13] = "o14.png";
-        FragSMARTS[13] = "OP(O)";   
+        FragSMARTS[13] = "OP(O)";
 
-        FragNames[14] = "Thiobenzene residue (SR 04)";
-        FragDescription[14] = "This chemical contains the thiobenzene residue, which has been found only in non-bioaccumulative compounds (39 chemicals), even when the logP value was higher than 3.";
+        FragNames[14] = StringSelector.getString("sa_bcf_caesar_frag_name_14");
+        FragDescription[14] = StringSelector.getString("sa_bcf_caesar_frag_description_14");
         FragPNGNames[14] = "o15.png";
-        FragSMARTS[14] = "[S]c1ccccc1";   
+        FragSMARTS[14] = "[S]c1ccccc1";
 
-        FragNames[15] = "Tertiary amine (SR 05)";
-        FragDescription[15] = "This chemical contains a tertiary amine. This residue has been found to be present in a large numberof non-bioaccumulative compounds (28), even when the logP value was higher than 3.";
+        FragNames[15] = StringSelector.getString("sa_bcf_caesar_frag_name_15");
+        FragDescription[15] = StringSelector.getString("sa_bcf_caesar_frag_description_15");
         FragPNGNames[15] = "o16.png";
-        FragSMARTS[15] = "CN(C)C";   
+        FragSMARTS[15] = "CN(C)C";
 
-        FragNames[16] = "Triazole ring (SR 06)";
-        FragDescription[16] = "This chemical contains a triazole ring. This residue has been found to be present in a number of non- bioaccumulative compounds (16), even when the logP value was higher than 3.";
+        FragNames[16] = StringSelector.getString("sa_bcf_caesar_frag_name_16");
+        FragDescription[16] = StringSelector.getString("sa_bcf_caesar_frag_description_16");
         FragPNGNames[16] = "o17.png";
-        FragSMARTS[16] = "c1ncncn1";   
+        FragSMARTS[16] = "c1ncncn1";
 
-        FragNames[17] = "Moiety (SMILES: Clc1ccccc1c1ccc(Cl)cc1) (SR 07)";
-        FragDescription[17] = "This chemical contains a moiety defined by SMILES Clc1ccccc1c1ccc(Cl)cc1), which has been found only in bioaccumulative compounds (15 chemicals). The high lipophylicity of this moiety increases the bioaccumulative behavior.";
+        FragNames[17] = StringSelector.getString("sa_bcf_caesar_frag_name_17");
+        FragDescription[17] = StringSelector.getString("sa_bcf_caesar_frag_description_17");
         FragPNGNames[17] = "o18.png";
-        FragSMARTS[17] = "Clc1ccccc1c1ccc(Cl)cc1";   
+        FragSMARTS[17] = "Clc1ccccc1c1ccc(Cl)cc1";
 
-        FragNames[18] = "Moiert (SMILES: C1cc(Oc2ccccc2)ccc1Cl) (SR 08)";
-        FragDescription[18] = "This chemical contains a moiety defined by SMILES C1cc(Oc2ccccc2)ccc1Cl, which has been found only in bioaccumulative compounds (9 chemicals). The high lipophylicity of this moiety increases the bioaccumulative behavior.";
+        FragNames[18] = StringSelector.getString("sa_bcf_caesar_frag_name_18");
+        FragDescription[18] = StringSelector.getString("sa_bcf_caesar_frag_description_18");
         FragPNGNames[18] = "o19.png";
-        FragSMARTS[18] = "C1cc(Oc2ccccc2)ccc1Cl";   
+        FragSMARTS[18] = "C1cc(Oc2ccccc2)ccc1Cl";
 
-        FragNames[19] = "Moiety (SMILES: Clc1cc(c2ccccc2)c(Cl)cc1) (SR 09)";
-        FragDescription[19] = "This chemical contains a moiety defined by SMILES Clc1cc(c2ccccc2)c(Cl)cc1, which has been found only in bioaccumulative compounds (15 chemicals). The high lipophylicity of this moiety increases the bioaccumulative behavior.";
+        FragNames[19] = StringSelector.getString("sa_bcf_caesar_frag_name_19");
+        FragDescription[19] = StringSelector.getString("sa_bcf_caesar_frag_description_19");
         FragPNGNames[19] = "o20.png";
         FragSMARTS[19] = "Clc1cc(c2ccccc2)c(Cl)cc1";  
 
         //// Only for reasoning: polar fragments
 
-        String PolarGroupExpl = "The presence of polar groups increases hydrophilicity, related to lower values of BCF.";
+        String PolarGroupExpl = StringSelector.getString("sa_bcf_caesar_polar_group");
 
         // First group (20-24)
 
-        FragNames[20] = "COOH group (PG 01)";
-        FragDescription[20] = "This chemical contains a COOH polar group. " + PolarGroupExpl;
+        FragNames[20] = StringSelector.getString("sa_bcf_caesar_frag_name_20");
+        FragDescription[20] = StringSelector.getString("sa_bcf_caesar_frag_description_20") + PolarGroupExpl;
         FragPNGNames[20] = "g21.png";
-        FragSMARTS[20] = "*-C(=O)[OH]";  
+        FragSMARTS[20] = "*-C(=O)[OH]";
 
-        FragNames[21] = "SO3H group (PG 02)";
-        FragDescription[21] = "This chemical contains a SO3H polar group. " + PolarGroupExpl;
+        FragNames[21] = StringSelector.getString("sa_bcf_caesar_frag_name_21");
+        FragDescription[21] = StringSelector.getString("sa_bcf_caesar_frag_description_21") + PolarGroupExpl;
         FragPNGNames[21] = "g22.png";
-        FragSMARTS[21] = "*-S(=O)(=O)[OH]";  
+        FragSMARTS[21] = "*-S(=O)(=O)[OH]";
 
-        FragNames[22] = "PO3 group (PG 03)";
-        FragDescription[22] = "This chemical contains a PO3 polar group. " + PolarGroupExpl;
+        FragNames[22] = StringSelector.getString("sa_bcf_caesar_frag_name_22");
+        FragDescription[22] = StringSelector.getString("sa_bcf_caesar_frag_description_22") + PolarGroupExpl;
         FragPNGNames[22] = "g23.png";
-        FragSMARTS[22] = "*-P(=O)([OH])[OH]";  
+        FragSMARTS[22] = "*-P(=O)([OH])[OH]";
 
-        FragNames[23] = "PO2S group (PG 04)";
-        FragDescription[23] = "This chemical contains a PO2S polar group. " + PolarGroupExpl;
+        FragNames[23] = StringSelector.getString("sa_bcf_caesar_frag_name_23");
+        FragDescription[23] = StringSelector.getString("sa_bcf_caesar_frag_description_23") + PolarGroupExpl;
         FragPNGNames[23] = "g24.png";
-        FragSMARTS[23] = "*-P(=S)([OH])[OH]";  
+        FragSMARTS[23] = "*-P(=S)([OH])[OH]";
 
-        FragNames[24] = "POS2 group (PG 05)";
-        FragDescription[24] = "This chemical contains a POS2 polar group. " + PolarGroupExpl;
+        FragNames[24] = StringSelector.getString("sa_bcf_caesar_frag_name_24");
+        FragDescription[24] = StringSelector.getString("sa_bcf_caesar_frag_description_24") + PolarGroupExpl;
         FragPNGNames[24] = "g25.png";
         FragSMARTS[24] = "*-P(=S)(-S)[OH]";  
 
         // Second group (25-27)
 
-        FragNames[25] = "OH group (PG 06)";
-        FragDescription[25] = "This chemical contains a OH polar group. " + PolarGroupExpl;
+        FragNames[25] = StringSelector.getString("sa_bcf_caesar_frag_name_25");
+        FragDescription[25] = StringSelector.getString("sa_bcf_caesar_frag_description_25") + PolarGroupExpl;
         FragPNGNames[25] = "g26.png";
-        FragSMARTS[25] = "*-[OH]";  
+        FragSMARTS[25] = "*-[OH]";
 
-        FragNames[26] = "NH2 group (PG 07)";
-        FragDescription[26] = "This chemical contains a NH2 polar group. " + PolarGroupExpl;
+        FragNames[26] = StringSelector.getString("sa_bcf_caesar_frag_name_26");
+        FragDescription[26] = StringSelector.getString("sa_bcf_caesar_frag_description_26") + PolarGroupExpl;
         FragPNGNames[26] = "g27.png";
-        FragSMARTS[26] = "*-[N;D1]";  
+        FragSMARTS[26] = "*-[N;D1]";
 
-        FragNames[27] = "CS2 group (PG 08)";
-        FragDescription[27] = "This chemical contains a CS2 polar group. " + PolarGroupExpl;
+        FragNames[27] = StringSelector.getString("sa_bcf_caesar_frag_name_27");
+        FragDescription[27] = StringSelector.getString("sa_bcf_caesar_frag_description_27") + PolarGroupExpl;
         FragPNGNames[27] = "g28.png";
         FragSMARTS[27] = "*-C(=S)[S;D1]";  
 
         // Third group (28)
 
-        FragNames[28] = ">C=O group (PG 09)";
-        FragDescription[28] = "This chemical contains a >C=O polar group. " + PolarGroupExpl;
+        FragNames[28] = StringSelector.getString("sa_bcf_caesar_frag_name_28");
+        FragDescription[28] = StringSelector.getString("sa_bcf_caesar_frag_description_28") + PolarGroupExpl;
         FragPNGNames[28] = "g29.png";
         FragSMARTS[28] = "[C;D3](=O)";     
         
@@ -237,7 +238,7 @@ public class SABCFCaesar extends AlertBlockFromSMARTS implements iAlertBlock {
             SA_5_add = SmartsPattern.create(FragSMARTS_5_add, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
             
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
         }    
     }
 

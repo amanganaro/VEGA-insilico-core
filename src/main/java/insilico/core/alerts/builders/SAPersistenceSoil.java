@@ -5,15 +5,13 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
  *
@@ -66,7 +64,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
     
     
     public SAPersistenceSoil() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_PERSISTENCE_SOIL_IRFMN, "Rules for persistence in soil (IRFMN)");
+        super(InsilicoConstants.SA_BLOCK_PERSISTENCE_SOIL_IRFMN, StringSelector.getString("sa_persistence_soil_irfmn_initialization"));
     }
     
     
@@ -85,8 +83,8 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
 
         for (int i=0; i<SMARTSFragsNP.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("nP (soil) alert no. " + (idx+1));
-            curSA.setDescription("Fragment related to nP compounds (soil), defined by the SMARTS: " + SMARTSFragsNP[i]);
+            curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+            curSA.setDescription(String.format(StringSelector.getString("sa_persistence_soil_irfmn_description_np"), SMARTSFragsNP[i]));
             curSA.setImageURL("/insilico/core/alerts/png/perssoil/PER_SOIL_" + (pngidx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
             Alerts.add(curSA);
@@ -94,71 +92,71 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
         }
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName("nP (soil) alert no. " + (idx+1));
-        curSA.setDescription("Chemical class related to nP compounds (soil), defined by the presence of multiple primary alcohols");
+        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_alcohols"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Multiple[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName("nP (soil) alert no. " + (idx+1));
-        curSA.setDescription("Chemical class related to nP compounds (soil), defined by the presence of multiple esters (aromatic)");
+        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_esters_aromatic"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Multiple[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName("nP (soil) alert no. " + (idx+1));
-        curSA.setDescription("Chemical class related to nP compounds (soil), defined by the presence of a single oxime (aliphatic)");
+        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_oxime"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName("nP (soil) alert no. " + (idx+1));
-        curSA.setDescription("Chemical class related to nP compounds (soil), defined by the presence of esters (aliphatic)");
+        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_esters_aliphatic"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName("nP (soil) alert no. " + (idx+1));
-        curSA.setDescription("Chemical class related to nP compounds (soil), defined by the presence of a single aldehyde (aliphatic)");
-        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
-        Alerts.add(curSA);
-        Single[idx] = true;
-        idx++;
-        
-        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName("nP (soil) alert no. " + (idx+1));
-        curSA.setDescription("Chemical class related to nP compounds (soil), defined by the presence of a single carboxylic acid (aliphatic)");
+        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_aldehyde"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName("nP (soil) alert no. " + (idx+1));
-        curSA.setDescription("Chemical class related to nP compounds (soil), defined by the presence of a single (thio-) carbamate (aliphatic)");
+        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_carboxylic"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName("nP (soil) alert no. " + (idx+1));
-        curSA.setDescription("Chemical class related to nP compounds (soil), defined by the presence of a single ketone (aromatic)");
+        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_carbamate"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName("nP (soil) alert no. " + (idx+1));
-        curSA.setDescription("Chemical class related to nP compounds (soil), defined by the presence of a single phosphate/thiophosphate");
+        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_ketone"));
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+        
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_phosph"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
@@ -169,8 +167,8 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
         
         for (int i=0; i<SMARTSFragsVP.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName("vP (soil) alert no. " + (vPidx+1));
-            curSA.setDescription("Fragment related to vP compounds (soil), defined by the SMARTS: " + SMARTSFragsVP[i]);
+            curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name_vp"),idx+1));
+            curSA.setDescription(String.format(StringSelector.getString("sa_persistence_soil_irfmn_description_vp"), SMARTSFragsVP[i]));
             curSA.setImageURL("/insilico/core/alerts/png/perssoil/PER_SOIL_" + (pngidx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_VP, true);
             Alerts.add(curSA);
@@ -203,7 +201,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
             }
             
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -243,7 +241,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_SOIL_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -254,7 +252,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_SOIL_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

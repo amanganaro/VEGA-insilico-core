@@ -2,6 +2,7 @@ package insilico.core.descriptor.blocks.weights.basic;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.blocks.weights.iBasicWeight;
+import insilico.core.localization.StringSelector;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -16,7 +17,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class WeightsPolarizability implements iBasicWeight {
 
     private static final String SYMBOL = "p";
-    private static final String NAME = "polarizability";
+    private static final String NAME = StringSelector.getString("descriptors_polarizability_name");
 
     private final static Object[][] mass = {
         {"H", 0.67},

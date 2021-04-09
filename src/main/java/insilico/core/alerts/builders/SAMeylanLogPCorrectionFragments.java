@@ -5,6 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
@@ -241,7 +242,7 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
 
 
     public SAMeylanLogPCorrectionFragments() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_CORRECTION, "Meylan correction fragments for LoP calculation (Kowwin)");
+        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_CORRECTION, StringSelector.getString("sa_meylan_logp_correction_initialization"));
     }
 
 
@@ -251,7 +252,7 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
         for (int i=0; i<SMARTSFragments.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (i+1)));
             curSA.setName("MEYC" + (i+1));
-            curSA.setDescription("Meylan correction fragment for LogP calculation no. " + (i+1) + " defined by SMARTS: " +  SMARTSFragments[i]);
+            curSA.setDescription(String.format(StringSelector.getString("sa_meylan_logp_correction_description"), i+1, SMARTSFragments[i]));
             Alerts.add(curSA);
         }
 
@@ -274,7 +275,7 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
                 SA[i] = SmartsPattern.create(SMARTSFragments[i]).setPrepare(false);
 
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
         }
     }
 
@@ -380,7 +381,7 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             }
 
         } catch (CloneNotSupportedException | InvalidMoleculeException e) {
-            throw new GenericFailureException("Error while calculating SMARTS matching");
+            throw new GenericFailureException(StringSelector.getString("sa_exception_smarts_matching_ge"));
         }
 
         return Res;

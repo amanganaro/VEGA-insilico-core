@@ -2,6 +2,7 @@ package insilico.core.descriptor.blocks.weights.other;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.blocks.weights.iWeight;
+import insilico.core.localization.StringSelector;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -13,7 +14,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class WeightsAtomicNumber implements iWeight {
 
     private static final String SYMBOL = "Z";
-    private static final String NAME = "atomic number";
+    private static final String NAME = StringSelector.getString("descriptors_atomicnumber_name");
 
     @Override
     public String getName() {

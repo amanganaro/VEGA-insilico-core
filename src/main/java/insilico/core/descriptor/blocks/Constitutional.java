@@ -5,6 +5,7 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.blocks.weights.basic.WeightsMass;
 import insilico.core.descriptor.blocks.weights.iBasicWeight;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
 import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
@@ -21,7 +22,7 @@ import org.openscience.cdk.interfaces.IBond;
 public class Constitutional extends DescriptorBlock {
 
     private static final long serialVersionUID = 1L;
-    private static final String BlockName = "Constitutional Descriptors";
+    private static final String BlockName = StringSelector.getString("descriptors_constitutional_name");
 
 
     /**
@@ -35,48 +36,48 @@ public class Constitutional extends DescriptorBlock {
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
-        this.Add("MW", "molecular weight (scaled on Carbon atom)");
-        this.Add("AMW", "average molecular weight (scaled on Carbon atom)");
-        this.Add("Sv", "sum of atomic van der Waals volumes (scaled on Carbon atom)");
-        this.Add("Mv", "mean atomic van der Waals volume (scaled on Carbon atom)");
-        this.Add("Sp", "sum of atomic polarizabilities (scaled on Carbon atom)");
-        this.Add("Mp", "mean atomic polarizability (scaled on Carbon atom)");
-        this.Add("Se", "sum of atomic Sanderson electronegativities (scaled on Carbon atom)");
-        this.Add("Me", "mean atomic Sanderson electronegativity (scaled on Carbon atom)");
-        this.Add("Si", "sum of atomic ionic potential (scaled on Carbon atom)");
-        this.Add("Mi", "mean atomic ionic potential (scaled on Carbon atom)");
+        this.Add("MW", StringSelector.getString("descriptors_constitutional_mw"));
+        this.Add("AMW", StringSelector.getString("descriptors_constitutional_amw"));
+        this.Add("Sv", StringSelector.getString("descriptors_constitutional_sv"));
+        this.Add("Mv", StringSelector.getString("descriptors_constitutional_mv"));
+        this.Add("Sp", StringSelector.getString("descriptors_constitutional_sp"));
+        this.Add("Mp", StringSelector.getString("descriptors_constitutional_mp"));
+        this.Add("Se", StringSelector.getString("descriptors_constitutional_se"));
+        this.Add("Me", StringSelector.getString("descriptors_constitutional_me"));
+        this.Add("Si", StringSelector.getString("descriptors_constitutional_si"));
+        this.Add("Mi", StringSelector.getString("descriptors_constitutional_mi"));
 
-        this.Add("nAt", "number of atoms");
-        this.Add("nSk", "number of non-H atoms");
+        this.Add("nAt", StringSelector.getString("descriptors_constitutional_nAt"));
+        this.Add("nSk", StringSelector.getString("descriptors_constitutional_nSk"));
 
-        this.Add("nBt", "number of bonds (total)");
-        this.Add("nBo", "number of non-H bonds");
-        this.Add("nBm", "number of multiple bonds");
-        this.Add("nDB", "number of double bonds");
-        this.Add("nTB", "number of triple bonds");
-        this.Add("nAB", "number of aromatic bonds");
-        this.Add("SCBO", "sum of conventional bond orders (H-depleted)");
+        this.Add("nBt", StringSelector.getString("descriptors_constitutional_nBt"));
+        this.Add("nBo", StringSelector.getString("descriptors_constitutional_nBo"));
+        this.Add("nBm", StringSelector.getString("descriptors_constitutional_nBm"));
+        this.Add("nDB", StringSelector.getString("descriptors_constitutional_nDB"));
+        this.Add("nTB", StringSelector.getString("descriptors_constitutional_nTB"));
+        this.Add("nAB", StringSelector.getString("descriptors_constitutional_nAB"));
+        this.Add("SCBO", StringSelector.getString("descriptors_constitutional_SCBO"));
 
-        this.Add("nH", "number of Hydrogen atoms");
-        this.Add("nC", "number of Carbon atoms");
-        this.Add("nN", "number of Nitrogen atoms");
-        this.Add("nO", "number of Oxygen atoms");
-        this.Add("nP", "number of Phosphorous atoms");
-        this.Add("nS", "number of Sulfur atoms");
-        this.Add("nF", "number of Fluorine atoms");
-        this.Add("nCl", "number of Chlorine atoms");
-        this.Add("nBr", "number of Bromine atoms");
-        this.Add("nI", "number of Iodine atoms");
-        this.Add("nB", "number of Boron atoms");
+        this.Add("nH", StringSelector.getString("descriptors_constitutional_nH"));
+        this.Add("nC", StringSelector.getString("descriptors_constitutional_nC"));
+        this.Add("nN", StringSelector.getString("descriptors_constitutional_nN"));
+        this.Add("nO", StringSelector.getString("descriptors_constitutional_nO"));
+        this.Add("nP", StringSelector.getString("descriptors_constitutional_nP"));
+        this.Add("nS", StringSelector.getString("descriptors_constitutional_nS"));
+        this.Add("nF", StringSelector.getString("descriptors_constitutional_nF"));
+        this.Add("nCl", StringSelector.getString("descriptors_constitutional_nCl"));
+        this.Add("nBr", StringSelector.getString("descriptors_constitutional_nBr"));
+        this.Add("nI", StringSelector.getString("descriptors_constitutional_nI"));
+        this.Add("nB", StringSelector.getString("descriptors_constitutional_nB"));
 
-        this.Add("HPerc", "percentage of H atoms");
-        this.Add("CPerc", "percentage of C atoms");
-        this.Add("NPerc", "percentage of N atoms");
-        this.Add("OPerc", "percentage of O atoms");
-        this.Add("XPerc", "percentage of halogen atoms");
+        this.Add("HPerc", StringSelector.getString("descriptors_constitutional_Hperc"));
+        this.Add("CPerc", StringSelector.getString("descriptors_constitutional_CPerc"));
+        this.Add("NPerc", StringSelector.getString("descriptors_constitutional_NPerc"));
+        this.Add("OPerc", StringSelector.getString("descriptors_constitutional_OPerc"));
+        this.Add("XPerc", StringSelector.getString("descriptors_constitutional_XPerc"));
 
-        this.Add("nHet", "number of heteroatoms");
-        this.Add("nX", "number of halogen atoms");
+        this.Add("nHet", StringSelector.getString("descriptors_constitutional_NHet"));
+        this.Add("nX", StringSelector.getString("descriptors_constitutional_nX"));
 
         SetAllValues(Descriptor.MISSING_VALUE);
     }
@@ -97,7 +98,7 @@ public class Constitutional extends DescriptorBlock {
         try {
             curMol = mol.GetStructure();
         } catch (InvalidMoleculeException e) {
-            log.warn("Invalid structure, unable to calculate: " + this.Name);
+            log.warn(String.format(StringSelector.getString("descriptors_invalid_structure"), this.Name));
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
@@ -239,7 +240,7 @@ public class Constitutional extends DescriptorBlock {
                         ws = new insilico.core.descriptor.blocks.weights.basic.WeightsIonizationPotential();
                         break;
                     default:
-                        throw new Exception("Weight not found");
+                        throw new Exception(StringSelector.getString("descriptors_weight_not_found"));
                 }
 
                 double[] weights = ws.getScaledWeights(curMol);
@@ -284,12 +285,12 @@ public class Constitutional extends DescriptorBlock {
                         this.SetByName("Mi", ave);
                         break;
                     default:
-                        throw new Exception("Weight not found");
+                        throw new Exception(StringSelector.getString("descriptors_weight_not_found"));
                 }
             }
 
         } catch (Throwable e) {
-            log.warn("Unable to calculate: " + this.Name + " - " + e.getMessage());
+            log.warn(String.format(StringSelector.getString("descriptors_unable_calculate"), this.Name, e.getMessage()));
             this.SetAllValues(Descriptor.MISSING_VALUE);
         }
 

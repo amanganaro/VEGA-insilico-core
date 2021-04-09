@@ -1,6 +1,7 @@
 package insilico.core.descriptor.blocks.weights.other;
 
 import insilico.core.descriptor.blocks.weights.iWeight;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.tools.Manipulator;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -13,7 +14,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class WeightsVertexDegree implements iWeight {
 
     private static final String SYMBOL = "VD";
-    private static final String NAME = "vertex degree";
+    private static final String NAME = StringSelector.getString("descriptors_vertexdegree_name");
 
     @Override
     public String getName() {

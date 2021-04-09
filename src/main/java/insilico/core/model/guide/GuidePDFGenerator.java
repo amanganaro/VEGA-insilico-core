@@ -9,6 +9,7 @@ import com.lowagie.text.pdf.PdfWriter;
 import insilico.core.alerts.AlertsEngine;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelector;
 import insilico.core.model.InsilicoModel;
 import insilico.core.model.InsilicoModelInfoUpdated;
 import insilico.core.model.runner.InsilicoModelConsensusWrapper;
@@ -233,7 +234,7 @@ public class GuidePDFGenerator {
             document.open();
             GenerateReport();
         } catch (Exception e) {
-            throw new InitFailureException("Unable to create PDF document (" + e.getMessage() + ")");
+            throw new InitFailureException(String.format(StringSelector.getString("guide_generator_unable_create_pdf"), e.getMessage()));
         }
 
     }
@@ -310,7 +311,7 @@ public class GuidePDFGenerator {
 
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report (" + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelector.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
     }
 
@@ -386,7 +387,7 @@ public class GuidePDFGenerator {
             table.writeSelectedRows(0, -1, MidTable_Left, Math.round(y_pos) - 5 , writer.getDirectContent());
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report (" + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelector.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
         CurPage = 0;
@@ -399,13 +400,14 @@ public class GuidePDFGenerator {
             document.newPage();
             CurPage++;
             int index = 1;
-            WritePageHeader("1. MODEL EXPLANATION");
+            WritePageHeader(StringSelector.getString("guide_generator_model_explanation_title"));
 
 
             // 1.1 Introduction
             PdfPCell cell = new PdfPCell();
             cell.setHorizontalAlignment(ALIGN_LEFT);
-            Paragraph sectionTitle = new Paragraph("1." + index + "\t INTRODUCTION", fontBigUnderline);
+//            Paragraph sectionTitle = new Paragraph("1." + index + "\t INTRODUCTION", fontBigUnderline);
+            Paragraph sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_introduction"), index), fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph("\n", font));
@@ -416,7 +418,7 @@ public class GuidePDFGenerator {
             index++;
 
             // 1.2 Details
-            sectionTitle = new Paragraph("1." + index + " \t MODEL DETAILS", fontBigUnderline);
+            sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_details"), index), fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph("\n", font));
@@ -430,7 +432,7 @@ public class GuidePDFGenerator {
             index++;
 
             // 1.3 Applicability Domain
-            sectionTitle = new Paragraph("1." + index + " \t APPLICABILITY DOMAIN", fontBigUnderline);
+            sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_ad"), index), fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
 
@@ -543,7 +545,7 @@ public class GuidePDFGenerator {
 
             // 1.4 Coral Correlation weights
             if(modelInfo.Guide.get(InsilicoModelInfoUpdated.Guide_Coral_Weights) != null){
-                sectionTitle = new Paragraph("1." + index + "\t CORAL Correlation Weights", fontBigUnderline);
+                sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_coral_corrweights"), index), fontBigUnderline);
                 sectionTitle.setIndentationLeft(1);
                 document.add(sectionTitle);
                 document.add(new Paragraph("\n", font));
@@ -583,7 +585,7 @@ public class GuidePDFGenerator {
 
             // 1.4 Structural Alerts
             if(modelInfo.hasAlerts()){
-                sectionTitle = new Paragraph("1." + index + "\t STRUCTURAL ALERTS", fontBigUnderline);
+                sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_structural_alerts"), index), fontBigUnderline);
                 sectionTitle.setIndentationLeft(1);
                 document.add(sectionTitle);
                 document.add(new Paragraph("\n", font));
@@ -597,12 +599,12 @@ public class GuidePDFGenerator {
 
 
             // 1.4 References
-            sectionTitle = new Paragraph("1." + index + "\t REFERENCES", fontBigUnderline);
+            sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_structural_references"), index), fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph("\n"));
 
-            sectionBody = new Paragraph("QMRF Link: ", fontBold);
+            sectionBody = new Paragraph(StringSelector.getString("guide_generator_qmrf_link"), fontBold);
             sectionBody.add(new Paragraph(modelInfo.Reference.getQMRFLink(), fontLink));
             document.add(sectionBody);
             document.add(new Paragraph("\n"));
@@ -622,14 +624,14 @@ public class GuidePDFGenerator {
             if(modelInfo.hasAlerts()){
             }
 
-            sectionTitle = new Paragraph("1." + index + "\t MODEL STATISTICS", fontBigUnderline);
+            sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_structural_model_stats"), index), fontBigUnderline);
             sectionTitle.add("\n");
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph(TextConstants.STATS_INTRO, font));
 
             // Training Set stats
-            sectionBody = new Paragraph("- Training Set: " + "\n", fontBold);
+            sectionBody = new Paragraph(StringSelector.getString("guide_generator_training_set") + "\n", fontBold);
             document.add(sectionBody);
 
             sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_n_Train) + "        ", font);
@@ -639,7 +641,7 @@ public class GuidePDFGenerator {
             document.add(sectionBody);
 
             // Test Set stats
-            sectionBody = new Paragraph("- Test Set: " + "\n", fontBold);
+            sectionBody = new Paragraph(StringSelector.getString("guide_generator_test_set") + "\n", fontBold);
             document.add(sectionBody);
 
             sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_n_Test) + "        ", font);
@@ -654,7 +656,7 @@ public class GuidePDFGenerator {
             document.add(sectionBody);
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report (" + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelector.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
     }
 

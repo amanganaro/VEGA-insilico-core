@@ -2,6 +2,7 @@ package insilico.core.descriptor.blocks.weights.other;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.blocks.weights.iWeight;
+import insilico.core.localization.StringSelector;
 import insilico.core.tools.utils.MoleculeUtilities;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -19,7 +20,7 @@ import org.openscience.cdk.interfaces.IBond;
 public class WeightsIState implements iWeight {
 
     private static final String SYMBOL = "s";
-    private static final String NAME = "I-state";
+    private static final String NAME = StringSelector.getString("descriptors_istate_name");
 
     @Override
     public String getName() {

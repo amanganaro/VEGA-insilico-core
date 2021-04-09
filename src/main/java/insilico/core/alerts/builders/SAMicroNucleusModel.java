@@ -5,6 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
@@ -170,7 +171,7 @@ public class SAMicroNucleusModel extends AlertBlockFromSMARTS implements iAlertB
  
     
     public SAMicroNucleusModel() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_MICRONUCLEUS_INVITRO_MODEL, "Rules for in vitro micronucleus assay (IRFMN)");
+        super(InsilicoConstants.SA_BLOCK_MICRONUCLEUS_INVITRO_MODEL, StringSelector.getString("sa_micronucleus_model_initialization"));
     }
     
     
@@ -188,12 +189,12 @@ public class SAMicroNucleusModel extends AlertBlockFromSMARTS implements iAlertB
             
             curSA.setImageURL("/insilico/core/alerts/png/mnmodel/MN_MOD_" + (idx+1) + ".png");
             if (Activity == 1) {
-                curSA.setName("Micronucleus active alert no. " + (i+1));
-                curSA.setDescription("Structural alert for micronucleus activity defined by the SMARTS: " + SM);
+                curSA.setName(StringSelector.getString("sa_micronucleus_model_active_name") + (i+1));
+                curSA.setDescription(StringSelector.getString("sa_micronucleus_model_active_description") + SM);
                 curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_MICRONUCLEUS_ACTIVE, true);
             } else {
-                curSA.setName("Micronucleus inactive alert no. " + (i+1));
-                curSA.setDescription("Structural alert for micronucleus inactivity defined by the SMARTS: " + SM);
+                curSA.setName(StringSelector.getString("sa_micronucleus_model_inactive_name") + (i+1));
+                curSA.setDescription(StringSelector.getString("sa_micronucleus_model_inactive_description") + SM);
                 curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_MICRONUCLEUS_INACTIVE, true);
             }
             Alerts.add(curSA);
@@ -217,7 +218,7 @@ public class SAMicroNucleusModel extends AlertBlockFromSMARTS implements iAlertB
             }
             
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -252,7 +253,7 @@ public class SAMicroNucleusModel extends AlertBlockFromSMARTS implements iAlertB
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "MN_MOD_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

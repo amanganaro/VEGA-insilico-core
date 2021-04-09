@@ -5,6 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IRing;
 import org.openscience.cdk.interfaces.IRingSet;
@@ -342,7 +343,7 @@ public class SAMeylanLogPFragments extends AlertBlock implements iAlertBlock {
 
 
     public SAMeylanLogPFragments() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN, "Meylan fragments for LoP calculation (Kowwin)");
+        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN, StringSelector.getString("sa_meylan_logp_initialization"));
     }
 
 
@@ -351,7 +352,7 @@ public class SAMeylanLogPFragments extends AlertBlock implements iAlertBlock {
         for (int i=0; i<FragmentNames.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (i+1)));
             curSA.setName("MEY" + (i+1));
-            curSA.setDescription("Meylan fragment for LogP calculation no. " + (i+1) + ": " + FragmentNames[i]);
+            curSA.setDescription(String.format(StringSelector.getString("sa_meylan_logp_description"), i+1, FragmentNames[i]));
             Alerts.add(curSA);
         }
     }
@@ -369,7 +370,7 @@ public class SAMeylanLogPFragments extends AlertBlock implements iAlertBlock {
             try {
                 ConnMatrix = CurMol.GetMatrixConnectionAugmented();
             } catch (GenericFailureException ex) {
-                throw new GenericFailureException("Unable to calculate Connection matrix");
+                throw new GenericFailureException(StringSelector.getString("sa_connection_matrix_fail"));
             }
 
             FragmentsCounter = new int[FragmentNames.length];
@@ -392,7 +393,7 @@ public class SAMeylanLogPFragments extends AlertBlock implements iAlertBlock {
                     try {
                         Results.add((Alert)Alerts.get(i).clone());
                     } catch (CloneNotSupportedException e) {
-                        throw new GenericFailureException("Unable to clone alert");
+                        throw new GenericFailureException(StringSelector.getString("sa_clone_alert_fail"));
                     }
                 GlobalCoefficient += FragmentsCounter[i] * FragmentCoeff[i];
             }
@@ -400,7 +401,7 @@ public class SAMeylanLogPFragments extends AlertBlock implements iAlertBlock {
             return Results;
 
         } catch (InvalidMoleculeException e) {
-            throw new GenericFailureException("Invalid molecule, unable to process fragments");
+            throw new GenericFailureException(StringSelector.getString("sa_invalid_molecule"));
         }
     }
 

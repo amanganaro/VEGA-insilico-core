@@ -3,6 +3,7 @@ package insilico.core.alerts;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
 
 /**
@@ -52,7 +53,7 @@ public abstract class AlertBlock implements iAlertBlock {
     public AlertList Calculate(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
 
         if (!mol.IsValid())
-            throw new InvalidMoleculeException("Given molecule is not marked as valid");
+            throw new InvalidMoleculeException(StringSelector.getString("sa_molecule_invalid_marked"));
         CurMol = mol;
 
         // Calls method for checking alerts
@@ -71,7 +72,7 @@ public abstract class AlertBlock implements iAlertBlock {
      * @throws GenericFailureException
      */
     public double[] getOverlapsPerc(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
-        throw new GenericFailureException("not implemented in current alert block");
+        throw new GenericFailureException(StringSelector.getString("sa_not_implemented"));
     }
 
     /**

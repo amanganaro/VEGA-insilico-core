@@ -5,6 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelector;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.CustomQueryMatcher;
@@ -33,7 +34,7 @@ public class SAMutagenSarpy extends AlertBlockFromSMARTS implements iAlertBlock 
     
     
     public SAMutagenSarpy() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY, "SARpy rule set for mutagenicity");
+        super(InsilicoConstants.SA_BLOCK_MUTAGEN_SARPY, StringSelector.getString("sa_mutagen_sarpy_initialization"));
     }
     
     
@@ -49,8 +50,10 @@ public class SAMutagenSarpy extends AlertBlockFromSMARTS implements iAlertBlock 
             for (int i=0; i<SMARTSFileReader.getSize(); i++) {
                 Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (i+1)));
                 curSA.setName("SM" + (i+1));
-                curSA.setDescription("Sarpy alert n. " + (i+1) + " for " 
-                        + (SMARTSFileReader.getToxicity()[i] ? "Mutagenicity" : "NON-Mutagenicity") + ", defined by the SMARTS: " + SMARTSFileReader.getSMARTS()[i]);
+                curSA.setDescription(String.format(StringSelector.getString("sa_mutagen_sarpy_description"),
+                        i+1,
+                        SMARTSFileReader.getToxicity()[i] ? StringSelector.getString("sa_mutagen_sarpy_mutagenicity") : StringSelector.getString("sa_mutagen_sarpy_non_mutagenicity"),
+                        SMARTSFileReader.getSMARTS()[i]));
                 curSA.setImageURL("/insilico/core/alerts/png/mutagensarpy/SRPY_" + (i+1) + ".png");
 
                 // Toxicity of alerts
@@ -77,7 +80,7 @@ public class SAMutagenSarpy extends AlertBlockFromSMARTS implements iAlertBlock 
             }
 
         } catch (IOException e) {
-            throw new InitFailureException("Error while trying to open resource file " + u.getFile());
+            throw new InitFailureException(String.format(StringSelector.getString("sa_open_file_error"), u.getFile()));
         } catch (GenericFailureException e) {
             throw new InitFailureException(e.getMessage());
         }
@@ -96,7 +99,7 @@ public class SAMutagenSarpy extends AlertBlockFromSMARTS implements iAlertBlock 
                 SA[i] = SmartsPattern.create(SMARTSFileReader.getSMARTS()[i], DefaultChemObjectBuilder.getInstance()).setPrepare(false);
 
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -124,7 +127,7 @@ public class SAMutagenSarpy extends AlertBlockFromSMARTS implements iAlertBlock 
     public double[] getOverlapsPerc(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
 
         if (!mol.IsValid())
-            throw new InvalidMoleculeException("Given molecule is not marked as valid");
+            throw new GenericFailureException(String.format(StringSelector.getString("sa_invalid_molecule_err"), "Invalid Molecule"));
         CurMol = mol;
         
         // Init
@@ -135,7 +138,7 @@ public class SAMutagenSarpy extends AlertBlockFromSMARTS implements iAlertBlock 
                 IsInitialized = true;
             }
         } catch (Exception e) {
-            throw new GenericFailureException("Unable to init matcher: " + e.getMessage());
+            throw new GenericFailureException(String.format(StringSelector.getString("sa_invalid_molecule_err"), e.getMessage()));
         }
         
         // Calculate overlaps
@@ -154,7 +157,7 @@ public class SAMutagenSarpy extends AlertBlockFromSMARTS implements iAlertBlock 
                 Res[i] = (double)max / mol.GetStructure().getAtomCount();
             }
         } catch (Exception e) {
-            throw new GenericFailureException("Error during matching: " + e.getMessage());
+            throw new GenericFailureException(String.format(StringSelector.getString("sa_matching_error_overlaps"),e.getMessage()));
         }        
         
         return Res;
@@ -171,7 +174,7 @@ public class SAMutagenSarpy extends AlertBlockFromSMARTS implements iAlertBlock 
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "SRPY_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println("errore in " + idx + " " + s + " - " + e.getMessage());
+                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
