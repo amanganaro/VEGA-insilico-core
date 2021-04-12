@@ -14,6 +14,7 @@ import insilico.core.descriptor.blocks.weights.iBasicWeight;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.exception.MoleculeConversionException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.acf.ACFItemList;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.matrix.*;
@@ -104,8 +105,8 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
         double sum = 0;
         for (int i=0; i<nSK; i++) {
             if (weights[i] == Descriptor.MISSING_VALUE) {
-                log.warn("Missing value for calculation of molecular weight");
-                throw new InvalidMoleculeException("Missing value for calculation of molecular weight");
+                log.warn(StringSelectorCore.getString("ismolecule_cache_missing_value_for_mw"));
+                throw new InvalidMoleculeException(StringSelectorCore.getString("ismolecule_cache_missing_value_for_mw"));
             }
             sum += weights[i];
         }
@@ -139,7 +140,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
             structure = SmilesMolecule.CreateCDKMolecule(SMILES, new InsilicoMoleculeMessages());
         } catch (MoleculeConversionException ex) {
             structure = null;
-            String err = "Failed SMILES conversion while requesting CDK Molecule for SMILES: " + SMILES;
+            String err = String.format(StringSelectorCore.getString("ismolecule_failed_normalization"), SMILES);
             log.warn(err);
             throw new InvalidMoleculeException(err);
         }
@@ -149,7 +150,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
                 structure = Manipulator.AddHydrogens(structure);
             } catch (GenericFailureException ex) {
                 structure = null;
-                String err = "Failed normalization while requesting CDK Molecule for SMILES: " + SMILES;
+                String err = String.format(StringSelectorCore.getString("ismolecule_failed_normalization"), SMILES);
                 log.warn(err);
                 throw new InvalidMoleculeException(err);
             }
@@ -213,9 +214,10 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
                 allRings = (RingSet) ringsFinder.findAllRings(GetStructure(SMILES, explicitHydrogen));
             } catch (CDKException ex) {
 
-                errors.AddMessage("Unable to perceive all rings");
-                log.warn("Unable to find all rings for molecule " + SMILES);
-                throw new InvalidMoleculeException("unable to find all rings");
+                errors.AddMessage(StringSelectorCore.getString("ismolecule_rings_error_molmessages"));
+
+                log.warn(String.format(StringSelectorCore.getString("ismolecule_rings_molecule_error"), SMILES));
+                throw new InvalidMoleculeException(String.format(StringSelectorCore.getString("ismolecule_rings_molecule_error"), SMILES));
             }
         }
         return allRings;
@@ -292,7 +294,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
                 matrix = new MoleculeMatrix(MatrixClass,BaryszMatrix.getMatrix(this.GetStructure(SMILES,explicitHydrogen)));
 
         } catch (InvalidMoleculeException ex){
-            String msg = "Unable to build matrix " + MatrixClass.getName() + ", invalid molecule structure for " + SMILES;
+            String msg = String.format(StringSelectorCore.getString("ismolecule_build_matrix_fail"), MatrixClass.getName(), SMILES);
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -301,7 +303,7 @@ public class InsilicoMoleculeCache implements Serializable, Cloneable {
             this.matrices.add(matrix);
             return matrix;
         } else {
-            String msg = "Unable to build matrix " + MatrixClass.getName() + " for molecule " + SMILES;
+            String msg = String.format(StringSelectorCore.getString("ismolecule_build_matrix_fail"), MatrixClass.getName(), SMILES);
             log.warn(msg);
             throw new GenericFailureException(msg);
         }

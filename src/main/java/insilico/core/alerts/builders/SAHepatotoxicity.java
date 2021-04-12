@@ -5,16 +5,13 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
  *
@@ -120,57 +117,57 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
     };
 
     private final static String[] SMARTSActiveDesc = {
-            String.format(StringSelector.getString("sa_hepa_active_description"),"C(=CC(C)C)CCCCCCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=CC(NC)CO","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O(CCCC)CC(NC)CC","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=C(NCCCC)c1ccccc1","89%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"OCC(Oc1ccccc1)(C)C","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"c1ccc(cc1)SCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"c1ccc(cc1)CCCc2ccccc2","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=COC(CC(O)C)C(C)C","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=CCc1ccccc1(N)","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"N(CC)CCCCNCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=C(CO)C(O)CCO","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"n2cnc1c(ncn1CCOC)c2N","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O(c1cccc(c1)CNCCCC)C","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=C(OCCc1ccccc1)C","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"OCC(O)C(O)CCCNC","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=[N+]([O-])c1cccc(O)c1","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"c1c(cc(cc1C)CC)C","80%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=CNC(CC=O)CCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=CNC(C(=O)O)CCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=SCCNCCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=C(N)N(N)CC","80%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"FC(F)CCl","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=C(NC)CCc1ccccc1","92%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=COC(C)COC","91%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"Oc1ccc(c(OC)c1)C","75%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"N(C)C(C)CNCCCC","90%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"NCCCCCNC","85%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=CC(N)Cc1ccccc1","82%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"c1ccc(c(c1)C=CC)C","77%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"n1cc[nH]c1","85%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"NCNc1ccccc1","75%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=CC(c1ccccc1)CN","83%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"FC(F)(F)c1ccccc1","86%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"n1ccccc1Cc2ccccc2","75%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"N(CC)CCCl","83%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"c1cc(C)sc1","71%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"C(=C(Cl))","75%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=S(=O)(N)c1ccccc1","71%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"Nc1ccc(cc1)S(=O)=O","75%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"[n,o]1n[c,n][c,n,s,nH][c,n]1","71%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=C1CCCCCCCCCCCCO1","71%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"[n,c]1ccn[n,c]c1","72%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"CNC(=O)N(CCCl)N=O","100%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"OC(=O)C1[C,S][S,O,C]C2CC(=O)N12","67%"),
-            String.format(StringSelector.getString("sa_hepa_active_description")," Nc1[n,c]cc2C(=O)C(=CNc2[c,n]1)C(O)=O","67%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"O=C1N~CC=C[N,C]1C2C~[S,C]CO2","82%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"NS(=O)(=O)c1ccccc1","71%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"C1[S,C,N,O]c2ccccc2[N,C,S,O]c3ccccc13","82%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"*N(*)CCC(c1cccc[n,c]1)c2cccc[n,c]2","83%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"CC=C(C)C=CC=C(C)C=C[R,a]","75%"),
-            String.format(StringSelector.getString("sa_hepa_active_description"),"Nc1[n,c]cnc2[n,c]cccc12","60%")
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"C(=CC(C)C)CCCCCCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=CC(NC)CO","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O(CCCC)CC(NC)CC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=C(NCCCC)c1ccccc1","89%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"OCC(Oc1ccccc1)(C)C","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"c1ccc(cc1)SCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"c1ccc(cc1)CCCc2ccccc2","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=COC(CC(O)C)C(C)C","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=CCc1ccccc1(N)","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"N(CC)CCCCNCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=C(CO)C(O)CCO","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"n2cnc1c(ncn1CCOC)c2N","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O(c1cccc(c1)CNCCCC)C","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=C(OCCc1ccccc1)C","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"OCC(O)C(O)CCCNC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=[N+]([O-])c1cccc(O)c1","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"c1c(cc(cc1C)CC)C","80%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=CNC(CC=O)CCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=CNC(C(=O)O)CCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=SCCNCCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=C(N)N(N)CC","80%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"FC(F)CCl","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=C(NC)CCc1ccccc1","92%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=COC(C)COC","91%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"Oc1ccc(c(OC)c1)C","75%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"N(C)C(C)CNCCCC","90%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"NCCCCCNC","85%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=CC(N)Cc1ccccc1","82%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"c1ccc(c(c1)C=CC)C","77%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"n1cc[nH]c1","85%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"NCNc1ccccc1","75%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=CC(c1ccccc1)CN","83%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"FC(F)(F)c1ccccc1","86%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"n1ccccc1Cc2ccccc2","75%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"N(CC)CCCl","83%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"c1cc(C)sc1","71%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"C(=C(Cl))","75%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=S(=O)(N)c1ccccc1","71%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"Nc1ccc(cc1)S(=O)=O","75%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"[n,o]1n[c,n][c,n,s,nH][c,n]1","71%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=C1CCCCCCCCCCCCO1","71%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"[n,c]1ccn[n,c]c1","72%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"CNC(=O)N(CCCl)N=O","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"OC(=O)C1[C,S][S,O,C]C2CC(=O)N12","67%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description")," Nc1[n,c]cc2C(=O)C(=CNc2[c,n]1)C(O)=O","67%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"O=C1N~CC=C[N,C]1C2C~[S,C]CO2","82%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"NS(=O)(=O)c1ccccc1","71%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"C1[S,C,N,O]c2ccccc2[N,C,S,O]c3ccccc13","82%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"*N(*)CCC(c1cccc[n,c]1)c2cccc[n,c]2","83%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"CC=C(C)C=CC=C(C)C=C[R,a]","75%"),
+            String.format(StringSelectorCore.getString("sa_hepa_active_description"),"Nc1[n,c]cnc2[n,c]cccc12","60%")
     };
 
 //    private final static String[] SMARTSActiveDesc = {
@@ -228,44 +225,44 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
 //    };
 
     private final static String[] SMARTSInactiveDesc = {
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"OC(c1ccccc1)c2ccccc2","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=C(O)CCc1ccc(OC)cc1","86%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"OC1OC(CN)CCC1(N)","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"OCCNC(C)(C)C","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=C(OC2CCC3C4CCc1cc(O)ccc1C4(CCC23(C)))CC","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=C(N(c1ccccc1)CC)C","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=C(Nc1ccccc1C)CC","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=COCC(C)(C)COC=O","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=C(c1ccccc1)c2ccccc2(O)","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"c1ccc(cc1)Cc2ccccc2Cl","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=C(NC)CNC(=O)C(CC)CCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"OC(c1cccc(OC)c1)CNC","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O(c1ccccc1)CCN(C)CC","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"Oc1ccc(cc1)NCCCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"OCCC1(C)(CCCCC1)","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"c1ccc(c(c1)CCC)Cl","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"C1C2CC3CC1CC(C2)C3","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"N1CN(C)CC(C)C1","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"OCCSCCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=S(=O)(NC)C","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=Cc1cccc(c1)NCC","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"OCCC(CO)CCO","100%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=C(N(c1ccccc1C)C)C","88%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=CC(C)(C)CN","83%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"CC[N+](C)(C)C","83%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=C1CCCCC1","80%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"c1ccc(cc1)I","87%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O=C(N)c1cccc(c1)S(=O)=O","75%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"Nc1ccc2ccccc2(c1)","75%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"O(c1ccc(cc1)C)CCC","70%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"OC1OCC(O)C(O)C1(N)","78%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"c1cc(c(cc1Cl)Cl)C","78%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"NN=C","70%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"CC(=O)Nc1ccccc1C","78%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"CC(=O)NC1C2[S,O]CC=C(N2C1=O)C(O)=O","69%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"c1ccc(cc1)I","87%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"c1ccc(cc1)I","87%"),
-            String.format(StringSelector.getString("sa_hepa_inactive_description"),"C1CC2CCC3C(CC[C,c]4[C,c][C,c][C,c][C,c][C,c]34)C2C1","70%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"OC(c1ccccc1)c2ccccc2","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=C(O)CCc1ccc(OC)cc1","86%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"OC1OC(CN)CCC1(N)","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"OCCNC(C)(C)C","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=C(OC2CCC3C4CCc1cc(O)ccc1C4(CCC23(C)))CC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=C(N(c1ccccc1)CC)C","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=C(Nc1ccccc1C)CC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=COCC(C)(C)COC=O","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=C(c1ccccc1)c2ccccc2(O)","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"c1ccc(cc1)Cc2ccccc2Cl","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=C(NC)CNC(=O)C(CC)CCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"OC(c1cccc(OC)c1)CNC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O(c1ccccc1)CCN(C)CC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"Oc1ccc(cc1)NCCCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"OCCC1(C)(CCCCC1)","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"c1ccc(c(c1)CCC)Cl","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"C1C2CC3CC1CC(C2)C3","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"N1CN(C)CC(C)C1","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"OCCSCCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=S(=O)(NC)C","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=Cc1cccc(c1)NCC","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"OCCC(CO)CCO","100%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=C(N(c1ccccc1C)C)C","88%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=CC(C)(C)CN","83%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"CC[N+](C)(C)C","83%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=C1CCCCC1","80%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"c1ccc(cc1)I","87%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O=C(N)c1cccc(c1)S(=O)=O","75%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"Nc1ccc2ccccc2(c1)","75%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"O(c1ccc(cc1)C)CCC","70%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"OC1OCC(O)C(O)C1(N)","78%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"c1cc(c(cc1Cl)Cl)C","78%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"NN=C","70%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"CC(=O)Nc1ccccc1C","78%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"CC(=O)NC1C2[S,O]CC=C(N2C1=O)C(O)=O","69%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"c1ccc(cc1)I","87%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"c1ccc(cc1)I","87%"),
+            String.format(StringSelectorCore.getString("sa_hepa_inactive_description"),"C1CC2CCC3C(CC[C,c]4[C,c][C,c][C,c][C,c][C,c]34)C2C1","70%"),
     };
 
 //    private final static String[] SMARTSInactiveDesc = {
@@ -313,7 +310,7 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
     
     
     public SAHepatotoxicity() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_HEPATOTOXICITY, StringSelector.getString("sa_hepa_initialization"));
+        super(InsilicoConstants.SA_BLOCK_HEPATOTOXICITY, StringSelectorCore.getString("sa_hepa_initialization"));
     }
     
     
@@ -327,7 +324,7 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
 
         for (int i=0; i<SMARTSActive.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(StringSelector.getString("sa_hepa_active_name") + (i+1));
+            curSA.setName(StringSelectorCore.getString("sa_hepa_active_name") + (i+1));
             curSA.setDescription(SMARTSActiveDesc[i]);
             curSA.setImageURL("/insilico/core/alerts/png/hepatotoxicity/HEPA_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_HEPA_TOXIC, true);
@@ -337,7 +334,7 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
         
         for (int i=0; i<SMARTSInactive.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(StringSelector.getString("sa_hepa_inactive_name") + (i+1));
+            curSA.setName(StringSelectorCore.getString("sa_hepa_inactive_name") + (i+1));
             curSA.setDescription(SMARTSInactiveDesc[i]);
             curSA.setImageURL("/insilico/core/alerts/png/hepatotoxicity/HEPA_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_HEPA_NONTOXIC, true);
@@ -367,7 +364,7 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -403,7 +400,7 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "HEPA_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -414,7 +411,7 @@ public class SAHepatotoxicity extends AlertBlockFromSMARTS implements iAlertBloc
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "HEPA_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

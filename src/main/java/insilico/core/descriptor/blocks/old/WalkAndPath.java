@@ -6,6 +6,7 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.interfaces.IAtom;
@@ -24,12 +25,11 @@ import java.util.List;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class WalkAndPath extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
-
-    Logger logger = LoggerFactory.getLogger(WalkAndPath.class);
-
+    
     private final static String BlockName = "Walk and Path Descriptors";
     private boolean defaultDescriptors;
 
@@ -145,7 +145,7 @@ public class WalkAndPath extends DescriptorBlock {
         try {
             AdjMat = mol.GetMatrixAdjacency();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

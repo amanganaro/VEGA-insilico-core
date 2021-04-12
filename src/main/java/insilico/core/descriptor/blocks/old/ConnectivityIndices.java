@@ -8,6 +8,7 @@ import insilico.core.descriptor.blocks.old.weight.VertexDegree;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -21,11 +22,11 @@ import java.util.List;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class ConnectivityIndices extends DescriptorBlock {
     
     private static final long serialVersionUID = 1L;
 
-    Logger logger = LoggerFactory.getLogger(ConnectivityIndices.class);
 
     private final static String BlockName = "Connectivity Descriptors";
 
@@ -120,7 +121,7 @@ public class ConnectivityIndices extends DescriptorBlock {
         try {
             ConnAugMatrix = mol.GetMatrixConnectionAugmented();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

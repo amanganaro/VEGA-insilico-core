@@ -1,6 +1,7 @@
 package insilico.core.model.runner;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModelConsensus;
 import insilico.core.model.InsilicoModelConsensusOutput;
 import insilico.core.model.iInsilicoModelConsensus;
@@ -52,7 +53,7 @@ public class InsilicoModelConsensusWrapper {
         try {
             result.add(model.Execute(mol, molIndex, ModelResults));
         } catch  (GenericFailureException ex){
-            throw new GenericFailureException("Error during model " + model.getInfo().getName() + " execution - " + ex.getMessage());
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("runner_consensus_exception"),model.getInfo().getName(), ex.getMessage() ));
         }
     }
 

@@ -2,19 +2,15 @@ package insilico.core.alerts.builders;
 
 import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
-import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 import static insilico.core.constant.InsilicoConstants.KEY_ALERT_SKIN_NON_SENS;
 import static insilico.core.constant.InsilicoConstants.KEY_ALERT_SKIN_SENS;
@@ -120,7 +116,7 @@ public class SASkinNcstox extends AlertBlockFromSMARTS implements iAlertBlock {
     
     
     public SASkinNcstox() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_SKIN_SENS_NCSTOX, StringSelector.getString("sa_skin_ncstox_initialization"));
+        super(InsilicoConstants.SA_BLOCK_SKIN_SENS_NCSTOX, StringSelectorCore.getString("sa_skin_ncstox_initialization"));
     }
     
     
@@ -131,11 +127,11 @@ public class SASkinNcstox extends AlertBlockFromSMARTS implements iAlertBlock {
         
         for (int i=0; i<SMARTS.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(String.format(StringSelector.getString("sa_skin_ncstox_name"), i+1));
+            curSA.setName(String.format(StringSelectorCore.getString("sa_skin_ncstox_name"), i+1));
             curSA.setDescription("Structural alert for Skin sensitization related to " + 
                     (SMARTS[i][1].equalsIgnoreCase(KEY_ALERT_SKIN_SENS)?"active":"inactive") + " compounds defined by the SMARTS: " + SMARTS[i][0]);
-            curSA.setDescription(String.format(StringSelector.getString("sa_skin_ncstox_description"),
-                    SMARTS[i][1].equalsIgnoreCase(KEY_ALERT_SKIN_SENS)? StringSelector.getString("sa_skin_ncstox_active"):StringSelector.getString("sa_skin_ncstox_nonactive"),
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_skin_ncstox_description"),
+                    SMARTS[i][1].equalsIgnoreCase(KEY_ALERT_SKIN_SENS)? StringSelectorCore.getString("sa_skin_ncstox_active"): StringSelectorCore.getString("sa_skin_ncstox_nonactive"),
                     SMARTS[i][0]));
 
             curSA.setImageURL("/insilico/core/alerts/png/skinvermeer/SKIN_VER_" + (idx+1) + ".png");
@@ -162,7 +158,7 @@ public class SASkinNcstox extends AlertBlockFromSMARTS implements iAlertBlock {
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -197,7 +193,7 @@ public class SASkinNcstox extends AlertBlockFromSMARTS implements iAlertBlock {
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "SKIN_NCSTOX_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

@@ -2,18 +2,17 @@ package insilico.core.molecule.conversion;
 
 
 
-import insilico.core.tools.utils.logger.InsilicoLogger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import insilico.core.localization.StringSelectorCore;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Parsing and normalization for CAS numbers
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class CAS {
 
-    static  Logger logger = LoggerFactory.getLogger(CAS.class);
 
     /** Default string for invalid CAS numbers ({@value #MISSING_CAS}) */
     public final static String MISSING_CAS = "N.A.";
@@ -67,7 +66,7 @@ public class CAS {
             res = A + "-" + B + "-" + C;
 
         } catch (Exception e) {
-            logger.warn("Unable to parse CAS string " + CAS);
+            log.warn(String.format(StringSelectorCore.getString("conversion_cas_parse_error"), CAS));
             res = MISSING_CAS;
         }
 

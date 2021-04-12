@@ -5,16 +5,13 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
  *
@@ -99,7 +96,7 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
     
     
     public SAEstrogenBindCerapp() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_ESTROGEN_BIND_CERAPP, StringSelector.getString("sa_estrogen_cerapp_initialization"));
+        super(InsilicoConstants.SA_BLOCK_ESTROGEN_BIND_CERAPP, StringSelectorCore.getString("sa_estrogen_cerapp_initialization"));
     }
     
     
@@ -113,8 +110,8 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
 
         for (int i=0; i<SMARTSActive.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(StringSelector.getString("sa_estrogen_cerapp_active_name") + (i+1));
-            curSA.setDescription(StringSelector.getString("sa_estrogen_cerapp_active_description") + SMARTSActive[i]);
+            curSA.setName(StringSelectorCore.getString("sa_estrogen_cerapp_active_name") + (i+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_estrogen_cerapp_active_description") + SMARTSActive[i]);
             curSA.setImageURL("/insilico/core/alerts/png/estrogenbindcerapp/CERAPP_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_ER_ACTIVE, true);
             Alerts.add(curSA);
@@ -123,8 +120,8 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
         
         for (int i=0; i<SMARTSActiveProb.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(StringSelector.getString("sa_estrogen_cerapp_active_prob_name") + (i+1));
-            curSA.setDescription(StringSelector.getString("sa_estrogen_cerapp_active_prob_description") + SMARTSActiveProb[i]);
+            curSA.setName(StringSelectorCore.getString("sa_estrogen_cerapp_active_prob_name") + (i+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_estrogen_cerapp_active_prob_description") + SMARTSActiveProb[i]);
             curSA.setImageURL("/insilico/core/alerts/png/estrogenbindcerapp/CERAPP_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_ER_ACTIVE_POSSIBLE, true);
             Alerts.add(curSA);
@@ -133,8 +130,8 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
         
         for (int i=0; i<SMARTSInactive.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(StringSelector.getString("sa_estrogen_cerapp_inactive_name") + (i+1));
-            curSA.setDescription(StringSelector.getString("sa_estrogen_cerapp_inactive_description") + SMARTSInactive[i]);
+            curSA.setName(StringSelectorCore.getString("sa_estrogen_cerapp_inactive_name") + (i+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_estrogen_cerapp_inactive_description") + SMARTSInactive[i]);
             curSA.setImageURL("/insilico/core/alerts/png/estrogenbindcerapp/CERAPP_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_ER_INACTIVE, true);
             Alerts.add(curSA);
@@ -143,8 +140,8 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
         
         for (int i=0; i<SMARTSInactiveProb.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(StringSelector.getString("sa_estrogen_cerapp_inactive_prob_name") + (i+1));
-            curSA.setDescription(StringSelector.getString("sa_estrogen_cerapp_inactive_prob_description") + SMARTSInactiveProb[i]);
+            curSA.setName(StringSelectorCore.getString("sa_estrogen_cerapp_inactive_prob_name") + (i+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_estrogen_cerapp_inactive_prob_description") + SMARTSInactiveProb[i]);
             curSA.setImageURL("/insilico/core/alerts/png/estrogenbindcerapp/CERAPP_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_ER_INACTIVE_POSSIBLE, true);
             Alerts.add(curSA);
@@ -183,7 +180,7 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -217,7 +214,7 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "CERAPP_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -227,7 +224,7 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "CERAPP_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -237,7 +234,7 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "CERAPP_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -247,7 +244,7 @@ public class SAEstrogenBindCerapp extends AlertBlockFromSMARTS implements iAlert
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "CERAPP_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

@@ -5,13 +5,9 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
-import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
+import insilico.core.localization.StringSelectorCore;
 import org.openscience.cdk.isomorphism.Pattern;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
  *
@@ -69,7 +65,7 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
 
 
     public SAMeylanLogPAdditionalFragments() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_ADDITIONAL, StringSelector.getString("sa_meylan_logp_add_initialization"));
+        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_ADDITIONAL, StringSelectorCore.getString("sa_meylan_logp_add_initialization"));
     }
 
 
@@ -79,7 +75,7 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
         for (int i=0; i<SMARTSFragments.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (i+1)));
             curSA.setName("MEYA" + (i+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_meylan_logp_add_description"), i+1, SMARTSFragments[i]));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_meylan_logp_add_description"), i+1, SMARTSFragments[i]));
             Alerts.add(curSA);
         }
 
@@ -99,7 +95,7 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
                 SA[i] = SmartsPattern.create(SMARTSFragments[i]).setPrepare(false);
 
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }
     }
 
@@ -125,7 +121,7 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
             }
 
         } catch (CloneNotSupportedException | InvalidMoleculeException e) {
-            throw new GenericFailureException(StringSelector.getString("sa_exception_smarts_matching_ge"));
+            throw new GenericFailureException(StringSelectorCore.getString("sa_exception_smarts_matching_ge"));
         }
 
         return Res;

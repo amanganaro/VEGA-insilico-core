@@ -11,6 +11,7 @@ import insilico.core.molecule.matrix.TopoDistanceMatrix;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -23,10 +24,9 @@ import org.slf4j.LoggerFactory;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class EStateCorrectForH {
-
-    Logger logger = LoggerFactory.getLogger(EStateCorrectForH.class);
-
+    
     private Map<String, Integer> periods;
 
     private final double [] D;
@@ -57,7 +57,7 @@ public class EStateCorrectForH {
 //            TopoDistMat = Mol.GetMatrixTopologicalDistance();
             TopoDistMat = TopoDistanceMatrix.getMatrix(m);
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             throw new GenericFailureException("Unable to calculate matrices");
         }
 

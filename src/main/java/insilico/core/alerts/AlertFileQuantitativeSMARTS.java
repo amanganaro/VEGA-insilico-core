@@ -1,11 +1,8 @@
 package insilico.core.alerts;
 
 import insilico.core.exception.GenericFailureException;
-import insilico.core.localization.StringSelector;
-import insilico.core.tools.utils.logger.InsilicoLogger;
+import insilico.core.localization.StringSelectorCore;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -75,8 +72,8 @@ public class AlertFileQuantitativeSMARTS {
                 else
                     Description[i] = "";
             } catch (NumberFormatException e) {
-                log.error(String.format(StringSelector.getString("sa_smarts_input_file_error"), i+1, e.getMessage()));
-                throw new GenericFailureException(StringSelector.getString("sa_alert_numeric_conversion_error"));
+                log.error(String.format(StringSelectorCore.getString("sa_smarts_input_file_error"), i+1, e.getMessage()));
+                throw new GenericFailureException(StringSelectorCore.getString("sa_alert_numeric_conversion_error"));
             }
         }
         

@@ -1,5 +1,6 @@
 package insilico.core.molecule.conversion.file;
 
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import lombok.Data;
@@ -23,7 +24,7 @@ public class MoleculeFileTXT extends MoleculeFile{
     @Override
     public InsilicoMolecule ReadNext() throws IOException {
         if (!isFileOpen)
-            throw new IOException("File is not open");
+            throw new IOException(StringSelectorCore.getString("conversion_file_sdf_error_open_file"));
 
         String CurLine = null;
         boolean Proceed = true;
@@ -46,7 +47,7 @@ public class MoleculeFileTXT extends MoleculeFile{
                 mol.SetId("Molecule " + Count);
             return mol;
         } catch (IOException e) {
-            log.error("Error while reading file " + this.FileName + " (" + e.getMessage() + ")");
+            log.error(String.format(StringSelectorCore.getString("conversion_file_sdf_error_reading_file"), this.FileName, e.getMessage()));
             throw(e);
         }
     }

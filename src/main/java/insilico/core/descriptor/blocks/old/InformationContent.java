@@ -7,6 +7,7 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.tools.utils.MoleculeUtilities;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.graph.PathTools;
 import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
@@ -25,11 +26,11 @@ import java.util.List;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class InformationContent extends DescriptorBlock {
     
     private static final long serialVersionUID = 1L;
 
-    Logger logger = LoggerFactory.getLogger(InformationContent.class);
 
     private final static String BlockName = "Information Content";
 
@@ -113,7 +114,7 @@ public class InformationContent extends DescriptorBlock {
             ConnMat = mol.GetMatrixConnectionAugmented();
             TopoDistMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

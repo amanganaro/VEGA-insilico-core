@@ -5,7 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
@@ -64,7 +64,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
     
     
     public SAPersistenceSoil() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_PERSISTENCE_SOIL_IRFMN, StringSelector.getString("sa_persistence_soil_irfmn_initialization"));
+        super(InsilicoConstants.SA_BLOCK_PERSISTENCE_SOIL_IRFMN, StringSelectorCore.getString("sa_persistence_soil_irfmn_initialization"));
     }
     
     
@@ -83,8 +83,8 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
 
         for (int i=0; i<SMARTSFragsNP.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_persistence_soil_irfmn_description_np"), SMARTSFragsNP[i]));
+            curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_np"), SMARTSFragsNP[i]));
             curSA.setImageURL("/insilico/core/alerts/png/perssoil/PER_SOIL_" + (pngidx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
             Alerts.add(curSA);
@@ -92,71 +92,71 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
         }
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_alcohols"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_alcohols"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Multiple[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_esters_aromatic"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_esters_aromatic"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Multiple[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_oxime"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_oxime"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_esters_aliphatic"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_esters_aliphatic"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_aldehyde"));
-        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
-        Alerts.add(curSA);
-        Single[idx] = true;
-        idx++;
-        
-        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_carboxylic"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_aldehyde"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_carbamate"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_carboxylic"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_ketone"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_carbamate"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name"),idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_soil_irfmn_description_phosph"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_ketone"));
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+        
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name"),idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_phosph"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
@@ -167,8 +167,8 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
         
         for (int i=0; i<SMARTSFragsVP.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(String.format(StringSelector.getString("sa_persistence_soil_irfmn_name_vp"),idx+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_persistence_soil_irfmn_description_vp"), SMARTSFragsVP[i]));
+            curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_name_vp"),idx+1));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_persistence_soil_irfmn_description_vp"), SMARTSFragsVP[i]));
             curSA.setImageURL("/insilico/core/alerts/png/perssoil/PER_SOIL_" + (pngidx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SOIL_VP, true);
             Alerts.add(curSA);
@@ -201,7 +201,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -241,7 +241,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_SOIL_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -252,7 +252,7 @@ public class SAPersistenceSoil extends AlertBlockFromSMARTS implements iAlertBlo
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_SOIL_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

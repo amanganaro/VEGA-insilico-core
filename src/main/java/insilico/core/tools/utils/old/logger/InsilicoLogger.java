@@ -1,4 +1,4 @@
-package insilico.core.tools.utils.logger;
+package insilico.core.tools.utils.old.logger;
 
 import insilico.core.exception.InitFailureException;
 import org.apache.log4j.Logger;

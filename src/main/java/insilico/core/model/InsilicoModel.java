@@ -1,5 +1,6 @@
 package insilico.core.model;
 
+import com.hp.hpl.jena.assembler.Mode;
 import insilico.core.alerts.AlertList;
 import insilico.core.alerts.AlertsEngine;
 import insilico.core.constant.MessagesError;
@@ -9,13 +10,14 @@ import insilico.core.descriptor.DescriptorsEngine;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.trainingset.TrainingSet;
 import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.acf.ACFBuilder;
 import insilico.core.similarity.SimilarityDescriptorsBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+
 
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -28,9 +30,9 @@ import java.util.ArrayList;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public abstract class InsilicoModel implements iInsilicoModel {
 
-    Logger logger = LoggerFactory.getLogger(InsilicoModel.class);
 
     protected final static short MODEL_ERROR = -1;
     protected final static short MODEL_CALCULATED = 1;
@@ -47,7 +49,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
     protected final static short AD_CALCULATED = 1;
 
 
-    protected InsilicoModelInfoUpdated Info;
+    protected InsilicoModelInfo Info;
     protected iTrainingSet TS;
     protected InsilicoMolecule CurMolecule;
     protected InsilicoModelOutput CurOutput;
@@ -88,7 +90,13 @@ public abstract class InsilicoModel implements iInsilicoModel {
     public InsilicoModel(String ModelData)
             throws InitFailureException {
 
-        Info = new InsilicoModelInfoUpdated(getClass().getResource(ModelData));
+
+        String curLang = StringSelectorCore.getLanguage();
+
+        String[] fileNames = ModelData.split(".xml");
+        ModelData = fileNames[0] + "-" + curLang + fileNames[1];
+
+        Info = new InsilicoModelInfo(getClass().getResource(ModelData));
         TS = null; // TS is initialized in execute()
 
         ResultsName = new String[0];
@@ -102,7 +110,6 @@ public abstract class InsilicoModel implements iInsilicoModel {
         Format_3D = new DecimalFormat("0.###", InternationalSymbols);
         Format_4D = new DecimalFormat("0.####", InternationalSymbols);
         Format_6D = new DecimalFormat("0.######", InternationalSymbols);
-
     }
 
 
@@ -220,8 +227,8 @@ public abstract class InsilicoModel implements iInsilicoModel {
             }
         } catch (Throwable e) {
             if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-            logger.error("Descriptors calculation: " + e);
-            throw new GenericFailureException("Unexpected error: " + e);
+            log.error(StringSelectorCore.getString("ismodel_descriptors_calculation_exception"), e);
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("ismodel_generic_exception"), e));
         }
         if (DescriptorStatus == InsilicoModel.DESCRIPTORS_CALCULATED) {
             for (Double Desc : Descriptors)
@@ -265,8 +272,8 @@ public abstract class InsilicoModel implements iInsilicoModel {
             ModelStatus = CalculateModel();
         } catch (Throwable e) {
             if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-            logger.error("Model calculation: " + e);
-            throw new GenericFailureException("Unexpected error: " + e);
+            log.error(StringSelectorCore.getString("ismodel_model_calculation_exception"), e);
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("ismodel_generic_exception"), e));
         }
         if (ModelStatus != InsilicoModel.MODEL_CALCULATED) {
             CurOutput.setStatus(InsilicoModelOutput.OUTPUT_ERROR);
@@ -282,8 +289,8 @@ public abstract class InsilicoModel implements iInsilicoModel {
                 ADStatus = CalculateAD();
             } catch (Throwable e) {
                 if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-                logger.error("AD calculation: " + e);
-                throw new GenericFailureException("Unexpected error: " + e);
+                log.error(StringSelectorCore.getString("ismodel_ad_calculation_exception"), e);
+                throw new GenericFailureException(String.format(StringSelectorCore.getString("ismodel_generic_exception"), e));
             }
             if (ADStatus != InsilicoModel.AD_CALCULATED) {
                 // Tries anyway to set assessment
@@ -292,8 +299,8 @@ public abstract class InsilicoModel implements iInsilicoModel {
                     CalculateAssessment();
                 } catch (Throwable e) {
                     if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-                    logger.error("Assessment calculation: " + e);
-                    throw new GenericFailureException("Unexpected error: " + e);
+                    log.error(StringSelectorCore.getString("ismodel_assessment_calculation_exception"), e);
+                    throw new GenericFailureException(String.format(StringSelectorCore.getString("ismodel_assessment_calculation_exception"), e));
                 }
                 CurOutput.setErrMessage(MessagesError.MODEL_AD_NOT_CALCULATED);
                 CurOutput.setStatus(InsilicoModelOutput.OUTPUT_OK_AD_MISSING);
@@ -304,8 +311,8 @@ public abstract class InsilicoModel implements iInsilicoModel {
                 CalculateAssessment();
             } catch (Throwable e) {
                 if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-                logger.error("Assessment calculation: " + e);
-                throw new GenericFailureException("Unexpected error: " + e);
+                log.error(StringSelectorCore.getString("ismodel_assessment_calculation_exception"), e);
+                throw new GenericFailureException(String.format(StringSelectorCore.getString("ismodel_assessment_calculation_exception"), e));
             }
         }
 
@@ -346,7 +353,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
     @Override
     public double GetDescriptor(int Index) throws GenericFailureException {
         if ((Index<0)||(Index>(Descriptors.length-1)))
-            throw new GenericFailureException("array ot ouf bounds");
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_array_out_bounds"));
         return Descriptors[Index];
     }
 
@@ -369,7 +376,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
      * @return the Info object of this model
      */
     @Override
-    public InsilicoModelInfoUpdated getInfo() {
+    public InsilicoModelInfo getInfo() {
         return Info;
     }
 

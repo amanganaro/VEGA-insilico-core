@@ -5,12 +5,11 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.RingSet;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IRing;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
@@ -19,11 +18,10 @@ import java.util.Arrays;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class DistanceDetour extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
-
-    Logger logger = LoggerFactory.getLogger(DistanceDetour.class);
 
     private final static String BlockName = "Distance/Detour Descriptors";
 
@@ -75,7 +73,7 @@ public class DistanceDetour extends DescriptorBlock {
         try {
             DDrMatrix = mol.GetMatrixDistanceDetour();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

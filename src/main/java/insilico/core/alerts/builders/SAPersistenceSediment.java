@@ -5,16 +5,13 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
  *
@@ -59,7 +56,7 @@ public class SAPersistenceSediment extends AlertBlockFromSMARTS implements iAler
     
     
     public SAPersistenceSediment() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_PERSISTENCE_SEDIMENT_IRFMN, StringSelector.getString("sa_persistence_sediment_initialization"));
+        super(InsilicoConstants.SA_BLOCK_PERSISTENCE_SEDIMENT_IRFMN, StringSelectorCore.getString("sa_persistence_sediment_initialization"));
     }
     
     
@@ -78,8 +75,8 @@ public class SAPersistenceSediment extends AlertBlockFromSMARTS implements iAler
 
         for (int i=0; i<SMARTSFragsNP.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(String.format(StringSelector.getString("sa_persistence_sediment_name"), idx+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_persistence_sediment_description"), SMARTSFragsNP[i]));
+            curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_sediment_name"), idx+1));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_persistence_sediment_description"), SMARTSFragsNP[i]));
             curSA.setImageURL("/insilico/core/alerts/png/perssed/PER_SED_" + (pngidx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SEDIMENT_NP, true);
             Alerts.add(curSA);
@@ -87,36 +84,36 @@ public class SAPersistenceSediment extends AlertBlockFromSMARTS implements iAler
         }
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_sediment_name"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_sediment_description_esters"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_sediment_name"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_sediment_description_esters"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SEDIMENT_NP, true);
         Alerts.add(curSA);
         idx++;
 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_sediment_name"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_sediment_description_aldehydes"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_sediment_name"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_sediment_description_aldehydes"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SEDIMENT_NP, true);
         Alerts.add(curSA);
         idx++;
 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_sediment_name"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_sediment_description_ketones"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_sediment_name"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_sediment_description_ketones"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SEDIMENT_NP, true);
         Alerts.add(curSA);
         idx++;
 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_sediment_name"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persitence_sediment_description_amines"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_sediment_name"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persitence_sediment_description_amines"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SEDIMENT_NP, true);
         Alerts.add(curSA);
         idx++;
 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_sediment_name"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persitence_sediment_description_hydroxyl"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_sediment_name"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persitence_sediment_description_hydroxyl"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SEDIMENT_NP, true);
         Alerts.add(curSA);
         Multiple[idx] = true;
@@ -127,8 +124,8 @@ public class SAPersistenceSediment extends AlertBlockFromSMARTS implements iAler
         
         for (int i=0; i<SMARTSFragsVP.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(String.format(StringSelector.getString("sa_persistence_sediment_vp_name"), vPidx+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_persistence_sediment_vp_description"), SMARTSFragsVP[i]));
+            curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_sediment_vp_name"), vPidx+1));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_persistence_sediment_vp_description"), SMARTSFragsVP[i]));
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SEDIMENT_VP, true);
             curSA.setImageURL("/insilico/core/alerts/png/perssed/PER_SED_" + (pngidx+1) + ".png");
             Alerts.add(curSA);
@@ -136,16 +133,16 @@ public class SAPersistenceSediment extends AlertBlockFromSMARTS implements iAler
         }
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_sediment_vp_name"), vPidx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_sediment_vp_description_ether"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_sediment_vp_name"), vPidx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_sediment_vp_description_ether"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SEDIMENT_VP, true);
         Alerts.add(curSA);
         Multiple[idx] = true;
         idx++; vPidx++;
 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_sediment_vp_name"), vPidx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_sediment_vp_description_halogens"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_sediment_vp_name"), vPidx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_sediment_vp_description_halogens"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_SEDIMENT_VP, true);
         Alerts.add(curSA);
         Multiple[idx] = true;
@@ -181,7 +178,7 @@ public class SAPersistenceSediment extends AlertBlockFromSMARTS implements iAler
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -221,7 +218,7 @@ public class SAPersistenceSediment extends AlertBlockFromSMARTS implements iAler
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_SED_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -232,7 +229,7 @@ public class SAPersistenceSediment extends AlertBlockFromSMARTS implements iAler
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_SED_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

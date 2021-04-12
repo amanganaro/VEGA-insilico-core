@@ -7,6 +7,7 @@ import insilico.core.descriptor.blocks.old.weight.VertexDegree;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.graph.matrix.AdjacencyMatrix;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
@@ -17,11 +18,11 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class TopologicalCharge extends DescriptorBlock {
     
     private static final long serialVersionUID = 1L;
 
-    Logger logger = LoggerFactory.getLogger(TopologicalCharge.class);
 
     private static final String BlockName = "Topological Charge Descriptors";
 
@@ -74,7 +75,7 @@ public class TopologicalCharge extends DescriptorBlock {
         try {
             TopoMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

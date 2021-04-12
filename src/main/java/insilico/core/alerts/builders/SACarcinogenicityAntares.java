@@ -5,7 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.smarts.SmartsPattern;
 
@@ -150,7 +150,7 @@ public class SACarcinogenicityAntares extends AlertBlockFromSMARTS implements iA
     
     
     public SACarcinogenicityAntares() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_CARC_ANTARES, StringSelector.getString("sa_carc_antares_initialization"));
+        super(InsilicoConstants.SA_BLOCK_CARC_ANTARES, StringSelectorCore.getString("sa_carc_antares_initialization"));
     }
     
     
@@ -159,8 +159,8 @@ public class SACarcinogenicityAntares extends AlertBlockFromSMARTS implements iA
 
         for (int i=0; i<CarcSMARTS.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (i+1)));
-            curSA.setName(StringSelector.getString("sa_carc_antares_name") + (i+1));
-            curSA.setDescription(StringSelector.getString("sa_carc_antares_description") + CarcSMARTS[i]);
+            curSA.setName(StringSelectorCore.getString("sa_carc_antares_name") + (i+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_carc_antares_description") + CarcSMARTS[i]);
             Alerts.add(curSA);
         }
 
@@ -182,7 +182,7 @@ public class SACarcinogenicityAntares extends AlertBlockFromSMARTS implements iA
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 

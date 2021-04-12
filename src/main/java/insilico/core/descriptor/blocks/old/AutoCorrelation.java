@@ -6,6 +6,7 @@ import insilico.core.descriptor.blocks.old.weight.Electronegativity;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,11 @@ import java.util.ArrayList;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class AutoCorrelation extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
 
-    Logger logger = LoggerFactory.getLogger(AutoCorrelation.class);
 
     private final static String BlockName = "AutoCorrelation Descriptors";
 
@@ -98,7 +99,7 @@ public class AutoCorrelation extends DescriptorBlock {
         try {
             TopoMatrix = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

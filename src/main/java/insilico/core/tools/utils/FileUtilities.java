@@ -1,6 +1,7 @@
 package insilico.core.tools.utils;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.localization.StringSelectorCore;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,7 +30,7 @@ public class FileUtilities {
             outFileStream.flush();
             outFileStream.close();
         } catch (Exception e) {
-            throw new GenericFailureException("Unable to save to file(" + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("fileutilities_unable_to_save"), e.getMessage()));
         }
     }
 

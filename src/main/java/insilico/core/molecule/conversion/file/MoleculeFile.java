@@ -1,11 +1,7 @@
 package insilico.core.molecule.conversion.file;
 
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.molecule.conversion.custom.CustomMDLWriter;
-import insilico.core.tools.utils.logger.InsilicoLogger;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

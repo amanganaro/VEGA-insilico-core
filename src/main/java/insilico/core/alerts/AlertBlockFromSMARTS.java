@@ -3,13 +3,8 @@ package insilico.core.alerts;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.molecule.tools.CustomQueryMatcher;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
-
-import java.util.List;
 
 public abstract class AlertBlockFromSMARTS extends AlertBlock {
 
@@ -57,7 +52,7 @@ public abstract class AlertBlockFromSMARTS extends AlertBlock {
     public AlertList Calculate(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
 
         if (!mol.IsValid())
-            throw new InvalidMoleculeException(StringSelector.getString("sa_molecule_invalid_marked"));
+            throw new InvalidMoleculeException(StringSelectorCore.getString("sa_molecule_invalid_marked"));
         CurMol = mol;
 
         // Init
@@ -68,7 +63,7 @@ public abstract class AlertBlockFromSMARTS extends AlertBlock {
                 IsInitialized = true;
             }
         } catch (Exception e) {
-            throw new GenericFailureException(String.format(StringSelector.getString("sa_invalid_molecule_err"), e.getMessage()));
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("sa_invalid_molecule_err"), e.getMessage()));
         }
 
         // Calls method for checking alerts

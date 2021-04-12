@@ -2,16 +2,12 @@ package insilico.core.alerts.builders;
 
 import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
-import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
  *
@@ -100,7 +96,7 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
     
     
     public SAFishIRFMN() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_FISH_IRFMN, StringSelector.getString("sa_fish_irfmn_initialization"));
+        super(InsilicoConstants.SA_BLOCK_FISH_IRFMN, StringSelectorCore.getString("sa_fish_irfmn_initialization"));
     }
     
     
@@ -111,8 +107,8 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
         
         for (int i=0; i<SMARTSCategory1.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(StringSelector.getString("sa_fish_irfmn_smarts1_name") + (i+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_fish_irfmn_smarts1_description"), SMARTSCategory1[i]));
+            curSA.setName(StringSelectorCore.getString("sa_fish_irfmn_smarts1_name") + (i+1));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_fish_irfmn_smarts1_description"), SMARTSCategory1[i]));
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_FISH_TOX_LESS_1, true);
             Alerts.add(curSA);
             idx++;
@@ -120,8 +116,8 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
 
         for (int i=0; i<SMARTSCategory2.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(StringSelector.getString("sa_fish_irfmn_smarts2_name") + (i+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_fish_irfmn_smarts2_description"), SMARTSCategory2[i]));
+            curSA.setName(StringSelectorCore.getString("sa_fish_irfmn_smarts2_name") + (i+1));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_fish_irfmn_smarts2_description"), SMARTSCategory2[i]));
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_FISH_TOX_1_10, true);
             Alerts.add(curSA);
             idx++;
@@ -129,8 +125,8 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
         
         for (int i=0; i<SMARTSCategory3.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(StringSelector.getString("sa_fish_irfmn_smarts3_name") + (i+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_fish_irfmn_smarts3_description"), SMARTSCategory3[i]));
+            curSA.setName(StringSelectorCore.getString("sa_fish_irfmn_smarts3_name") + (i+1));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_fish_irfmn_smarts3_description"), SMARTSCategory3[i]));
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_FISH_TOX_10_100, true);
             Alerts.add(curSA);
             idx++;
@@ -162,7 +158,7 @@ public class SAFishIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 

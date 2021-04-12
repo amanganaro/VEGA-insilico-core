@@ -2,7 +2,7 @@ package insilico.core.descriptor.blocks.weights.basic;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.blocks.weights.iBasicWeight;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -17,7 +17,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class WeightsMass implements iBasicWeight {
 
     private static final String SYMBOL = "m";
-    private static final String NAME = StringSelector.getString("descriptors_mass_name");
+    private static final String NAME = StringSelectorCore.getString("descriptors_mass_name");
 
     private final static Object[][] mass = {
         {"H", 1.01},

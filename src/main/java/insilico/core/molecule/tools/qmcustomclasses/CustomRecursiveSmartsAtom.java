@@ -1,5 +1,7 @@
 package insilico.core.molecule.tools.qmcustomclasses;
 
+import insilico.core.localization.StringSelectorCore;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -16,10 +18,11 @@ import org.openscience.cdk.tools.LoggingToolFactory;
 
 import java.util.*;
 
+@Slf4j
 public class CustomRecursiveSmartsAtom extends SMARTSAtom {
 
     private static final long serialVersionUID = 1L;
-    private static final ILoggingTool logger = LoggingToolFactory.createLoggingTool(RecursiveSmartsAtom.class);
+
     private IAtomContainer atomContainer = null;
     private IQueryAtomContainer recursiveQuery = null;
     private BitSet bitSet = null;
@@ -33,14 +36,14 @@ public class CustomRecursiveSmartsAtom extends SMARTSAtom {
         if (this.recursiveQuery.getAtomCount() == 1) {
             return ((IQueryAtom)this.recursiveQuery.getAtom(0)).matches(atom);
         } else if (this.atomContainer == null) {
-            logger.error("In RecursiveSmartsAtom, atomContainer can't be null! You must set it before matching");
+            log.error(StringSelectorCore.getString("tools_smarts_atom_custom_error"));
             return false;
         } else {
             if (this.bitSet == null) {
                 try {
                     this.initilizeBitSets();
                 } catch (CDKException var3) {
-                    logger.error("Error found when matching recursive smarts: " + var3.getMessage());
+                    log.error(String.format(StringSelectorCore.getString("tools_smarts_atom_match_error"), var3.getMessage()));
                     return false;
                 }
             }

@@ -1,6 +1,7 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
@@ -31,7 +32,7 @@ public class Depiction {
 
         BufferedImage image;
         if(!mol.IsValid())
-            throw new GenericFailureException("Molecule does not have a valid structure");
+            throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_generic_fail"));
 
         // Generates structure
         StructureDiagramGenerator sdg = new StructureDiagramGenerator();
@@ -39,7 +40,7 @@ public class Depiction {
             sdg.setMolecule(mol.GetStructure());
             sdg.generateCoordinates();
         } catch (Exception ex){
-            throw new GenericFailureException("Unable to generate coordinates for molecule");
+            throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_coordinates_fail"));
         }
         IAtomContainer currentMol = sdg.getMolecule();
 
@@ -92,7 +93,7 @@ public class Depiction {
             sdg.setMolecule(mol);
             sdg.generateCoordinates();
         } catch (Exception ex){
-            throw new GenericFailureException("Unable to generate coordinates for molecule");
+            throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_coordinates_fail"));
         }
         IAtomContainer currentMol = sdg.getMolecule();
 
@@ -152,7 +153,7 @@ public class Depiction {
                 InsilicoMolecule molecule = SmilesMolecule.Convert(ts.getSMILES(i));
                 String id = root + "/" + ts.getId(i) + ".png";
             } catch (Exception e){
-                System.out.println("Error in molecule n° " + (i+1));
+                System.out.println(String.format(StringSelectorCore.getString("tool_depicture_molecule_error"), i +1));
             }
         }
     }

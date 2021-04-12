@@ -1,6 +1,7 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.descriptor.Descriptor;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.tools.utils.MoleculeUtilities;
 import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
@@ -218,7 +219,7 @@ public class InsilicoMoleculeNormalization {
                         Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxSingleOminus)).setOrder(IBond.Order.DOUBLE);
 
                         HasModified = true;
-                        log.info("Normalized a NO2 group to O=N=O form");
+                        log.info(StringSelectorCore.getString("tool_normalization_no2_1"));
                         continue;
                     }
 
@@ -231,7 +232,7 @@ public class InsilicoMoleculeNormalization {
                         Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
 
                         HasModified = true;
-                        log.info("Normalized a NO2 group to O=[N+][O-] form");
+                        log.info(StringSelectorCore.getString("tool_normalization_no2_2"));
                         continue;
                     }
 
@@ -252,7 +253,7 @@ public class InsilicoMoleculeNormalization {
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxTripleN)).setOrder(IBond.Order.DOUBLE);
 
                     HasModified = true;
-                    log.info("Normalized a N=N#N / C=N#N group");
+                    log.info(StringSelectorCore.getString("tool_normalization_nnn"));
                     continue;
                 }
 
@@ -267,7 +268,7 @@ public class InsilicoMoleculeNormalization {
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
 
                     HasModified = true;
-                    log.info("Normalized a C#N=O / C=N=O / N=N=O group");
+                    log.info(StringSelectorCore.getString("tool_normalization_cno"));
                 }
 
 
@@ -320,7 +321,7 @@ public class InsilicoMoleculeNormalization {
 
             if (AllAromatic) {
                 b.setFlag(CDKConstants.ISAROMATIC, true);
-                log.info("Fixed an aromatic bond between fused aromatic rings");
+                log.info(StringSelectorCore.getString("tool_normalization_aromatic_bond_fixing"));
             }
 
         }

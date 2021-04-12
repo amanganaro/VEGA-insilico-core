@@ -2,7 +2,7 @@ package insilico.core.ad.item;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import insilico.core.constant.MessagesAD;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
@@ -41,7 +41,7 @@ public class ADIndexACF extends ADIndex {
                 IdxMissing = 0.6;
             else
                 IdxMissing = 0.4;
-            details = ((int)nACFMissing) + " " + StringSelector.getString("ad_acf_unknown_fragments");
+            details = ((int)nACFMissing) + " " + StringSelectorCore.getString("ad_acf_unknown_fragments");
         }
 
         if (nACFRare == 0)
@@ -52,8 +52,8 @@ public class ADIndexACF extends ADIndex {
             else
                 IdxRare = 0.7;
             if (!details.equalsIgnoreCase(""))
-                details += " " + StringSelector.getString("ad_acf_details_and") + " ";
-            details += ((int)nACFRare) + " " + StringSelector.getString("ad_acf_infrequent_fragments");
+                details += " " + StringSelectorCore.getString("ad_acf_details_and") + " ";
+            details += ((int)nACFRare) + " " + StringSelectorCore.getString("ad_acf_infrequent_fragments");
         }
 
         IndexValue = IdxRare * IdxMissing;
@@ -70,6 +70,6 @@ public class ADIndexACF extends ADIndex {
         }
 
         if (!details.equals(""))
-            Assessment += " (" + String.format(StringSelector.getString("ad_acf_assessment"), details) + ")";
+            Assessment += " (" + String.format(StringSelectorCore.getString("ad_acf_assessment"), details) + ")";
     }
 }

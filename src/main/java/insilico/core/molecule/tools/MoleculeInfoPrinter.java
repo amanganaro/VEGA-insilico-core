@@ -1,6 +1,7 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -20,8 +21,8 @@ public class MoleculeInfoPrinter {
 
         PrintWriter writer = new PrintWriter(out);
 
-        writer.println("Valid molecule: " + Molecule.IsValid());
-        writer.println("Warnings: " + Molecule.GetWarnings());
+        writer.println(StringSelectorCore.getString("tool_infoprinter_valid_mol") + Molecule.IsValid());
+        writer.println(StringSelectorCore.getString("tool_infoprinter_warn") + Molecule.GetWarnings());
 
         if (!Molecule.IsValid()) {
             writer.flush();
@@ -34,36 +35,37 @@ public class MoleculeInfoPrinter {
         try {
             structure = Molecule.GetStructure();
         } catch (InvalidMoleculeException ex) {
-            writer.println("Unable to retrieve structure");
+            writer.println(StringSelectorCore.getString("tool_infoprinter_retrieve_struct_fail"));
             writer.flush();
             writer.close();
             return;
         }
 
-        writer.println("SMILES: " + Molecule.GetSMILES());
-        writer.println("no. of atoms: " + structure.getAtomCount());
-        writer.println("no. of bonds: " + structure.getBondCount());
+        writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_smiles"), Molecule.GetSMILES()));
+        writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_atoms"), structure.getAtomCount()));
+        writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_bonds"), structure.getBondCount()));
+
 
         for (int i=0; i<structure.getAtomCount(); i++) {
             IAtom at = structure.getAtom(i);
             writer.println();
-            writer.println("* Atom no. " + (i+1));
-            writer.println("Atomic Number: " + at.getAtomicNumber());
-            writer.println("Symbol: " + at.getSymbol());
-            writer.println("Type: " + at.getAtomTypeName());
-            writer.println("Hybridization: " + at.getHybridization().toString());
-            writer.println("Valency: " + at.getValency());
-            writer.println("Aromatic: " + at.isAromatic());
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_atom_no"),i+1));
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_atomic_no"),at.getAtomicNumber()));
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_symbol"),at.getSymbol()));
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_type"),at.getAtomTypeName()));
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_hybrid"),at.getHybridization().toString()));
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_valency"),at.getValency()));
+            writer.println(StringSelectorCore.getString("tool_infoprinter_aromatic") + at.isAromatic());
         }
 
         for (int i=0; i<structure.getBondCount(); i++) {
             IBond bo = structure.getBond(i);
             writer.println();
-            writer.println("* Bond no. " + (i+1));
-            writer.println("Order: " + bo.getOrder().toString());
-            writer.println("Atom 1: " + (structure.indexOf(bo.getAtom(0)) + 1));
-            writer.println("Atom 2: " + (structure.indexOf(bo.getAtom(1)) + 1));
-            writer.println("Aromatic: " + bo.isAromatic());
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_bond_no"),i+1));
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_order"),bo.getOrder().toString()));
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_atom"),1, (structure.indexOf(bo.getAtom(0)) + 1)));
+            writer.println(String.format(StringSelectorCore.getString("tool_infoprinter_atom"),2, (structure.indexOf(bo.getAtom(0)) + 1)));
+            writer.println(StringSelectorCore.getString("tool_infoprinter_aromatic") + bo.isAromatic());
         }
 
         writer.flush();

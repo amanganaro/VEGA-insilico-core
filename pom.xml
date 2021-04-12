@@ -228,22 +228,31 @@
 
     <build>
 
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>2.8.2</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+<!--        <resources>-->
+<!--            <resource>-->
+<!--                <directory>src/main/resources</directory>-->
+<!--                <filtering>false</filtering>-->
+<!--                <includes>-->
+<!--                    <include>*.properties</include>-->
+<!--                </includes>-->
+<!--            </resource>-->
+<!--        </resources>-->
+
+
 
         <plugins>
+
+<!--            <plugin>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
+<!--            </plugin>-->
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
+
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -264,6 +273,9 @@
                         <exclude>insilico/core/descriptor/blocks/old/AtomCenteredFragments.java</exclude>
                         <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>
                         <exclude>insilico/core/descriptor/blocks/old/weight/*.java</exclude>
+                        <exclude>insilico/core/model/old/*.java</exclude>
+                        <exclude>insilico/core/tools/utils/old/logger/*.java</exclude>
+                        <exclude>insilico/core/CoreUtils.java</exclude>
 <!--                        <exclude>insilico/core/descriptor/blocks/old/*.java</exclude>-->
                     </excludes>
 
@@ -333,6 +345,15 @@
                         <version>LATEST</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
             </plugin>
 
 

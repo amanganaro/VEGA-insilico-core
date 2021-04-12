@@ -7,6 +7,7 @@ import insilico.core.descriptor.Descriptor;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.exception.MatrixNotSupportedException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.acf.ACFItemList;
 import insilico.core.molecule.matrix.*;
 import insilico.core.similarity.SimilarityDescriptors;
@@ -90,7 +91,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
     public IAtomContainer GetStructure() throws InvalidMoleculeException {
 
         if((!isValid) || (SMILES.isEmpty())){
-            String err = "Requested CDK AtomContainer for an invalid molecule (SMILES: " + SMILES + ")";
+            String err = String.format(StringSelectorCore.getString("ismolecule_invalid_molecule_exception"), SMILES);
             log.warn(err);
             throw new InvalidMoleculeException();
         }
@@ -105,7 +106,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
     public RingSet GetSSSR() throws InvalidMoleculeException {
 
         if((!isValid) || (SMILES.isEmpty())){
-            String err = "Requested CDK AtomContainer for an invalid molecule (SMILES: " + SMILES + ")";
+            String err = String.format(StringSelectorCore.getString("ismolecule_invalid_molecule_exception"), SMILES);
             log.warn(err);
             throw new InvalidMoleculeException();
         }
@@ -116,7 +117,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
     public RingSet GetAllRings() throws InvalidMoleculeException{
 
         if((!isValid) || (SMILES.isEmpty())){
-            String err = "Requested CDK AtomContainer for an invalid molecule (SMILES: " + SMILES + ")";
+            String err = String.format(StringSelectorCore.getString("ismolecule_invalid_molecule_exception"), SMILES);
             log.warn(err);
             throw new InvalidMoleculeException();
         }
@@ -186,7 +187,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(AdjacencyMatrix.class, SMILES, explicitHydrogen).getBidimensionalIntMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + AdjacencyMatrix.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), AdjacencyMatrix.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -201,7 +202,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(BondAugMatrix.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + BondAugMatrix.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), BondAugMatrix.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -216,7 +217,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(BurdenMatrix.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + BurdenMatrix.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), BurdenMatrix.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -231,7 +232,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(ConnectionAugMatrix.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + ConnectionAugMatrix.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), ConnectionAugMatrix.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -246,7 +247,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(DistanceDetourMatrix.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + DistanceDetourMatrix.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), DistanceDetourMatrix.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -261,7 +262,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(EdgeAdjacencyMatrix.class, SMILES, explicitHydrogen).getThreedimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + EdgeAdjacencyMatrix.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), EdgeAdjacencyMatrix.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -276,7 +277,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(TopoDistanceMatrix.class, SMILES, explicitHydrogen).getBidimensionalIntMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + TopoDistanceMatrix.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), TopoDistanceMatrix.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -291,7 +292,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(TopoDistanceMatrixHFilled.class, SMILES, explicitHydrogen).getBidimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + TopoDistanceMatrixHFilled.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), TopoDistanceMatrixHFilled.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -306,7 +307,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(LaplaceMatrix.class, SMILES, explicitHydrogen).getBidimensionalIntMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + LaplaceMatrix.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), LaplaceMatrix.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }
@@ -321,7 +322,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         try {
             return MoleculeCache.GetMatrix(BaryszMatrix.class, SMILES, explicitHydrogen).getThreedimensionalDoubleMatrix();
         } catch (MatrixNotSupportedException ex){
-            String msg = "Unable to convert matrix of class " + BaryszMatrix.class.getSimpleName();
+            String msg =String.format(StringSelectorCore.getString("ismolecule_convert_matrix_error"), BaryszMatrix.class.getSimpleName());
             log.warn(msg);
             throw new GenericFailureException(msg);
         }

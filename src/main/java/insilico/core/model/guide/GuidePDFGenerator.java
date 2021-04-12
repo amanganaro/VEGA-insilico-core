@@ -9,9 +9,9 @@ import com.lowagie.text.pdf.PdfWriter;
 import insilico.core.alerts.AlertsEngine;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModel;
-import insilico.core.model.InsilicoModelInfoUpdated;
+import insilico.core.model.InsilicoModelInfo;
 import insilico.core.model.runner.InsilicoModelConsensusWrapper;
 import insilico.core.model.runner.InsilicoModelWrapper;
 import insilico.core.version.InsilicoInfo;
@@ -83,7 +83,7 @@ public class GuidePDFGenerator {
     // Core version
     private InsilicoInfo coreVersion;
 
-    private InsilicoModelInfoUpdated modelInfo;
+    private InsilicoModelInfo modelInfo;
 
     // Format object
     private DecimalFormat Format_3D;
@@ -221,7 +221,7 @@ public class GuidePDFGenerator {
 
     }
 
-    protected void InitReport(InsilicoModelInfoUpdated modelInfo) throws InitFailureException {
+    protected void InitReport(InsilicoModelInfo modelInfo) throws InitFailureException {
 
         this.modelInfo = modelInfo;
 
@@ -234,7 +234,7 @@ public class GuidePDFGenerator {
             document.open();
             GenerateReport();
         } catch (Exception e) {
-            throw new InitFailureException(String.format(StringSelector.getString("guide_generator_unable_create_pdf"), e.getMessage()));
+            throw new InitFailureException(String.format(StringSelectorCore.getString("guide_generator_unable_create_pdf"), e.getMessage()));
         }
 
     }
@@ -311,7 +311,7 @@ public class GuidePDFGenerator {
 
 
         } catch (Exception e) {
-            throw new GenericFailureException(String.format(StringSelector.getString("guide_generator_error_write_pdf"), e.getMessage()));
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
     }
 
@@ -387,7 +387,7 @@ public class GuidePDFGenerator {
             table.writeSelectedRows(0, -1, MidTable_Left, Math.round(y_pos) - 5 , writer.getDirectContent());
 
         } catch (Exception e) {
-            throw new GenericFailureException(String.format(StringSelector.getString("guide_generator_error_write_pdf"), e.getMessage()));
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
         CurPage = 0;
@@ -400,14 +400,14 @@ public class GuidePDFGenerator {
             document.newPage();
             CurPage++;
             int index = 1;
-            WritePageHeader(StringSelector.getString("guide_generator_model_explanation_title"));
+            WritePageHeader(StringSelectorCore.getString("guide_generator_model_explanation_title"));
 
 
             // 1.1 Introduction
             PdfPCell cell = new PdfPCell();
             cell.setHorizontalAlignment(ALIGN_LEFT);
 //            Paragraph sectionTitle = new Paragraph("1." + index + "\t INTRODUCTION", fontBigUnderline);
-            Paragraph sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_introduction"), index), fontBigUnderline);
+            Paragraph sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_introduction"), index), fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph("\n", font));
@@ -418,7 +418,7 @@ public class GuidePDFGenerator {
             index++;
 
             // 1.2 Details
-            sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_details"), index), fontBigUnderline);
+            sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_details"), index), fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph("\n", font));
@@ -432,7 +432,7 @@ public class GuidePDFGenerator {
             index++;
 
             // 1.3 Applicability Domain
-            sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_ad"), index), fontBigUnderline);
+            sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_ad"), index), fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
 
@@ -504,38 +504,38 @@ public class GuidePDFGenerator {
                 cell.setPaddingRight(3);
                 cell.setExtraParagraphSpace(2);
 
-                if(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeTop) != null) {
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeTop), font));
+                if(AD.get(InsilicoModelInfo.Guide_AD_RangeTop) != null) {
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_RangeTop), font));
                     table.addCell(cell);
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_DescriptionRangeTop), font));
-                    table.addCell(cell);
-                }
-
-                if(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMid) != null){
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMid), font));
-                    table.addCell(cell);
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_DescriptionRangeMid), font));
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_DescriptionRangeTop), font));
                     table.addCell(cell);
                 }
 
-                if(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeBottom) != null) {
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeBottom), font));
+                if(AD.get(InsilicoModelInfo.Guide_AD_RangeMid) != null){
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_RangeMid), font));
                     table.addCell(cell);
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_DescriptionRangeBottom), font));
-                    table.addCell(cell);
-                }
-
-                if(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMidBottom) != null) {
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMidBottom), font));
-                    table.addCell(cell);
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_DescriptionRangeMidBottom), font));
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_DescriptionRangeMid), font));
                     table.addCell(cell);
                 }
 
-                if(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMidTop) != null) {
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_RangeMidTop), font));
+                if(AD.get(InsilicoModelInfo.Guide_AD_RangeBottom) != null) {
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_RangeBottom), font));
                     table.addCell(cell);
-                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfoUpdated.Guide_AD_DescriptionRangeMidTop), font));
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_DescriptionRangeBottom), font));
+                    table.addCell(cell);
+                }
+
+                if(AD.get(InsilicoModelInfo.Guide_AD_RangeMidBottom) != null) {
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_RangeMidBottom), font));
+                    table.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_DescriptionRangeMidBottom), font));
+                    table.addCell(cell);
+                }
+
+                if(AD.get(InsilicoModelInfo.Guide_AD_RangeMidTop) != null) {
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_RangeMidTop), font));
+                    table.addCell(cell);
+                    cell = new PdfPCell(new Paragraph(AD.get(InsilicoModelInfo.Guide_AD_DescriptionRangeMidTop), font));
                     table.addCell(cell);
                 }
                 document.add(table);
@@ -544,8 +544,8 @@ public class GuidePDFGenerator {
             }
 
             // 1.4 Coral Correlation weights
-            if(modelInfo.Guide.get(InsilicoModelInfoUpdated.Guide_Coral_Weights) != null){
-                sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_coral_corrweights"), index), fontBigUnderline);
+            if(modelInfo.Guide.get(InsilicoModelInfo.Guide_Coral_Weights) != null){
+                sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_coral_corrweights"), index), fontBigUnderline);
                 sectionTitle.setIndentationLeft(1);
                 document.add(sectionTitle);
                 document.add(new Paragraph("\n", font));
@@ -567,7 +567,7 @@ public class GuidePDFGenerator {
                 table.addCell(cell);
 
 
-                String[] coralArray = modelInfo.getGuide().get(InsilicoModelInfoUpdated.Guide_Coral_Weights).replaceAll("\n", "\t").trim().split("\t");
+                String[] coralArray = modelInfo.getGuide().get(InsilicoModelInfo.Guide_Coral_Weights).replaceAll("\n", "\t").trim().split("\t");
                 for(int i = 0; i < coralArray.length; i = i + 2){
                     cell = new PdfPCell(new Paragraph(coralArray[i].trim(), font));
                     cell.setPaddingLeft(15);
@@ -585,7 +585,7 @@ public class GuidePDFGenerator {
 
             // 1.4 Structural Alerts
             if(modelInfo.hasAlerts()){
-                sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_structural_alerts"), index), fontBigUnderline);
+                sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_structural_alerts"), index), fontBigUnderline);
                 sectionTitle.setIndentationLeft(1);
                 document.add(sectionTitle);
                 document.add(new Paragraph("\n", font));
@@ -599,12 +599,12 @@ public class GuidePDFGenerator {
 
 
             // 1.4 References
-            sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_structural_references"), index), fontBigUnderline);
+            sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_structural_references"), index), fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph("\n"));
 
-            sectionBody = new Paragraph(StringSelector.getString("guide_generator_qmrf_link"), fontBold);
+            sectionBody = new Paragraph(StringSelectorCore.getString("guide_generator_qmrf_link"), fontBold);
             sectionBody.add(new Paragraph(modelInfo.Reference.getQMRFLink(), fontLink));
             document.add(sectionBody);
             document.add(new Paragraph("\n"));
@@ -613,8 +613,8 @@ public class GuidePDFGenerator {
             int curRef = 1;
             for(HashMap<String, String> singleRef : modelInfo.Reference.getReferenceList()) {
                 document.add(new Paragraph("#" + curRef + "\n", font));
-                document.add(new Paragraph(singleRef.get(InsilicoModelInfoUpdated.Reference_ReferenceName), fontReference));
-                document.add(new Paragraph(singleRef.get(InsilicoModelInfoUpdated.Reference_ReferenceLink), fontLink));
+                document.add(new Paragraph(singleRef.get(InsilicoModelInfo.Reference_ReferenceName), fontReference));
+                document.add(new Paragraph(singleRef.get(InsilicoModelInfo.Reference_ReferenceLink), fontLink));
                 document.add(new Paragraph("\n"));
                 curRef++;
             }
@@ -624,39 +624,39 @@ public class GuidePDFGenerator {
             if(modelInfo.hasAlerts()){
             }
 
-            sectionTitle = new Paragraph(String.format(StringSelector.getString("guide_generator_model_structural_model_stats"), index), fontBigUnderline);
+            sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_structural_model_stats"), index), fontBigUnderline);
             sectionTitle.add("\n");
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph(TextConstants.STATS_INTRO, font));
 
             // Training Set stats
-            sectionBody = new Paragraph(StringSelector.getString("guide_generator_training_set") + "\n", fontBold);
+            sectionBody = new Paragraph(StringSelectorCore.getString("guide_generator_training_set") + "\n", fontBold);
             document.add(sectionBody);
 
-            sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_n_Train) + "        ", font);
-            sectionBody.add("\t" + "R2 = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_R2_Train)+ "        ");
-            sectionBody.add("\t" + "RMSE = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_RMSE_Train) + "        ");
+            sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_n_Train) + "        ", font);
+            sectionBody.add("\t" + "R2 = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_R2_Train)+ "        ");
+            sectionBody.add("\t" + "RMSE = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_RMSE_Train) + "        ");
 
             document.add(sectionBody);
 
             // Test Set stats
-            sectionBody = new Paragraph(StringSelector.getString("guide_generator_test_set") + "\n", fontBold);
+            sectionBody = new Paragraph(StringSelectorCore.getString("guide_generator_test_set") + "\n", fontBold);
             document.add(sectionBody);
 
-            sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_n_Test) + "        ", font);
-            sectionBody.add("\t" + "R2 = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_R2_Test) + "        ");
-            sectionBody.add("\t" + "RMSE = " + modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_RMSE_Test) + "        ");
+            sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_n_Test) + "        ", font);
+            sectionBody.add("\t" + "R2 = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_R2_Test) + "        ");
+            sectionBody.add("\t" + "RMSE = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_RMSE_Test) + "        ");
 
             sectionBody.add("\n");
             if(modelInfo.getStats().get("Stats_Notes") != null){
-                sectionBody.add(new Paragraph(modelInfo.Stats.get(InsilicoModelInfoUpdated.Stats_Notes), font));
+                sectionBody.add(new Paragraph(modelInfo.Stats.get(InsilicoModelInfo.Stats_Notes), font));
             }
 
             document.add(sectionBody);
 
         } catch (Exception e) {
-            throw new GenericFailureException(String.format(StringSelector.getString("guide_generator_error_write_pdf"), e.getMessage()));
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
     }
 

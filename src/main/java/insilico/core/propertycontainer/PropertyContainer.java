@@ -1,6 +1,7 @@
 package insilico.core.propertycontainer;
 
 import insilico.core.exception.PropertyNotFoundException;
+import insilico.core.localization.StringSelectorCore;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -91,7 +92,7 @@ public class PropertyContainer implements iPropertyContainer, Serializable, Clon
     public double getNumericProperty(String PropertyName) throws PropertyNotFoundException {
         Double retVal =  NumericProperties.get(PropertyName);
         if (retVal == null)
-            throw new PropertyNotFoundException("No numeric property found for the key " + PropertyName);
+            throw new PropertyNotFoundException(String.format(StringSelectorCore.getString("propertycontainer_no_numeric_exception"), PropertyName));
         else
             return retVal;
     }

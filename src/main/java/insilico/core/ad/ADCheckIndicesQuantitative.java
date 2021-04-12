@@ -6,15 +6,12 @@ import insilico.core.ad.item.ADIndexMaxError;
 import insilico.core.ad.item.ADIndexSimilarity;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.exception.GenericFailureException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.similarity.SimilarMolecule;
-import insilico.core.tools.utils.logger.InsilicoLogger;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -78,8 +75,8 @@ public class ADCheckIndicesQuantitative extends ADCheckIndices {
             return MostSimilar;
             
         } catch (CloneNotSupportedException e) {
-            log.warn(String.format(StringSelector.getString("ad_check_qualitative_warn"), Mol.GetSMILES(), e.getMessage()));
-            throw new GenericFailureException(String.format(StringSelector.getString("ad_check_qualitative_exception"), e.getMessage()));
+            log.warn(String.format(StringSelectorCore.getString("ad_check_qualitative_warn"), Mol.GetSMILES(), e.getMessage()));
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("ad_check_qualitative_exception"), e.getMessage()));
         }
     }
     

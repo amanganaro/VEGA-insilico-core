@@ -31,6 +31,7 @@
  */
 package insilico.core.molecule.conversion.custom;
 
+import insilico.core.localization.StringSelectorCore;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.config.IsotopeFactory;
@@ -229,6 +230,7 @@ public class CustomSmilesWriter {
      *      non-chiral smiles (createSMILES(AtomContainer) does not throw an
      *      exception).
      * @return the SMILES representation of the molecule
+     *
      */
     public synchronized String createSMILESWithoutCheckForMultipleMolecules(IAtomContainer molecule, boolean chiral, boolean doubleBondConfiguration[])
             throws CDKException {
@@ -238,7 +240,7 @@ public class CustomSmilesWriter {
         try {
             labeler.canonLabel(molecule);
         } catch (Throwable e) {
-            throw new CDKException("Unable to run canonical labelelr for the SMILES [" + e.getMessage() + "]");
+            throw new CDKException(String.format(StringSelectorCore.getString("conversion_smileswriter_labeler_exception"), e.getMessage()));
         }
         brokenBonds.clear();
         ringMarker = 0;

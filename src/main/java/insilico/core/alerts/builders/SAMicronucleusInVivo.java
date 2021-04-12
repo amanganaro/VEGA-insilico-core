@@ -10,7 +10,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.exception.PropertyNotFoundException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
@@ -28,8 +28,8 @@ public class SAMicronucleusInVivo extends AlertBlockFromSMARTS implements iAlert
     public final static int SA_REL_HIGH = 1;
     public final static int SA_REL_MODERATE = 2;
     public final static int SA_REL_LOW = 3;
-    public final static String INACTIVE = StringSelector.getString("sa_inactive");
-    public final static String ACTIVE = StringSelector.getString("sa_active");
+    public final static String INACTIVE = StringSelectorCore.getString("sa_inactive");
+    public final static String ACTIVE = StringSelectorCore.getString("sa_active");
     
     private Pattern[] SA;
     
@@ -128,7 +128,7 @@ public class SAMicronucleusInVivo extends AlertBlockFromSMARTS implements iAlert
     
     
     public SAMicronucleusInVivo() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_MICRONUCLEUS_INVIVO, StringSelector.getString("sa_micronucleus_vivo_initialization"));
+        super(InsilicoConstants.SA_BLOCK_MICRONUCLEUS_INVIVO, StringSelectorCore.getString("sa_micronucleus_vivo_initialization"));
     }
     
     
@@ -139,8 +139,8 @@ public class SAMicronucleusInVivo extends AlertBlockFromSMARTS implements iAlert
         
         for (int i=0; i<SMARTS.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(String.format(StringSelector.getString("sa_micronucleus_vivo_name"), i+1, SMARTS[i][2]));
-            curSA.setDescription(String.format(StringSelector.getString("sa_micronucleus_vivo_description"),SMARTS[i][0],SMARTS[i][2]));
+            curSA.setName(String.format(StringSelectorCore.getString("sa_micronucleus_vivo_name"), i+1, SMARTS[i][2]));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_micronucleus_vivo_description"),SMARTS[i][0],SMARTS[i][2]));
             curSA.setImageURL("/insilico/core/alerts/png/invivomicronucleus/MNVIVO_" + (idx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_MICRONUCLEUS_ACTIVE, (SMARTS[i][2].equals(ACTIVE)));
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_MICRONUCLEUS_INACTIVE, (SMARTS[i][2].equals(INACTIVE)));
@@ -165,7 +165,7 @@ public class SAMicronucleusInVivo extends AlertBlockFromSMARTS implements iAlert
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -219,7 +219,7 @@ public class SAMicronucleusInVivo extends AlertBlockFromSMARTS implements iAlert
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "MNVIVO_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

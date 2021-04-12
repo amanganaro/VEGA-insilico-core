@@ -4,8 +4,9 @@ import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,13 +18,13 @@ import java.util.Arrays;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class TopologicalDistances extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
 
-    Logger logger = LoggerFactory.getLogger(TopologicalDistances.class);
 
-    private final static String BlockName = StringSelector.getString("descriptors__topologicaldistances_name");
+    private final static String BlockName = StringSelectorCore.getString("descriptors__topologicaldistances_name");
     
     private final static int MAX_TOPO_DISTANCE = 10;
 
@@ -95,8 +96,8 @@ public class TopologicalDistances extends DescriptorBlock {
             Add("T(" + AtomCouples[i][0] + ".." + AtomCouples[i][1] + ")", "");
         for (int lag=1; lag<= MAX_TOPO_DISTANCE; lag++)
             for (int i=0; i<AtomCouples.length; i++) {
-                Add("B"+lag+"(" + AtomCouples[i][0] + ".." + AtomCouples[i][1] + ")", String.format(StringSelector.getString("descriptors__topologicaldistances_b_description"), AtomCouples[i][0],AtomCouples[i][1], lag));
-                Add("F"+lag+"(" + AtomCouples[i][0] + ".." + AtomCouples[i][1] + ")", String.format(StringSelector.getString("descriptors__topologicaldistances_f_description"), AtomCouples[i][0],AtomCouples[i][1], lag));
+                Add("B"+lag+"(" + AtomCouples[i][0] + ".." + AtomCouples[i][1] + ")", String.format(StringSelectorCore.getString("descriptors__topologicaldistances_b_description"), AtomCouples[i][0],AtomCouples[i][1], lag));
+                Add("F"+lag+"(" + AtomCouples[i][0] + ".." + AtomCouples[i][1] + ")", String.format(StringSelectorCore.getString("descriptors__topologicaldistances_f_description"), AtomCouples[i][0],AtomCouples[i][1], lag));
             }
         SetAllValues(Descriptor.MISSING_VALUE);
     }
@@ -128,7 +129,7 @@ public class TopologicalDistances extends DescriptorBlock {
         try {
             TopoMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

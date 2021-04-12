@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public interface iInsilicoModel extends Serializable {
 
-    public InsilicoModelInfoUpdated getInfo();
+    public InsilicoModelInfo getInfo();
 
     public ArrayList<DescriptorBlock> GetRequiredDescriptorBlocks() throws InitFailureException;
     public ArrayList<Integer> GetRequiredAlertBlocks();

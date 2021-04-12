@@ -3,7 +3,7 @@ package insilico.core.model.trainingset;
 import insilico.core.alerts.AlertEncoding;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
-import insilico.core.model.InsilicoModelInfoUpdated;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModel;
 import insilico.core.molecule.InsilicoMolecule;
@@ -125,7 +125,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public int getId(int Index) throws GenericFailureException {
         if((Id == null) || (Index < 0) || (Index >= Id.length)){
-            String message = "Id object empty or wrong index in request to training set";
+            String message = StringSelectorCore.getString("trainingset_id_null");
             log.error(message);
             throw new GenericFailureException(message);
         }
@@ -135,7 +135,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getCAS(int Index) throws GenericFailureException {
         if ((CAS == null) || (Index < 0) || (Index >= CAS.length)) {
-            String message = "CAS object empty or wrong index in request to training set";
+            String message = StringSelectorCore.getString("trainingset_cas_null");
             log.error(message);
             throw new GenericFailureException(message);
         }
@@ -145,7 +145,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
 //    @Override
     public String getSMILES(int Index) throws GenericFailureException {
         if ((SMILES == null) || (Index < 0) || (Index >= SMILES.length)) {
-            String message = "SMILES object empty or wrong index in request to training set";
+            String message = StringSelectorCore.getString("trainingset_smiles_null");
             log.error(message);
             throw new GenericFailureException(message);
         }
@@ -163,7 +163,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public short getMoleculeSet(int Index) throws GenericFailureException {
         if ((Status == null) || (Index < 0) || (Index >= Status.length)) {
-            String message = "Status object empty or wrong index in request to training set";
+            String message = StringSelectorCore.getString("trainingset_status_null");
             log.error(message);
             throw new GenericFailureException(message);
         }
@@ -173,8 +173,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getExperimentalValue(int Index) throws GenericFailureException {
         if ((Experimental == null) || (Index < 0) || (Index >= Experimental.length)) {
-            log.error("Experimental object empty or wrong index in request to training set");
-            throw new GenericFailureException("Experimental object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_experimental_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_experimental_null"));
         }
         return Experimental[Index];
     }
@@ -187,8 +187,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getExperimentalValueFormatted(int Index) throws GenericFailureException {
         if ((Experimental == null) || (Index < 0) || (Index >= Experimental.length)) {
-            log.error("Experimental object empty or wrong index in request to training set");
-            throw new GenericFailureException("Experimental object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_experimental_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_experimental_null"));
         }
 
         double val = getExperimentalValue(Index);
@@ -198,8 +198,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getPredictedValue(int Index) throws GenericFailureException {
         if ((Prediction == null) || (Index < 0) || (Index >= Prediction.length)) {
-            log.error("Prediction object empty or wrong index in request to training set");
-            throw new GenericFailureException("Prediction object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_prediction_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_prediction_null"));
         }
         return Prediction[Index];
     }
@@ -207,8 +207,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getPredictedValueFormatted(int Index) throws GenericFailureException {
         if ((Prediction == null) || (Index < 0) || (Index >= Prediction.length)) {
-            log.error("Prediction object empty or wrong index in request to training set");
-            throw new GenericFailureException("Prediction object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_prediction_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_prediction_null"));
         }
 
         double val = getPredictedValue(Index);
@@ -218,8 +218,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getMolecularWeight(int Index) throws GenericFailureException {
         if ((MW == null) || (Index < 0) || (Index >= MW.length)) {
-            log.error("MW object empty or wrong index in request to training set");
-            throw new GenericFailureException("MW object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_mw_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_mw_null"));
         }
 
         return MW[Index];
@@ -233,15 +233,15 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String GetDescriptorName(int Index) throws GenericFailureException {
         if ((Index<0)||(Index>(DescriptorName.length-1)))
-            throw new GenericFailureException("array ot ouf bounds");
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_array_out_bounds"));
         return DescriptorName[Index];
     }
 
     @Override
     public double getDescriptorMax(int Index) throws GenericFailureException {
         if ((DescriptorMax == null) || (Index < 0) || (Index >= DescriptorMax.length)) {
-            log.error("DescriptorMax object empty or wrong index in request to training set");
-            throw new GenericFailureException("DescriptorMax object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_descmax_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_descmax_null"));
         }
         return DescriptorMax[Index];
     }
@@ -249,8 +249,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public double getDescriptorMin(int Index) throws GenericFailureException {
         if ((DescriptorMin == null) || (Index < 0) || (Index >= DescriptorMin.length)) {
-            log.error("DescriptorMin object empty or wrong index in request to training set");
-            throw new GenericFailureException("DescriptorMin object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_descmin_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_descmin_null"));
         }
         return DescriptorMin[Index];
     }
@@ -259,8 +259,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     public double getDescriptor(int MolIndex, int DescriptorIndex) throws GenericFailureException {
         if ((Descriptors == null) || (MolIndex < 0) || (MolIndex >= Descriptors.length) ||
                 (DescriptorIndex < 0) || (DescriptorIndex >= Descriptors[0].length)) {
-            log.error("Descriptors object empty or wrong index in request to training set");
-            throw new GenericFailureException("Descriptors object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_descriptors_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_descriptors_null"));
         }
         return Descriptors[MolIndex][DescriptorIndex];
     }
@@ -268,8 +268,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public SimilarityDescriptors getSimilarityDescriptor(int Index) throws GenericFailureException {
         if ((SimDescriptors == null) || (Index < 0) || (Index >= SimDescriptors.length)) {
-            log.error("SimDescriptors object empty or wrong index in request to training set");
-            throw new GenericFailureException("SimDescriptors object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_simdesc_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_simdesc_null"));
         }
         return SimDescriptors[Index];
     }
@@ -277,8 +277,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getAlerts(int Index) throws GenericFailureException {
         if ((Alerts == null) || (Index < 0) || (Index >= Alerts.length)) {
-            log.error("Alerts object empty or wrong index in request to training set");
-            throw new GenericFailureException("Alerts object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_alerts_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_alerts_null"));
         }
         return Alerts[Index];
     }
@@ -286,8 +286,8 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public ACFItemList getACF() throws GenericFailureException {
         if (ACFList == null) {
-            log.error("ACFList object empty or wrong index in request to training set");
-            throw new GenericFailureException("ACFList object empty or wrong index in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_acf_null"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_acf_null"));
         }
         return ACFList;
     }
@@ -295,13 +295,13 @@ public class TrainingSet implements Serializable, iTrainingSet {
     @Override
     public String getClassLabel(double Value) throws GenericFailureException {
         if (!hasClassValues) {
-            log.error("Requested class label for a dataset without classification info in request to training set");
-            throw new GenericFailureException("Requested class label for a dataset without classification info in request to training set");
+            log.error(StringSelectorCore.getString("trainingset_class_values_error"));
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_class_values_error"));
         }
 //        int value_to_check = ;
         if (!ClassValues.containsKey(Value)) {
-            log.error("Class label not found (value = " + Value + ") in request to training set");
-            throw new GenericFailureException("Class label not found (value = " + Value + ") in request to training set");
+            log.error(String.format(StringSelectorCore.getString("trainingset_class_label_error"), Value));
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("trainingset_class_label_error"), Value));
         }
         return ClassValues.get(Value);
     }
@@ -325,7 +325,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
                 try {
                     return getClassLabel(value);
                 } catch (GenericFailureException e) {
-                    log.error("Unable to format value " + value + " in request to training ");
+                    log.error(String.format(StringSelectorCore.getString("trainingset_format_value_error"), value));
                     return "-";
                 }
             else
@@ -379,7 +379,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
             // Check the header
             String[] parsedString = bufferedReader.readLine().split("\t");
             if(parsedString.length < 5)
-                throw new GenericFailureException("Wrong number of fields in header");
+                throw new GenericFailureException(StringSelectorCore.getString("trainingset_header_error"));
 
             // Number of descriptors, initialization of descriptors names
             DescriptorSize = Model.getDescriptorsSize();
@@ -538,11 +538,11 @@ public class TrainingSet implements Serializable, iTrainingSet {
         if (hasUnits())
             Units = " [" + getUnits() + "]";
 
-        String headers = "Id\tCAS\tSMILES\tStatus\tExperimental value" + Units + "\tPredicted value" + Units;
+        StringBuilder headers = new StringBuilder(String.format(StringSelectorCore.getString("trainingset_header_print"), "\t", "\t", "\t", "\t", Units, "\t", Units));
         if (IncludeAllInfo) {
-            headers += "\tAlerts";
+            headers.append("\tAlerts");
             for (int d=0; d<this.DescriptorSize; d++)
-                headers += "\t" + this.DescriptorName[d];
+                headers.append("\t").append(this.DescriptorName[d]);
         }
         Out.println(headers);
 
@@ -596,7 +596,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
             in.close();
             return TS;
         } catch (IOException | ClassNotFoundException e) {
-            throw new GenericFailureException("Unable to load training set - " + e.getMessage());
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("trainingset_unable_to_load"), e.getMessage()));
         }
     }
 }

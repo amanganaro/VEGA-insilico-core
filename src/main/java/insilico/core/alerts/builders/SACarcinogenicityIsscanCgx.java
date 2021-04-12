@@ -5,13 +5,10 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.isomorphism.Pattern;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
  *
@@ -70,7 +67,7 @@ public class SACarcinogenicityIsscanCgx extends AlertBlockFromSMARTS implements 
     
     
     public SACarcinogenicityIsscanCgx() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_CARC_ISSCANCGX, StringSelector.getString("sa_carc_isscancgx_initialization"));
+        super(InsilicoConstants.SA_BLOCK_CARC_ISSCANCGX, StringSelectorCore.getString("sa_carc_isscancgx_initialization"));
     }
     
     
@@ -79,8 +76,8 @@ public class SACarcinogenicityIsscanCgx extends AlertBlockFromSMARTS implements 
 
         for (int i=0; i<CarcSMARTS.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (i+1)));
-            curSA.setName(StringSelector.getString("sa_carc_isscancgx_name") + (i+1));
-            curSA.setDescription(StringSelector.getString("sa_carc_isscancgx_description") + CarcSMARTS[i]);
+            curSA.setName(StringSelectorCore.getString("sa_carc_isscancgx_name") + (i+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_carc_isscancgx_description") + CarcSMARTS[i]);
             Alerts.add(curSA);
         }
 
@@ -101,7 +98,7 @@ public class SACarcinogenicityIsscanCgx extends AlertBlockFromSMARTS implements 
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 

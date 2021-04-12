@@ -3,12 +3,14 @@ package insilico.core.molecule.conversion;
 
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.MoleculeConversionException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.InsilicoMoleculeMessages;
 import insilico.core.molecule.conversion.custom.CustomSmilesWriter;
 import insilico.core.molecule.tools.InsilicoMoleculeNormalization;
 import insilico.core.molecule.tools.Normalizer;
 import insilico.core.tools.utils.GeneralUtilities;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
@@ -21,14 +23,14 @@ import org.slf4j.LoggerFactory;
 /**
  * Conversion from SMILES format to Insilico Molecule
  */
+@Slf4j
 public class SmilesMolecule {
 
-    static Logger logger = LoggerFactory.getLogger(MDLMolecule.class);
 
     public static boolean EXCLUDE_DISCONNECTED_STRUCTURES = true;
 
     final static private char charTab = 9;
-    final static String ERR_HEADER = "Conversion from SMILES: ";
+    final static String ERR_HEADER = StringSelectorCore.getString("conversion_smiles_error_header");
 
     /**
      * Converts a given SMILES string to a InsilicoMolecule Object, it creates its CDK MOlecule Structure and its inisilico canonical SMILES String
@@ -43,7 +45,7 @@ public class SmilesMolecule {
     public static InsilicoMolecule Convert(String SMILESString, int SMILESField, int CASField, int IdField){
 
         InsilicoMolecule isMol = new InsilicoMolecule();
-        logger.debug("Starting conversion for SMILES: " + SMILESString);
+        log.debug(String.format(StringSelectorCore.getString("conversion_smiles_start"), SMILESString));
 
         try {
             SMILESString = GeneralUtilities.TrimString(SMILESString);
@@ -65,7 +67,7 @@ public class SmilesMolecule {
                 }
             } else {
                 if ( (SMILESField >= bufStr.length) || (CASField >= bufStr.length) || (IdField >= bufStr.length) )
-                    throw new MoleculeConversionException(ERR_HEADER + "unable to match fields in string");
+                    throw new MoleculeConversionException(ERR_HEADER + StringSelectorCore.getString("conversion_smiles_unable_fields_matching"));
             }
 
             isMol.SetSMILES(GeneralUtilities.TrimString(bufStr[SMILESField]));
@@ -87,11 +89,11 @@ public class SmilesMolecule {
             // Check for disconnected structures
             if (EXCLUDE_DISCONNECTED_STRUCTURES)
                 if (IsDisconnected(isMol.GetSMILES()))
-                    throw new MoleculeConversionException(ERR_HEADER + "molecule has disconnected structures");
+                    throw new MoleculeConversionException(ERR_HEADER + StringSelectorCore.getString("conversion_smiles_has_disconnected_structure"));
 
             // Check for particular SMILES leading to problems
             if (isMol.GetSMILES().compareTo("-") == 0)
-                throw new MoleculeConversionException("Invalid SMILES");
+                throw new MoleculeConversionException(StringSelectorCore.getString("conversion_smiles_invalid"));
 
             // Parses SMILES and creates normalized Molecule object
             IAtomContainer mol = CreateCDKMolecule(isMol.GetSMILES(), isMol.GetWarnings());
@@ -106,7 +108,7 @@ public class SmilesMolecule {
 
 
         } catch (MoleculeConversionException | NumberFormatException ex){
-            logger.error("Molecule conversion failed for SMILES " + isMol.GetSMILES() + " (" + ex.getMessage() + ")");
+            log.error(String.format(StringSelectorCore.getString("conversion_smiles_failed"), isMol.GetSMILES(), ex.getMessage()));
             if (ex.getClass() == MoleculeConversionException.class)
                 for (String s : ((MoleculeConversionException)ex).getMessageList())
                     isMol.AddError(s);
@@ -115,7 +117,7 @@ public class SmilesMolecule {
             isMol.MarkAsInvalid();
         }
 
-        logger.debug("SMILES molecule converted");
+        log.debug(StringSelectorCore.getString("conversion_smiles_converted"));
         return isMol;
     }
 
@@ -145,16 +147,14 @@ public class SmilesMolecule {
 //            smilesParser.setPreservingAromaticity(true);
             mol = smilesParser.parseSmiles(SMILES);
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("SMILES converted with CDK SmilesParser");
+            if (log.isDebugEnabled()) {
+                log.debug(StringSelectorCore.getString("conversion_smiles_converted_smilesparser"));
                 for (int at=0; at<mol.getAtomCount(); at++)
-                    logger.debug("Atom no. " + (at+1) + ": " + mol.getAtom(at).getSymbol() +
-                            ", aromatic=" + mol.getAtom(at).getFlag(CDKConstants.ISAROMATIC));
+                    log.debug(String.format(StringSelectorCore.getString("conversion_smiles_debug"), at+1, mol.getAtom(at).getSymbol(),mol.getAtom(at).getFlag(CDKConstants.ISAROMATIC) ));
             }
-
         } catch (InvalidSmilesException  e) {
-            String err = ERR_HEADER + "unable to parse SMILES string " + SMILES;
-            logger.error(err + " (" + e.getMessage() + ")");
+            String err = ERR_HEADER + String.format(StringSelectorCore.getString("conversion_smiles_parse_fail"), SMILES);
+            log.error(err + " (" + e.getMessage() + ")");
             throw new MoleculeConversionException(err);
         }
 
@@ -165,13 +165,13 @@ public class SmilesMolecule {
             mol = InsilicoMoleculeNormalization.Normalize(mol);
         } catch (InitFailureException ex)
         {
-            String err = ERR_HEADER + "unable to init normalizer for SMILES string " + SMILES;
-            logger.error(err + " (" + ex.getMessage() + ")");
+            String err = ERR_HEADER + String.format(StringSelectorCore.getString("conversion_smiles_init_fail"), SMILES);
+            log.error(err + " (" + ex.getMessage() + ")");
             throw new MoleculeConversionException(err);
         } catch (Exception e)
         {
-            String err = ERR_HEADER + "unable to normalize SMILES string " + SMILES + " (" + e.getMessage() + ")";
-            logger.error(err);
+            String err = ERR_HEADER + String.format(StringSelectorCore.getString("conversion_smiles_unable_normalize"), SMILES, e.getMessage());
+            log.error(err);
             throw new MoleculeConversionException(err);
         }
 
@@ -193,10 +193,10 @@ public class SmilesMolecule {
             smilesWriter.setUseAromaticityFlag(true);
             return smilesWriter.createSMILES(mol);
         } catch (CDKException ex){
-            String err = ERR_HEADER + "unable to generate SMILES string";
+            String err = ERR_HEADER + StringSelectorCore.getString("conversion_smiles_unable_generate");
             if (!ex.getMessage().isEmpty())
                 err += " (" + ex.getMessage() + ")";
-            logger.error(err);
+            log.error(err);
             throw new MoleculeConversionException(err);
         }
 

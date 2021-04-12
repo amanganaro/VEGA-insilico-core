@@ -5,6 +5,7 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
@@ -19,9 +20,9 @@ import java.util.Arrays;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class Cats2D extends DescriptorBlock {
 
-    Logger logger = LoggerFactory.getLogger(Cats2D.class);
 
 
     private final static long serialVersionUID = 1L;
@@ -94,14 +95,14 @@ public class Cats2D extends DescriptorBlock {
         try {
             TopoMat = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
         try {
             ConnAugMatrix = mol.GetMatrixConnectionAugmented();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

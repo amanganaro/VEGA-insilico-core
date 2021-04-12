@@ -1,7 +1,7 @@
 package insilico.core.knn;
 
 import insilico.core.exception.GenericFailureException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
@@ -55,8 +55,8 @@ public abstract class insilicoKnn {
 
         if ((TrainSet == null)||(TrainSet.getMoleculesSize()==0)) {
             SimilarMols = null;
-            log.warn(StringSelector.getString("knn_ts_retrieve_fail"));
-            throw new GenericFailureException(StringSelector.getString("knn_ts_retrieve_fail"));
+            log.warn(StringSelectorCore.getString("knn_ts_retrieve_fail"));
+            throw new GenericFailureException(StringSelectorCore.getString("knn_ts_retrieve_fail"));
         }
 
         Similarity SIM = new Similarity();
@@ -68,7 +68,7 @@ public abstract class insilicoKnn {
             try {
                 curSim = SIM.Calculate(Mol.GetSimilarityDescriptors(),
                         TrainSet.getSimilarityDescriptor(idx));
-                log.debug(String.format(StringSelector.getString("knn_debug_similarity_calculated"), Mol.GetSMILES(), TrainSet.getSMILES(idx), curSim));
+                log.debug(String.format(StringSelectorCore.getString("knn_debug_similarity_calculated"), Mol.GetSMILES(), TrainSet.getSMILES(idx), curSim));
 
                 // If similarity is equal to 1, checks if mols are really identical
                 if (curSim == 1.0) {

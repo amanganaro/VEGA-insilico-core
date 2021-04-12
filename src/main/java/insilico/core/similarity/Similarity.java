@@ -2,8 +2,10 @@ package insilico.core.similarity;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.UniversalIsomorphismTester;
@@ -19,9 +21,9 @@ import java.util.BitSet;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class Similarity implements Serializable {
 
-    Logger logger = LoggerFactory.getLogger(Similarity.class);
     
     private static final long serialVersionUID = 1L;
 
@@ -219,7 +221,7 @@ public class Similarity implements Serializable {
                 }
             } catch (InvalidMoleculeException e) {
                 e.printStackTrace();
-                logger.warn("unable to check exact similarity for molecule " + mol.GetSMILES());
+                log.warn(String.format(StringSelectorCore.getString("similarity_unable_to_check"), mol.GetSMILES()));
             }
         }
 

@@ -1,6 +1,7 @@
 package insilico.core.similarity;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.localization.StringSelectorCore;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.fingerprint.ExtendedFingerprinter;
 import org.openscience.cdk.fingerprint.IFingerprinter;
@@ -18,10 +19,10 @@ public class ScreeningFingerprint {
             BitSet matchingFP = FP.getFingerprint(structure);
             long[] matchingFPLong = matchingFP.toLongArray();
             if(matchingFPLong.length != 1)
-                throw new CDKException("Wrong size of fingerprint array");
+                throw new CDKException(StringSelectorCore.getString("similarity_wrong_size"));
             return matchingFPLong[0];
         } catch (CDKException ex){
-            throw new GenericFailureException("Unable to calculate FP - " + ex.getMessage());
+            throw new GenericFailureException(StringSelectorCore.getString("similarity_fingerprint_fail"));
         }
     }
 

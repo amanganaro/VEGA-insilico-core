@@ -9,7 +9,7 @@ import insilico.core.alerts.iAlertBlock;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.smarts.SmartsPattern;
@@ -184,7 +184,7 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
     
     
     public SAAndrogenBindComparaIRFMN() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_ANDROGEN_BIND_COMPARA_SARPY, StringSelector.getString("sa_androgen_bind_compara_rules_intro"));
+        super(InsilicoConstants.SA_BLOCK_ANDROGEN_BIND_COMPARA_SARPY, StringSelectorCore.getString("sa_androgen_bind_compara_rules_intro"));
     }
     
     
@@ -199,8 +199,8 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
 
         for (String s : All_15_act_inf) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx + 1)));
-            curSA.setName(String.format(StringSelector.getString("sa_androgen_bind_compara_name_active"), idx+1));
-            curSA.setDescription(StringSelector.getString("sa_androgen_bind_compara_description_activity_high_rel") + s);
+            curSA.setName(String.format(StringSelectorCore.getString("sa_androgen_bind_compara_name_active"), idx+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_androgen_bind_compara_description_activity_high_rel") + s);
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_AR_COMPARA_SARPY_ALL15_ACT_INF, true);
             Alerts.add(curSA);
             idx++;
@@ -208,8 +208,8 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
 
         for (String s : All_15_act_noninf) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx + 1)));
-            curSA.setName(String.format(StringSelector.getString("sa_androgen_bind_compara_name_active"), idx+1));
-            curSA.setDescription(StringSelector.getString("sa_androgen_bind_compara_description_activity_mod_rel") + s);
+            curSA.setName(String.format(StringSelectorCore.getString("sa_androgen_bind_compara_name_active"), idx+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_androgen_bind_compara_description_activity_mod_rel") + s);
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_AR_COMPARA_SARPY_ALL15_ACT_NONINF, true);
             Alerts.add(curSA);
             idx++;
@@ -217,8 +217,8 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
 
         for (String s : All_15_inact_inf) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx + 1)));
-            curSA.setName(String.format(StringSelector.getString("sa_androgen_bind_compara_name_inactive"), idx+1));
-            curSA.setDescription(StringSelector.getString("sa_androgen_bind_compara_description_inactivity_high_rel") + s);
+            curSA.setName(String.format(StringSelectorCore.getString("sa_androgen_bind_compara_name_inactive"), idx+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_androgen_bind_compara_description_inactivity_high_rel") + s);
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_AR_COMPARA_SARPY_ALL15_INACT_INF, true);
             Alerts.add(curSA);
             idx++;
@@ -226,8 +226,8 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
 
         for (String s : All_15_inact_noninf) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx + 1)));
-            curSA.setName(String.format(StringSelector.getString("sa_androgen_bind_compara_name_inactive"), idx+1));
-            curSA.setDescription(StringSelector.getString("sa_androgen_bind_compara_description_inactivity_mod_rel") + s);
+            curSA.setName(String.format(StringSelectorCore.getString("sa_androgen_bind_compara_name_inactive"), idx+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_androgen_bind_compara_description_inactivity_mod_rel") + s);
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_AR_COMPARA_SARPY_ALL15_INACT_NONINF, true);
             Alerts.add(curSA);
             idx++;
@@ -235,8 +235,8 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
 
         for (String s : Act6) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx + 1)));
-            curSA.setName(String.format(StringSelector.getString("sa_androgen_bind_compara_name_active"), idx+1));
-            curSA.setDescription(StringSelector.getString("sa_androgen_bind_compara_description_activity_mod_rel") + s);
+            curSA.setName(String.format(StringSelectorCore.getString("sa_androgen_bind_compara_name_active"), idx+1));
+            curSA.setDescription(StringSelectorCore.getString("sa_androgen_bind_compara_description_activity_mod_rel") + s);
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_AR_COMPARA_SARPY_ACT6, true);
             Alerts.add(curSA);
             idx++;
@@ -276,7 +276,7 @@ public class SAAndrogenBindComparaIRFMN extends AlertBlockFromSMARTS implements 
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 

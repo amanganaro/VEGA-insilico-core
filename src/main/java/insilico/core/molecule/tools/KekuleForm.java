@@ -1,6 +1,7 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.exception.MoleculeConversionException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.matrix.BondAugMatrix;
 import insilico.core.molecule.matrix.ConnectionAugMatrix;
 import insilico.core.tools.utils.MoleculeUtilities;
@@ -25,7 +26,7 @@ public class KekuleForm {
     private final static int BND_SNG_OR_DBL = 4;
     private final static int BND_AROM = 5;
     private final static int MAX_CYCLES = 20;
-    private final String ERR_HEADER = "Aromaticity conversion: ";
+    private final String ERR_HEADER = StringSelectorCore.getString("tool_kekule_error_header");
 
     private int[] ChangeBonds;
     private int[] ChangeFinalBonds;
@@ -189,7 +190,7 @@ public class KekuleForm {
             }
 
         } catch (Exception e) {
-            throw new MoleculeConversionException(ERR_HEADER + "unable to set bonds properly.");
+            throw new MoleculeConversionException(ERR_HEADER + StringSelectorCore.getString("tool_kekule_bond_error"));
         }
 
 
@@ -232,7 +233,7 @@ public class KekuleForm {
         }
 
         if (RingCycles == MAX_CYCLES)
-            throw new MoleculeConversionException(ERR_HEADER + "unable to compute a proper configuration for bond orders.");
+            throw new MoleculeConversionException(ERR_HEADER + StringSelectorCore.getString("tool_kekule_bond_order_error"));
 
         // Stores new calculated bond orders
         for (int i=0; i<ring.getBondCount(); i++)
@@ -273,7 +274,7 @@ public class KekuleForm {
 
         if (Value == BND_SNG) {
             if (nDbl>0)
-                throw new CDKException("Unable to fix bonds");
+                throw new CDKException(StringSelectorCore.getString("tool_kekule_bond_fix_error"));
             for (int i=0; i<bonds.size(); i++) {
                 int b = bonds.get(i);
                 if (ChangeBonds[b] != BND_AROM)
@@ -286,7 +287,7 @@ public class KekuleForm {
         if (Value == BND_SNG_OR_DBL) {
 
             if ((nDbl > 1) || ((nSng==2)&&(bonds.size()==2)) || ((nSng==3)&&(bonds.size()==3)))
-                throw new CDKException("Unable to fix bonds");
+                throw new CDKException(StringSelectorCore.getString("tool_kekule_bond_fix_error"));
 
             if (nDbl==1) {
 
@@ -407,32 +408,32 @@ public class KekuleForm {
 
                 // C
                 if (Z==6) {
-                    if (bo != 4) throw new CDKException("wrong bond order");
+                    if (bo != 4) throw new CDKException(StringSelectorCore.getString("tool_kekule_bond_order_error_cdk_ex"));
                 }
 
                 // Halogen
                 else if ((Z==9)||(Z==17)||(Z==35)||(Z==53)) {
-                    if (bo != 1) throw new CDKException("wrong bond order");
+                    if (bo != 1) throw new CDKException(StringSelectorCore.getString("tool_kekule_bond_order_error_cdk_ex"));
                 }
 
                 // N or P
                 else if ((Z==7)||(Z==15)) {
-                    if (!((bo == 3)||(bo == 5))) throw new CDKException("wrong bond order");
+                    if (!((bo == 3)||(bo == 5))) throw new CDKException(StringSelectorCore.getString("tool_kekule_bond_order_error_cdk_ex"));
                 }
 
                 // O or Se
                 else if ((Z==8)||(Z==34)) {
-                    if (bo != 2) throw new CDKException("wrong bond order");
+                    if (bo != 2) throw new CDKException(StringSelectorCore.getString("tool_kekule_bond_order_error_cdk_ex"));
                 }
 
                 // B
                 else if (Z==5) {
-                    if (bo != 3) throw new CDKException("wrong bond order");
+                    if (bo != 3) throw new CDKException(StringSelectorCore.getString("tool_kekule_bond_order_error_cdk_ex"));
                 }
 
                 // S
                 else if (Z==16) {
-                    if (!((bo == 2)||(bo == 4)||(bo == 6))) throw new CDKException("wrong bond order");
+                    if (!((bo == 2)||(bo == 4)||(bo == 6))) throw new CDKException(StringSelectorCore.getString("tool_kekule_bond_order_error_cdk_ex"));
                 }
 
             }

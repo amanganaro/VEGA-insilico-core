@@ -1,6 +1,7 @@
 package insilico.core.pmml;
 
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelectorCore;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -40,7 +41,7 @@ public class ModelANNFromPMML {
 //            Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelEvaluator()
 
         } catch (Exception e) {
-            throw new InitFailureException("Unable to init PMML model - " + e.getMessage());
+            throw new InitFailureException(String.format(StringSelectorCore.getString("pmml_ann_unable_init_pmml_model"), e.getMessage()));
         }
 
         this.outputField = FieldName.create(outputField);
@@ -62,7 +63,7 @@ public class ModelANNFromPMML {
 
             // Check if descriptor is available
             if (!Descriptors.containsKey(inputField.getName().getValue()))
-                throw new Exception("Descriptor " + inputField.getName().getValue() + " not found in the parameters");
+                throw new Exception(String.format(StringSelectorCore.getString("pmml_ann_descriptor_not_found"),inputField.getName().getValue() ));
 
             // The raw (ie. user-supplied) value could be any Java primitive value
             Object rawValue = Descriptors.get(inputField.getName().getValue());

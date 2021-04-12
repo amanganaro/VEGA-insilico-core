@@ -3,7 +3,7 @@ package insilico.core.descriptor.blocks;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.acf.GhoseCrippenACF;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ import org.openscience.cdk.interfaces.IAtomContainer;
 public class AtomCenteredFragments extends DescriptorBlock {
 
     private static final long serialVersionUID = 1L;
-    private static final String BlockName = StringSelector.getString("descriptors_acf_name");
+    private static final String BlockName = StringSelectorCore.getString("descriptors_acf_name");
 
 
     /**

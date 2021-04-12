@@ -2,7 +2,7 @@ package insilico.core.descriptor.blocks;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IRing;
@@ -18,7 +18,7 @@ import java.util.Iterator;
 public class Rings extends DescriptorBlock {
     
     private static final long serialVersionUID = 1L;
-    private static final String BlockName = StringSelector.getString("descriptors_rings_name");
+    private static final String BlockName = StringSelectorCore.getString("descriptors_rings_name");
 
     private static final int RING_SIZE_MIN = 3;
     private static final int RING_SIZE_MAX = 11;
@@ -37,8 +37,8 @@ public class Rings extends DescriptorBlock {
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
-        this.Add("nCIC", StringSelector.getString("descriptors_rings_nCIC"));
-        this.Add("nCIR", StringSelector.getString("descriptors_rings_nCIR"));
+        this.Add("nCIC", StringSelectorCore.getString("descriptors_rings_nCIC"));
+        this.Add("nCIR", StringSelectorCore.getString("descriptors_rings_nCIR"));
         for (int i=RING_SIZE_MIN; i<=RING_SIZE_MAX; i++)
             this.Add("nR" + i, "number of " + i + "-membered rings");
         SetAllValues(Descriptor.MISSING_VALUE);

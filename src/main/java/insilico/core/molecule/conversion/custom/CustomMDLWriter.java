@@ -1,7 +1,7 @@
 package insilico.core.molecule.conversion.custom;
 
-import insilico.core.molecule.conversion.MDLMolecule;
-import insilico.core.tools.utils.logger.InsilicoLogger;
+import insilico.core.localization.StringSelectorCore;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.config.XMLIsotopeFactory;
 import org.openscience.cdk.exception.CDKException;
@@ -9,8 +9,6 @@ import org.openscience.cdk.interfaces.*;
 import org.openscience.cdk.io.DefaultChemObjectWriter;
 import org.openscience.cdk.io.formats.IResourceFormat;
 import org.openscience.cdk.io.formats.MDLFormat;
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
 import org.openscience.cdk.tools.manipulator.ChemFileManipulator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,10 +30,9 @@ import java.util.TimeZone;
  * writer.close();
  * </pre>
  */
+@Slf4j
 public class CustomMDLWriter extends DefaultChemObjectWriter {
-
-    static Logger logger = LoggerFactory.getLogger(CustomMDLWriter.class);
-
+    
     private BufferedWriter writer;
 
     /**
@@ -130,11 +127,11 @@ public class CustomMDLWriter extends DefaultChemObjectWriter {
                 return;
             }
         } catch (Exception ex) {
-            logger.error(ex.getMessage());
-            logger.debug(ex.getMessage());
-            throw new CDKException("Exception while writing MDL file: " + ex.getMessage(), ex);
+            log.error(ex.getMessage());
+            log.debug(ex.getMessage());
+            throw new CDKException(String.format(StringSelectorCore.getString("conversion_mdlwriter_cdk_exception"), ex.getMessage()), ex);
         }
-        throw new CDKException("Only supported is writing of ChemFile, MoleculeSet, AtomContainer and Molecule objects.");
+        throw new CDKException(StringSelectorCore.getString("conversion_mdlwriter_cdk_exception2"));
     }
 
     private void writeChemFile(IChemFile file) throws Exception {
@@ -231,7 +228,7 @@ public class CustomMDLWriter extends DefaultChemObjectWriter {
             IBond bond = (IBond) bonds.next();
 
             if (bond.getAtomCount() != 2) {
-                logger.warn("Skipping bond with more/less than two atoms: " + bond);
+                log.warn(StringSelectorCore.getString("conversion_mdlwriter_skip_bond") + bond);
             } else {
 
                 // Modified by AM - no stero information taken into account

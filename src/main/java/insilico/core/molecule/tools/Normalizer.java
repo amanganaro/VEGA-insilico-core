@@ -2,10 +2,11 @@ package insilico.core.molecule.tools;
 
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.MoleculeConversionException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMoleculeMessages;
 import insilico.core.molecule.matrix.ConnectionAugMatrix;
 import insilico.core.tools.utils.MoleculeUtilities;
-import insilico.core.tools.utils.logger.InsilicoLogger;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.atomtype.CDKAtomTypeMatcher;
 import org.openscience.cdk.exception.CDKException;
@@ -23,9 +24,10 @@ import java.util.Iterator;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
+
 public class Normalizer {
 
-    Logger logger = LoggerFactory.getLogger(Normalizer.class);
 
     private final AtomicNumber ZFinder;
 
@@ -52,14 +54,14 @@ public class Normalizer {
     public IAtomContainer ConfigureMolecule(IAtomContainer mol, InsilicoMoleculeMessages warnings)
             throws MoleculeConversionException {
 
-        final String ERR_HEADER = "Molecule Normalization: ";
+        final String ERR_HEADER = StringSelectorCore.getString("tool_normalizer_err_header");
 
         IAtomContainer newMol = null;
 
         try {
             newMol =  mol.clone();
         } catch (CloneNotSupportedException ex){
-            String err = ERR_HEADER + "unable to clone molecule";
+            String err = ERR_HEADER + StringSelectorCore.getString("tool_normalizer_err_clone");
             throw new MoleculeConversionException(ex);
 
         }
@@ -72,16 +74,16 @@ public class Normalizer {
         try{
             newMol = Manipulator.RemoveHydrogens(newMol);
         } catch (CDKException ex) {
-            String err = ERR_HEADER + "unable to make hydrogens implicit";
+            String err = ERR_HEADER + StringSelectorCore.getString("tool_normalizer_err_h_implicits");
             throw new MoleculeConversionException(err);
         }
 
         // Adds implicits H where they are lacking
         try {
             if (Manipulator.AddLackingImplicitHydrogens(newMol) > 0)
-                warnings.AddMessage("Some lacking hydrogen atoms ahve been added to original structures");
+                warnings.AddMessage(StringSelectorCore.getString("tool_normalizer_err_h_lacking"));
         } catch (Exception ex){
-            String err = ERR_HEADER + "unable to add lacking H atoms";
+            String err = ERR_HEADER + StringSelectorCore.getString("tool_normalizer_err_add_h_lacking");
             throw new MoleculeConversionException(err);
         }
 
@@ -95,7 +97,8 @@ public class Normalizer {
 //            singleRings = new SSSRFinder(NewMol).findSSSR();
         }
         catch (Exception e) {
-            String err = ERR_HEADER + "unable to recognize rings";throw new MoleculeConversionException(err);
+            String err = ERR_HEADER + StringSelectorCore.getString("tool_normalizer_err_recognize_rings");
+            throw new MoleculeConversionException(err);
         }
 
         // Aromaticity
@@ -158,8 +161,8 @@ public class Normalizer {
 
                             // Clears marked atoms and relative bonds
                             if ( (!markedAtoms.isEmpty()) || (!markedBonds.isEmpty())){
-                                logger.debug("Aromaticity has been removed from a five membered carbon cycle");
-                                warnings.AddMessage("Some five membered carbon ccles were wrongly set as aromatic and have been changed");
+                                log.debug(StringSelectorCore.getString("tool_normalizer_aromaticity_removed"));
+                                warnings.AddMessage(StringSelectorCore.getString("tool_normalizer_aromaticity_removed_add_message"));
                                 for (IAtom mAt : markedAtoms){
                                     mAt.setFlag(CDKConstants.ISAROMATIC, false);
                                 }
@@ -208,8 +211,8 @@ public class Normalizer {
                 }
             }
         } catch (Exception e) {
-            String err = ERR_HEADER + "unable to remove improper fixed aromaticity";
-            logger.error(err + " (" + e.getMessage() + ")");
+            String err = ERR_HEADER + StringSelectorCore.getString("tool_normalizer_aromaticity_unable_to_remove");
+            log.error(err + " (" + e.getMessage() + ")");
             throw new MoleculeConversionException(err);
         }
 
@@ -229,8 +232,8 @@ public class Normalizer {
                 }
             }
         } catch (Exception e) {
-            String err = ERR_HEADER + "unable to set aromaticity";
-            logger.error(err + " (" + e.getMessage() + ")");
+            String err = ERR_HEADER + StringSelectorCore.getString("tool_normalizer_aromaticity_unable_to_set");
+            log.error(err + " (" + e.getMessage() + ")");
             throw new MoleculeConversionException(err);
         }
 
@@ -254,8 +257,8 @@ public class Normalizer {
             } while (NewAromaticRingFound);
 
         } catch (Exception e) {
-            String err = ERR_HEADER + "unable to calculate aromaticity";
-            logger.error(err + " (" + e.getMessage() + ")");
+            String err = ERR_HEADER + StringSelectorCore.getString("tool_normalizer_aromaticity_unable_to_calculate");
+            log.error(err + " (" + e.getMessage() + ")");
             throw new MoleculeConversionException(err);
         }
 
@@ -275,7 +278,7 @@ public class Normalizer {
      */
     private void ConfigureAtom(IAtomContainer mol, IAtom atom) throws MoleculeConversionException {
 
-        final String ERR_HEADER = "Atom Configurator:";
+        final String ERR_HEADER = StringSelectorCore.getString("tool_normalizer_atom_configurator_init");
 
         CDKAtomTypeMatcher matcher = CDKAtomTypeMatcher.getInstance(mol.getBuilder());
         try {
@@ -310,7 +313,7 @@ public class Normalizer {
             }
 
         } catch (CDKException ex){
-            String err = ERR_HEADER + "unable to configure atom n° " + mol.indexOf(atom);
+            String err = ERR_HEADER + String.format(StringSelectorCore.getString("tool_normalizer_unable_configure_atom"), mol.indexOf(atom));
             if ((atom.getSymbol()!=null)&&(!atom.getSymbol().equalsIgnoreCase("")))
                 err += " (" + atom.getSymbol() + ")";
             throw new MoleculeConversionException(err);
@@ -326,7 +329,7 @@ public class Normalizer {
      */
     private void FixAromaticRings (IAtomContainer mol, InsilicoMoleculeMessages messages) throws MoleculeConversionException {
 
-        final String ERR_HEADER = "Aromaticity Normalizaztion: ";
+        final String ERR_HEADER = StringSelectorCore.getString("tool_normalizer_atom_aromaticity_init");
 
         Cycles cycles = Cycles.sssr(mol);
         IRingSet singleRings = cycles.toRingSet();
@@ -334,7 +337,7 @@ public class Normalizer {
 
         boolean conversionError = false;
         boolean ringFixed = false;
-        boolean isInMultipleAtomRings[] = new boolean[mol.getAtomCount()];
+        boolean[] isInMultipleAtomRings = new boolean[mol.getAtomCount()];
 
         // check for atoms shared in multiple aromatic rings
         for (int i=0; i< mol.getAtomCount(); i++){
@@ -354,11 +357,10 @@ public class Normalizer {
             }
         }
 
-        Iterator<IAtomContainer> ringsIterator = singleRings.atomContainers().iterator();
-        while (ringsIterator.hasNext()){
+        for (IAtomContainer iAtomContainer : singleRings.atomContainers()) {
 
-            IRing ring = (IRing) ringsIterator.next();
-            if(!MoleculeUtilities.IsRingAromatic(ring))
+            IRing ring = (IRing) iAtomContainer;
+            if (!MoleculeUtilities.IsRingAromatic(ring))
                 continue;
 
             boolean aromCorrect = true;
@@ -369,7 +371,7 @@ public class Normalizer {
             // heteroatoms shared by more aromatic rings
             ArrayList<IAtom> sharedAtoms = new ArrayList<>();
 
-            for (IAtom at: ring.atoms()){
+            for (IAtom at : ring.atoms()) {
 
                 int atNum = mol.indexOf(at);
                 int Z = (int) connMatrix[atNum][atNum];
@@ -385,13 +387,13 @@ public class Normalizer {
                 int vertexDegree = 0;
                 for (int j = 0; j < mol.getAtomCount(); j++)
                     if (connMatrix[atNum][j] > 0)
-                        if ( j != atNum) {
+                        if (j != atNum) {
                             bufBondOrd += connMatrix[atNum][j];
                             vertexDegree++;
 
                             if (!ring.contains(mol.getAtom(j)))
-                                if(connMatrix[atNum][j] == 2)
-                                    if((connMatrix[j][j] == 7) || (connMatrix[j][j] == 8) || (connMatrix[j][j] == 15) || (connMatrix[j][j] == 16))
+                                if (connMatrix[atNum][j] == 2)
+                                    if ((connMatrix[j][j] == 7) || (connMatrix[j][j] == 8) || (connMatrix[j][j] == 15) || (connMatrix[j][j] == 16))
                                         ExoDoubleElNeg = true;
                         }
 
@@ -399,12 +401,12 @@ public class Normalizer {
                 int formalCharge = 0;
                 try {
                     formalCharge = at.getFormalCharge();
-                } catch (Exception e){
+                } catch (Exception e) {
                     System.out.println(e.toString());
                 }
 
                 // For Atom C
-                if (Z==6){
+                if (Z == 6) {
 
                     if ((ExoDoubleElNeg) || (formalCharge != 0)) {
                         aromCorrect = false;
@@ -421,7 +423,7 @@ public class Normalizer {
                 }
 
                 // O
-                else if (Z==8) {
+                else if (Z == 8) {
                     // Oxygen in aromatic is always -O- with no H
                     if (formalCharge == 0) {
                         PIelectrons += 2;
@@ -432,10 +434,10 @@ public class Normalizer {
                 }
 
                 // N or P
-                if ((Z==7)||(Z==15)) {
+                if ((Z == 7) || (Z == 15)) {
 
                     // check for P with valence 5
-                    if ( (Z==15) && (vertexDegree > 3)) {
+                    if ((Z == 15) && (vertexDegree > 3)) {
                         aromCorrect = false;
                         break;
                     }
@@ -448,8 +450,7 @@ public class Normalizer {
                             uncertainAtoms.add(at);
                             PIelectrons++; // here adds just one PI e
                         }
-                    }
-                    else {
+                    } else {
                         if (formalCharge == 1) {
                             H = 0;
                             PIelectrons += 1;
@@ -459,13 +460,13 @@ public class Normalizer {
                                 sharedAtoms.add(at);
                                 PIelectrons++; // here adds just one PI e
                             } else
-                                PIelectrons +=2;
+                                PIelectrons += 2;
                         }
                     }
                 }
 
                 // S
-                else if (Z==16) {
+                else if (Z == 16) {
                     // If is ..S.. with vertex degree 2 (equal to a
                     // tot bond order of 3 i.e. 1.5 + 1.5), no H added
                     if (vertexDegree == 2) {
@@ -479,8 +480,7 @@ public class Normalizer {
                     else if (bondOrder <= 4) {
                         H = 4 - bondOrder;
                         PIelectrons++;
-                    }
-                    else if (bondOrder <= 6) {
+                    } else if (bondOrder <= 6) {
                         H = 6 - bondOrder;
                         PIelectrons++;
                     }
@@ -490,13 +490,13 @@ public class Normalizer {
             }
 
             // CHECKING THE RESULTING PI ELECTRON - PI BOND
-            if ( (uncertainAtoms.size() > 0) || (sharedAtoms.size() > 0)) {
+            if ((uncertainAtoms.size() > 0) || (sharedAtoms.size() > 0)) {
 
                 // Calculates the supposed correct number of
                 // PI electrons that the ring should have to be aromatic
                 int aromPiElectrons = 0;
                 for (int i = 0; i < 5; i++) {
-                    aromPiElectrons = (4 * i) +2;
+                    aromPiElectrons = (4 * i) + 2;
                     if (aromPiElectrons >= PIelectrons)
                         break;
                 }
@@ -506,7 +506,7 @@ public class Normalizer {
                 int MorePIelectrons = (aromPiElectrons - PIelectrons);
 
                 // First tries to assign atoms shared by multiple aromatic rings
-                for (int i=0; i<sharedAtoms.size(); i++) {
+                for (int i = 0; i < sharedAtoms.size(); i++) {
                     if (MorePIelectrons > 0) {
                         MorePIelectrons--;
                         PIelectrons++;
@@ -515,7 +515,7 @@ public class Normalizer {
                 }
 
                 // then tries uncertain atoms
-                for (int i=0; i<uncertainAtoms.size(); i++) {
+                for (int i = 0; i < uncertainAtoms.size(); i++) {
                     if (MorePIelectrons > 0) {
                         MorePIelectrons--;
                         PIelectrons++;
@@ -532,12 +532,12 @@ public class Normalizer {
 
             // final check for hueckel rule
 
-            if (((PIelectrons-2) % 4)  != 0)
+            if (((PIelectrons - 2) % 4) != 0)
                 aromCorrect = false;
 
             // Tries to remove aromaticity if needed
             if (!aromCorrect) {
-                logger.debug("Wrong no. of electrons for Hueckel rule - PI electrons = " + PIelectrons);
+                log.debug(String.format(StringSelectorCore.getString("tool_normalizer_wrong_electron_number"), PIelectrons));
                 KekuleForm Kekule = new KekuleForm();
                 try {
                     Kekule.Convert(mol, ring);
@@ -553,13 +553,13 @@ public class Normalizer {
 
 
         if (conversionError) {
-            String err = ERR_HEADER + "some aromatic rings can not be not correctly recognized";
-            logger.error(err);
+            String err = ERR_HEADER + StringSelectorCore.getString("tool_normalizer_aromatic_rings_recognized_not");
+            log.error(err);
             throw new MoleculeConversionException(err);
         }
 
         if (ringFixed)
-            messages.AddMessage("Some aromatic rings are not correctly recognized, and transformed to kekule form.");
+            messages.AddMessage(StringSelectorCore.getString("tool_normalizer_aromatic_rings_recognized_not_msg"));
     }
 
     /**
@@ -639,7 +639,7 @@ public class Normalizer {
                     Mol.getAtom(idxDoubleO).setFormalCharge(-1);
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
 
-                    logger.debug("Normalized a NO2 group");
+                    log.debug(StringSelectorCore.getString("tool_normalization_no2_0"));
                     continue;
                 }
 
@@ -662,7 +662,7 @@ public class Normalizer {
                     Mol.getAtom(idxTripleN).setFormalCharge(NTripleCharge -1);
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxTripleN)).setOrder(IBond.Order.DOUBLE);
 
-                    logger.debug("Normalized a N=N#N / C=N#N group");
+                    log.debug(StringSelectorCore.getString("tool_normalization_nnn"));
                     continue;
                 }
 
@@ -682,7 +682,7 @@ public class Normalizer {
                     Mol.getAtom(idxDoubleO).setFormalCharge(-1);
                     Mol.getBond(Mol.getAtom(idxN), Mol.getAtom(idxDoubleO)).setOrder(IBond.Order.SINGLE);
 
-                    logger.debug("Normalized a C#N=O / C=N=O / N=N=O group");
+                    log.debug(StringSelectorCore.getString("tool_normalization_cno"));
                     // continue;   not needed, last block
                 }
 

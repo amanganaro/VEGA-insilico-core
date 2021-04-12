@@ -2,14 +2,14 @@ package insilico.core.descriptor.blocks.weights.other;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.blocks.weights.iWeight;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.acf.GhoseCrippenACF;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 public class WeightsHydrophobicityGC implements iWeight {
 
     private static final String SYMBOL = "Hy";
-    private static final String NAME = StringSelector.getString("descriptors_hydrophobicty_name");
+    private static final String NAME = StringSelectorCore.getString("descriptors_hydrophobicty_name");
 
     private final static double[] HY = {
             0, 	// 0  U-000

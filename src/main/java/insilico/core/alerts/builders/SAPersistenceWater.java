@@ -5,7 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
@@ -66,7 +66,7 @@ public class SAPersistenceWater extends AlertBlockFromSMARTS implements iAlertBl
     
     
     public SAPersistenceWater() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_PERSISTENCE_WATER_IRFMN, StringSelector.getString("sa_persistence_water_initialization"));
+        super(InsilicoConstants.SA_BLOCK_PERSISTENCE_WATER_IRFMN, StringSelectorCore.getString("sa_persistence_water_initialization"));
     }
     
     
@@ -85,8 +85,8 @@ public class SAPersistenceWater extends AlertBlockFromSMARTS implements iAlertBl
 
         for (int i=0; i<SMARTSFragsNP.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_persistence_water_np_description"), SMARTSFragsNP[i]));
+            curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_persistence_water_np_description"), SMARTSFragsNP[i]));
             curSA.setImageURL("/insilico/core/alerts/png/perswater/PER_WATER_" + (pngidx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
             Alerts.add(curSA);
@@ -94,94 +94,94 @@ public class SAPersistenceWater extends AlertBlockFromSMARTS implements iAlertBl
         }
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_carboxyl"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_carboxyl"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_singester"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_singester"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
     
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_multiester"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_multiester"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         Multiple[idx] = true;
         idx++;
 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_carbamate"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_carbamate"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_aldehyde"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_aldehyde"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
         
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_ketone"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_ketone"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
                 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_amine_aliphatic"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_amine_aliphatic"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
                 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_amine_aromatic"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_amine_aromatic"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         idx++;
                 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_amine_nitroso"));
-        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
-        Alerts.add(curSA);
-        Single[idx] = true;
-        idx++;
-                
-        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_amine_hydroxyl"));
-        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
-        Alerts.add(curSA);
-        idx++;
-                
-        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_amine_hydroxyl_single"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_amine_nitroso"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         Single[idx] = true;
         idx++;
                 
         curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-        curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_np"), idx+1));
-        curSA.setDescription(StringSelector.getString("sa_persistence_water_np_description_amine_alcohols"));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_amine_hydroxyl"));
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        idx++;
+                
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_amine_hydroxyl_single"));
+        curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
+        Alerts.add(curSA);
+        Single[idx] = true;
+        idx++;
+                
+        curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
+        curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_np"), idx+1));
+        curSA.setDescription(StringSelectorCore.getString("sa_persistence_water_np_description_amine_alcohols"));
         curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_NP, true);
         Alerts.add(curSA);
         idx++;
@@ -190,8 +190,8 @@ public class SAPersistenceWater extends AlertBlockFromSMARTS implements iAlertBl
         
         for (int i=0; i<SMARTSFragsVP.length; i++) {
             curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
-            curSA.setName(String.format(StringSelector.getString("sa_persistence_water_name_vp"), idx+1));
-            curSA.setDescription(String.format(StringSelector.getString("sa_persistence_water_vp_description"), SMARTSFragsVP[i]));
+            curSA.setName(String.format(StringSelectorCore.getString("sa_persistence_water_name_vp"), idx+1));
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_persistence_water_vp_description"), SMARTSFragsVP[i]));
             curSA.setImageURL("/insilico/core/alerts/png/perswater/PER_WATER_" + (pngidx+1) + ".png");
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_PERS_WATER_VP, true);
             Alerts.add(curSA);
@@ -224,7 +224,7 @@ public class SAPersistenceWater extends AlertBlockFromSMARTS implements iAlertBl
             }
             
         } catch (Exception e) {
-            throw new InitFailureException(StringSelector.getString("sa_exception_smarts_initialization"));
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }    
     }
 
@@ -265,7 +265,7 @@ public class SAPersistenceWater extends AlertBlockFromSMARTS implements iAlertBl
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_WATER_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }
@@ -276,7 +276,7 @@ public class SAPersistenceWater extends AlertBlockFromSMARTS implements iAlertBl
                 InsilicoMolecule mol = SmilesMolecule.Convert(s);
                 Depiction.SaveImageAsPNG(Depiction.DepictMolecule(mol, 200, 200), "PER_WATER_" + (idx) + ".png");
             } catch (Exception e) {
-                System.out.println(String.format(StringSelector.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
+                System.out.println(String.format(StringSelectorCore.getString("sa_save_smarts_error"), idx, s, e.getMessage()));
             }
             idx++;
         }

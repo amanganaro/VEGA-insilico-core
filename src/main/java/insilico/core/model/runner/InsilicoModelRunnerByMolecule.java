@@ -7,6 +7,7 @@ import insilico.core.descriptor.blocks.FunctionalGroups;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
 
         // Create descriptor and alert engine
         if (Messenger != null)
-            Messenger.SendMessage("Initializing molecular descriptors engine...");
+            Messenger.SendMessage(StringSelectorCore.getString("runner_consensus_init_engine"));
         DescriptorsEngine descriptorsEngine;
         AlertsEngine alertsEngine;
 
@@ -42,7 +43,7 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
             descriptorsEngine.AddDescriptorBlock(new FunctionalGroups());
 
         } catch (InitFailureException | CloneNotSupportedException ex) {
-            throw new GenericFailureException("Unable to initialize descriptor blocks - " + ex.getMessage());
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("runner_consensus_exception_init_blocks"), ex.getMessage()));
         }
 
         // Reset results in each model wrapper
@@ -53,7 +54,7 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
 
         // Calculate descriptors and models on each molecule
         if (Messenger != null)
-            Messenger.SendMessage("Running models...");
+            Messenger.SendMessage(StringSelectorCore.getString("runner_consensus_run_models"));
 
         int moleculeIndex = 0;
         for(InsilicoMolecule molecule : Mols){
@@ -69,14 +70,14 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
                 try {
                     molecule.SetACF(ACFBuild.CreateList(molecule));
                 } catch (InvalidMoleculeException ex) {
-                    throw new GenericFailureException("Unable to calculace ACF - " + ex.getMessage());
+                    throw new GenericFailureException(String.format(StringSelectorCore.getString("runner_consensus_exception_acf"),ex.getMessage()));
                 }
 //                molecule.SetSimilarityDescriptors(SimBuild.Calculate(molecule));
                 try {
                     molecule.PurgeAlerts();
                     molecule.AddAlert(alertsEngine.CalculateAlerts(molecule));
                 } catch (GenericFailureException | InvalidMoleculeException ex) {
-                    throw new GenericFailureException("Unable to calculate alerts - " + ex.getMessage());
+                    throw new GenericFailureException(String.format(StringSelectorCore.getString("runner_consensus_exception_alerts"),ex.getMessage()));
                 }
             }
 

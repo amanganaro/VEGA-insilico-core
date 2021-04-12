@@ -5,7 +5,7 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
@@ -131,17 +131,17 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 try {
                     ParsedSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    log.warn(String.format(StringSelector.getString("sa_exception_smarts_initialization_with_index"), Id, curSMARTS));
-                    throw new InitFailureException(String.format(StringSelector.getString("sa_exception_smarts_initialization_with_index"), Id, curSMARTS));
+                    log.warn(String.format(StringSelectorCore.getString("sa_exception_smarts_initialization_with_index"), Id, curSMARTS));
+                    throw new InitFailureException(String.format(StringSelectorCore.getString("sa_exception_smarts_initialization_with_index"), Id, curSMARTS));
                 }
             }
             for (String curSMARTS : PreSMARTS) {
                 try {
                     ParsedPreSMARTS.add(SmartsPattern.create(curSMARTS, DefaultChemObjectBuilder.getInstance()).setPrepare(false));
                 } catch (Exception ex) {
-                    log.warn(String.format(StringSelector.getString("sa_exception_presmarts_initialization_with_index"), Id, curSMARTS));
+                    log.warn(String.format(StringSelectorCore.getString("sa_exception_presmarts_initialization_with_index"), Id, curSMARTS));
                     log.warn(ex.getMessage());
-                    throw new InitFailureException(String.format(StringSelector.getString("sa_exception_smarts_initialization_with_index"), Id, curSMARTS));
+                    throw new InitFailureException(String.format(StringSelectorCore.getString("sa_exception_smarts_initialization_with_index"), Id, curSMARTS));
                 }
             }
         }
@@ -216,7 +216,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
 
     public SABenigniBossa() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA, StringSelector.getString("sa_benigni_bossa_initialization"));
+        super(InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA, StringSelectorCore.getString("sa_benigni_bossa_initialization"));
     }
 
 
@@ -279,7 +279,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
             try {
                 sssrings = CurMol.GetSSSR();
             } catch (InvalidMoleculeException ex) {
-                throw new GenericFailureException(StringSelector.getString("sa_benigni_bossa_sssr_fail"));
+                throw new GenericFailureException(StringSelectorCore.getString("sa_benigni_bossa_sssr_fail"));
             }
             int nrings = sssrings.getAtomContainerCount();
 
@@ -341,7 +341,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                         try {
                             alist = CurMol.GetStructure().getConnectedAtomsList(a);
                         } catch (InvalidMoleculeException ex) {
-                            throw new GenericFailureException(StringSelector.getString("sa_benigni_bossa_atom_list_fail"));
+                            throw new GenericFailureException(StringSelectorCore.getString("sa_benigni_bossa_atom_list_fail"));
                         }
                         for (int k=0; k<alist.size(); k++) {
                             IAtom b = alist.get(k);
@@ -438,7 +438,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
     public double[] getOverlapsPerc(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
 
         if (!mol.IsValid())
-            throw new InvalidMoleculeException(StringSelector.getString("sa_molecule_invalid_marked"));
+            throw new InvalidMoleculeException(StringSelectorCore.getString("sa_molecule_invalid_marked"));
         CurMol = mol;
 
         // Init
@@ -449,7 +449,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 IsInitialized = true;
             }
         } catch (Exception e) {
-            throw new GenericFailureException(String.format(StringSelector.getString("sa_benigni_bossa_init_matcher_fail"), e.getMessage()));
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("sa_benigni_bossa_init_matcher_fail"), e.getMessage()));
         }
 
         // Code for SA 18-19-20 (ring based)
@@ -464,7 +464,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
             try {
                 sssrings = mol.GetSSSR();
             } catch (InvalidMoleculeException ex) {
-                throw new GenericFailureException(StringSelector.getString("sa_benigni_bossa_sssr_fail"));
+                throw new GenericFailureException(StringSelectorCore.getString("sa_benigni_bossa_sssr_fail"));
             }
             int nrings = sssrings.getAtomContainerCount();
 
@@ -526,7 +526,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                         try {
                             alist = mol.GetStructure().getConnectedAtomsList(a);
                         } catch (InvalidMoleculeException ex) {
-                            throw new GenericFailureException(StringSelector.getString("sa_benigni_bossa_linked_atom_fail"));
+                            throw new GenericFailureException(StringSelectorCore.getString("sa_benigni_bossa_linked_atom_fail"));
                         }
                         for (int k=0; k<alist.size(); k++) {
                             IAtom b = alist.get(k);
@@ -600,14 +600,14 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                     for (IAtomContainer ac : matches)
                         if (ac.getAtomCount() > max)
                             max = ac.getAtomCount();
-                    double buf = (double)max / (double)CurMol.GetStructure().getAtomCount();
+                    double buf = (double)max / (double) CurMol.GetStructure().getAtomCount();
                     if (buf>curBBMax) curBBMax = buf;
                 }
                 Res[i] = curBBMax;
 
             }
         } catch (InvalidMoleculeException  e) {
-            throw new GenericFailureException(String.format(StringSelector.getString("sa_benigni_bossa_matcher_fail"), e.getMessage()));
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("sa_benigni_bossa_matcher_fail"), e.getMessage()));
         }
 
         return Res;
@@ -624,8 +624,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA1");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa1_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa1_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa1_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa1_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[!$([OH1,SH1])]C(=O)[Br,Cl,F,I]");
@@ -655,8 +655,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA2");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa2_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa2_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa2_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa2_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -684,8 +684,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA3");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa3_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa3_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa3_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa3_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[CX4H2](N)([OX2H1])");
@@ -711,8 +711,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA4");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa4_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa4_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa4_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa4_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         for (String s_left : SA4_left)
@@ -727,8 +727,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         String SA5_smarts = "[F,Cl,Br,I][CX4H2][CX4H2][N,S][CX4H2][CX4H2][F,Cl,Br,I]";
         curAlert = new BBAlert();
         curAlert.setId("SA5");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa5_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa5_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa5_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa5_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(SA5_smarts);
@@ -740,8 +740,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA6");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa6_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa6_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa6_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa6_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[O,S]=C1[O,S]CC1");
@@ -754,8 +754,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA7");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa7_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa7_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa7_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa7_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("C1[O,N]C1");
@@ -794,8 +794,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA8");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa8_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa8_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa8_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa8_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(b8.toString());
@@ -807,8 +807,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA9");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa9_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa9_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa9_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa9_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("O=[NX2]OC");
@@ -820,8 +820,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA10");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa10_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa10_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa10_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa10_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -840,8 +840,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA11");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa11_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa11_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa11_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa11_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[#6][$([CH;D2]);!$(CC=C)](=O)");
@@ -853,8 +853,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA12");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa12_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa12_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa12_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa12_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("O=[#6]1[#6]=,:[#6][#6](=O)[#6]=,:[#6]1");
@@ -867,8 +867,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA13");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa13_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa13_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa13_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa13_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[N+0]!@;-[N+0](=[!O;!N])");
@@ -885,8 +885,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA14");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa14_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa14_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa14_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa14_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -906,8 +906,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA15");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa15_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa15_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa15_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa15_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[NX2]=C=[O,S]");
@@ -919,8 +919,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA16");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa16_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa16_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa16_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa16_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -942,8 +942,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA17");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa17_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa17_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa17_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa17_description"));
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[#7X3][#6](=[SX1])[!$([O,S][CX4])!$([OH,SH])!$([O-,S-])]");
@@ -955,8 +955,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA18");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa18_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa18_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa18_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa18_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         // No SMARTS, checked through code
@@ -968,8 +968,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA19");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa19_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa19_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa19_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa19_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         // No SMARTS, checked through code
@@ -981,8 +981,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA20");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa20_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa20_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa20_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa20_description"));
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
         // No SMARTS, checked through code
@@ -994,8 +994,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA21");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa21_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa21_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa21_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa21_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -1011,8 +1011,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA22");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa22_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa22_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa22_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa22_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[N]=[N]-[N]");
@@ -1025,8 +1025,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA23");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa23_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa23_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa23_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa23_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[C!r][NH1]N(=O)O");
@@ -1039,8 +1039,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA24");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa24_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa24_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa24_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa24_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -1055,13 +1055,13 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         //// SA 25 (idx 24)
 
         Object[][] sa28_exclusion_rules = {
-                {StringSelector.getString("sa_benigni_bossa_rule1"),"a(a[A;!#1])(a[A;!#1])","[H]C=1C([H])=C(C)C(=C(C)C=1([H]))N([H])OC=O","", false},
-                {StringSelector.getString("sa_benigni_bossa_rule2"),"aa[CX3](=O)[OX2H1]","O=C(O)C1=CC=CC=C1(N)","", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aa[SX4](=[OX1])(=[OX1])([O])","NC=1C=CC=CC=1S(=O)(=O)[O-]","", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaa[SX4](=[OX1])(=[OX1])([O])","NC=1C=CC=C(C=1)S(=O)(=O)[O-]","", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaa[SX4](=[OX1])(=[OX1])([O])","O=S(=O)([O-])C1=CC=C(N)C=C1","", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaaa[SX4](=[OX1])(=[OX1])([O])","","", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaaaa[SX4](=[OX1])(=[OX1])([O])","","", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule1"),"a(a[A;!#1])(a[A;!#1])","[H]C=1C([H])=C(C)C(=C(C)C=1([H]))N([H])OC=O","", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule2"),"aa[CX3](=O)[OX2H1]","O=C(O)C1=CC=CC=C1(N)","", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aa[SX4](=[OX1])(=[OX1])([O])","NC=1C=CC=CC=1S(=O)(=O)[O-]","", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aaa[SX4](=[OX1])(=[OX1])([O])","NC=1C=CC=C(C=1)S(=O)(=O)[O-]","", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aaaa[SX4](=[OX1])(=[OX1])([O])","O=S(=O)([O-])C1=CC=C(N)C=C1","", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aaaaa[SX4](=[OX1])(=[OX1])([O])","","", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aaaaaa[SX4](=[OX1])(=[OX1])([O])","","", false},
         };
 
         StringBuilder b25 = new StringBuilder();
@@ -1078,7 +1078,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         b25.append("]");
 
         StringBuilder e25 = new StringBuilder();
-        e25.append(StringSelector.getString("sa_benigni_bossa_rule_append"));
+        e25.append(StringSelectorCore.getString("sa_benigni_bossa_rule_append"));
         Object old = "";
         for (int i=0; i < sa28_exclusion_rules.length;i++) {
             if (old.equals(sa28_exclusion_rules[i][0])) continue;
@@ -1089,7 +1089,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA25");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa25_name"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa25_name"));
         curAlert.setDescription(e25.toString());
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
@@ -1103,8 +1103,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA26");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa26_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa26_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa26_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa26_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[n+]!@[O-]");
@@ -1119,13 +1119,13 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
                 // {"Nitro uncharged","[N](=O)=O"} // VEGA normalizes nitro groups to [N+]([O-])=O
         };
         Object[][] sa27_exclusion_rules = {
-                {StringSelector.getString("sa_benigni_bossa_rule1"),"a(a[A;!#1;!H])(a[A;!#1;!H])", false},
-                {StringSelector.getString("sa_benigni_bossa_rule2"),"aa[CX3](=O)[OX2H1]", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
-                {StringSelector.getString("sa_benigni_bossa_rule3"),"aaaaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false}
+                {StringSelectorCore.getString("sa_benigni_bossa_rule1"),"a(a[A;!#1;!H])(a[A;!#1;!H])", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule2"),"aa[CX3](=O)[OX2H1]", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aaaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_rule3"),"aaaaaa[SX4](=[OX1])(=[OX1])([OX2H1])", false}
         };
 
         StringBuilder b27 = new StringBuilder();
@@ -1156,8 +1156,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA27");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa27_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa27_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa27_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa27_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addPreSMARTS("[N+][O-]");
@@ -1176,11 +1176,11 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 //        };	
 
         String[][] sa28_amines = {
-                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule1"),"[N+0;H2;D1]"},
-                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule1"),"[N+0;H1;D2][OH;D1]"},
-                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule2"),"[N+0;H0;D3]([OH;D1])C"},
-                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule2"),"[N+0;H1;D2]OC=O"},
-                {StringSelector.getString("sa_benigni_bossa_sa28_amines_rule3"),"[N+0;H0;D3](C)OC=O"}
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28_amines_rule1"),"[N+0;H2;D1]"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28_amines_rule1"),"[N+0;H1;D2][OH;D1]"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28_amines_rule2"),"[N+0;H0;D3]([OH;D1])C"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28_amines_rule2"),"[N+0;H1;D2]OC=O"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28_amines_rule3"),"[N+0;H0;D3](C)OC=O"}
         };
         // Note: sa28_exclusion_rules array has been already defined above
 
@@ -1209,8 +1209,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA28");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa28_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa28_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa28_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa28_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(b28.toString());
@@ -1229,11 +1229,11 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 //            {"Aromatic mono- and dialkylamine","[NX3;v3]([CH2][CH3])([CH2][CH3])"},
 //        };      
         String[][] amines = {
-                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H1;D2][CH3]"},
-                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H0;D3]([CH3])([CH3])"},
-                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H1;D2][CH2][CH3]"},
-                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H0;D3]([CH3])([CH2][CH3])"},
-                {StringSelector.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H0;D3]([CH2][CH3])([CH2][CH3])"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H1;D2][CH3]"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H0;D3]([CH3])([CH3])"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H1;D2][CH2][CH3]"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H0;D3]([CH3])([CH2][CH3])"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa28bis_amines_rule1"),"[N+0;H0;D3]([CH2][CH3])([CH2][CH3])"},
         };
         // Note: sa28_exclusion_rules array has been already defined above
 
@@ -1260,8 +1260,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA28bis");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa28bis_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa28bis_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa28bis_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa28bis_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(b28bis.toString());
@@ -1295,8 +1295,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA28ter");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa28ter_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa28ter_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa28ter_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa28ter_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS(b28ter.toString());
@@ -1308,8 +1308,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA29");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa29_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa29_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa29_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa29_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
 
@@ -1345,8 +1345,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA30");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa30_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa30_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa30_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa30_description"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("O=c1ccc2ccccc2(o1)");
@@ -1360,11 +1360,11 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
         // Some exclusion rules removed, they were only in ToxTree (not in the
         // original paper) and correspond to previous alerts
 
-        String hydroxyl = StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_hydroxil");
+        String hydroxyl = StringSelectorCore.getString("sa_benigni_bossa_sa31a_excl_rules_hydroxil");
         String[][] exclusion_rules_Hal = {
                 //{title, smarts, example}
-                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_ortho"),"[Cl,Br,I,F]cc[Cl,Br,I,F]","FC1=CC=CC=C1Cl"},
-                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_meta"),"[Cl,Br,I,F]ccc[Cl,Br,I,F]","C=1C=C(C=C(C=1)Br)Cl"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa31a_excl_rules_ortho"),"[Cl,Br,I,F]cc[Cl,Br,I,F]","FC1=CC=CC=C1Cl"},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa31a_excl_rules_meta"),"[Cl,Br,I,F]ccc[Cl,Br,I,F]","C=1C=C(C=C(C=1)Br)Cl"},
                 {hydroxyl,"[Cl,Br,I,F]c1c([OX2H])c([OX2H])c([OX2H])cc1",""},
                 {hydroxyl,"[Cl,Br,I,F]c1c([OX2H])c([OX2H])cc([OX2H])c1",""},
                 {hydroxyl,"[Cl,Br,I,F]c1c([OX2H])c([OX2H])ccc1([OX2H])",""},
@@ -1385,9 +1385,9 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 //            {"Aromatic mono- and dialkylamine","c[NX3v3]([CH2][CH3])([CH2][CH3])","CCN(CC)C=1C=CC=C(Cl)C=1","",false}, 
 //            {"Aromatic N-acyl amine","cNC(=O)[#1,CH3]","CC(=O)NC=1C=CC=C(C=1)Cl","SA28ter_gen", false},
 //            {"Aromatic diazo","cN=[N]a","C1=CC=C(C=C1)N=NC=2C=CC=C(C=2)Cl","SA29_gen", false},
-                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_biph"),"c!@[cR1r6]1ccccc1","C1=CC=C(C=C1)C2=CC=CC=C2Cl","", false},
-                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_diph"),"c!@*!@c1ccccc1","c1c(Cl)c(ccc1Cc2ccc(cc2))","", false},
-                {StringSelector.getString("sa_benigni_bossa_sa31a_excl_rules_not_in"),"[R2]","C=1C=CC=2C(C=1)=CC=CC=2Cl","", false}
+                {StringSelectorCore.getString("sa_benigni_bossa_sa31a_excl_rules_biph"),"c!@[cR1r6]1ccccc1","C1=CC=C(C=C1)C2=CC=CC=C2Cl","", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa31a_excl_rules_diph"),"c!@*!@c1ccccc1","c1c(Cl)c(ccc1Cc2ccc(cc2))","", false},
+                {StringSelectorCore.getString("sa_benigni_bossa_sa31a_excl_rules_not_in"),"[R2]","C=1C=CC=2C(C=1)=CC=CC=2Cl","", false}
         };
 
         StringBuilder b31a = new StringBuilder();
@@ -1423,12 +1423,12 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 //        e31a.append("Halogenated benzene  (Nongenotoxic carcinogens). ");
 //        e31a.append("The rule applies only to halogenated benezenes (not naphtalenes, etc.), but it should allow for the presence of other rings in the same molecule. ");
 //        e31a.append("However, the following structures should be excluded:");
-        e31a.append(StringSelector.getString("sa_benigni_bossa_sa31a_description1"));
+        e31a.append(StringSelectorCore.getString("sa_benigni_bossa_sa31a_description1"));
         for (int i=0; i < exclusion_rules_Hal.length;i++) {
             if (i>0) e31a.append(", ");
             e31a.append(exclusion_rules_Hal[i][0]);
         }
-        e31a.append(StringSelector.getString("sa_benigni_bossa_sa31a_description2"));
+        e31a.append(StringSelectorCore.getString("sa_benigni_bossa_sa31a_description2"));
 
         old = "";
         for (int i=0; i < sa31a_exclusion_rules.length;i++) {
@@ -1440,7 +1440,7 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA31a");
-        curAlert.setName((StringSelector.getString("sa_benigni_bossa_sa31a_name")));
+        curAlert.setName((StringSelectorCore.getString("sa_benigni_bossa_sa31a_name")));
         curAlert.setDescription(e31a.toString());
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
@@ -1453,8 +1453,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA31b");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa31b_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa31b_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa31b_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa31b_description"));
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("[Cl,Br,F,I]c1ccc2ccccc2(c1)");
@@ -1468,8 +1468,8 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
         curAlert = new BBAlert();
         curAlert.setId("SA31c");
-        curAlert.setName(StringSelector.getString("sa_benigni_bossa_sa31c_name"));
-        curAlert.setDescription(StringSelector.getString("sa_benigni_bossa_sa31c_description"));
+        curAlert.setName(StringSelectorCore.getString("sa_benigni_bossa_sa31c_name"));
+        curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_sa31c_description"));
         curAlert.setMutagen(false);
         curAlert.setCarcinogen(true);
         curAlert.addSMARTS("c1ccc2Oc3cc(ccc3(Oc2(c1)))[Cl,Br,F,I]");

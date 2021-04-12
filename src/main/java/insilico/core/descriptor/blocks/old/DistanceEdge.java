@@ -6,6 +6,7 @@ import insilico.core.descriptor.blocks.old.weight.VertexDegree;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,11 +19,11 @@ import java.util.ArrayList;
  * 
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class DistanceEdge extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
 
-    Logger logger = LoggerFactory.getLogger(DistanceEdge.class);
 
     private final static String BlockName = "DistanceEdge descriptors";
 
@@ -126,7 +127,7 @@ public class DistanceEdge extends DescriptorBlock {
         try {
             TopoMatrix = mol.GetMatrixTopologicalDistance();
         } catch (GenericFailureException e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

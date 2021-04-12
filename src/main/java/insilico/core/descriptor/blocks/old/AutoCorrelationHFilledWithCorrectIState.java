@@ -13,6 +13,8 @@ import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.matrix.TopoDistanceMatrix;
 import insilico.core.molecule.tools.Manipulator;
 import java.util.ArrayList;
+
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +28,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
 
     private final static long serialVersionUID = 1L;
-    Logger logger = LoggerFactory.getLogger(AutoCorrelationHFilledWithCorrectIState.class);
 
     private final static String BlockName = "AutoCorrelation Descriptors";
 
@@ -165,7 +167,7 @@ public class AutoCorrelationHFilledWithCorrectIState extends DescriptorBlock {
         try {
             TopoMatrix = TopoDistanceMatrix.getMatrix(m);
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }

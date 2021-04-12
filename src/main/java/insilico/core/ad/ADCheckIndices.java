@@ -2,7 +2,7 @@ package insilico.core.ad;
 
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
@@ -10,8 +10,6 @@ import insilico.core.similarity.SimilarMolecule;
 import insilico.core.similarity.Similarity;
 import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.interfaces.IAtomContainer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,8 +78,8 @@ public class ADCheckIndices {
         
         if ((TrainSet == null)||(TrainSet.getMoleculesSize()==0)) {
             SimilarMols = null;
-            log.warn(StringSelector.getString("ad_checkindices_logwarn"));
-            throw new GenericFailureException(StringSelector.getString("ad_checkindices_exception"));
+            log.warn(StringSelectorCore.getString("ad_checkindices_logwarn"));
+            throw new GenericFailureException(StringSelectorCore.getString("ad_checkindices_exception"));
         }
         
         Similarity SIM = new Similarity();

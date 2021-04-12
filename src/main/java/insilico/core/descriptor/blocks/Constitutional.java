@@ -5,7 +5,7 @@ import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.descriptor.blocks.weights.basic.WeightsMass;
 import insilico.core.descriptor.blocks.weights.iBasicWeight;
 import insilico.core.exception.InvalidMoleculeException;
-import insilico.core.localization.StringSelector;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
@@ -22,7 +22,7 @@ import org.openscience.cdk.interfaces.IBond;
 public class Constitutional extends DescriptorBlock {
 
     private static final long serialVersionUID = 1L;
-    private static final String BlockName = StringSelector.getString("descriptors_constitutional_name");
+//    private static final String BlockName = ;
 
 
     /**
@@ -30,54 +30,54 @@ public class Constitutional extends DescriptorBlock {
      */
     public Constitutional() {
         super();
-        this.Name = Constitutional.BlockName;
+        this.Name = StringSelectorCore.getString("descriptors_constitutional_name");
     }
 
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
-        this.Add("MW", StringSelector.getString("descriptors_constitutional_mw"));
-        this.Add("AMW", StringSelector.getString("descriptors_constitutional_amw"));
-        this.Add("Sv", StringSelector.getString("descriptors_constitutional_sv"));
-        this.Add("Mv", StringSelector.getString("descriptors_constitutional_mv"));
-        this.Add("Sp", StringSelector.getString("descriptors_constitutional_sp"));
-        this.Add("Mp", StringSelector.getString("descriptors_constitutional_mp"));
-        this.Add("Se", StringSelector.getString("descriptors_constitutional_se"));
-        this.Add("Me", StringSelector.getString("descriptors_constitutional_me"));
-        this.Add("Si", StringSelector.getString("descriptors_constitutional_si"));
-        this.Add("Mi", StringSelector.getString("descriptors_constitutional_mi"));
+        this.Add("MW", StringSelectorCore.getString("descriptors_constitutional_mw"));
+        this.Add("AMW", StringSelectorCore.getString("descriptors_constitutional_amw"));
+        this.Add("Sv", StringSelectorCore.getString("descriptors_constitutional_sv"));
+        this.Add("Mv", StringSelectorCore.getString("descriptors_constitutional_mv"));
+        this.Add("Sp", StringSelectorCore.getString("descriptors_constitutional_sp"));
+        this.Add("Mp", StringSelectorCore.getString("descriptors_constitutional_mp"));
+        this.Add("Se", StringSelectorCore.getString("descriptors_constitutional_se"));
+        this.Add("Me", StringSelectorCore.getString("descriptors_constitutional_me"));
+        this.Add("Si", StringSelectorCore.getString("descriptors_constitutional_si"));
+        this.Add("Mi", StringSelectorCore.getString("descriptors_constitutional_mi"));
 
-        this.Add("nAt", StringSelector.getString("descriptors_constitutional_nAt"));
-        this.Add("nSk", StringSelector.getString("descriptors_constitutional_nSk"));
+        this.Add("nAt", StringSelectorCore.getString("descriptors_constitutional_nAt"));
+        this.Add("nSk", StringSelectorCore.getString("descriptors_constitutional_nSk"));
 
-        this.Add("nBt", StringSelector.getString("descriptors_constitutional_nBt"));
-        this.Add("nBo", StringSelector.getString("descriptors_constitutional_nBo"));
-        this.Add("nBm", StringSelector.getString("descriptors_constitutional_nBm"));
-        this.Add("nDB", StringSelector.getString("descriptors_constitutional_nDB"));
-        this.Add("nTB", StringSelector.getString("descriptors_constitutional_nTB"));
-        this.Add("nAB", StringSelector.getString("descriptors_constitutional_nAB"));
-        this.Add("SCBO", StringSelector.getString("descriptors_constitutional_SCBO"));
+        this.Add("nBt", StringSelectorCore.getString("descriptors_constitutional_nBt"));
+        this.Add("nBo", StringSelectorCore.getString("descriptors_constitutional_nBo"));
+        this.Add("nBm", StringSelectorCore.getString("descriptors_constitutional_nBm"));
+        this.Add("nDB", StringSelectorCore.getString("descriptors_constitutional_nDB"));
+        this.Add("nTB", StringSelectorCore.getString("descriptors_constitutional_nTB"));
+        this.Add("nAB", StringSelectorCore.getString("descriptors_constitutional_nAB"));
+        this.Add("SCBO", StringSelectorCore.getString("descriptors_constitutional_SCBO"));
 
-        this.Add("nH", StringSelector.getString("descriptors_constitutional_nH"));
-        this.Add("nC", StringSelector.getString("descriptors_constitutional_nC"));
-        this.Add("nN", StringSelector.getString("descriptors_constitutional_nN"));
-        this.Add("nO", StringSelector.getString("descriptors_constitutional_nO"));
-        this.Add("nP", StringSelector.getString("descriptors_constitutional_nP"));
-        this.Add("nS", StringSelector.getString("descriptors_constitutional_nS"));
-        this.Add("nF", StringSelector.getString("descriptors_constitutional_nF"));
-        this.Add("nCl", StringSelector.getString("descriptors_constitutional_nCl"));
-        this.Add("nBr", StringSelector.getString("descriptors_constitutional_nBr"));
-        this.Add("nI", StringSelector.getString("descriptors_constitutional_nI"));
-        this.Add("nB", StringSelector.getString("descriptors_constitutional_nB"));
+        this.Add("nH", StringSelectorCore.getString("descriptors_constitutional_nH"));
+        this.Add("nC", StringSelectorCore.getString("descriptors_constitutional_nC"));
+        this.Add("nN", StringSelectorCore.getString("descriptors_constitutional_nN"));
+        this.Add("nO", StringSelectorCore.getString("descriptors_constitutional_nO"));
+        this.Add("nP", StringSelectorCore.getString("descriptors_constitutional_nP"));
+        this.Add("nS", StringSelectorCore.getString("descriptors_constitutional_nS"));
+        this.Add("nF", StringSelectorCore.getString("descriptors_constitutional_nF"));
+        this.Add("nCl", StringSelectorCore.getString("descriptors_constitutional_nCl"));
+        this.Add("nBr", StringSelectorCore.getString("descriptors_constitutional_nBr"));
+        this.Add("nI", StringSelectorCore.getString("descriptors_constitutional_nI"));
+        this.Add("nB", StringSelectorCore.getString("descriptors_constitutional_nB"));
 
-        this.Add("HPerc", StringSelector.getString("descriptors_constitutional_Hperc"));
-        this.Add("CPerc", StringSelector.getString("descriptors_constitutional_CPerc"));
-        this.Add("NPerc", StringSelector.getString("descriptors_constitutional_NPerc"));
-        this.Add("OPerc", StringSelector.getString("descriptors_constitutional_OPerc"));
-        this.Add("XPerc", StringSelector.getString("descriptors_constitutional_XPerc"));
+        this.Add("HPerc", StringSelectorCore.getString("descriptors_constitutional_Hperc"));
+        this.Add("CPerc", StringSelectorCore.getString("descriptors_constitutional_CPerc"));
+        this.Add("NPerc", StringSelectorCore.getString("descriptors_constitutional_NPerc"));
+        this.Add("OPerc", StringSelectorCore.getString("descriptors_constitutional_OPerc"));
+        this.Add("XPerc", StringSelectorCore.getString("descriptors_constitutional_XPerc"));
 
-        this.Add("nHet", StringSelector.getString("descriptors_constitutional_NHet"));
-        this.Add("nX", StringSelector.getString("descriptors_constitutional_nX"));
+        this.Add("nHet", StringSelectorCore.getString("descriptors_constitutional_NHet"));
+        this.Add("nX", StringSelectorCore.getString("descriptors_constitutional_nX"));
 
         SetAllValues(Descriptor.MISSING_VALUE);
     }
@@ -98,7 +98,7 @@ public class Constitutional extends DescriptorBlock {
         try {
             curMol = mol.GetStructure();
         } catch (InvalidMoleculeException e) {
-            log.warn(String.format(StringSelector.getString("descriptors_invalid_structure"), this.Name));
+            log.warn(String.format(StringSelectorCore.getString("descriptors_invalid_structure"), this.Name));
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
@@ -240,7 +240,7 @@ public class Constitutional extends DescriptorBlock {
                         ws = new insilico.core.descriptor.blocks.weights.basic.WeightsIonizationPotential();
                         break;
                     default:
-                        throw new Exception(StringSelector.getString("descriptors_weight_not_found"));
+                        throw new Exception(StringSelectorCore.getString("descriptors_weight_not_found"));
                 }
 
                 double[] weights = ws.getScaledWeights(curMol);
@@ -285,12 +285,12 @@ public class Constitutional extends DescriptorBlock {
                         this.SetByName("Mi", ave);
                         break;
                     default:
-                        throw new Exception(StringSelector.getString("descriptors_weight_not_found"));
+                        throw new Exception(StringSelectorCore.getString("descriptors_weight_not_found"));
                 }
             }
 
         } catch (Throwable e) {
-            log.warn(String.format(StringSelector.getString("descriptors_unable_calculate"), this.Name, e.getMessage()));
+            log.warn(String.format(StringSelectorCore.getString("descriptors_unable_calculate"), this.Name, e.getMessage()));
             this.SetAllValues(Descriptor.MISSING_VALUE);
         }
 
