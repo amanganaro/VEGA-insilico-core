@@ -66,9 +66,9 @@ public class AlertsEngine {
 //                case InsilicoConstants.SA_BLOCK_BCF_IRFMN:
 //                    Alerts.add(new SABCFIRFMN());
 //                    break;
-//                case InsilicoConstants.SA_BLOCK_BCF_IRFMN_THRESHOLD:
-//                    Alerts.add(new SABCFIRFMNThreshold());
-//                    break;
+                case InsilicoConstants.SA_BLOCK_MOA_IRFMN:
+                    Alerts.add(new SAMoaIRFMN());
+                    break;
                 case InsilicoConstants.SA_BLOCK_LOGP_MEYLAN:
                     Alerts.add(new SAMeylanLogPFragments());
                     break;
