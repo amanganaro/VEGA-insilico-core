@@ -9,7 +9,6 @@
     <version>1.3.6</version>
     <packaging>jar</packaging>
 
-
     <name>InSilicoCore</name>
     <description>
         Core libraries for the inSilico project (VEGA etc) - Updated to CDK 2.3, OpenJDK 11

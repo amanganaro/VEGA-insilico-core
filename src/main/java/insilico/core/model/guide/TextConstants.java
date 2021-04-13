@@ -41,6 +41,9 @@ public class TextConstants {
     public static final String AD_LOGP_RELIABILITY_TITLE = StringSelectorCore.getString("tc_guide_logp_reliability_title");
     public static final String AD_LOGP_RELIABILITY_INTRO = StringSelectorCore.getString("tc_guide_logp_reliability_intro");
 
+//    public static final String AD_DESCRIPTORS_RANGE_CHECK_TITLE=
+//    public static final String AD_DESCRIPTORS_RANGE_CHECK_INTRO=
+
     public static final String STATS_INTRO = StringSelectorCore.getString("tc_guide_stats_intro");
 
 }

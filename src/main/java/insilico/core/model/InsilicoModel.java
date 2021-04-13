@@ -93,8 +93,13 @@ public abstract class InsilicoModel implements iInsilicoModel {
 
         String curLang = StringSelectorCore.getLanguage();
 
-        String[] fileNames = ModelData.split(".xml");
-        ModelData = fileNames[0] + "-" + curLang + fileNames[1];
+        if(curLang.equals("en") || curLang.equals("")){
+
+        } else {
+            String[] fileNames = ModelData.split(".xml");
+            ModelData = fileNames[0] + "-" + curLang + ".xml";
+        }
+
 
         Info = new InsilicoModelInfo(getClass().getResource(ModelData));
         TS = null; // TS is initialized in execute()
@@ -116,24 +121,21 @@ public abstract class InsilicoModel implements iInsilicoModel {
     @Override
     public ArrayList<DescriptorBlock> GetRequiredDescriptorBlocks() {
         // Default - return an empty list
-        ArrayList<DescriptorBlock> blocks = new ArrayList<>();
-        return blocks;
+        return new ArrayList<>();
     }
 
 
     @Override
     public ArrayList<Integer> GetRequiredAlertBlocks() {
         // Default - return an empty list
-        ArrayList<Integer> blocks = new ArrayList<>();
-        return blocks;
+        return new ArrayList<>();
     }
 
 
     @Override
     public AlertList GetCalculatedAlert() throws CloneNotSupportedException {
         // Default - return an empty list
-        AlertList SA = new AlertList();
-        return SA;
+        return new AlertList();
     }
 
 
