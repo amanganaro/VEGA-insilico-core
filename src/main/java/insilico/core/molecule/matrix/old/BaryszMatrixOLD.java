@@ -1,7 +1,7 @@
 package insilico.core.molecule.matrix.old;
 
 import insilico.core.descriptor.Descriptor;
-import insilico.core.descriptor.blocks.old.weight.VanDerWaals;
+import insilico.core.descriptor.blocks.weights.VanDerWaalsOLD;
 import insilico.core.tools.utils.MoleculeUtilities;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.ShortestPaths;
@@ -34,7 +34,7 @@ public class BaryszMatrixOLD {
         double[][][] matrix = new double[nSK][nSK][weigths];
 
         // van der waals volumes (already scaled on carbon)
-        double[] w_v = VanDerWaals.getWeights(mol);
+        double[] w_v = VanDerWaalsOLD.getWeights(mol);
 
         for (int i=0; i<nSK; i++) {
 
@@ -61,8 +61,8 @@ public class BaryszMatrixOLD {
                     IBond bnd = mol.getBond(at1, at2);
 
                     double bnd_order = MoleculeUtilities.Bond2Double(bnd);
-                    double w1 = VanDerWaals.GetVdWVolume(at1.getSymbol());
-                    double w2 = VanDerWaals.GetVdWVolume(at2.getSymbol());
+                    double w1 = VanDerWaalsOLD.GetVdWVolume(at1.getSymbol());
+                    double w2 = VanDerWaalsOLD.GetVdWVolume(at2.getSymbol());
 
                     if ( (w1 == Descriptor.MISSING_VALUE) || (w2 == Descriptor.MISSING_VALUE) ) {
                         w_sum = Descriptor.MISSING_VALUE;

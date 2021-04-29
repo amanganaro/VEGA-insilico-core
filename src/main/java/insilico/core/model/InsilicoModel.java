@@ -1,6 +1,5 @@
 package insilico.core.model;
 
-import com.hp.hpl.jena.assembler.Mode;
 import insilico.core.alerts.AlertList;
 import insilico.core.alerts.AlertsEngine;
 import insilico.core.constant.MessagesError;
@@ -17,7 +16,6 @@ import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.acf.ACFBuilder;
 import insilico.core.similarity.SimilarityDescriptorsBuilder;
 import lombok.extern.slf4j.Slf4j;
-
 
 import java.net.URL;
 import java.text.DecimalFormat;

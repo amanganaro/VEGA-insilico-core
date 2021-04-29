@@ -11,6 +11,7 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.stream.XMLStreamConstants;
 import java.io.DataInputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -43,7 +44,6 @@ public class InsilicoModelInfo {
     public String getVersion() {
         return Version.get(Version_Version) == null ? "" : Version.get(Version_Version);
     }
-
 
 
     // VEGA
