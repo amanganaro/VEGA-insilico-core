@@ -1,4 +1,4 @@
-package insilico.core;
+package insilico.core.tools.utils;
 
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;

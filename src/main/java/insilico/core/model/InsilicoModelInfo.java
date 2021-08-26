@@ -11,7 +11,6 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.stream.XMLStreamConstants;
 import java.io.DataInputStream;
 import java.net.URL;
 import java.util.ArrayList;
