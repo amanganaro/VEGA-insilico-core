@@ -254,8 +254,12 @@ public class SABenigniBossaAdditional extends AlertBlockFromSMARTS implements iA
         curAlert.setDescription(StringSelectorCore.getString("sa_benigni_bossa_additional_sa39_name"));
         curAlert.setMutagen(true);
         curAlert.setCarcinogen(false);
-        curAlert.addSMARTS("C[C@@]12CCC3c4c(CCC3C1CC[C@H]2O)cc(O)cc4");
-        
+
+        //      Original SMARTS modified, it seems to have problems in matching
+        //        curAlert.addSMARTS("C[C@@]12CCC3c4c(CCC3C1CC[C@H]2O)cc(O)cc4");
+
+        curAlert.addSMARTS("CC12CCC3c4c(CCC3C1CCC2O)cc(O)cc4");
+
         BBAlerts.add(curAlert);
         
         
