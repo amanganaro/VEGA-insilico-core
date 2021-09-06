@@ -92,7 +92,7 @@ public class GuidePDFGenerator {
         try {
             URL uImage;
 
-            uImage = getClass().getClassLoader().getResource("/images/hi_vega_guide_cover_top.png" );
+            uImage = getClass().getResource("/images/hi_vega_guide_cover_top.png" );
             Img_header = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
         } catch (Exception e) {
