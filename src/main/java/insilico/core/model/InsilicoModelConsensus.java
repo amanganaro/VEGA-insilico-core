@@ -4,7 +4,6 @@ import insilico.core.constant.MessagesError;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.localization.StringSelectorCore;
-import insilico.core.model.old.InsilicoModelInfoOLD;
 import insilico.core.model.runner.InsilicoModelWrapper;
 import insilico.core.molecule.InsilicoMolecule;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,7 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
     protected final static short MODEL_CALCULATED = 1;
 
 
-    protected InsilicoModelInfoOLD Info;
+    protected InsilicoModelInfo Info;
     protected InsilicoMolecule CurMolecule;
     protected int CurMoleculeIndex;
     protected ArrayList<InsilicoModelWrapper> CurModels;
@@ -48,7 +47,7 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
      */
     public InsilicoModelConsensus(String ModelData) throws InitFailureException {
 
-        Info = new InsilicoModelInfoOLD(getClass().getResource(ModelData));
+        Info = new InsilicoModelInfo(getClass().getResource(ModelData));
 
         ResultsName = new String[0];
 
@@ -66,13 +65,13 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
     protected abstract void CalculateAssessment();
 
 
-    /**
-     * @return the Info object of this model
-     */
-    @Override
-    public InsilicoModelInfoOLD getInfo() {
-        return Info;
-    }
+//    /**
+//     * @return the Info object of this model
+//     */
+//    @Override
+//    public InsilicoModelInfo getInfo() {
+//        return Info;
+//    }
 
 
 

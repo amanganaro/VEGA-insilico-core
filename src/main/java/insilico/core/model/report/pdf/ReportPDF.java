@@ -23,7 +23,7 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModelConsensusOutput;
-import insilico.core.model.old.InsilicoModelInfoOLD;
+//import insilico.core.model.old.InsilicoModelInfoOLD;
 import insilico.core.model.InsilicoModelInfo;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.report.pdf.classbarchart.ClassBarChart;
@@ -480,9 +480,9 @@ public class ReportPDF {
         String[] ModelTitle = new String[nModels];
         String[] ModelDesc = new String[nModels];
         for (InsilicoModelConsensusWrapper mw : modelConsWrappers) {
-            InsilicoModelInfoOLD curInfo = mw.getModel().getInfo();
+            InsilicoModelInfo curInfo = mw.getModel().getInfo();
             ModelTitle[modelIdx] = curInfo.getName() + "(" + StringSelectorCore.getString("report_generator_version") + " " + curInfo.getVersion() + ")\n";
-            ModelDesc[modelIdx] = curInfo.getDescriptionLong() + "\n"; ;
+            ModelDesc[modelIdx] = curInfo.getSummary() + "\n"; ;
             modelIdx++;
         }
         for (InsilicoModelWrapper mw : modelWrappers) {

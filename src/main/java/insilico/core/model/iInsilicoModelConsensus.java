@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public interface iInsilicoModelConsensus extends Serializable {
 
-    public InsilicoModelInfoOLD getInfo();
+    public InsilicoModelInfo getInfo();
     public InsilicoModelConsensusOutput Execute(InsilicoMolecule mol, int molIndex, ArrayList<InsilicoModelWrapper> ModelsResults) throws GenericFailureException;
     public ArrayList<InsilicoModel> GetRequiredModels() throws InitFailureException;
     public int GetResultsSize();
