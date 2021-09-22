@@ -19,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -34,11 +35,10 @@ import static com.lowagie.text.Rectangle.BOTTOM;
 public class GuidePDFGenerator {
 
     protected Document document;
-    protected FileOutputStream doc_bos;
+    protected ByteArrayOutputStream doc_bos;
     protected PdfWriter writer;
     protected ArrayList<InsilicoModelWrapper> modelWrappers;
     protected ArrayList<InsilicoModelConsensusWrapper> modelConsWrappers;
-    protected boolean HiResMode;
     protected int CurPage;
 
     // For alerts in similar mols
@@ -59,26 +59,7 @@ public class GuidePDFGenerator {
     private Font fontReference;
 
     // Images object
-    private Image Img_circle_green;
-    private Image Img_circle_yellow;
-    private Image Img_circle_orange;
-    private Image Img_circle_red;
-    private Image Img_circle_gray;
-    private Image Img_stars_0;
-    private Image Img_stars_1;
-    private Image Img_stars_2;
-    private Image Img_stars_3;
-    private Image Img_assessment_good;
-    private Image Img_assessment_non_optimal;
-    private Image Img_assessment_bad;
     private Image Img_header;
-
-    private Image Img_title_1;
-    private Image Img_title_2;
-    private Image Img_title_3_1;
-    private Image Img_title_3_2;
-    private Image Img_title_4_1;
-    private Image Img_title_4_2;
 
     // Core version
     private InsilicoInfo coreVersion;
@@ -90,9 +71,8 @@ public class GuidePDFGenerator {
 
 
     // CONSTRUCTOR
-    public GuidePDFGenerator(boolean HiRes, InsilicoModel model) throws InitFailureException {
-        this.HiResMode = HiRes;
-        FetchImageObjects(HiRes);
+    public GuidePDFGenerator() throws InitFailureException {
+        FetchImageObjects();
         CreateFonts();
 
         DecimalFormatSymbols InternationalSymbols =
@@ -101,100 +81,20 @@ public class GuidePDFGenerator {
 
         Format_3D = new DecimalFormat("0.###", InternationalSymbols);
 
-        modelInfo = model.getInfo();
         SAEngine = new AlertsEngine();
 
-        InitReport(modelInfo);
     }
 
     // Init Images from files
-    private void FetchImageObjects(boolean HiRes) throws InitFailureException {
+    private void FetchImageObjects() throws InitFailureException {
 
         // Init images
         try {
             URL uImage;
 
-//            uImage = new File("images/light_green.png").toURI().toURL();
-            uImage = getClass().getClassLoader().getResource("images/light_green.png" );
-            Img_circle_green = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/light_yellow.png" );
-            Img_circle_yellow = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/light_orange.png" );
-            Img_circle_orange = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/light_red.png" );
-            Img_circle_red = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/light_gray.png" );
-            Img_circle_gray = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/stars_0.png" );
-            Img_stars_0 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/stars_1.png" );
-            Img_stars_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/stars_2.png" );
-            Img_stars_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/stars_3.png" );
-            Img_stars_3 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/assessment_ok.png" );
-            Img_assessment_good = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/assessment_bad.png" );
-            Img_assessment_bad = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/assessment_non-optimal.png" );
-            Img_assessment_non_optimal = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            uImage = getClass().getClassLoader().getResource("images/vega_header.png" );
+            uImage = getClass().getResource("/images/hi_vega_guide_cover_top.png" );
             Img_header = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-            if (HiRes) {
-
-                uImage = this.getClass().getClassLoader().getResource("images/hi_report_top_section_1.png" );
-                Img_title_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/hi_report_top_section_2.png" );
-                Img_title_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/hi_report_top_section_3_1.png" );
-                Img_title_3_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/hi_report_top_section_3_2.png" );
-                Img_title_3_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/hi_report_top_section_4_1.png" );
-                Img_title_4_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/hi_report_top_section_4_2.png" );
-                Img_title_4_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            } else {
-
-                uImage = getClass().getClassLoader().getResource("images/report_top_section_1.png" );
-                Img_title_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/report_top_section_2.png" );
-                Img_title_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/report_top_section_3_1.png" );
-                Img_title_3_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/report_top_section_3_2.png" );
-                Img_title_3_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/report_top_section_4_1.png" );
-                Img_title_4_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-                uImage = getClass().getClassLoader().getResource("images/report_top_section_4_2.png" );
-                Img_title_4_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
-
-            }
         } catch (Exception e) {
             throw new InitFailureException("Unable to load images");
         }
@@ -218,36 +118,70 @@ public class GuidePDFGenerator {
         fontBigUnderline = new Font(DEFAULT_FONT, 14, Font.BOLD + Font.UNDERLINE);
         fontSmall = new Font(DEFAULT_FONT, 4, Font.NORMAL);
         fontHeader = new Font(DEFAULT_FONT, 18, Font.BOLD);
-
     }
 
-    protected void InitReport(InsilicoModelInfo modelInfo) throws InitFailureException {
 
+    public byte[] CreateReport(InsilicoModelInfo modelInfo) throws GenericFailureException {
         this.modelInfo = modelInfo;
-
 
         try {
             document = new Document(PageSize.A4);
-            doc_bos = new FileOutputStream(modelInfo.getName() + ".pdf");
+            doc_bos = new ByteArrayOutputStream();
             writer = PdfWriter.getInstance(document, doc_bos);
-
             document.open();
-            GenerateReport();
+
+            document.setMarginMirroring(true);
+            document.setMarginMirroringTopBottom(true);
+            document.setMargins(50, 50, 25, 25);
+            AddCover();
+            WritePageGuide();
+            document.close();
+
+            return doc_bos.toByteArray();
         } catch (Exception e) {
-            throw new InitFailureException(String.format(StringSelectorCore.getString("guide_generator_unable_create_pdf"), e.getMessage()));
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_unable_create_pdf"), e.getMessage()));
         }
 
     }
 
-    private void GenerateReport() throws GenericFailureException {
 
-        document.setMarginMirroring(true);
-        document.setMarginMirroringTopBottom(true);
-        document.setMargins(50, 50, 25, 25);
-        AddCover();
-        WritePageGuide();
-        document.close();
+    // Override to save directly to file
+    public void CreateReport(InsilicoModelInfo modelInfo, String FileName) throws Exception  {
+        byte[] document = this.CreateReport(modelInfo);
+        try (FileOutputStream fos = new FileOutputStream(FileName)) {
+            fos.write(document);
+        }
     }
+
+
+
+//    protected void InitReport(InsilicoModelInfo modelInfo) throws InitFailureException {
+//
+//        this.modelInfo = modelInfo;
+//
+//
+//        try {
+//            document = new Document(PageSize.A4);
+//            doc_bos = new FileOutputStream(modelInfo.getName() + ".pdf");
+//            writer = PdfWriter.getInstance(document, doc_bos);
+//
+//            document.open();
+//            GenerateReport();
+//        } catch (Exception e) {
+//            throw new InitFailureException(String.format(StringSelectorCore.getString("guide_generator_unable_create_pdf"), e.getMessage()));
+//        }
+//
+//    }
+
+//    private void GenerateReport() throws GenericFailureException {
+//
+//        document.setMarginMirroring(true);
+//        document.setMarginMirroringTopBottom(true);
+//        document.setMargins(50, 50, 25, 25);
+//        AddCover();
+//        WritePageGuide();
+//        document.close();
+//    }
 
 
 
@@ -328,36 +262,17 @@ public class GuidePDFGenerator {
 
             double y_pos = 0;
 
-////             Header
-            URL uBanner = null;
-//            if (HiResMode)
-//                uBanner = getClass().getClassLoader().getResource("images/vega_header.png");
-//            else
-//                uBanner = getClass().getClassLoader().getResource("images/vega_header.png");
-//            gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
+            // Header
+            URL uBanner = getClass().getResource("/images/hi_vega_guide_cover_top.png" );
+            gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
             table = new PdfPTable(1);
-            cell = new PdfPCell();
+            cell = new PdfPCell(gif, true);
             cell.setPaddingBottom(4);
             cell.setHorizontalAlignment(ALIGN_CENTER);
             cell.setBorderColor(new Color(255,255,255));
             table.addCell(cell);
             table.setTotalWidth(w-20);
             y_pos = table.writeSelectedRows(0, -1, 10, h-10, writer.getDirectContent());
-//
-//             Footer
-//            if (HiResMode)
-//                uBanner = getClass().getClassLoader().getResource("images/hi_vega_report_cover_bottom.png" );
-//            else
-//                uBanner = getClass().getClassLoader().getResource("images/vega_report_cover_bottom.png" );
-//            gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
-//            table = new PdfPTable(1);
-//            cell = new PdfPCell();
-//            cell.setHorizontalAlignment(ALIGN_CENTER);
-//            cell.setBorderColor(new Color(255,255,255));
-//            table.addCell(cell);
-//            table.setTotalWidth(w-20);
-//            int GifHeight = Math.round((w-20) * (gif.getHeight() / gif.getWidth()));
-//            table.writeSelectedRows(0, -1, 10, 10 + GifHeight, writer.getDirectContent());
 
             // Mid contents
             long MidTable_Left = Math.round(10 + (w-20) * 0.096);
@@ -400,7 +315,7 @@ public class GuidePDFGenerator {
             document.newPage();
             CurPage++;
             int index = 1;
-            WritePageHeader(StringSelectorCore.getString("guide_generator_model_explanation_title"));
+//            WritePageHeader(StringSelectorCore.getString("guide_generator_model_explanation_title"));
 
 
             // 1.1 Introduction
@@ -631,29 +546,44 @@ public class GuidePDFGenerator {
             document.add(new Paragraph(TextConstants.STATS_INTRO, font));
 
             // Training Set stats
-            sectionBody = new Paragraph(StringSelectorCore.getString("guide_generator_training_set") + "\n", fontBold);
-            document.add(sectionBody);
+            ArrayList<String> StatsTrain = new ArrayList<>();
+            AddStat(StatsTrain, InsilicoModelInfo.Stats_n_Train, "n");
+            AddStat(StatsTrain, InsilicoModelInfo.Stats_R2_Train, "R2");
+            AddStat(StatsTrain, InsilicoModelInfo.Stats_RMSE_Train, "RMSE");
+            AddStat(StatsTrain, InsilicoModelInfo.Stats_Accuracy_Train, "Acc");
+            AddStat(StatsTrain, InsilicoModelInfo.Stats_Sensitivity_Train, "Sen");
+            AddStat(StatsTrain, InsilicoModelInfo.Stats_Specificity_Train, "Spe");
 
-            sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_n_Train) + "        ", font);
-            sectionBody.add("\t" + "R2 = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_R2_Train)+ "        ");
-            sectionBody.add("\t" + "RMSE = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_RMSE_Train) + "        ");
+            if (!StatsTrain.isEmpty()) {
+                sectionBody = new Paragraph(StringSelectorCore.getString("guide_generator_training_set") + "\n", fontBold);
+                document.add(sectionBody);
 
-            document.add(sectionBody);
+                sectionBody = new Paragraph("", font);
+                for (String s : StatsTrain)
+                sectionBody.add(s + "   ");
 
-            // Test Set stats
-            sectionBody = new Paragraph(StringSelectorCore.getString("guide_generator_test_set") + "\n", fontBold);
-            document.add(sectionBody);
-
-            sectionBody = new Paragraph("n = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_n_Test) + "        ", font);
-            sectionBody.add("\t" + "R2 = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_R2_Test) + "        ");
-            sectionBody.add("\t" + "RMSE = " + modelInfo.Stats.get(InsilicoModelInfo.Stats_RMSE_Test) + "        ");
-
-            sectionBody.add("\n");
-            if(modelInfo.getStats().get("Stats_Notes") != null){
-                sectionBody.add(new Paragraph(modelInfo.Stats.get(InsilicoModelInfo.Stats_Notes), font));
+                document.add(sectionBody);
             }
 
-            document.add(sectionBody);
+            // Test Set stats
+            ArrayList<String> StatsTest = new ArrayList<>();
+            AddStat(StatsTest, InsilicoModelInfo.Stats_n_Test, "n");
+            AddStat(StatsTest, InsilicoModelInfo.Stats_R2_Test, "R2");
+            AddStat(StatsTest, InsilicoModelInfo.Stats_RMSE_Test, "RMSE");
+            AddStat(StatsTest, InsilicoModelInfo.Stats_Accuracy_Test, "Acc");
+            AddStat(StatsTest, InsilicoModelInfo.Stats_Sensitivity_Test, "Sen");
+            AddStat(StatsTest, InsilicoModelInfo.Stats_Specificity_Test, "Spe");
+
+            if (!StatsTest.isEmpty()) {
+                sectionBody = new Paragraph(StringSelectorCore.getString("guide_generator_test_set") + "\n", fontBold);
+                document.add(sectionBody);
+
+                sectionBody = new Paragraph("", font);
+                for (String s : StatsTest)
+                    sectionBody.add(s + "   ");
+
+                document.add(sectionBody);
+            }
 
         } catch (Exception e) {
             throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
@@ -661,7 +591,10 @@ public class GuidePDFGenerator {
     }
 
 
-
+    private void AddStat(ArrayList<String> Stats, String StatTag, String DisplayTag) {
+        if (modelInfo.Stats.containsKey(StatTag))
+            Stats.add(DisplayTag + " = " + modelInfo.Stats.get(StatTag));
+    }
 
 
 
