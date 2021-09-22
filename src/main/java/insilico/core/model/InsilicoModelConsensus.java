@@ -65,13 +65,13 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
     protected abstract void CalculateAssessment();
 
 
-//    /**
-//     * @return the Info object of this model
-//     */
-//    @Override
-//    public InsilicoModelInfo getInfo() {
-//        return Info;
-//    }
+    /**
+     * @return the Info object of this model
+     */
+    @Override
+    public InsilicoModelInfo getInfo() {
+        return Info;
+    }
 
 
 
