@@ -38,6 +38,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
     private String Name;
     private String CAS;
     private String SMILES;
+    private String inputSMILES;
 
     private InsilicoMoleculeMessages errors, warnings;
 
@@ -52,6 +53,7 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         Name = "";
         CAS = "";
         SMILES = "";
+        inputSMILES = "";
         errors = new InsilicoMoleculeMessages();
         warnings = new InsilicoMoleculeMessages();
         ClearCache();
@@ -491,4 +493,11 @@ public class InsilicoMolecule implements Serializable, Cloneable {
         this.ClearCache();
     }
 
+    public String getInputSMILES() {
+        return inputSMILES;
+    }
+
+    public void setInputSMILES(String inputSMILES) {
+        this.inputSMILES = inputSMILES;
+    }
 }

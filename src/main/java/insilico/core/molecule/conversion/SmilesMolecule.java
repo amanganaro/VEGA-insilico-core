@@ -104,6 +104,7 @@ public class SmilesMolecule {
             // Mark as valid molecule
             isMol.SetSMILESAndStructure(SMI, mol);
             isMol.MarkAsValid();
+            isMol.setInputSMILES(SMILESString);
 
 
 
