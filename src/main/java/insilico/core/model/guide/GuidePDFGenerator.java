@@ -540,10 +540,10 @@ public class GuidePDFGenerator {
             }
 
             sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_structural_model_stats"), index), fontBigUnderline);
-            sectionTitle.add("\n");
             sectionTitle.setIndentationLeft(1);
             document.add(sectionTitle);
             document.add(new Paragraph(TextConstants.STATS_INTRO, font));
+            document.add(new Paragraph("\n"));
 
             // Training Set stats
             ArrayList<String> StatsTrain = new ArrayList<>();

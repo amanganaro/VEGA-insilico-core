@@ -996,7 +996,7 @@ public class GhoseCrippenACF {
 
             // Checks for particular N fragments linked to C, O or X
 
-            int nO=0, sOCR=0, sXdX=0;
+            int nO=0, sRCO=0, sXdX=0;
 
             for (int j=0; j<nSK; j++) {
                 if (j==AtomIndex)
@@ -1005,18 +1005,16 @@ public class GhoseCrippenACF {
                     int Z = (int)ConnAugMatrix[j][j];
 
                     // O
-                    if (Z==8) {
+                    if (Z==8)
                         nO++;
+
+                    // C for -RCO
+                    if ( (Z==6) && (ConnAugMatrix[AtomIndex][j] == 1) )  {
                         for (int k=0; k<nSK; k++) {
                             if ((k==j) || (k==AtomIndex)) continue;
-                            if ((ConnAugMatrix[k][j]>0) && (ConnAugMatrix[k][k]==6)) {
-                                int c_VD=0;
-                                for (int z=0; z<nSK; z++) {
-                                    if (z==k) continue;
-                                    if ((ConnAugMatrix[z][k]>0) && (ConnAugMatrix[z][z] != 1)) c_VD++;
-                                }
-                                if (c_VD == 2)
-                                    sOCR++;
+                            if ((ConnAugMatrix[k][j] == 2) && ( (ConnAugMatrix[k][k]==8) || (ConnAugMatrix[k][k]==16) ) ) {
+                                sRCO++;
+                                break;
                             }
                         }
                     }
@@ -1062,7 +1060,7 @@ public class GhoseCrippenACF {
 
             // fragment with particular groups
             if (!AromPyrroleLike)
-                if (((VD==3) && (sOCR==1)) ||   // >N-OCR
+                if ((((VD+nH)==3) && (sRCO==1)) ||   // RCO-N<
                         (((VD+nH)==3) && (sXdX>0)))     // >N-X=X
                 { FragAtomId[AtomIndex] = 72; return; }
 
@@ -1093,7 +1091,7 @@ public class GhoseCrippenACF {
 
             // R=N- is matched also if it is R=NH
             if (((VD==1) && (nH==0) && (tR==1)) ||
-                    ((VD==2) && (nH==0) && (dR==1) && (sR==1)) ||
+                    ((VD==2) && (nH==0) && (dR==1) && (nSingle==1)) ||
                     ((VD==1) && (nH==1) && (dR==1)))
             { FragAtomId[AtomIndex] = 74; return; }
 
