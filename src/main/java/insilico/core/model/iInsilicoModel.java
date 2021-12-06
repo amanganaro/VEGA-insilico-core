@@ -35,5 +35,6 @@ public interface iInsilicoModel extends Serializable {
     public void setSkipADandTSLoading(boolean SkipADandTSLoading);
     public void ProcessTrainingSet() throws Exception;
 
+    public void SetKnnSkipExperimental(boolean status);
 
 }

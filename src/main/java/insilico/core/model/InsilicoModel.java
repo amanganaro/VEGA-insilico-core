@@ -65,6 +65,8 @@ public abstract class InsilicoModel implements iInsilicoModel {
     protected short ModelStatus;
     protected short ADStatus;
 
+    protected boolean KnnSkipExperimental;
+
     private boolean SkipADandTSLoading = false;
 
     protected DecimalFormat Format_2D;
@@ -113,6 +115,13 @@ public abstract class InsilicoModel implements iInsilicoModel {
         Format_3D = new DecimalFormat("0.###", InternationalSymbols);
         Format_4D = new DecimalFormat("0.####", InternationalSymbols);
         Format_6D = new DecimalFormat("0.######", InternationalSymbols);
+
+        KnnSkipExperimental = false;
+    }
+
+
+    public void SetKnnSkipExperimental(boolean status) {
+        KnnSkipExperimental = status;
     }
 
 
