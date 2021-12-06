@@ -10,7 +10,6 @@ import insilico.core.alerts.AlertsEngine;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.localization.StringSelectorCore;
-import insilico.core.model.InsilicoModel;
 import insilico.core.model.InsilicoModelInfo;
 import insilico.core.model.runner.InsilicoModelConsensusWrapper;
 import insilico.core.model.runner.InsilicoModelWrapper;
@@ -45,7 +44,7 @@ public class GuidePDFGenerator {
     private final AlertsEngine SAEngine;
 
     // Fonts object
-    private final static int DEFAULT_FONT = Font.TIMES_ROMAN;
+    private final static int DEFAULT_FONT = Font.HELVETICA;
     private Font font;
     private Font fontGray;
     private Font fontTitle;
@@ -121,7 +120,7 @@ public class GuidePDFGenerator {
     }
 
 
-    public byte[] CreateReport(InsilicoModelInfo modelInfo) throws GenericFailureException {
+    public byte[] CreateGuide(InsilicoModelInfo modelInfo) throws GenericFailureException {
         this.modelInfo = modelInfo;
 
         try {
@@ -146,8 +145,8 @@ public class GuidePDFGenerator {
 
 
     // Override to save directly to file
-    public void CreateReport(InsilicoModelInfo modelInfo, String FileName) throws Exception  {
-        byte[] document = this.CreateReport(modelInfo);
+    public void CreateGuide(InsilicoModelInfo modelInfo, String FileName) throws Exception  {
+        byte[] document = this.CreateGuide(modelInfo);
         try (FileOutputStream fos = new FileOutputStream(FileName)) {
             fos.write(document);
         }
@@ -456,7 +455,9 @@ public class GuidePDFGenerator {
                 document.add(table);
 
                 document.add(new Paragraph("\n",font));
+
             }
+            index++;
 
             // 1.4 Coral Correlation weights
             if(modelInfo.Guide.get(InsilicoModelInfo.Guide_Coral_Weights) != null){
@@ -512,32 +513,31 @@ public class GuidePDFGenerator {
                 index++;
             }
 
-
+//
             // 1.4 References
-            sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_structural_references"), index), fontBigUnderline);
-            sectionTitle.setIndentationLeft(1);
-            document.add(sectionTitle);
-            document.add(new Paragraph("\n"));
+            if(modelInfo.Reference.getReferenceList().size() > 0){
 
-            sectionBody = new Paragraph(StringSelectorCore.getString("guide_generator_qmrf_link"), fontBold);
-            sectionBody.add(new Paragraph(modelInfo.Reference.getQMRFLink(), fontLink));
-            document.add(sectionBody);
-            document.add(new Paragraph("\n"));
-
-
-            int curRef = 1;
-            for(HashMap<String, String> singleRef : modelInfo.Reference.getReferenceList()) {
-                document.add(new Paragraph("#" + curRef + "\n", font));
-                document.add(new Paragraph(singleRef.get(InsilicoModelInfo.Reference_ReferenceName), fontReference));
-                document.add(new Paragraph(singleRef.get(InsilicoModelInfo.Reference_ReferenceLink), fontLink));
+                sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_structural_references"), index), fontBigUnderline);
+                sectionTitle.setIndentationLeft(1);
+                document.add(sectionTitle);
                 document.add(new Paragraph("\n"));
-                curRef++;
-            }
-            index++;
 
-            // INSERT ALERT HERE
-            if(modelInfo.hasAlerts()){
+
+                int curRef = 1;
+                for(HashMap<String, String> singleRef : modelInfo.Reference.getReferenceList()) {
+                    document.add(new Paragraph("#" + curRef + "\n", font));
+                    document.add(new Paragraph(singleRef.get(InsilicoModelInfo.Reference_ReferenceName), fontReference));
+                    document.add(new Paragraph(singleRef.get(InsilicoModelInfo.Reference_ReferenceLink), fontLink));
+                    document.add(new Paragraph("\n"));
+                    curRef++;
+                }
+                index++;
+
             }
+
+
+
+
 
             sectionTitle = new Paragraph(String.format(StringSelectorCore.getString("guide_generator_model_structural_model_stats"), index), fontBigUnderline);
             sectionTitle.setIndentationLeft(1);
