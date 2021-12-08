@@ -1260,8 +1260,8 @@ public class ReportPDF {
                 paragraph.add(String.format(StringSelectorCore.getString("report_dataset_id"), TS.getId((int)curSimMol.getIndex()), MolStatus) + "\n");
                 paragraph.add(String.format(StringSelectorCore.getString("report_smiles"),TS.getSMILES((int)curSimMol.getIndex())) + "\n");
                 paragraph.add(String.format(StringSelectorCore.getString("report_similarity"), Format_3D.format(curSimMol.getSimilarity())) + "\n");
-                paragraph.add("Experimental value" + Units + ": " + TS.getExperimentalValueFormatted((int)curSimMol.getIndex()) + "\n");
-                paragraph.add(String.format(StringSelectorCore.getString("report_predicted_value"), Units, TS.getExperimentalValueFormatted((int)curSimMol.getIndex())) + "\n");
+                paragraph.add(String.format(StringSelectorCore.getString("report_experimental_valuee"), Units, TS.getExperimentalValueFormatted((int)curSimMol.getIndex())) + "\n");
+                paragraph.add(String.format(StringSelectorCore.getString("report_predicted_value"), Units, TS.getPredictedValueFormatted((int)curSimMol.getIndex())) + "\n");
                 if (!SimAlertsInTarget.isEmpty())
                     paragraph.add("\n\n" + String.format(StringSelectorCore.getString("report_alert_found"), SimAlertsInTarget) + "");
                 if (!SimAlertsNotInTarget.isEmpty())
