@@ -51,7 +51,7 @@ public class Depiction {
         generators.add(new BasicAtomGenerator());
 
         DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
-                .withAtomMapNumbers();
+                .withAtomMapNumbers().withAromaticDisplay();
 
         org.openscience.cdk.depict.Depiction depiction = generator.depict(currentMol);
 
@@ -104,7 +104,7 @@ public class Depiction {
         generators.add(new BasicAtomGenerator());
 
         DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
-                .withAtomMapNumbers();
+                .withAtomMapNumbers().withAromaticDisplay();
 
         org.openscience.cdk.depict.Depiction depiction = generator.depict(currentMol);
 
