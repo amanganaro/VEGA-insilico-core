@@ -3,8 +3,8 @@
     <Version>
         <Name>InSilico Core libraries</Name>
         <Major>1</Major>
-        <Minor>2</Minor>
-        <Revision>8</Revision>
+        <Minor>3</Minor>
+        <Revision>10</Revision>
     </Version>
     
     <New>
