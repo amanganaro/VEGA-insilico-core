@@ -209,19 +209,19 @@ public class Similarity implements Serializable {
      * @return similarity index value
      */
     public double CalculateExactMatches(SimilarityDescriptors DescMolA, SimilarityDescriptors DescMolB,
-                                        IAtomContainer StructureA, String StructureB){
+                                        IAtomContainer StructureA, IAtomContainer StructureB){
 
         double sim = Calculate(DescMolA, DescMolB);
 
         if (sim == 1){
-            InsilicoMolecule mol = SmilesMolecule.Convert(StructureB);
+//            InsilicoMolecule mol = SmilesMolecule.Convert(StructureB);
             try {
-                if (!(CheckIsomorphism(StructureA, mol.GetStructure()))){
+                if (!(CheckIsomorphism(StructureA, StructureB))){
                     sim = 0.99;
                 }
-            } catch (InvalidMoleculeException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-                log.warn(String.format(StringSelectorCore.getString("similarity_unable_to_check"), mol.GetSMILES()));
+                log.warn(String.format(StringSelectorCore.getString("similarity_unable_to_check")));
             }
         }
 
