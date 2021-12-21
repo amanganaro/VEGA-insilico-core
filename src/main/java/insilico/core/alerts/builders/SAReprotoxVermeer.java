@@ -4,12 +4,15 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
@@ -18,7 +21,7 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
  */
 public class SAReprotoxVermeer extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     
     private final static Object[][] SMARTS_TOX = {
         {"C(c1cc(ccc1)O)CO", 1.000}, 
@@ -212,15 +215,15 @@ public class SAReprotoxVermeer extends AlertBlockFromSMARTS implements iAlertBlo
         try {
 
             int nFragments = SMARTS_TOX.length + SMARTS_NON_TOX.length;
-            SA = new QueryAtomContainer[nFragments];
+            SA = new Pattern[nFragments];
             
             int idx = 0;
             for (Object[] arr : SMARTS_TOX) {
-                SA[idx] = SMARTSParser.parse((String)arr[0], DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create((String) arr[0], DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             for (Object[] arr : SMARTS_NON_TOX) {
-                SA[idx] = SMARTSParser.parse((String)arr[0], DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create((String)arr[0], DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
@@ -239,10 +242,10 @@ public class SAReprotoxVermeer extends AlertBlockFromSMARTS implements iAlertBlo
             int nFragments = SMARTS_TOX.length + SMARTS_NON_TOX.length;
             
             for (int i=0; i<nFragments; i++) 
-                if (Matches(SA[i])) 
+                if (SA[i].matches(CurMol.GetStructure()))
                     Res.add((Alert)Alerts.get(i).clone());
             
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
             return null;
         }
         

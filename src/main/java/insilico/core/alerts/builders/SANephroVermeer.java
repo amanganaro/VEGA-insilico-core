@@ -4,12 +4,15 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
@@ -18,7 +21,7 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
  */
 public class SANephroVermeer extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     
     private final static Object[][] SMARTS_TOX = {
         {"c1ccc(cc1)S(=O)(=O)O", 1.0},
@@ -60,11 +63,11 @@ public class SANephroVermeer extends AlertBlockFromSMARTS implements iAlertBlock
         try {
 
             int nFragments = SMARTS_TOX.length;
-            SA = new QueryAtomContainer[nFragments];
+            SA = new Pattern[nFragments];
             
             int idx = 0;
             for (Object[] arr : SMARTS_TOX) {
-                SA[idx] = SMARTSParser.parse((String)arr[0], DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create((String) arr[0], DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
@@ -83,10 +86,10 @@ public class SANephroVermeer extends AlertBlockFromSMARTS implements iAlertBlock
             int nFragments = SMARTS_TOX.length; 
             
             for (int i=0; i<nFragments; i++) 
-                if (Matches(SA[i])) 
+                if ((SA[i].matches(CurMol.GetStructure())))
                     Res.add((Alert)Alerts.get(i).clone());
             
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
             return null;
         }
         

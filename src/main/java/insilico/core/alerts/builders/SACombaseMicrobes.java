@@ -4,12 +4,16 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 import java.util.ArrayList;
@@ -19,9 +23,10 @@ import java.util.Arrays;
  *
  * @author User
  */
+@Slf4j
 public class SACombaseMicrobes extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     
     private final static String[] SMARTS_LT_100 = {
         // EC50 < 100 mg/L
@@ -110,19 +115,19 @@ public class SACombaseMicrobes extends AlertBlockFromSMARTS implements iAlertBlo
         try {
 
             int nFragments = SMARTS_LT_100.length + SMARTS_LET_1000.length + SMARTS_GT_1000.length;
-            SA = new QueryAtomContainer[nFragments];
+            SA = new Pattern[nFragments];
             
             int idx = 0;
             for (String s : SMARTS_LT_100) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             for (String s : SMARTS_LET_1000) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             for (String s : SMARTS_GT_1000) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
@@ -141,10 +146,11 @@ public class SACombaseMicrobes extends AlertBlockFromSMARTS implements iAlertBlo
             int nFragments = SMARTS_LT_100.length + SMARTS_LET_1000.length + SMARTS_GT_1000.length;
             
             for (int i=0; i<nFragments; i++) 
-                if (Matches(SA[i])) 
+                if ((SA[i].matches(CurMol.GetStructure())))
                     Res.add((Alert)Alerts.get(i).clone());
             
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
+            log.warn(e.getClass() + ": " + e.getMessage());
             return null;
         }
         

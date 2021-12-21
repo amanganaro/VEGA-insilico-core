@@ -4,12 +4,16 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 import java.util.ArrayList;
@@ -18,11 +22,12 @@ import java.util.ArrayList;
  *
  * @author User
  */
+@Slf4j
 public class SACombaseDaphnia extends AlertBlockFromSMARTS implements iAlertBlock {
     
     private final static String USE_BENZENE = "usebenzene";
-    private QueryAtomContainer[] SA;
-    private QueryAtomContainer SA_Benzene;
+    private Pattern[] SA;
+    private Pattern SA_Benzene;
     
     private final static String[] SMARTS_LT_1_BENZENE = {
         // EC50 < 1 mg/L with benzene matching
@@ -104,18 +109,18 @@ public class SACombaseDaphnia extends AlertBlockFromSMARTS implements iAlertBloc
 
         try {
 
-            SA_Benzene = SMARTSParser.parse("c1ccccc1", DefaultChemObjectBuilder.getInstance());
+            SA_Benzene = SmartsPattern.create("c1ccccc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
             
             int nFragments = SMARTS_LT_1_BENZENE.length + SMARTS_LT_1.length;
-            SA = new QueryAtomContainer[nFragments];
+            SA = new Pattern[nFragments];
             
             int idx = 0;
             for (String s : SMARTS_LT_1_BENZENE) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             for (String s : SMARTS_LT_1) {
-                SA[idx] = SMARTSParser.parse(s, DefaultChemObjectBuilder.getInstance());
+                SA[idx] = SmartsPattern.create(s, DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
@@ -135,14 +140,15 @@ public class SACombaseDaphnia extends AlertBlockFromSMARTS implements iAlertBloc
             
             for (int i=0; i<nFragments; i++) {
                 if (Alerts.get(i).getBoolProperty(USE_BENZENE)) {
-                    if (!Matches(SA_Benzene))
+                    if (!SA_Benzene.matches(CurMol.GetStructure()))
                         continue;
                 }
-                if (Matches(SA[i])) 
+                if ((SA[i].matches(CurMol.GetStructure())))
                     Res.add((Alert)Alerts.get(i).clone());
             }
             
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
+            log.warn(e.getClass() + ": " + e.getMessage());
             return null;
         }
         

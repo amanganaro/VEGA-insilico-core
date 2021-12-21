@@ -8,19 +8,23 @@ import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 /**
  *
  * @author User
  */
+@Slf4j
 public class SAFishVermeer extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA_Set1_Scaffold;
-    private QueryAtomContainer[][] SA_Set2_Scaffold_Alerts;
+    private Pattern[] SA_Set1_Scaffold;
+    private Pattern[][] SA_Set2_Scaffold_Alerts;
     
     // SMARTS, pred. class, accuracy
     private final static Object[][] Set1_Scaffold = {
@@ -136,19 +140,19 @@ public class SAFishVermeer extends AlertBlockFromSMARTS implements iAlertBlock {
 
         try {
 
-            SA_Set1_Scaffold = new QueryAtomContainer[Set1_Scaffold.length];
-            SA_Set2_Scaffold_Alerts = new QueryAtomContainer[Set2_Scaffold_Alerts.length][2];
+            SA_Set1_Scaffold = new Pattern[Set1_Scaffold.length];
+            SA_Set2_Scaffold_Alerts = new Pattern[Set2_Scaffold_Alerts.length][2];
             
             int idx = 0;
             for (Object[] arr : Set1_Scaffold) {
-                SA_Set1_Scaffold[idx] = SMARTSParser.parse((String)arr[0], DefaultChemObjectBuilder.getInstance());
+                SA_Set1_Scaffold[idx] = SmartsPattern.create((String)arr[0], DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
             idx = 0;
             for (Object[] arr : Set2_Scaffold_Alerts) {
-                SA_Set2_Scaffold_Alerts[idx][0] = SMARTSParser.parse((String)arr[0], DefaultChemObjectBuilder.getInstance());
-                SA_Set2_Scaffold_Alerts[idx][1] = SMARTSParser.parse((String)arr[1], DefaultChemObjectBuilder.getInstance());
+                SA_Set2_Scaffold_Alerts[idx][0] = SmartsPattern.create((String)arr[0], DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+                SA_Set2_Scaffold_Alerts[idx][1] = SmartsPattern.create((String)arr[1], DefaultChemObjectBuilder.getInstance()).setPrepare(false);
                 idx++;
             }
             
@@ -172,22 +176,23 @@ public class SAFishVermeer extends AlertBlockFromSMARTS implements iAlertBlock {
                 
                 // Set 1
                 for (int i=0; i<SA_Set1_Scaffold.length; i++) {
-                    if (Matches(SA_Set1_Scaffold[i])) 
+                    if ((SA_Set1_Scaffold[i].matches(CurMol.GetStructure())))
                         Res.add((Alert)Alerts.get(idx).clone());
                     idx++;
                 }
                 
                 // Set 2
                 for (int i=0; i<SA_Set2_Scaffold_Alerts.length; i++) {
-                    if (Matches(SA_Set2_Scaffold_Alerts[i][0])) 
-                        if (Matches(SA_Set2_Scaffold_Alerts[i][1])) 
+                    if ((SA_Set2_Scaffold_Alerts[i][0].matches(CurMol.GetStructure())))
+                        if ((SA_Set2_Scaffold_Alerts[i][1].matches(CurMol.GetStructure())))
                             Res.add((Alert)Alerts.get(idx).clone());
                     idx++;
                 }
                 
             }
             
-        } catch (InvalidMoleculeException | CDKException | CloneNotSupportedException e ) {
+        } catch (InvalidMoleculeException  | CloneNotSupportedException e ) {
+            log.warn(e.getClass() + ": " + e.getMessage());
             return null;
         } 
         

@@ -4,12 +4,15 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.tools.Depiction;
 import org.openscience.cdk.exception.CDKException;
+import org.openscience.cdk.isomorphism.Pattern;
 import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
 import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.smarts.SmartsPattern;
 import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
 
 import java.io.IOException;
@@ -21,7 +24,7 @@ import java.net.URL;
  */
 public class SABCFIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
     
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     private AlertFileQuantitativeSMARTS SMARTSFileReader;
     
     
@@ -33,7 +36,7 @@ public class SABCFIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
     @Override
     protected void BuildSAList() throws InitFailureException {
 
-        URL u = getClass().getResource("/insilico/core/alerts/builders/SA_BCF_IRFMN.dat");
+        URL u = getClass().getResource("/alerts_data/SA_BCF_IRFMN.dat");
         
         try {
             
@@ -82,10 +85,10 @@ public class SABCFIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
 
         try {
 
-            SA = new QueryAtomContainer[SMARTSFileReader.getSize()];
+            SA = new Pattern[SMARTSFileReader.getSize()];
             
             for (int i=0; i<SMARTSFileReader.getSize(); i++) 
-                SA[i] = SMARTSParser.parse(SMARTSFileReader.getSMARTS()[i], DefaultChemObjectBuilder.getInstance());
+                SA[i] = SmartsPattern.create(SMARTSFileReader.getSMARTS()[i], DefaultChemObjectBuilder.getInstance()).setPrepare(false);
 
         } catch (Exception ex) {
             throw new InitFailureException("Unable to initialize SMARTS");
@@ -100,11 +103,11 @@ public class SABCFIRFMN extends AlertBlockFromSMARTS implements iAlertBlock {
         try {
 
             for (int i=0; i<SA.length; i++) {
-                if (Matcher.matches(SA[i]))
+                if ((SA[i]).matches(CurMol.GetStructure()))
                     Res.add((Alert)Alerts.get(i).clone());
             }
             
-        } catch (CDKException | CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
             return null;
         }
         

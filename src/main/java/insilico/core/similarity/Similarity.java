@@ -228,6 +228,37 @@ public class Similarity implements Serializable {
         return sim;
     }
 
+    /**
+     * Calculates similarity index given the descriptors of two molecules, and
+     * checks for false exact matchings. If two molecules have similarity equal
+     * to 1 but they are not exactly the same, a similarity of 0.999 is returned.
+     *
+     * @param DescMolA descriptors of first molecule
+     * @param DescMolB descriptors of second molecule
+     * @param StructureA structure of the first molecule
+     * @param StructureB structure of the second molecule
+     * @return similarity index value
+     */
+    public double CalculateExactMatches(SimilarityDescriptors DescMolA, SimilarityDescriptors DescMolB,
+                                        IAtomContainer StructureA, String StructureB){
+
+        double sim = Calculate(DescMolA, DescMolB);
+
+        if (sim == 1){
+            InsilicoMolecule mol = SmilesMolecule.Convert(StructureB);
+            try {
+                if (!(CheckIsomorphism(StructureA, mol.GetStructure()))){
+                    sim = 0.99;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.warn(String.format(StringSelectorCore.getString("similarity_unable_to_check")));
+            }
+        }
+
+        return sim;
+    }
+
 
     /**
      * Checks if at least a value in an array is a missing value (-999).
