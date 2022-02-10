@@ -1,6 +1,5 @@
 package insilico.core.molecule.fragmenter;
 
-import org.openscience.cdk.Atom;
 import org.openscience.cdk.Bond;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
@@ -8,9 +7,7 @@ import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 import org.openscience.cdk.isomorphism.Mappings;
-import org.openscience.cdk.smarts.Smarts;
 import org.openscience.cdk.smarts.SmartsPattern;
-import org.openscience.cdk.smiles.smarts.SMARTSQueryTool;
 
 import java.util.*;
 
@@ -128,8 +125,8 @@ public class FragmenterCRS4 {
     }
 
     private static boolean isCCQBond(IBond bond, IAtomContainer atomContainer) throws CDKException {
-        Atom a1 = (Atom) bond.getAtom(0);
-        Atom a2 = (Atom) bond.getAtom(1);
+        IAtom a1 =  bond.getAtom(0);
+        IAtom a2 =  bond.getAtom(1);
         String symbol;
         for(int i = 0; i < atomContainer.getConnectedBondsCount(a1); i ++){
             symbol = atomContainer.getConnectedAtomsList(a1).get(i).getSymbol();
@@ -195,8 +192,8 @@ public class FragmenterCRS4 {
             //System.out.println( "ROTATA" + " " + nmatch );
             for (int i = 0; i < nmatch; i++) {
                 List atomIndices = (List) mappings.get(i);
-                Atom a1 = (Atom) atomContainer.getAtom((Integer) atomIndices.get(0));
-                Atom a2 = (Atom) atomContainer.getAtom((Integer) atomIndices.get(1));
+                IAtom a1 =  atomContainer.getAtom((Integer) atomIndices.get(0));
+                IAtom a2 =  atomContainer.getAtom((Integer) atomIndices.get(1));
                 Bond bond = (Bond) atomContainer.getBond(a1, a2);
                 List<IAtomContainer> candidates = splitMolecule(atomContainer, bond);
                 //System.out.println( "A" + " " + candidates.size() + " " + (Integer) atomIndices.get(0) + " " + (Integer) atomIndices.get(1));
@@ -296,8 +293,8 @@ public class FragmenterCRS4 {
                 for (int i = 0; i < nmatch; i++) {
                     List atomIndices = (List) mappings.get(i);
                     //System.out.println(atomIndices);
-                    Atom a1 = (Atom) atomContainer.getAtom((Integer) atomIndices.get(0));
-                    Atom a2 = (Atom) atomContainer.getAtom((Integer) atomIndices.get(1));
+                    IAtom a1 =  atomContainer.getAtom((Integer) atomIndices.get(0));
+                    IAtom a2 =  atomContainer.getAtom((Integer) atomIndices.get(1));
 
                     //  Returns the bond that connectes the two given atoms.
                     Bond bond = (Bond) atomContainer.getBond(a1, a2);
