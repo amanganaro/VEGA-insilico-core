@@ -1,6 +1,5 @@
 package insilico.core.molecule.fragmenter;
 
-import org.openscience.cdk.Bond;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtom;
@@ -113,7 +112,7 @@ public class FragmenterCRS4 {
 
         for (int i = 0; i < atomContainer.getBondCount(); i ++){
             if (isCCQBond(atomContainer.getBond(i), atomContainer)){
-                Bond bond = (Bond) atomContainer.getBond(i);
+                IBond bond =  atomContainer.getBond(i);
                 List<IAtomContainer> candidates = splitMolecule(atomContainer, bond);
                 for (int a = 0; a < candidates.size(); a ++){
                     Results.add(candidates.get(a));
@@ -181,7 +180,7 @@ public class FragmenterCRS4 {
         SmartsPattern rotata = SmartsPattern.create("[!$([NH]!@C(=O))&!D1&!$(*#*)]-&!@[!$([NH]!@C(=O))&!D1&!$(*#*)]").setPrepare(false);
 //        SMARTSQueryTool rotata = new SMARTSQueryTool("[!$([NH]!@C(=O))&!D1&!$(*#*)]-&!@[!$([NH]!@C(=O))&!D1&!$(*#*)]", DefaultChemObjectBuilder.getInstance());
         rotata.setPrepare(false);
-        List mappings;
+        List<int[]> mappings;
         Mappings map;
 
         boolean status = rotata.matches(atomContainer);
@@ -191,10 +190,10 @@ public class FragmenterCRS4 {
             mappings = Arrays.asList(map.toArray());
             //System.out.println( "ROTATA" + " " + nmatch );
             for (int i = 0; i < nmatch; i++) {
-                List atomIndices = (List) mappings.get(i);
-                IAtom a1 =  atomContainer.getAtom((Integer) atomIndices.get(0));
-                IAtom a2 =  atomContainer.getAtom((Integer) atomIndices.get(1));
-                Bond bond = (Bond) atomContainer.getBond(a1, a2);
+                int[] atomIndices = mappings.get(i);
+                IAtom a1 =  atomContainer.getAtom(atomIndices[0]);
+                IAtom a2 =  atomContainer.getAtom(atomIndices[1]);
+                IBond bond = atomContainer.getBond(a1, a2);
                 List<IAtomContainer> candidates = splitMolecule(atomContainer, bond);
                 //System.out.println( "A" + " " + candidates.size() + " " + (Integer) atomIndices.get(0) + " " + (Integer) atomIndices.get(1));
                 Results.addAll(candidates);
@@ -297,7 +296,7 @@ public class FragmenterCRS4 {
                     IAtom a2 =  atomContainer.getAtom((Integer) atomIndices.get(1));
 
                     //  Returns the bond that connectes the two given atoms.
-                    Bond bond = (Bond) atomContainer.getBond(a1, a2);
+                    IBond bond =  atomContainer.getBond(a1, a2);
 
 
                     //  Taglia la molecola sul bond 
