@@ -286,14 +286,21 @@ public class FragmenterCRS4 {
 //                mappings = valore.getMatchingAtoms();
                 map = valore.matchAll(atomContainer);
 
+
                 mappings = Arrays.asList(map.toArray());
 //                mappings = Arrays.atList(((SmartsPattern) valore).matchAll(atomContainer).toArray());
 
-                for (int i = 0; i < nmatch; i++) {
-                    List atomIndices = (List) mappings.get(i);
+
+
+                for (int[] curMatchingMap : map ) {
+//                for (int i = 0; i < nmatch; i++) {
+                    IAtom a1 =  atomContainer.getAtom(curMatchingMap[0]);
+                    IAtom a2 =  atomContainer.getAtom(curMatchingMap[1]);
+
+//                    List atomIndices = (List) mappings.get(i);
                     //System.out.println(atomIndices);
-                    IAtom a1 =  atomContainer.getAtom((Integer) atomIndices.get(0));
-                    IAtom a2 =  atomContainer.getAtom((Integer) atomIndices.get(1));
+//                    IAtom a1 =  atomContainer.getAtom((Integer) atomIndices.get(0));
+//                    IAtom a2 =  atomContainer.getAtom((Integer) atomIndices.get(1));
 
                     //  Returns the bond that connectes the two given atoms.
                     IBond bond =  atomContainer.getBond(a1, a2);
