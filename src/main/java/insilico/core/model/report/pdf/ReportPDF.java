@@ -347,18 +347,34 @@ public class ReportPDF {
             // Section title
             if (Section != -1) {
 
-                if (Section == 1)
-                    gif = Img_title_1;
-                if (Section == 2)
-                    gif = Img_title_2;
-                if (Section == 31)
-                    gif = Img_title_3_1;
-                if (Section == 32)
-                    gif = Img_title_3_2;
-                if (Section == 41)
-                    gif = Img_title_4_1;
-                if (Section == 42)
-                    gif = Img_title_4_2;
+                if(HiResMode){
+                    if (Section == 1)
+                        gif = Img_title_1_highres;
+                    if (Section == 2)
+                        gif = Img_title_2_highres;
+                    if (Section == 31)
+                        gif = Img_title_3_1_highres;
+                    if (Section == 32)
+                        gif = Img_title_3_2_highres;
+                    if (Section == 41)
+                        gif = Img_title_4_1_highres;
+                    if (Section == 42)
+                        gif = Img_title_4_2_highres;
+                } else {
+                    if (Section == 1)
+                        gif = Img_title_1;
+                    if (Section == 2)
+                        gif = Img_title_2;
+                    if (Section == 31)
+                        gif = Img_title_3_1;
+                    if (Section == 32)
+                        gif = Img_title_3_2;
+                    if (Section == 41)
+                        gif = Img_title_4_1;
+                    if (Section == 42)
+                        gif = Img_title_4_2;
+                }
+
 
                 float[] widths_title = {100f};
                 table = new PdfPTable(1);
@@ -1698,9 +1714,8 @@ public class ReportPDF {
                         paragraph.add(String.format(StringSelectorCore.getString("report_dataset_id"), TS.getId((int)curSimMol.getIndex()), MolStatus) + "\n");
                         paragraph.add(String.format(StringSelectorCore.getString("report_smiles"),TS.getSMILES((int)curSimMol.getIndex())) + "\n");
                         paragraph.add(String.format(StringSelectorCore.getString("report_similarity"), Format_3D.format(curSimMol.getSimilarity())) + "\n\n");
-                        paragraph.add(String.format(StringSelectorCore.getString("report_experimental_valuee"), Units, TS.getPredictedValueFormatted((int)curSim.get(m).getIndex())) + "\n");
-                        paragraph.add(String.format(StringSelectorCore.getString("report_predicted_value"), Units, TS.getExperimentalValueFormatted((int)curSimMol.getIndex())) + "\n");
-
+                        paragraph.add(String.format(StringSelectorCore.getString("report_experimental_valuee"), Units, TS.getExperimentalValueFormatted((int)curSimMol.getIndex())) + "\n");
+                        paragraph.add(String.format(StringSelectorCore.getString("report_predicted_value"), Units, TS.getPredictedValueFormatted((int)curSim.get(m).getIndex())) + "\n");
                         if (!SimAlertsInTarget.isEmpty())
                             paragraph.add("\n\n" + String.format(StringSelectorCore.getString("report_alert_found"), SimAlertsInTarget) + "");
                         if (!SimAlertsNotInTarget.isEmpty())

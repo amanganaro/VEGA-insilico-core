@@ -214,6 +214,9 @@ public class SABenigniBossa extends AlertBlockFromSMARTS implements iAlertBlock 
 
     private ArrayList<BBAlert> BBAlertList;
 
+    public ArrayList<BBAlert> getBBAlertList() {
+        return BBAlertList;
+    }
 
     public SABenigniBossa() throws InitFailureException {
         super(InsilicoConstants.SA_BLOCK_MUTAGEN_BENIGNI_BOSSA, StringSelectorCore.getString("sa_benigni_bossa_initialization"));
