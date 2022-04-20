@@ -41,7 +41,7 @@ public class ADCheckIndices {
     protected SimilarMolecule[] SimilarMols;
     
     /** Flag for calculation of indices only on the training set (test set skipped) */
-    protected boolean OnlyFromTraining;
+    protected static boolean OnlyFromTraining;
     
     /** Flag for skipping exact matches */
     private boolean SkipExperimental;
@@ -205,15 +205,15 @@ public class ADCheckIndices {
     /**
      * @return the OnlyFromTraining
      */
-    public boolean isOnlyFromTraining() {
-        return OnlyFromTraining;
+    public static boolean isOnlyFromTraining() {
+        return ADCheckIndices.OnlyFromTraining;
     }
 
     /**
      * @param OnlyFromTraining the OnlyFromTraining to set
      */
-    public void setOnlyFromTraining(boolean OnlyFromTraining) {
-        this.OnlyFromTraining = OnlyFromTraining;
+    public static void setOnlyFromTraining(boolean OnlyFromTraining) {
+        ADCheckIndices.OnlyFromTraining = OnlyFromTraining;
     }
 
     
