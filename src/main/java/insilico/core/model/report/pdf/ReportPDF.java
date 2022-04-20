@@ -1209,10 +1209,11 @@ public class ReportPDF {
 //                        gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
 //                    } else {
                         InsilicoMolecule curMol = SmilesMolecule.Convert(TS.getSMILES((int)curSimMol.getIndex()));
+//                        InsilicoMolecule curMol = SmilesMolecule.Convert("ciao");
 
                         gif = Image.getInstance(Depiction.DepictMolecule(curMol, 180, 180),null);
 //                    }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     BufferedImage I = new BufferedImage(180, 180, BufferedImage.TYPE_INT_RGB);
                     Graphics2D g = I.createGraphics();
                     g.setBackground(new Color(255,255,255));
