@@ -41,7 +41,7 @@ public class ADCheckIndices {
     protected SimilarMolecule[] SimilarMols;
     
     /** Flag for calculation of indices only on the training set (test set skipped) */
-    protected static boolean OnlyFromTraining;
+    protected static boolean OnlyFromTraining = false;
     
     /** Flag for skipping exact matches */
     private boolean SkipExperimental;
@@ -59,7 +59,7 @@ public class ADCheckIndices {
         MoleculesToShowSize = 6;
         MoleculesForIndexSize = 3;
         MoleculesForFragmentsSize = 3;
-        OnlyFromTraining = false;
+//        OnlyFromTraining = false;
         SkipExperimental = false;
 
         TrainSet = ModelTrainingSet;
@@ -138,7 +138,7 @@ public class ADCheckIndices {
             if (OnlyFromTraining) {
                 try {
                     short curSet = TrainSet.getMoleculeSet((int) similarMol.getIndex());
-                    if (curSet == InsilicoConstants.MOLECULE_TRAINING)
+                    if (curSet == InsilicoConstants.MOLECULE_TEST)
                         continue;
                 } catch (GenericFailureException e) {
                     continue;
