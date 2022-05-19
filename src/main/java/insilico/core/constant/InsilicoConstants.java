@@ -65,6 +65,7 @@ public class InsilicoConstants implements Serializable {
         public static final int SA_BLOCK_MICRONUCLEUS_INVIVO = 49;
         public static final int SA_BLOCK_SKIN_SENS_NCSTOX = 50;
         public static final int SA_BLOCK_MOA_IRFMN = 51;
+        public static final int SA_BLOCK_SKIN_IRR_CONCERT = 52;
 
         // Property keys used for read-across in Alert objects
         public static final String KEY_ALERT_SHOW_SIMILAR_MOLS = "ra_sim";
@@ -125,6 +126,9 @@ public class InsilicoConstants implements Serializable {
 
         public static final String KEY_ALERT_SKIN_SENS = "skin_sen";
         public static final String KEY_ALERT_SKIN_NON_SENS = "skin_non_sen";
+
+        public static final String KEY_ALERT_SKIN_IRR = "skin_irr";
+        public static final String KEY_ALERT_SKIN_NON_IRR = "skin_non_irr";
 
         public static final String KEY_ALERT_MICRONUCLEUS_ACTIVE = "mn_act";
         public static final String KEY_ALERT_MICRONUCLEUS_INACTIVE = "mn_inact";

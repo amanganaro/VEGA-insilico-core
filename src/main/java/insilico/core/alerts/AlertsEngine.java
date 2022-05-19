@@ -147,6 +147,9 @@ public class AlertsEngine {
 //                case InsilicoConstants.SA_BLOCK_NEPHROTOX_VERMEER:
 //                    Alerts.add(new SANephroVermeer());
 //                    break;
+                case InsilicoConstants.SA_BLOCK_SKIN_IRR_CONCERT:
+                    Alerts.add(new SASkinConcert());
+                    break;
                 default:
                     throw new InitFailureException(String.format(StringSelectorCore.getString("sa_alert_not_available"), AlertBlockId));
             }
