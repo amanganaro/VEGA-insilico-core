@@ -150,6 +150,9 @@ public class AlertsEngine {
                 case InsilicoConstants.SA_BLOCK_SKIN_IRR_CONCERT:
                     Alerts.add(new SASkinConcert());
                     break;
+                case InsilicoConstants.SA_BLOCK_DEVTOX_CONCERT:
+                    Alerts.add(new SADevtoxConcert());
+                    break;
                 default:
                     throw new InitFailureException(String.format(StringSelectorCore.getString("sa_alert_not_available"), AlertBlockId));
             }

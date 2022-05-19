@@ -66,6 +66,7 @@ public class InsilicoConstants implements Serializable {
         public static final int SA_BLOCK_SKIN_SENS_NCSTOX = 50;
         public static final int SA_BLOCK_MOA_IRFMN = 51;
         public static final int SA_BLOCK_SKIN_IRR_CONCERT = 52;
+        public static final int SA_BLOCK_DEVTOX_CONCERT = 53;
 
         // Property keys used for read-across in Alert objects
         public static final String KEY_ALERT_SHOW_SIMILAR_MOLS = "ra_sim";
