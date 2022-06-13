@@ -1,6 +1,7 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.trainingset.iTrainingSet;
 import insilico.core.molecule.InsilicoMolecule;
@@ -8,6 +9,7 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import org.openscience.cdk.depict.DepictionGenerator;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.interfaces.IChemObject;
 import org.openscience.cdk.layout.StructureDiagramGenerator;
 import org.openscience.cdk.renderer.AtomContainerRenderer;
 import org.openscience.cdk.renderer.font.AWTFontManager;
@@ -27,25 +29,61 @@ import java.util.List;
 
 public class Depiction {
 
-    public static BufferedImage DepictMolecule(InsilicoMolecule mol, int width, int height)
-            throws GenericFailureException, CDKException {
+    public static BufferedImage DepictMoleculeWithSubstructure(InsilicoMolecule mol, int width, int height, Iterable<IChemObject> substructure, Color colorSub, double highlightWidth) throws GenericFailureException, CDKException, InvalidMoleculeException {
 
-        BufferedImage image;
         if(!mol.IsValid())
             throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_generic_fail"));
 
-        // Generates structure
-        StructureDiagramGenerator sdg = new StructureDiagramGenerator();
-        try {
-            sdg.setMolecule(mol.GetStructure());
-            sdg.generateCoordinates();
-        } catch (Exception ex){
-            throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_coordinates_fail"));
-        }
-        IAtomContainer currentMol = sdg.getMolecule();
 
         // Image generators
-        List<IGenerator<IAtomContainer>> generators = new ArrayList<IGenerator<IAtomContainer>>();
+        List<IGenerator<IAtomContainer>> generators = new ArrayList<>();
+        generators.add(new BasicSceneGenerator());
+        generators.add(new RingGenerator());
+        generators.add(new BasicAtomGenerator());
+
+        DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
+                .withAtomMapNumbers().withAromaticDisplay().withHighlight(substructure, colorSub).withOuterGlowHighlight(highlightWidth);
+
+
+        //
+        BufferedImage bufferedImage = generator.depict(mol.GetStructure()).toImg();
+
+        return getBufferedImage(width, height, bufferedImage);
+    }
+
+    public static BufferedImage DepictMoleculeWith2Substructures(InsilicoMolecule mol, int width, int height,
+                                                                 Iterable<IChemObject> substructure1, Iterable<IChemObject> substructure2, Color colorSub1, Color colorSub2, double highlightWidth) throws GenericFailureException, CDKException, InvalidMoleculeException {
+
+        if(!mol.IsValid())
+            throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_generic_fail"));
+
+
+        // Image generators
+        List<IGenerator<IAtomContainer>> generators = new ArrayList<>();
+        generators.add(new BasicSceneGenerator());
+        generators.add(new RingGenerator());
+        generators.add(new BasicAtomGenerator());
+
+        DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
+                .withAtomMapNumbers().withAromaticDisplay().withHighlight(substructure1, colorSub1).withHighlight(substructure2, colorSub2).withOuterGlowHighlight(highlightWidth);
+
+
+        // Build the image object
+        BufferedImage bufferedImage = generator.depict(mol.GetStructure()).toImg();
+
+        return getBufferedImage(width, height, bufferedImage);
+    }
+
+    public static BufferedImage DepictMolecule(InsilicoMolecule mol, int width, int height)
+            throws GenericFailureException, CDKException, InvalidMoleculeException {
+
+        if(!mol.IsValid())
+            throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_generic_fail"));
+
+
+
+        // Image generators
+        List<IGenerator<IAtomContainer>> generators = new ArrayList<>();
         generators.add(new BasicSceneGenerator());
         generators.add(new RingGenerator());
         generators.add(new BasicAtomGenerator());
@@ -53,22 +91,10 @@ public class Depiction {
         DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
                 .withAtomMapNumbers().withAromaticDisplay();
 
-        org.openscience.cdk.depict.Depiction depiction = generator.depict(currentMol);
+        BufferedImage bufferedImage = generator.depict(mol.GetStructure()).toImg();
 
-        // Build the image object
-        image = depiction.toImg();
 
-        BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        Graphics2D graphics2D = resizedImage.createGraphics();
-
-        graphics2D.drawImage(image, 0, 0, width, height, null);
-        graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        graphics2D.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics2D.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        graphics2D.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-        graphics2D.dispose();
-        return resizedImage;
+        return getBufferedImage(width, height, bufferedImage);
     }
 
 
@@ -85,17 +111,7 @@ public class Depiction {
     public static BufferedImage DepictMolecule(IAtomContainer mol, int width, int height)
             throws GenericFailureException, CDKException {
 
-        BufferedImage image;
 
-        // Generates structure
-        StructureDiagramGenerator sdg = new StructureDiagramGenerator();
-        try {
-            sdg.setMolecule(mol);
-            sdg.generateCoordinates();
-        } catch (Exception ex){
-            throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_coordinates_fail"));
-        }
-        IAtomContainer currentMol = sdg.getMolecule();
 
         // Image generators
         List<IGenerator<IAtomContainer>> generators = new ArrayList<IGenerator<IAtomContainer>>();
@@ -106,15 +122,19 @@ public class Depiction {
         DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
                 .withAtomMapNumbers().withAromaticDisplay();
 
-        org.openscience.cdk.depict.Depiction depiction = generator.depict(currentMol);
 
-        // Build the image object
-        image = depiction.toImg();
 
+        BufferedImage bufferedImage = generator.depict(mol).toImg();
+
+
+        return getBufferedImage(width, height, bufferedImage);
+    }
+
+    private static BufferedImage getBufferedImage(int width, int height, BufferedImage bufferedImage) {
         BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics2D graphics2D = resizedImage.createGraphics();
 
-        graphics2D.drawImage(image, 0, 0, width, height, null);
+        graphics2D.drawImage(bufferedImage, 0, 0, width, height, null);
         graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         graphics2D.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -126,7 +146,7 @@ public class Depiction {
 
 
     public static BufferedImage DepictDoubleMolecule(InsilicoMolecule mol1, InsilicoMolecule mol2, int width, int height)
-            throws GenericFailureException, CDKException {
+            throws GenericFailureException, CDKException, InvalidMoleculeException {
 
         BufferedImage image1 = DepictMolecule(mol1, width/2, height);
         BufferedImage image2 = DepictMolecule(mol2, width/2, height);
