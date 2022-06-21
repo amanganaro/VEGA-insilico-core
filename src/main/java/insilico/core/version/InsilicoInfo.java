@@ -51,7 +51,6 @@ public class InsilicoInfo {
         } catch (Throwable e) {
             throw new InitFailureException(String.format(StringSelectorCore.getString("isinfo_read_core_fail"), e.getMessage()));
         }
-
     }
 
 

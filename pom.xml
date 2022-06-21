@@ -42,13 +42,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>InSilico</groupId>
-            <artifactId>VegaModels-BCFCaesar</artifactId>
-            <version>2.1.16</version>
-        </dependency>
-
-
-        <dependency>
             <groupId>net.sf.jni-inchi</groupId>
             <artifactId>jni-inchi</artifactId>
             <version>0.8</version>
