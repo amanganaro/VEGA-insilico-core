@@ -1809,8 +1809,8 @@ public class ReportPDF {
             ds1.PointColor = new Color(0x00, 0x99, 0xFF);
 
             //todo
-//            for (int k=0; k<TS.getMoleculesSize(); k++)
-//                ds1.Add(new ScatterChartDataPoint(TS.getDescriptor(k, DescIdx), TS.getExperimentalValue(k)));
+            for (int k=0; k<TS.getMoleculesSize(); k++)
+                ds1.Add(new ScatterChartDataPoint(TS.getDescriptor(k, DescIdx), TS.getExperimentalValue(k)));
 
             ScatterChartDataSet ds2 = new ScatterChartDataSet(ScatterChartDataSet.DS_SCATTER);
             ds2.PointShape = ScatterChartDataSet.SHAPE_CIRCLE_FILLED;
@@ -1862,10 +1862,10 @@ public class ReportPDF {
                 dsSim[s].PointColorFilling = Color.WHITE;
 
                 //todo 17.11.2020
-//                dsSim[s].Add(new ScatterChartDataPoint(TS.getDescriptor((int)simMol.getIndex(), DescIdx),
-//                        TS.getExperimentalValue((int)simMol.getIndex()),
-//                        TS.getDescriptor((int)simMol.getIndex(), DescIdx),
-//                        TS.getPredictedValue((int)simMol.getIndex())));
+                dsSim[s].Add(new ScatterChartDataPoint(TS.getDescriptor((int)simMol.getIndex(), DescIdx),
+                        TS.getExperimentalValue((int)simMol.getIndex()),
+                        TS.getDescriptor((int)simMol.getIndex(), DescIdx),
+                        TS.getPredictedValue((int)simMol.getIndex())));
                 ch.DataSeries.add(dsSim[s]);
             }
 
@@ -1896,8 +1896,8 @@ public class ReportPDF {
             table.setWidthPercentage(75);
             document.add(table);
 
-            //gif.setAlignment(Image.ALIGN_CENTER);
-            //document.add(gif);
+            gif.setAlignment(Image.ALIGN_CENTER);
+            document.add(gif);
 
 
         } catch (Exception e) {
