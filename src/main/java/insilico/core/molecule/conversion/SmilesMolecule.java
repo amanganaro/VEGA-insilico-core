@@ -70,7 +70,8 @@ public class SmilesMolecule {
                     throw new MoleculeConversionException(ERR_HEADER + StringSelectorCore.getString("conversion_smiles_unable_fields_matching"));
             }
 
-            isMol.SetSMILES(GeneralUtilities.TrimString(bufStr[SMILESField]));
+            String OriginalInputSMILES = GeneralUtilities.TrimString(bufStr[SMILESField]);
+            isMol.SetSMILES(OriginalInputSMILES);
 
             if(CASField != -1)
                 isMol.SetCAS(CAS.NormalizeCAS(bufStr[CASField]));
@@ -104,7 +105,7 @@ public class SmilesMolecule {
             // Mark as valid molecule
             isMol.SetSMILESAndStructure(SMI, mol);
             isMol.MarkAsValid();
-            isMol.setInputSMILES(SMILESString);
+            isMol.setInputSMILES(OriginalInputSMILES);
 
 
 
