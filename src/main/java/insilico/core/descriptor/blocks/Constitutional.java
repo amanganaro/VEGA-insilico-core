@@ -38,6 +38,8 @@ public class Constitutional extends DescriptorBlock {
         DescList.clear();
         this.Add("MW", StringSelectorCore.getString("descriptors_constitutional_mw"));
         this.Add("AMW", StringSelectorCore.getString("descriptors_constitutional_amw"));
+        this.Add("MW_da", StringSelectorCore.getString("descriptors_constitutional_mw_da"));
+        this.Add("AMW_da", StringSelectorCore.getString("descriptors_constitutional_amw_da"));
         this.Add("Sv", StringSelectorCore.getString("descriptors_constitutional_sv"));
         this.Add("Mv", StringSelectorCore.getString("descriptors_constitutional_mv"));
         this.Add("Sp", StringSelectorCore.getString("descriptors_constitutional_sp"));
@@ -109,15 +111,15 @@ public class Constitutional extends DescriptorBlock {
             int nBO = curMol.getBondCount();
             int[] H = new int[nSK];
 
-            int nTotH=0;
-            int nC=0, nN=0, nO=0, nP=0, nS=0;
-            int nI=0, nF=0, nCl=0, nBr=0, nB=0;
-            int nHet=0;
+            int nTotH = 0;
+            int nC = 0, nN = 0, nO = 0, nP = 0, nS = 0;
+            int nI = 0, nF = 0, nCl = 0, nBr = 0, nB = 0;
+            int nHet = 0;
 
 
             //// Counts on atoms
 
-            for (int i=0; i<nSK; i++) {
+            for (int i = 0; i < nSK; i++) {
 
                 IAtom CurAt = curMol.getAtom(i);
 
@@ -125,7 +127,8 @@ public class Constitutional extends DescriptorBlock {
                 H[i] = 0;
                 try {
                     H[i] = CurAt.getImplicitHydrogenCount();
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                }
                 nTotH += H[i];
 
 
@@ -170,11 +173,11 @@ public class Constitutional extends DescriptorBlock {
             this.SetByName("nI", nI);
             this.SetByName("nB", nB);
 
-            this.SetByName("HPerc", (nTotH/(double)(nSK + nTotH))*100);
-            this.SetByName("CPerc", (nC/(double)(nSK + nTotH))*100);
-            this.SetByName("NPerc", (nN/(double)(nSK + nTotH))*100);
-            this.SetByName("OPerc", (nO/(double)(nSK + nTotH))*100);
-            this.SetByName("XPerc", ((nI + nF + nCl + nBr)/(double)(nSK + nTotH))*100);
+            this.SetByName("HPerc", (nTotH / (double) (nSK + nTotH)) * 100);
+            this.SetByName("CPerc", (nC / (double) (nSK + nTotH)) * 100);
+            this.SetByName("NPerc", (nN / (double) (nSK + nTotH)) * 100);
+            this.SetByName("OPerc", (nO / (double) (nSK + nTotH)) * 100);
+            this.SetByName("XPerc", ((nI + nF + nCl + nBr) / (double) (nSK + nTotH)) * 100);
 
             this.SetByName("nHet", nHet);
             this.SetByName("nX", nI + nF + nCl + nBr);
@@ -182,10 +185,10 @@ public class Constitutional extends DescriptorBlock {
 
             //// Counts on bonds
 
-            int nArBonds=0, nDblBonds=0, nTrpBonds=0, nMulBonds=0;
-            double scbo=0;
+            int nArBonds = 0, nDblBonds = 0, nTrpBonds = 0, nMulBonds = 0;
+            double scbo = 0;
 
-            for (int i=0; i<nBO; i++) {
+            for (int i = 0; i < nBO; i++) {
 
                 IBond CurBo = curMol.getBond(i);
 
@@ -220,7 +223,7 @@ public class Constitutional extends DescriptorBlock {
             this.SetByName("SCBO", scbo);
 
 
-            for (int w=0; w<5; w++) {
+            for (int w = 0; w < 5; w++) {
 
                 iBasicWeight ws;
                 switch (w) {
@@ -247,7 +250,7 @@ public class Constitutional extends DescriptorBlock {
                 double weightH = ws.getScaledWeight("H");
 
                 double sum = 0;
-                for (int i=0; i<nSK; i++) {
+                for (int i = 0; i < nSK; i++) {
                     if (weights[i] == Descriptor.MISSING_VALUE) {
                         sum = Descriptor.MISSING_VALUE;
                         break;
@@ -261,7 +264,7 @@ public class Constitutional extends DescriptorBlock {
 
                 double ave = Descriptor.MISSING_VALUE;
                 if (sum != Descriptor.MISSING_VALUE)
-                    ave = sum/(nSK + nTotH);
+                    ave = sum / (nSK + nTotH);
 
                 switch (w) {
                     case 0:
@@ -287,6 +290,33 @@ public class Constitutional extends DescriptorBlock {
                     default:
                         throw new Exception(StringSelectorCore.getString("descriptors_weight_not_found"));
                 }
+            }
+
+            // added - calculation for MW in dalton (NOT scaled)
+            {
+                iBasicWeight mws = new WeightsMass();
+
+                double[] weights = mws.getWeights(curMol);
+                double weightH = mws.getWeight("H");
+
+                double sum = 0;
+                for (int i=0; i<nSK; i++) {
+                    if (weights[i] == Descriptor.MISSING_VALUE) {
+                        sum = Descriptor.MISSING_VALUE;
+                        break;
+                    } else {
+                        sum += weights[i];
+                        if (H[i] > 0)
+                            sum += weightH * H[i];
+                    }
+                }
+
+                double ave = Descriptor.MISSING_VALUE;
+                if (sum != Descriptor.MISSING_VALUE)
+                    ave = sum/(nSK + nTotH);
+
+                this.SetByName("MW_da", sum);
+                this.SetByName("AMW_da", ave);
             }
 
         } catch (Throwable e) {
