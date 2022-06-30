@@ -1,7 +1,7 @@
 package insilico.core;
 
 //import insilico.carcinogenicity_isscancgx.ismCarcinogenicityIsscanCgx;
-//import insilico.bcf_caesar.ismBCFCaesar;
+import insilico.bcf_caesar.ismBCFCaesar;
 import insilico.core.descriptor.blocks.FunctionalGroups;
 import insilico.core.model.InsilicoModel;
 import insilico.core.model.guide.GuidePDFGenerator;
@@ -15,6 +15,7 @@ import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.fragmenter.FragmenterCRS4;
 import insilico.core.molecule.tools.Depiction;
+//import insilico.tpo_oberon.ismTpoOberon;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.depict.DepictionGenerator;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -47,106 +48,101 @@ public class main {
 
     public static void main(String[] args) throws Exception {
 //        InsilicoMolecule mol = SmilesMolecule.Convert("CCCCCc1cc(O)c2c(c1)OC(C)(C)C1CCC(C)=CC21");
+//
+//        SmartsPattern pattern1 = SmartsPattern.create("[R2][R2]", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+
+
+//        SmartsPattern pattern2 = SmartsPattern.create("[OX2H]-c1ccccc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+//        SmartsPattern pattern3 = SmartsPattern.create("[R2][R2]", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+//        SmartsPattern pattern3 = SmartsPattern.create("c1(-[OX2]-[C;H])c(-[OX2]-[C;H])cccc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+//        SmartsPattern pattern4 = SmartsPattern.create("c1(-[OX2]-[C;H])ccc(-[OX2]-[C;H])cc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+//        SmartsPattern pattern5 = SmartsPattern.create("c1(-[OX2]-[C;H])c(-[OX2H])cccc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+//        SmartsPattern pattern6 = SmartsPattern.create("c1(-[OX2H])ccc(-[OX2]-[C;H])cc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+
+
+//        Pattern pattern1 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("[OX2H]-c1ccccc1").GetStructure());
+//        Pattern pattern2 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2H])ccc(-[OX2H])cc1").GetStructure());
+//        Pattern pattern3 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2]-[C;H])c(-[OX2]-[C;H])cccc1").GetStructure());
+//        Pattern pattern4 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2]-[C;H])ccc(-[OX2]-[C;H])cc1").GetStructure());
+//        Pattern pattern5 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2]-[C;H])c(-[OX2H])cccc1").GetStructure());
+//        Pattern pattern6 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2H])ccc(-[OX2]-[C;H])cc1").GetStructure());
+
+//        pattern2.matchAll(mol.GetStructure()).uniqueAtoms().toChemObjects();
+//        System.out.println(pattern1.matches(mol.GetStructure()));
+//        System.out.println(pattern2.matches(mol.GetStructure()));
+
+//        Iterable<IChemObject> asd = pattern2.matchAll(mol.GetStructure()).toChemObjects();
+//        Iterable<IChemObject> asd2 = pattern3.matchAll(mol.GetStructure()).toChemObjects();
+//
+//        List<IGenerator<IAtomContainer>> generators = new ArrayList<IGenerator<IAtomContainer>>();
+//        generators.add(new BasicSceneGenerator());
+//        generators.add(new RingGenerator());
+//        generators.add(new BasicAtomGenerator());
+
+//        DepictionGenerator generator = new DepictionGenerator().withSize(300,300).withAtomColors()
+//                .withAtomMapNumbers().withAromaticDisplay().withHighlight(asd, Color.YELLOW).withHighlight(asd2, Color.CYAN).withOuterGlowHighlight(3);
+
+
+//        System.out.println(pattern3.matches(mol.GetStructure()));
+//        System.out.println(pattern4.matches(mol.GetStructure()));
+//        System.out.println(pattern5.matches(mol.GetStructure()));
+//        System.out.println(pattern6.matches(mol.GetStructure()));
+
+
+//        BufferedImage bufferedImage = Depiction.DepictMoleculeWith2Substructures(mol, 280, 280, asd, asd2, Color.YELLOW, Color.CYAN, 4);
+//        File outputfile = new File("image.jpg");
+
+//        ImageIO.write(bufferedImage, "jpg", outputfile);
+
+
+
+//        mol.GetBasicDescriptors();
+//        mol.GetMolecularWeight();
+//        System.out.println();
+//        FragmenterCRS4.getCCQfragments(SmilesMolecule.Convert("CCCCCC").GetStructure());
+//        FragmenterCRS4.getRECAPfragments(SmilesMolecule.Convert("CCCCCC").GetStructure());
+//        FragmenterCRS4.getROTATABLEfragments(SmilesMolecule.Convert("CCCCCC").GetStructure());
+
+//        FunctionalGroups block = new FunctionalGroups();
+//        block.Calculate();
+//        SABenigniBossa benigniBossa = new SABenigniBossa();
+//
+//
+//        ModelBuilder3D mb3d = ModelBuilder3D.getInstance(DefaultChemObjectBuilder.getInstance());
+//
+//        InsilicoMolecule mol = SmilesMolecule.Convert("CNC(=O)c1nccc2cccn12");
+//
+//
+//        IAtomContainer coordinates  = mb3d.generate3DCoordinates(mol.GetStructure(), false);
+//
+//        List<Point3d> pointList = new ArrayList<>();
+//        for(int i = 0; i < coordinates.getAtomCount(); i++){
+//            IAtom atom = coordinates.getAtom(i);
+//            pointList.add(atom.getPoint3d());
+//        }
+
+//        return;
+
+        InsilicoModel model = new ismBCFCaesar();
 ////
-////        SmartsPattern pattern1 = SmartsPattern.create("[R2][R2]", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+        InsilicoModelWrapper wrappersList = new InsilicoModelWrapper(model ,true);
+//
+        ArrayList<InsilicoMolecule> moleculeArrayList = new ArrayList<>();
+        moleculeArrayList.add(SmilesMolecule.Convert("O=C1OCCOCCOC(=O)CCCCC(=O)OC(=O)CCCC1"));
 //
 //
-////        SmartsPattern pattern2 = SmartsPattern.create("[OX2H]-c1ccccc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
-////        SmartsPattern pattern3 = SmartsPattern.create("[R2][R2]", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
-////        SmartsPattern pattern3 = SmartsPattern.create("c1(-[OX2]-[C;H])c(-[OX2]-[C;H])cccc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
-////        SmartsPattern pattern4 = SmartsPattern.create("c1(-[OX2]-[C;H])ccc(-[OX2]-[C;H])cc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
-////        SmartsPattern pattern5 = SmartsPattern.create("c1(-[OX2]-[C;H])c(-[OX2H])cccc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
-////        SmartsPattern pattern6 = SmartsPattern.create("c1(-[OX2H])ccc(-[OX2]-[C;H])cc1", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
+        InsilicoModelRunnerByMolecule runner = new InsilicoModelRunnerByMolecule();
 //
-//
-////        Pattern pattern1 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("[OX2H]-c1ccccc1").GetStructure());
-////        Pattern pattern2 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2H])ccc(-[OX2H])cc1").GetStructure());
-////        Pattern pattern3 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2]-[C;H])c(-[OX2]-[C;H])cccc1").GetStructure());
-////        Pattern pattern4 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2]-[C;H])ccc(-[OX2]-[C;H])cc1").GetStructure());
-////        Pattern pattern5 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2]-[C;H])c(-[OX2H])cccc1").GetStructure());
-////        Pattern pattern6 = SmartsPattern.findSubstructure(SmilesMolecule.Convert("c1(-[OX2H])ccc(-[OX2]-[C;H])cc1").GetStructure());
-//
-////        pattern2.matchAll(mol.GetStructure()).uniqueAtoms().toChemObjects();
-////        System.out.println(pattern1.matches(mol.GetStructure()));
-////        System.out.println(pattern2.matches(mol.GetStructure()));
-//
-////        Iterable<IChemObject> asd = pattern2.matchAll(mol.GetStructure()).toChemObjects();
-////        Iterable<IChemObject> asd2 = pattern3.matchAll(mol.GetStructure()).toChemObjects();
-////
-////        List<IGenerator<IAtomContainer>> generators = new ArrayList<IGenerator<IAtomContainer>>();
-////        generators.add(new BasicSceneGenerator());
-////        generators.add(new RingGenerator());
-////        generators.add(new BasicAtomGenerator());
-//
-////        DepictionGenerator generator = new DepictionGenerator().withSize(300,300).withAtomColors()
-////                .withAtomMapNumbers().withAromaticDisplay().withHighlight(asd, Color.YELLOW).withHighlight(asd2, Color.CYAN).withOuterGlowHighlight(3);
-//
-//
-////        System.out.println(pattern3.matches(mol.GetStructure()));
-////        System.out.println(pattern4.matches(mol.GetStructure()));
-////        System.out.println(pattern5.matches(mol.GetStructure()));
-////        System.out.println(pattern6.matches(mol.GetStructure()));
-//
-//
-////        BufferedImage bufferedImage = Depiction.DepictMoleculeWith2Substructures(mol, 280, 280, asd, asd2, Color.YELLOW, Color.CYAN, 4);
-////        File outputfile = new File("image.jpg");
-//
-////        ImageIO.write(bufferedImage, "jpg", outputfile);
-//
-//
-//
-////        mol.GetBasicDescriptors();
-////        mol.GetMolecularWeight();
-////        System.out.println();
-////        FragmenterCRS4.getCCQfragments(SmilesMolecule.Convert("CCCCCC").GetStructure());
-////        FragmenterCRS4.getRECAPfragments(SmilesMolecule.Convert("CCCCCC").GetStructure());
-////        FragmenterCRS4.getROTATABLEfragments(SmilesMolecule.Convert("CCCCCC").GetStructure());
-//
-////        FunctionalGroups block = new FunctionalGroups();
-////        block.Calculate();
-////        SABenigniBossa benigniBossa = new SABenigniBossa();
-////
-////
-////        ModelBuilder3D mb3d = ModelBuilder3D.getInstance(DefaultChemObjectBuilder.getInstance());
-////
-////        InsilicoMolecule mol = SmilesMolecule.Convert("CNC(=O)c1nccc2cccn12");
-////
-////
-////        IAtomContainer coordinates  = mb3d.generate3DCoordinates(mol.GetStructure(), false);
-////
-////        List<Point3d> pointList = new ArrayList<>();
-////        for(int i = 0; i < coordinates.getAtomCount(); i++){
-////            IAtom atom = coordinates.getAtom(i);
-////            pointList.add(atom.getPoint3d());
-////        }
-//
-////        return;
-//
-//        InsilicoModel model = new ismBCFCaesar();
-//
-//        InsilicoModelWrapper wrappersList = new InsilicoModelWrapper(model ,true);
-////        wrappersList.add();
-//
-//
-//////        wrappersList.add(new InsilicoModelWrapper(new ismDaphniaDemetra(), true));
-//////
-//        ArrayList<InsilicoMolecule> moleculeArrayList = new ArrayList<>();
-//        moleculeArrayList.add(SmilesMolecule.Convert("O=C1OCCOCCOC(=O)CCCCC(=O)OC(=O)CCCC1"));
-////        moleculeArrayList.add(SmilesMolecule.Convert("CCCCOOON"));
-//////
-////////
-//        InsilicoModelRunnerByMolecule runner = new InsilicoModelRunnerByMolecule();
-////        for(InsilicoModelWrapper wrap : wrappersList)
-//            runner.AddModel((InsilicoModel) wrappersList.getModel());
-//        runner.Run(moleculeArrayList);
-////////
-////        byte[] bytePdf = report.CreateReportByModel(moleculeArrayList, runner.GetModelWrappers());
-////        Files.write(Path.of("report.pdf"), bytePdf);
-//        ReportPDFSingle reportPDFSingle = new ReportPDFSingle(true);
-//        byte[] bytePdf = reportPDFSingle.CreateReport(moleculeArrayList , runner.GetModelWrappers().get(0));
+        runner.AddModel((InsilicoModel) wrappersList.getModel());
+        runner.Run(moleculeArrayList);
+//////////
+//        byte[] bytePdf = report.CreateReportByModel(moleculeArrayList, runner.GetModelWrappers());
 //        Files.write(Path.of("report.pdf"), bytePdf);
-////        guidePDFGenerator.CreateGuide(new ismMutagenicityBB().getInfo(), "guide.pdf");
-//
+        ReportPDFSingle reportPDFSingle = new ReportPDFSingle(true);
+        byte[] bytePdf = reportPDFSingle.CreateReport(moleculeArrayList , runner.GetModelWrappers().get(0));
+        Files.write(Path.of("report.pdf"), bytePdf);
+//        guidePDFGenerator.CreateGuide(new ismMutagenicityBB().getInfo(), "guide.pdf");
+
 
 
     }

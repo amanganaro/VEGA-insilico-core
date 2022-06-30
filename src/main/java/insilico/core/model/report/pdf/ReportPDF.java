@@ -1896,8 +1896,8 @@ public class ReportPDF {
             table.setWidthPercentage(75);
             document.add(table);
 
-            gif.setAlignment(Image.ALIGN_CENTER);
-            document.add(gif);
+//            gif.setAlignment(Image.ALIGN_CENTER);
+//            document.add(gif);
 
 
         } catch (Exception e) {

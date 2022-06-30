@@ -39,7 +39,17 @@ public class ReportPDFSingle extends ReportPDF {
 
             // if output is in error state, stops here
             if (ModelWrapper.getResult().get(i).getStatus() != InsilicoModelOutput.OUTPUT_OK)
+//            || (ModelWrapper.getResult().get(i).getStatus() != InsilicoModelOutput.OUTPUT_OK_AD_MISSING)
+//            || (ModelWrapper.getResult().get(i).getStatus() != InsilicoModelOutput.OUTPUT_OK_AD_NOT_APPLICABLE))
                 continue;
+
+
+
+//            {
+//                if(ModelWrapper.getResult().get(i).getStatus() != InsilicoModelOutput.OUTPUT_OK_AD_MISSING)
+//                    if(ModelWrapper.getResult().get(i).getStatus() != InsilicoModelOutput.OUTPUT_OK_AD_NOT_APPLICABLE)
+//                        continue;
+//            }
 
             // PAGE 3 - AD assessment
             this.WritePageAD(ModelWrapper, inputMols.get(i), i);
