@@ -175,7 +175,7 @@ public class ReportTXTMultiple {
                     throw new GenericFailureException(StringSelectorCore.getString("report_multitxt_molecules_not_match"));
 
                 if (curResult.getStatus() < InsilicoModelOutput.OUTPUT_OK) {
-                    report_txt.append("\t[").append(StringSelectorCore.getString("report_txt_struct_error")).append("]\t");
+                    report_txt.append("\t[").append(StringSelectorCore.getString("report_txt_struct_error")).append("]\t-");
                 } else {
                     report_txt.append("\t").append(curResult.getAssessment());
                     report_txt.append("\t").append(curResult.getResults()[0]);
@@ -189,7 +189,7 @@ public class ReportTXTMultiple {
                     throw new GenericFailureException(StringSelectorCore.getString("report_multitxt_molecules_not_match"));
 
                 if (curResult.getStatus() < InsilicoModelOutput.OUTPUT_OK) {
-                    report_txt.append("\t[").append(StringSelectorCore.getString("report_txt_struct_error")).append("]\t-\t");
+                    report_txt.append("\t[").append(StringSelectorCore.getString("report_txt_struct_error")).append("]\t-");
                 } else {
                     report_txt.append("\t").append(curResult.getAssessment());
                     report_txt.append("\t").append(curResult.getResults()[0]);
