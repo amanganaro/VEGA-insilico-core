@@ -1,7 +1,7 @@
 package insilico.core;
 
 //import insilico.carcinogenicity_isscancgx.ismCarcinogenicityIsscanCgx;
-import insilico.bcf_caesar.ismBCFCaesar;
+//import insilico.bcf_caesar.ismBCFCaesar;
 import insilico.core.descriptor.blocks.FunctionalGroups;
 import insilico.core.model.InsilicoModel;
 import insilico.core.model.guide.GuidePDFGenerator;
@@ -47,7 +47,8 @@ public class main {
 
 
     public static void main(String[] args) throws Exception {
-//        InsilicoMolecule mol = SmilesMolecule.Convert("CCCCCc1cc(O)c2c(c1)OC(C)(C)C1CCC(C)=CC21");
+
+        InsilicoMolecule mol = SmilesMolecule.Convert("CCCCCc1cc(O)c2c(c1)OC(C)(C)C1CCC(C)=CC21                  \n \n \t");
 //
 //        SmartsPattern pattern1 = SmartsPattern.create("[R2][R2]", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
 
@@ -122,25 +123,25 @@ public class main {
 //        }
 
 //        return;
-
-        InsilicoModel model = new ismBCFCaesar();
+//
+//        InsilicoModel model = new ismBCFCaesar();
+//////
+//        InsilicoModelWrapper wrappersList = new InsilicoModelWrapper(model ,true);
 ////
-        InsilicoModelWrapper wrappersList = new InsilicoModelWrapper(model ,true);
-//
-        ArrayList<InsilicoMolecule> moleculeArrayList = new ArrayList<>();
-        moleculeArrayList.add(SmilesMolecule.Convert("O=C1OCCOCCOC(=O)CCCCC(=O)OC(=O)CCCC1"));
-//
-//
-        InsilicoModelRunnerByMolecule runner = new InsilicoModelRunnerByMolecule();
-//
-        runner.AddModel((InsilicoModel) wrappersList.getModel());
-        runner.Run(moleculeArrayList);
-//////////
-//        byte[] bytePdf = report.CreateReportByModel(moleculeArrayList, runner.GetModelWrappers());
+//        ArrayList<InsilicoMolecule> moleculeArrayList = new ArrayList<>();
+//        moleculeArrayList.add(SmilesMolecule.Convert("O=C1OCCOCCOC(=O)CCCCC(=O)OC(=O)CCCC1"));
+////
+////
+//        InsilicoModelRunnerByMolecule runner = new InsilicoModelRunnerByMolecule();
+////
+//        runner.AddModel((InsilicoModel) wrappersList.getModel());
+//        runner.Run(moleculeArrayList);
+////////////
+////        byte[] bytePdf = report.CreateReportByModel(moleculeArrayList, runner.GetModelWrappers());
+////        Files.write(Path.of("report.pdf"), bytePdf);
+//        ReportPDFSingle reportPDFSingle = new ReportPDFSingle(true);
+//        byte[] bytePdf = reportPDFSingle.CreateReport(moleculeArrayList , runner.GetModelWrappers().get(0));
 //        Files.write(Path.of("report.pdf"), bytePdf);
-        ReportPDFSingle reportPDFSingle = new ReportPDFSingle(true);
-        byte[] bytePdf = reportPDFSingle.CreateReport(moleculeArrayList , runner.GetModelWrappers().get(0));
-        Files.write(Path.of("report.pdf"), bytePdf);
 //        guidePDFGenerator.CreateGuide(new ismMutagenicityBB().getInfo(), "guide.pdf");
 
 
