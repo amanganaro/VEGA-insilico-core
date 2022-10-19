@@ -1,14 +1,8 @@
 package insilico.core.descriptor.blocks.logp;
 
-import insilico.core.alerts.Alert;
-import insilico.core.alerts.AlertList;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
-import insilico.core.descriptor.blocks.AtomCenteredFragments;
-import insilico.core.descriptor.blocks.WalkAndPath;
-import insilico.core.descriptor.weight.GhoseCrippenWeights;
 import insilico.core.exception.GenericFailureException;
-import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.tools.utils.MoleculeUtilities;
