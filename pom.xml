@@ -22,7 +22,7 @@
     <repositories>
         <repository>
             <id>maven-group</id>
-            <url>http://tech.kode-datacenter.net:8081/repository/maven-group/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-releases/</url>
         </repository>
     </repositories>
 
