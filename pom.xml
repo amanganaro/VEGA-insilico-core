@@ -19,19 +19,6 @@
         <skipTests>true</skipTests>
     </properties>
 
-    <distributionManagement>
-
-        <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>http://tech.kode-datacenter.net:8081/repository/maven-snapshots/</url>
-        </snapshotRepository>
-        <repository>
-            <id>nexus-releases</id>
-            <url>http://tech.kode-datacenter.net:8081/repository/maven-releases/</url>
-        </repository>
-
-    </distributionManagement>
-
     <repositories>
         <repository>
             <id>maven-group</id>
@@ -209,18 +196,6 @@
             <scope>test</scope>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>InSilico</groupId>-->
-<!--            <artifactId>VegaModels-CarcinogenicityISSCANGX</artifactId>-->
-<!--            <version>1.0.2</version>-->
-<!--        </dependency>-->
-
-<!--        <dependency>-->
-<!--            <groupId>org.hsqldb</groupId>-->
-<!--            <artifactId>hsqldb</artifactId>-->
-<!--            <version>2.5.1</version>-->
-<!--&lt;!&ndash;            <scope>test</scope>&ndash;&gt;-->
-<!--        </dependency>-->
 
 
 
@@ -275,23 +250,6 @@
                     <source>11</source>
                     <target>11</target>
                     <release>11</release>
-
-                    <excludes>
-                        <exclude>insilico/core/alerts/builders/toberefactored/*.java</exclude>
-<!--                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>-->
-<!--                        <exclude>insilico/core/molecule/matrix/old/*.java</exclude>-->
-<!--                        <exclude>insilico/core/descriptor/blocks/pro/**</exclude>-->
-                        <exclude>insilico/core/descriptor/blocks/old/*.java</exclude>
-                        <exclude>insilico/core/descriptor/blocks/old/*</exclude>
-                        <exclude>insilico/core/descriptor/blocks/old/AtomCenteredFragments.java</exclude>
-                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>
-                        <exclude>insilico/core/descriptor/blocks/old/weight/*.java</exclude>
-                        <exclude>insilico/core/model/old/*.java</exclude>
-                        <exclude>insilico/core/tools/utils/old/logger/*.java</exclude>
-                        <exclude>insilico/core/CoreUtils.java</exclude>
-<!--                        <exclude>insilico/core/descriptor/blocks/old/*.java</exclude>-->
-                    </excludes>
-
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -389,13 +347,6 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-<!--                            <archive>-->
-<!--                                <manifest>-->
-<!--                                    <mainClass>-->
-<!--                                        com.baeldung.executable.ExecutableMavenJar-->
-<!--                                    </mainClass>-->
-<!--                                </manifest>-->
-<!--                            </archive>-->
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
