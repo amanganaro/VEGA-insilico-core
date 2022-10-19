@@ -2,6 +2,7 @@ package insilico.core.descriptor.blocks;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IRing;
@@ -17,7 +18,7 @@ import java.util.Iterator;
 public class Rings extends DescriptorBlock {
     
     private static final long serialVersionUID = 1L;
-    private static final String BlockName = "Rings Descriptors";
+    private static final String BlockName = StringSelectorCore.getString("descriptors_rings_name");
 
     private static final int RING_SIZE_MIN = 3;
     private static final int RING_SIZE_MAX = 11;
@@ -36,8 +37,10 @@ public class Rings extends DescriptorBlock {
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
+        this.Add("nCIC", StringSelectorCore.getString("descriptors_rings_nCIC"));
+        this.Add("nCIR", StringSelectorCore.getString("descriptors_rings_nCIR"));
         for (int i=RING_SIZE_MIN; i<=RING_SIZE_MAX; i++)
-            this.Add("nR" + i, "");
+            this.Add("nR" + i, "number of " + i + "-membered rings");
         SetAllValues(Descriptor.MISSING_VALUE);
     }
     
@@ -56,7 +59,14 @@ public class Rings extends DescriptorBlock {
         GenerateDescriptors();
         
         try {
-        
+
+            // get ring sets directly from molecule (cache)
+            IRingSet allRings = mol.GetAllRings();
+            IRingSet sssr = mol.GetSSSR();
+
+            int nCIC = sssr.getAtomContainerCount();
+            int nCIR = allRings.getAtomContainerCount();
+
             int nSizes = RING_SIZE_MAX - RING_SIZE_MIN + 1;
             int[] RingCount = new int[nSizes];
             int[] RingSize = new int[nSizes];
@@ -65,7 +75,6 @@ public class Rings extends DescriptorBlock {
                 RingCount[i] = 0;
             }
             
-            IRingSet allRings = mol.GetAllRings();
             Iterator<IAtomContainer> RingsIterator = allRings.atomContainers().iterator();
             while (RingsIterator.hasNext()) {
                 IRing ring = (IRing)RingsIterator.next();
@@ -74,8 +83,10 @@ public class Rings extends DescriptorBlock {
                         RingCount[i]++;
                 }
             }
-            
-            for (int i=0; i<nSizes; i++) 
+
+            SetByName("nCIC", nCIC);
+            SetByName("nCIR", nCIR);
+            for (int i=0; i<nSizes; i++)
                 SetByName("nR" + RingSize[i], RingCount[i]);
             
         } catch (Throwable e) {

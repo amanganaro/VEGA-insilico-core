@@ -1,6 +1,6 @@
 package insilico.core.molecule.matrix;
 
-import insilico.core.descriptor.weight.VertexDegree;
+import insilico.core.descriptor.blocks.weights.other.WeightsVertexDegree;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 /**
@@ -23,14 +23,14 @@ public class LaplaceMatrix {
      */
     static public int[][] getMatrix(IAtomContainer molecule) {
 
-        // adjacency matrix with connectec atoms set to -1
+        // adjacency matrix with connected atoms set to -1
         int[][] matrix = org.openscience.cdk.graph.matrix.AdjacencyMatrix.getMatrix(molecule);
         for (int i=0; i<matrix.length; i++)
             for (int j=0; j<matrix[0].length; j++)
                 matrix[i][j] = -matrix[i][j];
 
         // diagonal with vertex degree
-        int[] VD = VertexDegree.getWeights(molecule, true);
+        int[] VD = WeightsVertexDegree.getWeights(molecule, false);
         for (int i=0; i<matrix.length; i++) {
             matrix[i][i] = VD[i];
         }

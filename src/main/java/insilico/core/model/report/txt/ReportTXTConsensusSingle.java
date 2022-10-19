@@ -1,12 +1,14 @@
 package insilico.core.model.report.txt;
 
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModelConsensusOutput;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModelConsensus;
 import insilico.core.model.runner.InsilicoModelConsensusWrapper;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.version.InsilicoInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +21,9 @@ import java.util.ArrayList;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class ReportTXTConsensusSingle {
 
-    static Logger logger = LoggerFactory.getLogger(ReportTXTConsensusSingle.class);
 
     /**
      * Writes the single report from the consensus model wrapper to std output
@@ -60,13 +62,13 @@ public class ReportTXTConsensusSingle {
         ArrayList<InsilicoModelConsensusOutput> Results = ModelWrapper.getResult();
 
         // Model info
-        Out.print("Prediction for the consensus model:" + System.lineSeparator());
-        Out.print(Model.getInfo().getName() + " (version " + Model.getInfo().getVersion() + ")" + System.lineSeparator());
+        Out.print(StringSelectorCore.getString("report_txtconsensus_init") + System.lineSeparator());
+        Out.print(String.format(StringSelectorCore.getString("report_txt_version"), Model.getInfo().getName(), Model.getInfo().getVersion()) + System.lineSeparator());
         try {
             InsilicoInfo icv = new InsilicoInfo();
-            Out.print("(calculation core version: " + icv.getVersion() + ")" + System.lineSeparator());
+            Out.print(String.format(StringSelectorCore.getString("report_txt_core_version"), icv.getVersion()) + System.lineSeparator());
         } catch (InitFailureException ex) {
-            logger.warn("unable to retrieve core information - " + ex.getMessage());
+            log.warn(String.format(StringSelectorCore.getString("report_txt_init_exception"), ex.getMessage()));
         }
 
         Out.print(System.lineSeparator());
@@ -76,12 +78,12 @@ public class ReportTXTConsensusSingle {
 
 
         // Headers
-        StringBuilder report_txt = new StringBuilder("No.\tId\tSMILES\tAssessment");
-        report_txt.append("\tUsed models");
+        StringBuilder report_txt = new StringBuilder(String.format(StringSelectorCore.getString("report_txt_header"), "\t","\t","\t"));
+        report_txt.append("\t").append(StringSelectorCore.getString("report_txtconsensus_used_models"));
         for (String curResultName : Model.GetResultsName()) {
             report_txt.append("\t").append(curResultName);
         }
-        report_txt.append("\tRemarks").append(System.lineSeparator());
+        report_txt.append("\t").append(StringSelectorCore.getString("report_txt_struct_remarks")).append(System.lineSeparator());
         Out.print(report_txt);
 
         // Results
@@ -94,7 +96,7 @@ public class ReportTXTConsensusSingle {
 
             if (R.getStatus() < InsilicoModelOutput.OUTPUT_OK) {
 
-                report_txt.append("\t[ERROR]");
+                report_txt.append("\t").append("[").append(StringSelectorCore.getString("report_txt_struct_error")).append("]");
                 int nCols = Model.GetResultsName().length + 2;
                 for (int j=0; j<nCols; j++)
                     report_txt.append("\t-");
@@ -108,15 +110,15 @@ public class ReportTXTConsensusSingle {
 
             }
 
-            String msg = "";
+            StringBuilder msg = new StringBuilder();
             for (int j=0; j<inputMols.get(i).GetWarnings().GetSize(); j++)
-                msg += "[Molecule warning] " + inputMols.get(i).GetWarnings().GetMessages(j) + ". ";
+                msg.append("[").append(StringSelectorCore.getString("report_txt_molecule_warning")).append("]").append(inputMols.get(i).GetWarnings().GetMessages(j)).append(". ");
             for (int j=0; j<inputMols.get(i).GetErrors().GetSize(); j++)
-                msg += "[Molecule error] " + inputMols.get(i).GetErrors().GetMessages(j) + ". ";
+                msg.append("[").append(StringSelectorCore.getString("report_txt_molecule_error")).append("]").append(inputMols.get(i).GetErrors().GetMessages(j)).append(". ");
             if (!R.getErrMessage().isEmpty())
-                msg += "[Model] " + R.getErrMessage() + ".";
+                msg.append("[").append(StringSelectorCore.getString("report_txt_model")).append("]").append(R.getErrMessage()).append(".");
             if (msg.length() == 0)
-                msg = "-";
+                msg = new StringBuilder("-");
 
             report_txt.append("\t").append(msg);
 

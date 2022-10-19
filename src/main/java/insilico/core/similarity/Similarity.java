@@ -2,11 +2,11 @@ package insilico.core.similarity;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.SmilesMolecule;
-import insilico.core.molecule.tools.Normalizer;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.isomorphism.UniversalIsomorphismTester;
 import org.slf4j.Logger;
@@ -21,9 +21,9 @@ import java.util.BitSet;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class Similarity implements Serializable {
 
-    Logger logger = LoggerFactory.getLogger(Similarity.class);
     
     private static final long serialVersionUID = 1L;
 
@@ -209,6 +209,37 @@ public class Similarity implements Serializable {
      * @return similarity index value
      */
     public double CalculateExactMatches(SimilarityDescriptors DescMolA, SimilarityDescriptors DescMolB,
+                                        IAtomContainer StructureA, IAtomContainer StructureB){
+
+        double sim = Calculate(DescMolA, DescMolB);
+
+        if (sim == 1){
+//            InsilicoMolecule mol = SmilesMolecule.Convert(StructureB);
+            try {
+                if (!(CheckIsomorphism(StructureA, StructureB))){
+                    sim = 0.99;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.warn(String.format(StringSelectorCore.getString("similarity_unable_to_check")));
+            }
+        }
+
+        return sim;
+    }
+
+    /**
+     * Calculates similarity index given the descriptors of two molecules, and
+     * checks for false exact matchings. If two molecules have similarity equal
+     * to 1 but they are not exactly the same, a similarity of 0.999 is returned.
+     *
+     * @param DescMolA descriptors of first molecule
+     * @param DescMolB descriptors of second molecule
+     * @param StructureA structure of the first molecule
+     * @param StructureB structure of the second molecule
+     * @return similarity index value
+     */
+    public double CalculateExactMatches(SimilarityDescriptors DescMolA, SimilarityDescriptors DescMolB,
                                         IAtomContainer StructureA, String StructureB){
 
         double sim = Calculate(DescMolA, DescMolB);
@@ -219,9 +250,9 @@ public class Similarity implements Serializable {
                 if (!(CheckIsomorphism(StructureA, mol.GetStructure()))){
                     sim = 0.99;
                 }
-            } catch (InvalidMoleculeException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
-                logger.warn("unable to check exact similarity for molecule " + mol.GetSMILES());
+                log.warn(String.format(StringSelectorCore.getString("similarity_unable_to_check")));
             }
         }
 

@@ -1,10 +1,14 @@
 package insilico.core.ad.item;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import insilico.core.constant.MessagesAD;
+import insilico.core.localization.StringSelectorCore;
 
 /**
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class ADIndexRange extends ADIndex {
 
     private static final long serialVersionUID = 1L;
@@ -33,7 +37,7 @@ public class ADIndexRange extends ADIndex {
 
     @Override
     public String GetIndexValueFormatted() {
-        return IndexValue==1?"True":"False";
+        return IndexValue==1? StringSelectorCore.getString("bool_formatted_true") : StringSelectorCore.getString("bool_formatted_false");
     }
 
     /**

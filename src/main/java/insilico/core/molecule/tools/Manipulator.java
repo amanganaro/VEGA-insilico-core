@@ -1,6 +1,7 @@
 package insilico.core.molecule.tools;
 
 import insilico.core.exception.GenericFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.matrix.ConnectionAugMatrix;
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.Bond;
@@ -48,7 +49,7 @@ public class Manipulator {
                 try {
                     clonedAtom = (IAtom) atom.clone();
                 } catch (CloneNotSupportedException e) {
-                    throw new CDKException("Unable to clone atoms while removing hydrogens");
+                    throw new CDKException(StringSelectorCore.getString("tool_manipulator_clone_atoms_h_error"));
                 }
                 NewMol.addAtom(clonedAtom);
                 map.put(atom, clonedAtom);
@@ -75,7 +76,7 @@ public class Manipulator {
                 try {
                     clone = (IBond) molecule.getBond(i).clone();
                 } catch (CloneNotSupportedException e) {
-                    throw new CDKException("Unable to clone bonds while removing hydrogens");
+                    throw new CDKException(StringSelectorCore.getString("tool_manipulator_clone_atoms_h_error"));
                 }
                 assert clone != null;
                 clone.setAtoms(new IAtom[]{(IAtom) map.get(bond.getAtom(0)), (IAtom) map.get(bond.getAtom(1))});
@@ -199,7 +200,7 @@ public class Manipulator {
             }
 
         } catch (Exception e) {
-            throw new CDKException("unable to add lacking hydrogens");
+            throw new CDKException(StringSelectorCore.getString("tool_manipulator_add_atoms_h_error"));
         }
 
         return AddedHydrogens;
@@ -212,7 +213,7 @@ public class Manipulator {
      * @param atom Atom object to be checked
      * @return number of H atoms
      */
-    public static int CountImplicitHydrogens(Atom atom) {
+    public static int CountImplicitHydrogens(IAtom atom) {
         int H=0;
         if (atom.getImplicitHydrogenCount()!=null)
             H = atom.getImplicitHydrogenCount();
@@ -234,13 +235,13 @@ public class Manipulator {
         try {
             NewMol = molecule.clone();
         } catch (CloneNotSupportedException e) {
-            throw new GenericFailureException("Unable to clone molecule");
+            throw new GenericFailureException(StringSelectorCore.getString("tool_manipulator_clone_error"));
         }
 
         int OldCount=molecule.getAtomCount();
 
         for (int i=0;i<OldCount;i++) {
-            Atom atom = (Atom) NewMol.getAtom(i);
+            IAtom atom = NewMol.getAtom(i);
             int HCount = CountImplicitHydrogens(atom);
 
             atom.setImplicitHydrogenCount(0);

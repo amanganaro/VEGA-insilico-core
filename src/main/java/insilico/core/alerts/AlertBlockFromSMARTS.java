@@ -3,17 +3,13 @@ package insilico.core.alerts;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
-import insilico.core.molecule.tools.CustomQueryMatcher;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
-
-import java.util.List;
 
 public abstract class AlertBlockFromSMARTS extends AlertBlock {
 
     // Matcher tool
-    protected CustomQueryMatcher Matcher;
+//    protected CustomQueryMatcher Matcher;
 
     // Flag for initialization of SMARTS matchers
     protected boolean IsInitialized;
@@ -22,7 +18,7 @@ public abstract class AlertBlockFromSMARTS extends AlertBlock {
 
     public AlertBlockFromSMARTS(int BlockIndex, String Name) throws InitFailureException {
         super(BlockIndex, Name);
-        Matcher = null;
+//        Matcher = null;
         IsInitialized = false;
     }
 
@@ -39,45 +35,7 @@ public abstract class AlertBlockFromSMARTS extends AlertBlock {
     protected abstract void InitSMARTS() throws InitFailureException;
 
 
-    /**
-     * Method to be called for checking if CurQuery has some
-     * matches with currently loaded molecule
-     *
-     * @param CurQuery
-     * @return
-     * @throws org.openscience.cdk.exception.CDKException
-     */
-    protected boolean Matches(QueryAtomContainer CurQuery) throws CDKException {
 
-        boolean FoundMatches = Matcher.matches(CurQuery);
-        return FoundMatches;
-
-    }
-
-
-    /**
-     * Method to be called for checking if CurQuery has some
-     * matches with currently loaded molecule and the number of
-     * matches is needed
-     *
-     * @param CurQuery
-     * @return
-     * @throws org.openscience.cdk.exception.CDKException
-     */
-    protected int MatchesNumber(QueryAtomContainer CurQuery) throws CDKException {
-
-        int nmatch = 0;
-        List mappings;
-
-        boolean status = Matcher.matches(CurQuery);
-
-        if (status) {
-            mappings = Matcher.getUniqueMatchingAtoms();
-            nmatch = mappings.size();
-        }
-
-        return nmatch;
-    }
 
 
     /**
@@ -94,18 +52,18 @@ public abstract class AlertBlockFromSMARTS extends AlertBlock {
     public AlertList Calculate(InsilicoMolecule mol) throws InvalidMoleculeException, GenericFailureException {
 
         if (!mol.IsValid())
-            throw new InvalidMoleculeException("Given molecule is not marked as valid");
+            throw new InvalidMoleculeException(StringSelectorCore.getString("sa_molecule_invalid_marked"));
         CurMol = mol;
 
         // Init
         try {
-            Matcher = new CustomQueryMatcher(CurMol);
+//            Matcher = new CustomQueryMatcher(CurMol);
             if (!IsInitialized) {
                 InitSMARTS();
                 IsInitialized = true;
             }
         } catch (Exception e) {
-            throw new GenericFailureException("Unable to init matcher: " + e.getMessage());
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("sa_invalid_molecule_err"), e.getMessage()));
         }
 
         // Calls method for checking alerts

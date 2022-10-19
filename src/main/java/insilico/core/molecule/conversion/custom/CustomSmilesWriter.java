@@ -31,6 +31,7 @@
  */
 package insilico.core.molecule.conversion.custom;
 
+import insilico.core.localization.StringSelectorCore;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.PseudoAtom;
 import org.openscience.cdk.config.IsotopeFactory;
@@ -162,11 +163,11 @@ public class CustomSmilesWriter {
      * @see                             org.openscience.cdk.graph.invariant.CanonicalLabeler#canonLabel(IAtomContainer)
      * @return the SMILES representation of the molecule
      */
-    public synchronized String createSMILES(IAtomContainer molecule, boolean chiral, boolean doubleBondConfiguration[])
+    public synchronized String createSMILES(IAtomContainer molecule, boolean chiral, boolean[] doubleBondConfiguration)
             throws CDKException {
         IAtomContainerSet moleculeSet = ConnectivityChecker.partitionIntoMolecules(molecule);
         if(moleculeSet.getAtomContainerCount() > 1) {
-            StringBuffer fullSMILES = new StringBuffer();
+            StringBuilder fullSMILES = new StringBuilder();
             for(int i = 0; i< moleculeSet.getAtomContainerCount(); i++){
                 IAtomContainer molPart = moleculeSet.getAtomContainer(i);
                 fullSMILES.append(createSMILESWithoutCheckForMultipleMolecules(molPart, chiral, doubleBondConfiguration));
@@ -229,6 +230,7 @@ public class CustomSmilesWriter {
      *      non-chiral smiles (createSMILES(AtomContainer) does not throw an
      *      exception).
      * @return the SMILES representation of the molecule
+     *
      */
     public synchronized String createSMILESWithoutCheckForMultipleMolecules(IAtomContainer molecule, boolean chiral, boolean doubleBondConfiguration[])
             throws CDKException {
@@ -238,7 +240,7 @@ public class CustomSmilesWriter {
         try {
             labeler.canonLabel(molecule);
         } catch (Throwable e) {
-            throw new CDKException("Unable to run canonical labelelr for the SMILES [" + e.getMessage() + "]");
+            throw new CDKException(String.format(StringSelectorCore.getString("conversion_smileswriter_labeler_exception"), e.getMessage()));
         }
         brokenBonds.clear();
         ringMarker = 0;
@@ -272,13 +274,23 @@ public class CustomSmilesWriter {
      * @return false=not the end of configuration, true=end of configuration
      */
     private boolean isEndOfDoubleBond(IAtomContainer container, IAtom atom, IAtom parent, boolean[] doubleBondConfiguration){
-        if(container.getBondNumber(atom, parent) == -1 || doubleBondConfiguration.length <= container.getBondNumber(atom, parent) || !doubleBondConfiguration[container.getBondNumber(atom,parent)])
+
+        IBond bond = container.getBond(atom, parent);
+        int bondOrder = container.indexOf(bond);
+
+        if(bondOrder == -1 || doubleBondConfiguration.length <= bondOrder || !doubleBondConfiguration[bondOrder])
             return false;
+
+        // DEPRECATED MODE
+//        if(container.getBondNumber(atom, parent) == -1 || doubleBondConfiguration.length <= container.getBondNumber(atom, parent) || !doubleBondConfiguration[container.getBondNumber(atom,parent)])
+//            return false;
         int lengthAtom = container.getConnectedBondsCount(atom) + ((atom.getImplicitHydrogenCount() == CDKConstants.UNSET) ? 0 : atom.getImplicitHydrogenCount());
         int lengthParent = container.getConnectedBondsCount(parent) + ((parent.getImplicitHydrogenCount() == CDKConstants.UNSET) ? 0 : parent.getImplicitHydrogenCount());
         if (container.getBond(atom, parent) != null)
         {
-            if (container.getBond(atom, parent).getOrder() == CDKConstants.BONDORDER_DOUBLE && (lengthAtom == 3 || (lengthAtom == 2 && atom.getSymbol().equals("N"))) && (lengthParent == 3 || (lengthParent == 2 && parent.getSymbol().equals("N"))))
+
+            // CDKConstants.BONDORDER_DOUBLE =>
+            if (container.getBond(atom, parent).getOrder() == IBond.Order.DOUBLE && (lengthAtom == 3 || (lengthAtom == 2 && atom.getSymbol().equals("N"))) && (lengthParent == 3 || (lengthParent == 2 && parent.getSymbol().equals("N"))))
             {
                 List<IAtom> atoms = container.getConnectedAtomsList(atom);
                 IAtom one = null;
@@ -290,7 +302,7 @@ public class CustomSmilesWriter {
                     if (atm != parent && one == null)
                     {
                         one = atm;
-                    } else if (atm != parent && one != null)
+                    } else if (atm != parent)
                     {
                         two = atm;
                     }
@@ -331,15 +343,17 @@ public class CustomSmilesWriter {
             }
             if (atm != nextAtom && one == null)
                 one = atm;
-            else if (atm != nextAtom && one != null)
+            else if (atm != nextAtom)
                 two = atm;
         }
         String[] morganNumbers = MorganNumbersTools.getMorganNumbersWithElementSymbol(container);
         // REFACTOR .indexOf and .getBondNumber are deprecated
         //
+        IBond bond = container.getBond(atom, nextAtom);
+        int bondOrder = container.indexOf(bond);
         if (one != null && ((!atom.getSymbol().equals("N") &&
                 two != null && !morganNumbers[container.indexOf(one)].equals(morganNumbers[container.indexOf(two)]) &&
-                doubleBond && doubleBondConfiguration[container.getBondNumber(atom, nextAtom)]) ||
+                doubleBond && doubleBondConfiguration[bondOrder]) ||
                 (doubleBond && atom.getSymbol().equals("N") && Math.abs(BondTools.giveAngleBothMethods(nextAtom, atom, parent, true)) > Math.PI / 10)))
             return true;
         else return false;

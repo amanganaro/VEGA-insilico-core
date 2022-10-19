@@ -2,6 +2,7 @@ package insilico.core.molecule.acf;
 
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import org.openscience.cdk.CDKConstants;
 import org.openscience.cdk.RingSet;
@@ -86,14 +87,14 @@ public class ACFBuilder {
         try {
             ConnMatrix = mol.GetMatrixConnectionAugmented();
         } catch (GenericFailureException ex) {
-            throw new InvalidMoleculeException("unable to build connection matrix");
+            throw new InvalidMoleculeException(StringSelectorCore.getString("molecule_acf_matrix_exception"));
         }
         MolRings = mol.GetSSSR();
 
         // Cycles upon all atoms
         for (IAtom atom : Mol.atoms()) {
 
-            int A = Mol.getAtomNumber(atom);
+            int A = Mol.indexOf(atom);
 
             // Skips Hydrogen atoms
             if (atom.getSymbol().compareToIgnoreCase("H")==0)
@@ -117,7 +118,7 @@ public class ACFBuilder {
 
     private String RecursiveSearchACF(int PrevAtom, int AtomIdx, int Lag) {
 
-        String ACFChunk = "";
+        StringBuilder ACFChunk = new StringBuilder();
 
 
         //// Builds ACF string for current center atom
@@ -125,21 +126,21 @@ public class ACFBuilder {
 
         if (DoNotSplitRings)
             if (MolRings.contains(CenterAtom)) {
-                ACFChunk += GenerateRingSMILESFromAtom(CenterAtom);
-                return ACFChunk;
+                ACFChunk.append(GenerateRingSMILESFromAtom(CenterAtom));
+                return ACFChunk.toString();
             }
 
         // Atom Type:
         if (CenterAtom.getFlag(CDKConstants.ISAROMATIC))
-            ACFChunk += "[" + CenterAtom.getSymbol().toLowerCase();
+            ACFChunk.append("[").append(CenterAtom.getSymbol().toLowerCase());
         else
-            ACFChunk += "[" + CenterAtom.getSymbol();
-        ACFChunk += "]";
+            ACFChunk.append("[").append(CenterAtom.getSymbol());
+        ACFChunk.append("]");
 
 
         //// Checks if is the last atom
         if (Lag == 0)
-            return ACFChunk;
+            return ACFChunk.toString();
 
 
         //// Builds chunks for next atoms
@@ -162,7 +163,7 @@ public class ACFBuilder {
 
         //// Checks if other bound atoms have been found
         if (NextChunks.isEmpty())
-            return ACFChunk;
+            return ACFChunk.toString();
 
 
         //// Orders next chunks and builds the current ACF string
@@ -170,17 +171,17 @@ public class ACFBuilder {
         NextChunksStrings = NextChunks.toArray(NextChunksStrings);
         java.util.Arrays.sort(NextChunksStrings);
         for (String curChunk : NextChunksStrings) {
-            ACFChunk += "(" + curChunk +")";
+            ACFChunk.append("(").append(curChunk).append(")");
         }
 
 
-        return ACFChunk;
+        return ACFChunk.toString();
     }
 
 
     private String GenerateRingSMILESFromAtom(IAtom atom) {
 
-        String rSMILES = "";
+        StringBuilder rSMILES = new StringBuilder();
         IRing CurRing = null;
 
         for (IAtomContainer r : MolRings.atomContainers()) {
@@ -202,21 +203,21 @@ public class ACFBuilder {
             IAtom curAtom = CurRing.getAtom(AtIdx);
 
             if (curAtom.getFlag(CDKConstants.ISAROMATIC))
-                rSMILES += curAtom.getSymbol().toLowerCase();
+                rSMILES.append(curAtom.getSymbol().toLowerCase());
             else
-                rSMILES += curAtom.getSymbol();
+                rSMILES.append(curAtom.getSymbol());
 
             if (i == 0)
-                rSMILES += "1";
+                rSMILES.append("1");
 
             AtIdx++;
             if (AtIdx == CurRing.getAtomCount())
                 AtIdx = 0;
         }
-        rSMILES += "1";
+        rSMILES.append("1");
 
 
-        return rSMILES;
+        return rSMILES.toString();
     }
 
 

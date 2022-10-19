@@ -4,10 +4,10 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
+import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
+import org.openscience.cdk.isomorphism.Pattern;
+import org.openscience.cdk.smarts.SmartsPattern;
 
 /**
  *
@@ -15,7 +15,8 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
  */
 public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implements iAlertBlock {
 
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
+    private Pattern SA_MEYC42_CORR;
     private double GlobalCoefficient;
 
     private final static String[] SMARTSFragments = {
@@ -25,7 +26,8 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "[C;!R][$([C;D2]),$([C;D3](=N)(C)[C,c])]=NOC",  // 3
             "[OH]CC(=O)C[O;D2]",  // 4
             "n1oncc1",  // 5
-            "[N;R]=[C;R]([R,R2])[R,R2]",  // 6
+            "[N;R1]=[C;R1]([R,R2])[R,R2]",  // 6
+//            "[N;R]=[C;R]([R,R2])[R,R2]",  // 6 OLD CDK
 //        "[$([N;D1]),$([N;D2]-*),$([N;D3](-*)-*)]=C([R])[R]",  // 6
             "CC(=O)NC(C(=O)[OH])C[S;D2]",  // 7
 //        "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)]", // 8 wrong?
@@ -33,7 +35,8 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "*=C(C#N)C(=O)[O;D2]", // 9
             "[OH][C;H1,H2]C([O;D2])[C;H1,H2][OH]", // 10
             "*[S;R](=O)[N;R]=[C;R][N;R]", // 11
-            "[*;R][C,c;R](=O)[O,o;R][*;R]", // 12
+//            "[*;R][C,c;R](=O)[O,o;R][*;R]", // 12 COMPLIANCE WITH OLDER CDK
+            "[*;R1][C,c;R1](=O)[O,o;R1][*;R1]", // 12
             "*C(=O)NC(=O)NC(=O)*", // 13
             "*C(=O)C=CC(=O)[A]", // 14
             "C(-*)(-*)=NOC(=O)*", // 15
@@ -63,7 +66,8 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "N=C(C#N)C#N", // 37
             "[OH]CC(=O)[OH]", // 38
             "*-[CH]=N-O-C(=O)-*", // 39
-            "[c;!$(c([*;R])([*;R])([*;R]))]1[c;!$(c([*;R])([*;R])([*;R]))][c;!$(c([*;R])([*;R])([*;R]))]n[c;!$(c([*;R])([*;R])([*;R]))][c;!$(c([*;R])([*;R])([*;R]))]1", // 40
+//            "[c;!$(c([*;R])([*;R])([*;R]))]1[c;!$(c([*;R])([*;R])([*;R]))][c;!$(c([*;R])([*;R])([*;R]))]n[c;!$(c([*;R])([*;R])([*;R]))][c;!$(c([*;R])([*;R])([*;R]))]1", // 40 OLD CDK
+            "[c;!$(c([*;R1])([*;R1])([*;R1]))]1[c;!$(c([*;R1])([*;R1])([*;R1]))][c;!$(c([*;R1])([*;R1])([*;R1]))]n[c;!$(c([*;R1])([*;R1])([*;R1]))][c;!$(c([*;R1])([*;R1])([*;R1]))]1", // 40
 //        "[!a](@[!a])(@[!a])@[!a](@[!a])@[!a]", // 41 wrong?
             "[$([C;!a](@[C;!a])(@[C;!a])@[C;!a])]@[$([C;!a](@[C;!a])(@[C;!a])@[C;!a])]", // 41
             "[C;!$(C(=O)[OH])][OH]", // 42
@@ -80,13 +84,16 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "[C;D2](C(=O)-*)C(=O)N", // 52
             "NC=N[$(c1ncsc1),$(c1cncs1),$(c1sccn1)]", // 53
             "[N;R][C;R]([N;R])=N[a]", // 54
-            "C(-*)(-*)(c1ccccc1)c1ccccc1", // 55
+            "C(-*)(-*)(c1ccccc1)c1ccccc1", // 55 NOT WORKING IN CDK OLD
+//            "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][R1;a][$([R1;a]);!$([R1;a][OH])][$([R1;a][OH]),$([R1;a][R1;a][OH])]", // 56 OLD CDK
             "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][R;a][$([R;a]);!$([R;a][OH])][$([R;a][OH]),$([R;a][R;a][OH])]", // 56
             "[R;a](C(=O)[OH])[R;a](C(=O)[OH])", // 57
-            "[R;a]([N+](=O)[O-])[$([R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R;a][R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R;a][R;a][R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)])]",  // 58
+//            "[R;a]([N+](=O)[O-])[$([R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R;a][R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R;a][R;a][R;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)])]",  // 58 OLD CDK
+            "[R1;a]([N+](=O)[O-])[$([R1;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R1;a][R1;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)]),$([R1;a][R1;a][R1;a][$([OH]),$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),$(N=N)])]",  // 58
             "[R;a]([OH])[R;a]C(=O)[O;D2]", // 59
             "*-N-C(=O)-C([Cl,Br,F,I])[Cl,Br,F,I]", // 60
-            "[$([C,c](=O)1[N,n][C,c](=O)[*;R][*;R]1);!$(C(=O)1NC(=O)C=C1)]", // 61
+//            "[$([C,c](=O)1[N,n][C,c](=O)[*;R][*;R]1);!$(C(=O)1NC(=O)C=C1)]", // 61 CDK OLD
+            "[$([C,c](=O)1[N,n][C,c](=O)[*;R1][*;R1]1);!$(C(=O)1NC(=O)C=C1)]", // 61
             "C(=O)[C,$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][N;D3]([a])[a]", // 62
             "[n;R](=O)[$([n;R]),$([*;R][n;R]),$([*;R][*;R][n;R])]", // 63
             "[a]-N(C(=O)-*)C(=O)-*", // 64
@@ -97,15 +104,18 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
             "CSC[$(S(=O)(C)-*)]", // 69
 //        "[a;R](N(=O)-*)[a;R][NH]C(=O)C", // 70
             "SSSSSS", // 70
-            "[$(S(=O)(=O)(N)[a;R][a;R]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R][a;R][a;R]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R][a;R][a;R][a;R]S(=O)(=O)(N))]", // 71
-            "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][$([a;R][a;R][a;R]C(=O)[O;D2]),$([a;R][a;R][a;R][a;R]C(=O)[O;D2])]", // 72
+//            "[$(S(=O)(=O)(N)[a;R][a;R]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R][a;R][a;R]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R][a;R][a;R][a;R]S(=O)(=O)(N))]", // 71 OLD CDK
+            "[$(S(=O)(=O)(N)[a;R1][a;R1]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R1][a;R1][a;R1]S(=O)(=O)(N)),$(S(=O)(=O)(N)[a;R1][a;R1][a;R1][a;R1]S(=O)(=O)(N))]", // 71
+//            "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][$([a;R][a;R][a;R]C(=O)[O;D2]),$([a;R][a;R][a;R][a;R]C(=O)[O;D2])]", // 72 OLD CDK
+            "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*)][$([a;R1][a;R][a;R1]C(=O)[O;D2]),$([a;R1][a;R1][a;R1][a;R1]C(=O)[O;D2])]", // 72
             "S(=O)(=O)(N)C(C)N", // 73
             "[OH][a;R][a;R]C(=O)[OH]", // 74
             "c1ccccc1CCN", // 75
             "[$(C(=O)([OH])[A]C(=O)[OH]),$(C(=O)([OH])[A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A][A][A][A]C(=O)[OH]),$(C(=O)([OH])[A][A][A][A][A][A][A][A]C(=O)[OH])]", // 76
             "[$([N;D1]),$([N;D2](-*)-*),$([N;D3](-*)(-*)-*),O]C(=O)NN=O", // 77
             "S(=O)[$(C([Cl,Br,F,I])[Cl,Br,F,I])]", // 78
-            "[a;R](-*)[a;R]c(n)n", // 79
+//            "[a;R](-*)[a;R]c(n)n", // 79 OLD CDK
+            "[a;R1](-*)[a;R1]c(n)n", // 79
             "C(=O)N(O)C(=O)", // 80
             "C-S-C(=N-*)-[$(S(=O))]", // 81
             "[$(P=O)]-S-C-[$(S=O)]", // 82
@@ -228,7 +238,7 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
 
 
     public SAMeylanLogPCorrectionFragments() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_CORRECTION, "Meylan correction fragments for LoP calculation (Kowwin)");
+        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_CORRECTION, StringSelectorCore.getString("sa_meylan_logp_correction_initialization"));
     }
 
 
@@ -238,7 +248,7 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
         for (int i=0; i<SMARTSFragments.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (i+1)));
             curSA.setName("MEYC" + (i+1));
-            curSA.setDescription("Meylan correction fragment for LogP calculation no. " + (i+1) + " defined by SMARTS: " +  SMARTSFragments[i]);
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_meylan_logp_correction_description"), i+1, SMARTSFragments[i]));
             Alerts.add(curSA);
         }
 
@@ -251,14 +261,17 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
 
         try {
 
-            SA = new QueryAtomContainer[SMARTSFragments.length];
+            // additional fragment for MEYC42 to be consistent with prev CDK version
+            SA_MEYC42_CORR = SmartsPattern.create("C1CC1").setPrepare(false);
+
+            SA = new Pattern[SMARTSFragments.length];
 
             for (int i=0; i<SMARTSFragments.length; i++)
-                // TODO: 25/06/2020 BUILDER
-                SA[i] = SMARTSParser.parse(SMARTSFragments[i], DefaultChemObjectBuilder.getInstance());
+
+                SA[i] = SmartsPattern.create(SMARTSFragments[i]).setPrepare(false);
 
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }
     }
 
@@ -273,9 +286,10 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
         try {
 
             for (int i=0; i<SA.length; i++) {
-                if (Matcher.matches(SA[i])) {
 
-                    int nMatches = Matcher.countUniqueMatches();
+                if (SA[i].matches(CurMol.GetStructure())) {
+
+                    int nMatches = SA[i].matchAll(CurMol.GetStructure()).countUnique();
 
 //                    if(nMatches>0)
 //                        System.out.println(i + "\t" + Alerts.get(i).getName() + "\t" +  SMARTSFragments[i] + "\t" + SMARTSCoeff[i]);
@@ -309,6 +323,16 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
                         continue;
                     }
 
+                    if (i == 55) {
+                        // not working in old CDK - skip to be compliant
+                        continue;
+                    }
+
+                    if (i == 58) {
+                        // not working in old CDK - skip to be compliant
+                        continue;
+                    }
+
                     if (i == 89) {
                         // non-alpha amino-acids - oleifinic
                         // only if no alpha amino-acids have been found
@@ -339,11 +363,21 @@ public class SAMeylanLogPCorrectionFragments extends AlertBlockFromSMARTS implem
 
                     Res.add((Alert)Alerts.get(i).clone());
                     GlobalCoefficient += SMARTSCoeff[i] * nMatches;
+                } else if (i == 41) {
+                    // special case for MEYC42 if not matched
+                    // check for the additional SMARTS to be compliant with prev CDK
+                    // matches no. is set to 3 to be consistent with the wrongly matched SMARTS in prev CDK
+                    if (SA_MEYC42_CORR.matches(CurMol.GetStructure())) {
+                        int nMatches = SA_MEYC42_CORR.matchAll(CurMol.GetStructure()).countUnique() * 3;
+                        Res.add((Alert)Alerts.get(i).clone());
+                        GlobalCoefficient += SMARTSCoeff[i] * nMatches;
+                    }
                 }
+
             }
 
-        } catch (CDKException | CloneNotSupportedException e) {
-            throw new GenericFailureException("Error while calculating SMARTS matching");
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
+            throw new GenericFailureException(StringSelectorCore.getString("sa_exception_smarts_matching_ge"));
         }
 
         return Res;

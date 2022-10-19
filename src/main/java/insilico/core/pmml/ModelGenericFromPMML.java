@@ -1,6 +1,7 @@
 package insilico.core.pmml;
 
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelectorCore;
 import org.dmg.pmml.FieldName;
 import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
@@ -26,25 +27,28 @@ public class ModelGenericFromPMML {
     private final Evaluator evaluator;
     protected boolean verbose;
 
-    //
-    public ModelGenericFromPMML(InputStream PmmlSource, Model model) throws InitFailureException {
+
+    public ModelGenericFromPMML(InputStream PmmlSource) throws InitFailureException {
 
         try {
-            // TODO: modelEvaluatorFactory.newModelEvaluator(pmml, model) we must define model
+
             // Load the model from the given resource (PMML file)
             PMML pmml = unmarshal(PmmlSource);
 
             // Create the evaluator object
-            ModelEvaluatorFactory modelEvaluatorFactory = ModelEvaluatorFactory.newInstance();
-            ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml, model);
-            evaluator = (Evaluator) modelEvaluator;
+            ModelEvaluatorBuilder modelEvaluatorBuilder = new ModelEvaluatorBuilder(pmml);
+            ModelEvaluator<?> modelEvaluator = modelEvaluatorBuilder.build();
+//            ModelEvaluator<?> modelEvaluator = modelEvaluatorFactory.newModelEvaluator(pmml);
+            evaluator = modelEvaluator;
+//            Evaluator evaluator = (Evaluator)modelEvaluatorFactory.newModelEvaluator()
 
         } catch (Exception e) {
-            throw new InitFailureException("Unable to init PMML model - " + e.getMessage());
+            throw new InitFailureException(String.format(StringSelectorCore.getString("pmml_ann_unable_init_pmml_model"), e.getMessage()));
         }
 
         this.verbose = false;
     }
+
 
     // Run the model using the descriptors, provided as a Map with
     // Key: Descriptor name
@@ -55,12 +59,12 @@ public class ModelGenericFromPMML {
         Map<FieldName, FieldValue> arguments = new LinkedHashMap<FieldName, FieldValue>();
         List<InputField> inputFields = evaluator.getInputFields();
 
-        for (InputField inputField : inputFields) {
+        for(InputField inputField : inputFields){
             FieldName inputFieldName = inputField.getName();
 
             // Check if descriptor is available
             if (!Descriptors.containsKey(inputField.getName().getValue()))
-                throw new Exception("Descriptor " + inputField.getName().getValue() + " not found in the parameters");
+                throw new Exception(String.format(StringSelectorCore.getString("pmml_ann_descriptor_not_found"),inputField.getName().getValue() ));
 
             // The raw (ie. user-supplied) value could be any Java primitive value
             Object rawValue = Descriptors.get(inputField.getName().getValue());
@@ -74,10 +78,12 @@ public class ModelGenericFromPMML {
         }
 
         // Evaluate model
+        Map<FieldName, ?> outputs = evaluator.evaluate(arguments);
 
         // Retrieve result
-        return evaluator.evaluate(arguments);
+        return outputs;
     }
+
 
     /**
      * @return the verbose

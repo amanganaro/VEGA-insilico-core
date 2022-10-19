@@ -1,6 +1,7 @@
 package insilico.core.version;
 
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelectorCore;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -22,7 +23,7 @@ public class InsilicoInfo {
     private int Minor;
     private int Revision;
 
-    private static final String XMLSource = "/insilico/core/version/version.xml";
+    private static final String XMLSource = "/version/version.xml";
 
     /**
      * Constructor. Builds the info object by reading the data retrieved
@@ -43,15 +44,13 @@ public class InsilicoInfo {
             Element element = (Element) nodes.item(0);
 
             this.Name = getValue("Name", element);
-            this.Major = Integer.valueOf(getValue("Major",element));
-            this.Minor = Integer.valueOf(getValue("Minor",element));
-            this.Revision = Integer.valueOf(getValue("Revision",element));
+            this.Major = Integer.parseInt(getValue("Major",element));
+            this.Minor = Integer.parseInt(getValue("Minor",element));
+            this.Revision = Integer.parseInt(getValue("Revision",element));
 
         } catch (Throwable e) {
-            throw new InitFailureException("Unable to read core data from XML (" +
-                    e.getMessage() + ")");
+            throw new InitFailureException(String.format(StringSelectorCore.getString("isinfo_read_core_fail"), e.getMessage()));
         }
-
     }
 
 
@@ -102,8 +101,6 @@ public class InsilicoInfo {
      * @return the version
      */
     public String getVersion() {
-        String s = String.valueOf(Major) + "." + String.valueOf(Minor) +
-                "." + String.valueOf(Revision);
-        return s;
+        return Major + "." + Minor + "." + Revision;
     }
 }

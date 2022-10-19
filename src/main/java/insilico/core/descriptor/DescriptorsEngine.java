@@ -1,10 +1,13 @@
 package insilico.core.descriptor;
 
 import insilico.core.exception.DescriptorNotFoundException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
+import lombok.Data;
 
 import java.util.ArrayList;
 
+@Data
 public class DescriptorsEngine {
 
     private ArrayList<DescriptorBlock> Descriptors;
@@ -25,7 +28,7 @@ public class DescriptorsEngine {
             if (currentDescriptor != null)
                 return currentDescriptor;
         }
-        throw new DescriptorNotFoundException("Descriptor " + name + " not found");
+        throw new DescriptorNotFoundException(String.format(StringSelectorCore.getString("descriptors_not_found"), name));
     }
 
     public boolean hasDescriptorBlock(Class DescriptorClass) {

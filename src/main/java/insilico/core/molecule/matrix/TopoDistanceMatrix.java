@@ -2,9 +2,11 @@ package insilico.core.molecule.matrix;
 
 import org.openscience.cdk.Atom;
 import org.openscience.cdk.graph.PathTools;
+import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -29,12 +31,17 @@ public class TopoDistanceMatrix {
 
         for (int i=0; i<nSK; i++) {
             matrix[i][i] = 0;  // diagonal
-            Atom atStart = (Atom) molecule.getAtom(i);
+            IAtom atStart = molecule.getAtom(i);
 
             for (int j=(i+1); j<nSK; j++) {
-                Atom atEnd = (Atom) molecule.getAtom(j);
-                List<IAtom> shortestPaths =
-                        PathTools.getShortestPath(molecule, atStart, atEnd);
+                IAtom atEnd = molecule.getAtom(j);
+
+                ShortestPaths sp = new ShortestPaths(molecule, atStart);
+                List<IAtom> shortestPaths = Arrays.asList(sp.atomsTo(atEnd));
+
+                // DEPRECATED METHOD
+//                List<IAtom> shortestPaths = PathTools.getShortestPath(molecule, atStart, atEnd);
+
                 matrix[i][j] = shortestPaths.size()-1;
                 matrix[j][i] = matrix[i][j];
             }

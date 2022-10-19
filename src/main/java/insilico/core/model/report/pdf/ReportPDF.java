@@ -21,7 +21,9 @@ import insilico.core.constant.InsilicoConstants;
 import insilico.core.constant.MessagesAD;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModelConsensusOutput;
+//import insilico.core.model.old.InsilicoModelInfoOLD;
 import insilico.core.model.InsilicoModelInfo;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.report.pdf.classbarchart.ClassBarChart;
@@ -39,6 +41,10 @@ import insilico.core.molecule.tools.Depiction;
 import insilico.core.similarity.SimilarMolecule;
 import insilico.core.tools.utils.ModelUtilities;
 import insilico.core.version.InsilicoInfo;
+import lombok.extern.slf4j.Slf4j;
+import org.openscience.cdk.DefaultChemObjectBuilder;
+import org.openscience.cdk.interfaces.IAtomContainer;
+import org.openscience.cdk.smiles.SmilesParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,10 +59,9 @@ import java.util.ArrayList;
 
 import static com.lowagie.text.Element.*;
 import static com.lowagie.text.Rectangle.BOTTOM;
-
+@Slf4j
 public class ReportPDF {
 
-    Logger logger = LoggerFactory.getLogger(ReportPDF.class);
 
     protected Document document;
     protected ByteArrayOutputStream doc_bos;
@@ -100,6 +105,13 @@ public class ReportPDF {
     private Image Img_title_4_1;
     private Image Img_title_4_2;
 
+    private Image Img_title_1_highres;
+    private Image Img_title_2_highres;
+    private Image Img_title_3_1_highres;
+    private Image Img_title_3_2_highres;
+    private Image Img_title_4_1_highres;
+    private Image Img_title_4_2_highres;
+
     // Core version
     private InsilicoInfo coreVersion;
 
@@ -131,88 +143,88 @@ public class ReportPDF {
        try {
            URL uImage = null;
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_green.png" );
+           uImage = getClass().getResource("/images/light_green.png" );
            Img_circle_green = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_yellow.png" );
+           uImage = getClass().getResource("/images/light_yellow.png" );
            Img_circle_yellow = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_orange.png" );
+           uImage = getClass().getResource("/images/light_orange.png" );
            Img_circle_orange = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_red.png" );
+           uImage = getClass().getResource("/images/light_red.png" );
            Img_circle_red = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/light_gray.png" );
+           uImage = getClass().getResource("/images/light_gray.png" );
            Img_circle_gray = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/stars_0.png" );
+           uImage = getClass().getResource("/images/stars_0.png" );
            Img_stars_0 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/stars_1.png" );
+           uImage = getClass().getResource("/images/stars_1.png" );
            Img_stars_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/stars_2.png" );
+           uImage = getClass().getResource("/images/stars_2.png" );
            Img_stars_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/stars_3.png" );
+           uImage = getClass().getResource("/images/stars_3.png" );
            Img_stars_3 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/assessment_ok.png" );
+           uImage = getClass().getResource("/images/assessment_ok.png" );
            Img_assessment_good = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/assessment_bad.png" );
+           uImage = getClass().getResource("/images/assessment_bad.png" );
            Img_assessment_bad = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/assessment_non-optimal.png" );
+           uImage = getClass().getResource("/images/assessment_non-optimal.png" );
            Img_assessment_non_optimal = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-           uImage = getClass().getResource("/insilico/core/model/report/pdf/images/vega_header.png" );
+           uImage = getClass().getResource("/images/vega_header.png" );
            Img_header = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
            if (HiRes) {
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_1.png" );
-               Img_title_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               uImage = getClass().getResource("/images/hi_report_top_section_1.png" );
+               Img_title_1_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_2.png" );
-               Img_title_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               uImage = getClass().getResource("/images/hi_report_top_section_2.png" );
+               Img_title_2_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_3_1.png" );
-               Img_title_3_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               uImage = getClass().getResource("/images/hi_report_top_section_3_1.png" );
+               Img_title_3_1_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_3_2.png" );
-               Img_title_3_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               uImage = getClass().getResource("/images/hi_report_top_section_3_2.png" );
+               Img_title_3_2_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_4_1.png" );
-               Img_title_4_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               uImage = getClass().getResource("/images/hi_report_top_section_4_1.png" );
+               Img_title_4_1_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/hi_report_top_section_4_2.png" );
-               Img_title_4_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
+               uImage = getClass().getResource("/images/hi_report_top_section_4_2.png" );
+               Img_title_4_2_highres = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
            } else {
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_1.png" );
+               uImage = getClass().getResource("/images/report_top_section_1.png" );
                Img_title_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_2.png" );
+               uImage = getClass().getResource("/images/report_top_section_2.png" );
                Img_title_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_3_1.png" );
+               uImage = getClass().getResource("/images/report_top_section_3_1.png" );
                Img_title_3_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_3_2.png" );
+               uImage = getClass().getResource("/images/report_top_section_3_2.png" );
                Img_title_3_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_4_1.png" );
+               uImage = getClass().getResource("/images/report_top_section_4_1.png" );
                Img_title_4_1 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
-               uImage = getClass().getResource("/insilico/core/model/report/pdf/images/report_top_section_4_2.png" );
+               uImage = getClass().getResource("/images/report_top_section_4_2.png" );
                Img_title_4_2 = Image.getInstance(ImageIO.read(uImage.openStream()),null);
 
            }
        } catch (Exception e) {
-           throw new InitFailureException("Unable to load images");
+           throw new InitFailureException(StringSelectorCore.getString("report_generator_load_image_fail"));
        }
    }
 
@@ -243,7 +255,7 @@ public class ReportPDF {
             writer = PdfWriter.getInstance(document, doc_bos);
             document.open();
         } catch (Exception e) {
-            throw new InitFailureException("Unable to create PDF document (" + e.getMessage() + ")");
+            throw new InitFailureException(String.format(StringSelectorCore.getString("guide_generator_unable_create_pdf"), e.getMessage()));
         }
 
         for (InsilicoModelWrapper Wrapper : modelWrappers) {
@@ -320,7 +332,7 @@ public class ReportPDF {
             cell.setBorder(BOTTOM);
             cell.setBorderColor(new Color(20,20,20));
             table.addCell(cell);
-            paragraph = new Paragraph("page " + CurPage, font);
+            paragraph = new Paragraph(StringSelectorCore.getString("report_generator_page") + CurPage, font);
             cell = new PdfPCell(paragraph);
             cell.setHorizontalAlignment(ALIGN_RIGHT);
             cell.setVerticalAlignment(ALIGN_MIDDLE);
@@ -335,18 +347,34 @@ public class ReportPDF {
             // Section title
             if (Section != -1) {
 
-                if (Section == 1)
-                    gif = Img_title_1;
-                if (Section == 2)
-                    gif = Img_title_2;
-                if (Section == 31)
-                    gif = Img_title_3_1;
-                if (Section == 32)
-                    gif = Img_title_3_2;
-                if (Section == 41)
-                    gif = Img_title_4_1;
-                if (Section == 42)
-                    gif = Img_title_4_2;
+                if(HiResMode){
+                    if (Section == 1)
+                        gif = Img_title_1_highres;
+                    if (Section == 2)
+                        gif = Img_title_2_highres;
+                    if (Section == 31)
+                        gif = Img_title_3_1_highres;
+                    if (Section == 32)
+                        gif = Img_title_3_2_highres;
+                    if (Section == 41)
+                        gif = Img_title_4_1_highres;
+                    if (Section == 42)
+                        gif = Img_title_4_2_highres;
+                } else {
+                    if (Section == 1)
+                        gif = Img_title_1;
+                    if (Section == 2)
+                        gif = Img_title_2;
+                    if (Section == 31)
+                        gif = Img_title_3_1;
+                    if (Section == 32)
+                        gif = Img_title_3_2;
+                    if (Section == 41)
+                        gif = Img_title_4_1;
+                    if (Section == 42)
+                        gif = Img_title_4_2;
+                }
+
 
                 float[] widths_title = {100f};
                 table = new PdfPTable(1);
@@ -362,7 +390,7 @@ public class ReportPDF {
             }
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report (" + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
     }
 
@@ -383,9 +411,9 @@ public class ReportPDF {
             // Header
             URL uBanner = null;
             if (HiResMode)
-                uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/hi_vega_report_cover_top.png" );
+                uBanner = getClass().getResource("/images/hi_vega_report_cover_top.png" );
             else
-                uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/vega_report_cover_top.png" );
+                uBanner = getClass().getResource("/images/vega_report_cover_top.png" );
             gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
             table = new PdfPTable(1);
             cell = new PdfPCell(gif, true);
@@ -398,9 +426,9 @@ public class ReportPDF {
 
             // Footer
             if (HiResMode)
-                uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/hi_vega_report_cover_bottom.png" );
+                uBanner = getClass().getResource("/images/hi_vega_report_cover_bottom.png" );
             else
-                uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/vega_report_cover_bottom.png" );
+                uBanner = getClass().getResource("/images/vega_report_cover_bottom.png" );
             gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
             table = new PdfPTable(1);
             cell = new PdfPCell(gif, true);
@@ -420,7 +448,7 @@ public class ReportPDF {
             cell.setBorderColor(new Color(255,255,255));
             cell.setPadding(10);
             cell.setBackgroundColor(new Color(240,240,240));
-            StringBuilder CurPar = new StringBuilder("Prediction and Applicability Domain analysis for models:\n\n");
+            StringBuilder CurPar = new StringBuilder(StringSelectorCore.getString("report_generator_prediction_ad_section") + "\n\n");
             paragraph = new Paragraph(CurPar.toString(), fontTitle);
             cell.addElement(paragraph);
             CurPar = new StringBuilder();
@@ -435,7 +463,7 @@ public class ReportPDF {
             CurPar.append("\n\n");
             paragraph = new Paragraph(CurPar.toString(), fontBig);
             cell.addElement(paragraph);
-            CurPar = new StringBuilder("Core version: " + coreVersion.getVersion());
+            CurPar = new StringBuilder(StringSelectorCore.getString("report_generator_core_version") + coreVersion.getVersion());
             paragraph = new Paragraph(CurPar.toString(), fontGray);
             cell.addElement(paragraph);
             table.addCell(cell);
@@ -443,8 +471,7 @@ public class ReportPDF {
             table.writeSelectedRows(0, -1, MidTable_Left, Math.round(y_pos) - 5 , writer.getDirectContent());
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
         CurPage = 0;
@@ -470,16 +497,16 @@ public class ReportPDF {
         String[] ModelDesc = new String[nModels];
         for (InsilicoModelConsensusWrapper mw : modelConsWrappers) {
             InsilicoModelInfo curInfo = mw.getModel().getInfo();
-            ModelTitle[modelIdx] = curInfo.getName() + " (version " + curInfo.getVersion() + ")\n";
-            ModelDesc[modelIdx] = curInfo.getDescriptionLong() + "\n"; ;
+            ModelTitle[modelIdx] = curInfo.getName() + "(" + StringSelectorCore.getString("report_generator_version") + " " + curInfo.getVersion() + ")\n";
+            ModelDesc[modelIdx] = curInfo.getSummary() + "\n"; ;
             modelIdx++;
         }
         for (InsilicoModelWrapper mw : modelWrappers) {
             if (!mw.isFlagForOutput())
                 continue;
             InsilicoModelInfo curInfo = mw.getModel().getInfo();
-            ModelTitle[modelIdx] = curInfo.getName() + " (version " + curInfo.getVersion() + ")\n";
-            ModelDesc[modelIdx] = curInfo.getDescriptionLong() + "\n"; ;
+            ModelTitle[modelIdx] = curInfo.getName() + "(" + StringSelectorCore.getString("report_generator_version") + " " + curInfo.getVersion() + ")\n";
+            ModelDesc[modelIdx] = curInfo.getSummary() + "\n"; ;
             modelIdx++;
         }
 
@@ -496,9 +523,9 @@ public class ReportPDF {
                 // Header
                 URL uBanner = null;
                 if (HiResMode)
-                    uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/hi_vega_report_references_top.png" );
+                    uBanner = getClass().getResource("/images/hi_vega_report_references_top.png" );
                 else
-                    uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/vega_report_references_top.png" );
+                    uBanner = getClass().getResource("/images/vega_report_references_top.png" );
                 gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
                 table = new PdfPTable(1);
                 cell = new PdfPCell(gif, true);
@@ -511,9 +538,9 @@ public class ReportPDF {
 
                 // Footer
                 if (HiResMode)
-                    uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/hi_vega_report_references_bottom.png" );
+                    uBanner = getClass().getResource("/images/hi_vega_report_references_bottom.png" );
                 else
-                    uBanner = getClass().getResource("/insilico/core/model/report/pdf/images/vega_report_references_bottom.png" );
+                    uBanner = getClass().getResource("/images/vega_report_references_bottom.png" );
                 gif = Image.getInstance(ImageIO.read(uBanner.openStream()),null);
                 table = new PdfPTable(1);
                 cell = new PdfPCell(gif, true);
@@ -536,9 +563,7 @@ public class ReportPDF {
 
                 // general disclaimer
                 if (modelIdx == 0) {
-                    CurPar = "You can find complete details on each model and on how to read "+
-                            "results in the proper model's guide, available on-line at www.vega-qsar.eu " +
-                            "or directly in the VegaNIC application.\n";
+                    CurPar = StringSelectorCore.getString("report_generator_paragraph_disclaimer");
                     paragraph = new Paragraph(CurPar, fontTitle);
                     cell.addElement(paragraph);
                     cell.addElement(new Paragraph("\n", font));
@@ -568,8 +593,7 @@ public class ReportPDF {
             }
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
     }
@@ -599,7 +623,8 @@ public class ReportPDF {
             if (!inMol.GetCAS().isEmpty())
                 if (!inMol.GetCAS().equals(inMol.GetId()))
                     sCAS =  "(" + inMol.GetCAS() + ")";
-            document.add(new Paragraph("Prediction for compound " + inMol.GetId() + sCAS +"\n\n", fontTitle));
+//            document.add(new Paragraph("Prediction for compound " + inMol.GetId() + sCAS +"\n\n", fontTitle));
+            document.add(new Paragraph(String.format(StringSelectorCore.getString("report_prediction_for_compound"), inMol.GetId(), sCAS) +  "\n\n", fontTitle));
 
             table = new PdfPTable(2);
 
@@ -792,13 +817,13 @@ public class ReportPDF {
 
             /////
 
-            CurPar = "\nCompound: " + inMol.GetId();
+            CurPar = "\n" + String.format(StringSelectorCore.getString("report_compound"), inMol.GetId());
             paragraph = new Paragraph(CurPar, font);
             document.add(paragraph);
-            CurPar = "Compound SMILES: " + inMol.GetSMILES();
+            CurPar = String.format(StringSelectorCore.getString("report_compound_smiles"), inMol.GetSMILES());
             paragraph = new Paragraph(CurPar, font);
             document.add(paragraph);
-            CurPar = "Experimental value";
+            CurPar = StringSelectorCore.getString("report_experimental_value");
             if (ModelWrapper.getModel().GetTrainingSet().hasUnits())
                 CurPar += " [" + ModelWrapper.getModel().GetTrainingSet().getUnits() + "]";
             CurPar += ": ";
@@ -826,38 +851,37 @@ public class ReportPDF {
                     CurPar = ModelUtilities.BuildSANameList(curOut.getSAList().getSAList());
                 else
                     CurPar = "-";
-                CurPar = "Structural alerts: " + CurPar;
+                CurPar = String.format(StringSelectorCore.getString("report_structural_alerts"), CurPar);
                 paragraph = new Paragraph(CurPar, font);
                 document.add(paragraph);
             }
 
             if (curOut.getADI() != null)
-                CurPar = "Reliability: " + curOut.getADI().GetAssessment();
+                CurPar = String.format(StringSelectorCore.getString("report_reliability"), curOut.getADI().GetAssessment());
             else
-                CurPar = "Reliability: -";
+                CurPar = String.format(StringSelectorCore.getString("report_reliability"), "-");
             paragraph = new Paragraph(CurPar, font);
             document.add(paragraph);
-            CurPar = "Remarks: ";
+            CurPar = StringSelectorCore.getString("report_remarks");
             paragraph = new Paragraph(CurPar, font);
             document.add(paragraph);
 
             // Joins different warnings
-            String msg = "";
+            StringBuilder msg = new StringBuilder();
             for (int i = 0; i<inMol.GetWarnings().GetSize(); i++)
-                msg += "[Molecule warning] " + inMol.GetWarnings().GetMessages(i) + "\n";
+                msg.append(StringSelectorCore.getString("report_molecule_warning")).append(inMol.GetWarnings().GetMessages(i)).append("\n");
             for (int i = 0; i<inMol.GetErrors().GetSize(); i++)
-                msg += "[Molecule error] " + inMol.GetErrors().GetMessages(i) + "\n";
+                msg.append(StringSelectorCore.getString("report_molecule_error")).append(inMol.GetErrors().GetMessages(i)).append("\n");
             if (!curOut.getErrMessage().isEmpty())
-                msg += "[Model] " + curOut.getErrMessage() + "\n";
+                msg.append(StringSelectorCore.getString("report_model_square")).append(curOut.getErrMessage()).append("\n");
             if (msg.length() == 0)
-                msg = "none";
-            paragraph = new Paragraph(msg, font);
+                msg = new StringBuilder(StringSelectorCore.getString("report_non"));
+            paragraph = new Paragraph(msg.toString(), font);
             paragraph.setIndentationLeft(8);
             document.add(paragraph);
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
     }
@@ -876,7 +900,7 @@ public class ReportPDF {
 
             document.newPage();
             CurPage++;
-            WritePageHeader(ModelWrapper.getModel().getInfo(), 1);
+//            WritePageHeader(ModelWrapper.getModel().getInfo(), 1);
 
 
             //// PAGE 1 - results //////////////////////////////////////////
@@ -886,7 +910,7 @@ public class ReportPDF {
             if (!inMol.GetCAS().isEmpty())
                 if (!inMol.GetCAS().equals(inMol.GetId()))
                     sCAS =  "(" + inMol.GetCAS() + ")";
-            document.add(new Paragraph("Prediction for compound " + inMol.GetId() + sCAS +"\n\n", fontTitle));
+            document.add(new Paragraph(String.format(StringSelectorCore.getString("report_prediction_for_compound"), inMol.GetId(), sCAS) +"\n\n", fontTitle));
 
             table = new PdfPTable(2);
 
@@ -923,7 +947,7 @@ public class ReportPDF {
             cell.setHorizontalAlignment(ALIGN_LEFT);
             cell.setVerticalAlignment(ALIGN_MIDDLE);
             cell.setBorderColor(new Color(255,255,255));
-            CurPar = "Prediction: ";
+            CurPar = StringSelectorCore.getString("report_prediction_label");
             paragraph = new Paragraph(CurPar, font);
             cell.addElement(paragraph);
             tableImg.addCell(cell);
@@ -997,13 +1021,13 @@ public class ReportPDF {
 
             /////
 
-            CurPar = "\nCompound: " + inMol.GetId();
+            CurPar = "\n" + String.format(StringSelectorCore.getString("report_compound"), inMol.GetId());
             paragraph = new Paragraph(CurPar, font);
             document.add(paragraph);
-            CurPar = "Compound SMILES: " + inMol.GetSMILES();
+            CurPar = String.format(StringSelectorCore.getString("report_compound_smiles"), inMol.GetSMILES());
             paragraph = new Paragraph(CurPar, font);
             document.add(paragraph);
-            CurPar = "Used models: " + curOut.getUsedModels();
+            CurPar = String.format(StringSelectorCore.getString("report_model_used"), curOut.getUsedModels());
             paragraph = new Paragraph(CurPar, font);
             document.add(paragraph);
 
@@ -1023,22 +1047,22 @@ public class ReportPDF {
             document.add(paragraph);
 
             // Joins different warnings
-            String msg = "";
+            StringBuilder msg = new StringBuilder();
             for (int i = 0; i<inMol.GetWarnings().GetSize(); i++)
-                msg += "[Molecule warning] " + inMol.GetWarnings().GetMessages(i) + "\n";
+                msg.append(StringSelectorCore.getString("report_molecule_warning")).append(inMol.GetWarnings().GetMessages(i)).append("\n");
             for (int i = 0; i<inMol.GetErrors().GetSize(); i++)
-                msg += "[Molecule error] " + inMol.GetErrors().GetMessages(i) + "\n";
+                msg.append(StringSelectorCore.getString("report_molecule_error")).append(inMol.GetErrors().GetMessages(i)).append("\n");
             if (!curOut.getErrMessage().isEmpty())
-                msg += "[Model] " + curOut.getErrMessage() + "\n";
+                msg.append(StringSelectorCore.getString("report_model_square")).append(curOut.getErrMessage()).append("\n");
             if (msg.length() == 0)
-                msg = "none";
-            paragraph = new Paragraph(msg, font);
+                msg = new StringBuilder(StringSelectorCore.getString("report_non"));
+            paragraph = new Paragraph(msg.toString(), font);
             paragraph.setIndentationLeft(8);
             document.add(paragraph);
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
+
         }
 
     }
@@ -1090,7 +1114,7 @@ public class ReportPDF {
                 UncertaintyClassBar CurClass = UncItem.getBars().get(cl);
 
                 document.add(new Paragraph(CurClass.getClassName() + "\n\n", fontTitle));
-                document.add(new Paragraph("Following, a chart showing the predicted value together with its conservative confidence interval for safe classification.\n", font));
+                document.add(new Paragraph(StringSelectorCore.getString("report_chart_paragraph") + "\n", font));
                 document.add(new Paragraph(CurClass.getClassDescription() + "\n\n", font));
 
                 BufferedImage I = new BufferedImage(900, 200, BufferedImage.TYPE_INT_RGB);
@@ -1127,8 +1151,7 @@ public class ReportPDF {
             }
             
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
 
@@ -1178,15 +1201,19 @@ public class ReportPDF {
                 table = new PdfPTable(2);
 
                 try {
-                    if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
-                        URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
-                                TS.getId((int)curSimMol.getIndex()) + ".png" );
-                        gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
-                    } else {
+
+                    //todo
+//                    if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
+//                        URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
+//                                TS.getId((int)curSimMol.getIndex()) + ".png" );
+//                        gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
+//                    } else {
                         InsilicoMolecule curMol = SmilesMolecule.Convert(TS.getSMILES((int)curSimMol.getIndex()));
+//                        InsilicoMolecule curMol = SmilesMolecule.Convert("ciao");
+
                         gif = Image.getInstance(Depiction.DepictMolecule(curMol, 180, 180),null);
-                    }
-                } catch (Exception e) {
+//                    }
+                } catch (Throwable e) {
                     BufferedImage I = new BufferedImage(180, 180, BufferedImage.TYPE_INT_RGB);
                     Graphics2D g = I.createGraphics();
                     g.setBackground(new Color(255,255,255));
@@ -1196,7 +1223,7 @@ public class ReportPDF {
                     g.drawLine(20, 160, 160, 20);
                     g.dispose();
                     gif = Image.getInstance(I,null);
-                    logger.warn("Unable to depict molecule no. " + curSimMol.getIndex() + " from TS in " + ModelWrapper.getModel().getInfo().getName());
+                    log.warn(String.format(StringSelectorCore.getString("report_depict_mol_error"), curSimMol.getIndex() , ModelWrapper.getModel().getInfo().getName()));
                 }
 
                 cell = new PdfPCell(gif, true);
@@ -1208,9 +1235,9 @@ public class ReportPDF {
 
                 String MolStatus = "";
                 if (TS.getMoleculeSet((int)curSimMol.getIndex()) == TrainingSet.MOLECULE_TRAINING)
-                    MolStatus = "  (Training set)";
+                    MolStatus = StringSelectorCore.getString("report_molstatus_training");
                 if (TS.getMoleculeSet((int)curSimMol.getIndex()) == TrainingSet.MOLECULE_TEST)
-                    MolStatus = "  (Test set)";
+                    MolStatus = StringSelectorCore.getString("report_molstatus_test");
 
                 String Units = "";
                 if (ModelWrapper.getModel().GetTrainingSet().hasUnits())
@@ -1245,17 +1272,17 @@ public class ReportPDF {
                     }
                 }
 
-                paragraph.add("Compound #" + (i+1) + "\n\n");
-                paragraph.add("CAS: " + TS.getCAS((int)curSimMol.getIndex()) + "\n");
-                paragraph.add("Dataset id: " + TS.getId((int)curSimMol.getIndex()) + MolStatus + "\n");
-                paragraph.add("SMILES: " + TS.getSMILES((int)curSimMol.getIndex()) + "\n");
-                paragraph.add("Similarity: " + Format_3D.format(curSimMol.getSimilarity()) + "\n\n");
-                paragraph.add("Experimental value" + Units + ": " + TS.getExperimentalValueFormatted((int)curSimMol.getIndex()) + "\n");
-                paragraph.add("Predicted value" + Units + ": " + TS.getPredictedValueFormatted((int)curSimMol.getIndex()) + "");
+                paragraph.add(String.format(StringSelectorCore.getString("report_compound_#"), i+1) + "\n\n");
+                paragraph.add(String.format(StringSelectorCore.getString("report_cas"), TS.getCAS((int)curSimMol.getIndex())) + "\n");
+                paragraph.add(String.format(StringSelectorCore.getString("report_dataset_id"), TS.getId((int)curSimMol.getIndex()), MolStatus) + "\n");
+                paragraph.add(String.format(StringSelectorCore.getString("report_smiles"),TS.getSMILES((int)curSimMol.getIndex())) + "\n");
+                paragraph.add(String.format(StringSelectorCore.getString("report_similarity"), Format_3D.format(curSimMol.getSimilarity())) + "\n");
+                paragraph.add(String.format(StringSelectorCore.getString("report_experimental_valuee"), Units, TS.getExperimentalValueFormatted((int)curSimMol.getIndex())) + "\n");
+                paragraph.add(String.format(StringSelectorCore.getString("report_predicted_value"), Units, TS.getPredictedValueFormatted((int)curSimMol.getIndex())) + "\n");
                 if (!SimAlertsInTarget.isEmpty())
-                    paragraph.add("\n\nAlerts (found also in the target): " + SimAlertsInTarget + "");
+                    paragraph.add("\n\n" + String.format(StringSelectorCore.getString("report_alert_found"), SimAlertsInTarget) + "");
                 if (!SimAlertsNotInTarget.isEmpty())
-                    paragraph.add("\n\nAlerts (not found in the target): " + SimAlertsNotInTarget + "");
+                    paragraph.add("\n\n" + String.format(StringSelectorCore.getString("report_alert_not_found"), SimAlertsNotInTarget) + "");
                 paragraph.add("\n");
                 cell = new PdfPCell(new Paragraph(paragraph));
                 cell.setBorderColor(new Color(255,255,255));
@@ -1282,8 +1309,7 @@ public class ReportPDF {
             }
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
     }
@@ -1345,7 +1371,7 @@ public class ReportPDF {
                 paragraph = new Paragraph(Results.getADI().GetIndexName() + " = " +
                         Results.getADI().GetIndexValueFormatted() + "\n", font);
                 cell.addElement(paragraph);
-                paragraph = new Paragraph("Explanation: " + Results.getADI().GetAssessment() + ".\n", font);
+                paragraph = new Paragraph(String.format(StringSelectorCore.getString("report_explanation"), Results.getADI().GetAssessment()) + "\n", font);
                 cell.addElement(paragraph);
 
                 cell.setBorderColor(Color.BLACK);
@@ -1395,7 +1421,7 @@ public class ReportPDF {
                     paragraph = new Paragraph(curAD.GetIndexName() + " = " +
                             curAD.GetIndexValueFormatted() + "\n", font);
                     cell.addElement(paragraph);
-                    paragraph = new Paragraph("Explanation: " + curAD.GetAssessment() + ".\n", font);
+                    paragraph = new Paragraph(String.format(StringSelectorCore.getString("report_explanation"), curAD.GetAssessment()) + ".\n", font);
                     cell.addElement(paragraph);
 
                     cell.setBorderColor(new Color(200,200,200));
@@ -1410,14 +1436,14 @@ public class ReportPDF {
             } else {
 
                 document.add(new Paragraph("\n", font));
-                document.add(new Paragraph(" No AD assessment available for this molecule\n\n", font));
+                document.add(new Paragraph(StringSelectorCore.getString("report_no_ad_available") + "\n\n", font));
                 return;
 
             }
 
             // Legend
 
-            paragraph = new Paragraph("\nSymbols explanation:\n\n", font);
+            paragraph = new Paragraph("\n" + StringSelectorCore.getString("report_symbols_explanation") + "\n\n", font);
             document.add(paragraph);
 
             table = new PdfPTable(2);
@@ -1429,7 +1455,7 @@ public class ReportPDF {
             cell.setPaddingRight(6);
             table.addCell(cell);
             cell = new PdfPCell();
-            paragraph = new Paragraph("The feature has a good assessment, model is reliable regarding this aspect.", font);
+            paragraph = new Paragraph(StringSelectorCore.getString("report_feature_assessment_good"), font);
             cell.addElement(paragraph);
             cell.setBorderColor(new Color(255,255,255));
             cell.setPaddingLeft(4);
@@ -1453,7 +1479,7 @@ public class ReportPDF {
             cell.setPaddingBottom(4);
             table.addCell(cell);
             cell = new PdfPCell();
-            paragraph = new Paragraph("The feature has a non optimal assessment, this aspect should be reviewed by an expert.", font);
+            paragraph = new Paragraph(StringSelectorCore.getString("report_feature_assessment_non_optimal"), font);
             cell.addElement(paragraph);
             cell.setBorderColor(new Color(255,255,255));
             cell.setPaddingLeft(4);
@@ -1476,7 +1502,7 @@ public class ReportPDF {
             cell.setPaddingRight(6);
             table.addCell(cell);
             cell = new PdfPCell();
-            paragraph = new Paragraph("The feature has a bad assessment, model is not reliable regarding this aspect.", font);
+            paragraph = new Paragraph(StringSelectorCore.getString("report_feature_assessment_bad"), font);
             cell.addElement(paragraph);
             cell.setBorderColor(new Color(255,255,255));
             cell.setPaddingLeft(4);
@@ -1491,8 +1517,7 @@ public class ReportPDF {
             document.add(table);
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
     }
@@ -1536,7 +1561,7 @@ public class ReportPDF {
                     if (totFragPage>1)
                         pages = " - " + (fragPage+1) + " of " + (totFragPage) + ":";
 
-                    document.add(new Paragraph("(" + inMol.GetId() + ") Reasoning on fragments/structural alerts" + pages + "\n\n", font));
+                    document.add(new Paragraph(String.format(StringSelectorCore.getString("report_reasoning_pages"), inMol.GetId(), pages) + "\n\n", font));
                     document.add(new Paragraph("\n", font));
 
                     // show fragment
@@ -1558,7 +1583,7 @@ public class ReportPDF {
 
                     cell = new PdfPCell();
 
-                    paragraph = new Paragraph("Fragment found: " + curSA.getName() + "\n\n", fontTitle);
+                    paragraph = new Paragraph(String.format(StringSelectorCore.getString("report_fragment_found"),  curSA.getName()) + "\n\n", fontTitle);
                     cell.addElement(paragraph);
 
                     if (gif != null) {
@@ -1573,12 +1598,12 @@ public class ReportPDF {
                     if ((curSim != null) && (!curSim.isEmpty()))  {
                         paragraph = new Paragraph("", font);
                         paragraph.add(curSA.getDescription() + "\n\n");
-                        paragraph.add("Following, the most similar compounds from the model's dataset having the same fragment.\n");
+                        paragraph.add( StringSelectorCore.getString("report_following_similar")+"\n");
                         cell.addElement(paragraph);
                     } else {
                         paragraph = new Paragraph("", font);
                         paragraph.add(curSA.getDescription() + "\n\n");
-                        paragraph.add("No compounds with the same fragment have been found int the model's dataset .\n");
+                        paragraph.add( StringSelectorCore.getString("report_following_similar_none")+"\n");
                         cell.addElement(paragraph);
                     }
 
@@ -1618,14 +1643,16 @@ public class ReportPDF {
                         SimilarMolecule curSimMol = curSim.get(m);
 
                         try {
-                            if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
-                                URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
-                                        TS.getId((int)curSimMol.getIndex()) + ".png" );
-                                gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
-                            } else {
+
+                            // todo
+//                            if (ModelWrapper.getModel().getInfo().hasTrainingSetPngURL()) {
+//                                URL uImg = getClass().getResource(ModelWrapper.getModel().getInfo().getTrainingSetPngURL() + "/" +
+//                                        TS.getId((int)curSimMol.getIndex()) + ".png" );
+//                                gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
+//                            } else {
                                 InsilicoMolecule curMol = SmilesMolecule.Convert(TS.getSMILES((int)curSimMol.getIndex()));
                                 gif = Image.getInstance(Depiction.DepictMolecule(curMol, 180, 180),null);
-                            }
+//                            }
                         } catch (Exception e) {
                             BufferedImage I = new BufferedImage(180, 180, BufferedImage.TYPE_INT_RGB);
                             Graphics2D g = I.createGraphics();
@@ -1636,7 +1663,7 @@ public class ReportPDF {
                             g.drawLine(20, 160, 160, 20);
                             g.dispose();
                             gif = Image.getInstance(I,null);
-                            logger.warn("Unable to depict molecule no. " + curSimMol.getIndex() + " from TS in " + ModelWrapper.getModel().getInfo().getName());
+                            log.warn(String.format(StringSelectorCore.getString("report_depict_mol_error"), curSimMol.getIndex() , ModelWrapper.getModel().getInfo().getName()));
                         }
 
                         cell = new PdfPCell(gif, true);
@@ -1648,9 +1675,9 @@ public class ReportPDF {
 
                         String MolStatus = "";
                         if (TS.getMoleculeSet((int)curSimMol.getIndex()) == TrainingSet.MOLECULE_TRAINING)
-                            MolStatus = "  (Training set)";
+                            MolStatus = StringSelectorCore.getString("report_molstatus_training");
                         if (TS.getMoleculeSet((int)curSimMol.getIndex()) == TrainingSet.MOLECULE_TEST)
-                            MolStatus = "  (Test set)";
+                            MolStatus = StringSelectorCore.getString("report_molstatus_test");
 
                         String Units = "";
                         if (ModelWrapper.getModel().GetTrainingSet().hasUnits())
@@ -1684,16 +1711,16 @@ public class ReportPDF {
                         }
 
 
-                        paragraph.add("CAS: " + TS.getCAS((int)curSimMol.getIndex()) + "\n");
-                        paragraph.add("Dataset id: " + TS.getId((int)curSimMol.getIndex()) + MolStatus + "\n");
-                        paragraph.add("SMILES: " + TS.getSMILES((int)curSimMol.getIndex()) + "\n");
-                        paragraph.add("Similarity: " + Format_3D.format(curSim.get(m).getSimilarity()) + "\n\n");
-                        paragraph.add("Experimental value" + Units + ": " + TS.getExperimentalValueFormatted((int)curSim.get(m).getIndex()) + "\n");
-                        paragraph.add("Predicted value" + Units + ": " + TS.getPredictedValueFormatted((int)curSim.get(m).getIndex()) + "");
+                        paragraph.add(String.format(StringSelectorCore.getString("report_cas"), TS.getCAS((int)curSimMol.getIndex())) + "\n");
+                        paragraph.add(String.format(StringSelectorCore.getString("report_dataset_id"), TS.getId((int)curSimMol.getIndex()), MolStatus) + "\n");
+                        paragraph.add(String.format(StringSelectorCore.getString("report_smiles"),TS.getSMILES((int)curSimMol.getIndex())) + "\n");
+                        paragraph.add(String.format(StringSelectorCore.getString("report_similarity"), Format_3D.format(curSimMol.getSimilarity())) + "\n\n");
+                        paragraph.add(String.format(StringSelectorCore.getString("report_experimental_valuee"), Units, TS.getExperimentalValueFormatted((int)curSimMol.getIndex())) + "\n");
+                        paragraph.add(String.format(StringSelectorCore.getString("report_predicted_value"), Units, TS.getPredictedValueFormatted((int)curSim.get(m).getIndex())) + "\n");
                         if (!SimAlertsInTarget.isEmpty())
-                            paragraph.add("\n\nAlerts (found also in the target): " + SimAlertsInTarget + "");
+                            paragraph.add("\n\n" + String.format(StringSelectorCore.getString("report_alert_found"), SimAlertsInTarget) + "");
                         if (!SimAlertsNotInTarget.isEmpty())
-                            paragraph.add("\n\nAlerts (not found in the target): " + SimAlertsNotInTarget + "");
+                            paragraph.add("\n\n" + String.format(StringSelectorCore.getString("report_alert_not_found"), SimAlertsNotInTarget) + "");
                         paragraph.add("\n");
                         cell = new PdfPCell(new Paragraph(paragraph));
                         cell.setBorderColor(new Color(255,255,255));
@@ -1723,8 +1750,7 @@ public class ReportPDF {
             }
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
     }
@@ -1764,13 +1790,12 @@ public class ReportPDF {
             int DescIdx = DescItem.getDescriptorIndex();
             iTrainingSet TS = ModelWrapper.getModel().GetTrainingSet();
 
-            document.add(new Paragraph("Descriptor name: " + DescItem.getDescriptorName() + "\n", font));
-            document.add(new Paragraph("Description: " + DescItem.getDescription()+ "\n\n", font));
+            document.add(new Paragraph(String.format(StringSelectorCore.getString("report_descriptor_name"), DescItem.getDescriptorName()) + "\n", font));
+            document.add(new Paragraph(String.format(StringSelectorCore.getString("report_description"),DescItem.getDescription()) + "\n\n", font));
 
 
             // Scatter of all values
-
-            document.add(new Paragraph("Following, a scatterplot of " + DescItem.getDescriptorName() + " against response values; experimental values are reported for the training set, predicted value for the studied compound. Light blue dots represent values of compounds from training set, red dot is the value of the studied compound.\n\n", font));
+            document.add(new Paragraph(String.format(StringSelectorCore.getString("report_scatter_all_values"), DescItem.getDescriptorName()) + "\n\n", font));
 
             BufferedImage I = new BufferedImage(600, 350, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = I.createGraphics();
@@ -1782,6 +1807,8 @@ public class ReportPDF {
 
             ScatterChartDataSet ds1 = new ScatterChartDataSet(ScatterChartDataSet.DS_SCATTER);
             ds1.PointColor = new Color(0x00, 0x99, 0xFF);
+
+            //todo
             for (int k=0; k<TS.getMoleculesSize(); k++)
                 ds1.Add(new ScatterChartDataPoint(TS.getDescriptor(k, DescIdx), TS.getExperimentalValue(k)));
 
@@ -1815,7 +1842,7 @@ public class ReportPDF {
 
             // Scatter of similar compounds
 
-            document.add(new Paragraph("Following, a scatterplot of " + DescItem.getDescriptorName() + " against response values only for 3 most similar compounds in the training set. Red dot is the value of the studied compound, black outlined circles represents experimental values of compounds from training set, black dots represents predicted value of the same compound; the size of the circle is proportional to the similarity to the studied compound.\n\n", font));
+            document.add(new Paragraph(String.format(StringSelectorCore.getString("report_scatter_similar_compounds"), DescItem.getDescriptorName()) + "\n\n", font));
 
             I = new BufferedImage(600, 350, BufferedImage.TYPE_INT_RGB);
             g = I.createGraphics();
@@ -1833,6 +1860,8 @@ public class ReportPDF {
                 dsSim[s].PointSize = 2 + (int)Math.ceil(Math.pow(16, simMol.getSimilarity()*simMol.getSimilarity()));
                 dsSim[s].PointColor = Color.BLACK;
                 dsSim[s].PointColorFilling = Color.WHITE;
+
+                //todo 17.11.2020
                 dsSim[s].Add(new ScatterChartDataPoint(TS.getDescriptor((int)simMol.getIndex(), DescIdx),
                         TS.getExperimentalValue((int)simMol.getIndex()),
                         TS.getDescriptor((int)simMol.getIndex(), DescIdx),
@@ -1867,13 +1896,12 @@ public class ReportPDF {
             table.setWidthPercentage(75);
             document.add(table);
 
-            //gif.setAlignment(Image.ALIGN_CENTER);
-            //document.add(gif);
+//            gif.setAlignment(Image.ALIGN_CENTER);
+//            document.add(gif);
 
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
         }
 
     }
@@ -1923,8 +1951,8 @@ public class ReportPDF {
                     String pages=".";
                     if (nPages>1)
                         pages = " - page " + (curPage) + " of " + (nPages) + ".";
-                    document.add(new Paragraph("(" + inMol.GetId() + ") Reasoning on rare and missing Atom Centered Fragments" + pages + "\n", font));
-                    document.add(new Paragraph("The following Atom Centered Fragments have been found in the molecule, but they are not found or rarely found in the model's training set:\n\n", font));
+                    document.add(new Paragraph(String.format(StringSelectorCore.getString("report_reasoning_acf"), inMol.GetId(), pages) + "\n", font));
+                    document.add(new Paragraph(StringSelectorCore.getString("report_resoning_acf_detail") + "\n\n", font));
                     document.add(new Paragraph("\n", font));
                 }
 
@@ -1934,10 +1962,11 @@ public class ReportPDF {
                 String FragSMILES = DescItem.getFragments()[i];
 
                 try {
-                    InsilicoMolecule curMol = SmilesMolecule.Convert(FragSMILES);
-                    gif = Image.getInstance(Depiction.DepictMolecule(curMol, 100, 100),null);
-                    if (curMol.IsValid())
-                        FragSMILES = curMol.GetSMILES();
+                    SmilesParser smilesParser = new SmilesParser(DefaultChemObjectBuilder.getInstance());
+                    smilesParser.kekulise(false);
+                    IAtomContainer CurFragment = smilesParser.parseSmiles(FragSMILES);
+                    gif = Image.getInstance(Depiction.DepictMolecule(CurFragment, 100, 100),null);
+                    FragSMILES = SmilesMolecule.GenerateSmiles(CurFragment);
                 } catch (Exception e) {
                     BufferedImage I = new BufferedImage(100, 100, BufferedImage.TYPE_INT_RGB);
                     Graphics2D g = I.createGraphics();
@@ -1956,7 +1985,7 @@ public class ReportPDF {
                 table.addCell(cell);
 
                 paragraph = new Paragraph("", font);
-                paragraph.add("Fragment defined by the SMILES: " + FragSMILES + "\n");
+                paragraph.add(String.format(StringSelectorCore.getString("report_fragment_smiles"), FragSMILES) + "\n");
                 if (DescItem.getFragmentsType()[i] == InsilicoConstants.ACF_TYPE_RARE)
                     paragraph.add(MessagesAD.ACF_MESSAGE_RARE + "\n");
                 if (DescItem.getFragmentsType()[i] == InsilicoConstants.ACF_TYPE_MISSING)
@@ -1984,8 +2013,8 @@ public class ReportPDF {
 
 
         } catch (Exception e) {
-            throw new GenericFailureException("Error while writing PDF report ("
-                    + e.getMessage() + ")");
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("guide_generator_error_write_pdf"), e.getMessage()));
+
         }
 
     }

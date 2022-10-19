@@ -1,0 +1,41 @@
+no.	SMARTS	Mean value	Std Dev	Hits	Parents	Chemical meaning
+1	O=Cc1ccccc1	1.36	1.1	73		
+2	C=O	1.34	1.14	237		
+3	OP(O)	1.4	1.08	52		
+4	[S]c1ccccc1	0.81	1	50		
+5	CN(C)C	1.37	1.11	47		
+6	c1ncncn1	0.4	0.74	16		1-3-5-Triazines
+7	Clc1ccccc1c2ccc(Cl)cc2	4.45	0.5	15		
+8	Clc1cc(c2ccccc2)c(Cl)cc1	4.49	0.46	15		
+9	*-C(=O)[OH]	0.33	0.83	45		
+10	*-S(=O)(=O)[OH]	0.79	0.96	31		
+11	*-P(=O)([OH])[OH]	-0.11	0.27	2		
+12	*-P(=S)([O])[O]	1.69	1.08	27		
+13	*-P(=S)(-S)[O]	1.28	1.12	12		
+14	*-[OH]	1.12	1.12	205		
+15	*-[N;D1]	0.89	0.88	71		
+16	*-C(=S)[S]	0.69	0.38	3		
+17	[C;D3](=O)	1.36	1.14	234		
+18	Clc1ccc(Oc2ccc(Cl)c(Cl)c2)cc1	4.13	0.38	7		
+19	c1ccc2cc3ccccc3(cc2(c1))	2.69	0.3	7		
+20	[$([S;D2]),$([S;D3]=[O,S]),$([S;D4](=[O,S])=O)]([C,c])[$([N;D1;!+]),$([N;D2;!+]([*])[*]),$([N;D3;!+]([*])([*])[*])]	0.80	1.07	16		sulfonamides (thio-/dithio-)
+21	[$([C;D2]),$([C;D3]C)](=O)[N;D2;!+][C,c;!$(C=O)]	0.92	0.89	16		secondary amides (aliphatic)
+22	[N;D1][a]	0.97	0.90	60		primary amines (aromatic)
+23	O=[$([C;D2]),$([C;D3]C)][N;D3;!+]([C,c;!$(C=O)])[C,c;!$(C=O)]	1.12	0.85	12		tertiary amides (aliphatic)
+24	[C,c][C;D2;!R][Cl,Br,F,I]	1.18	0.99	27		CH2RX
+25	[!H0;#7,#8]	1.19	1.10	369		donor atoms for H-bonds (N and O)
+26	C(=[O,S])([$([#7;D3;!+](*)(*)*),$([#7;D2;!+](*)*),$([#7;D1;!+])])[$([#7;D3;!+](*)(*)*),$([#7;D2;!+](*)*),$([#7;D1;!+])]	1.26	1.20	32		urea (-thio) derivatives
+27	c1cc[$([nX3]),$([nX2])]cc1	1.30	1.37	31		pyridines
+28	O=C([a])[O;D2][C,c]	1.31	1.25	14		esters (aromatic)
+29	[$([S;D4](=O)(=O)([*;!a])[*;!a]),$([S;D3](=O)(=O)=C),$([S;D3](=O)(=O)=S)]	1.41	1.23	13		sulfones
+30	[a][N+]([O-])=O	1.43	1.09	62		nitro groups (aromatic)
+31	N#C[a]	1.50	1.06	13		nitriles (aromatic)
+32	[!$([#6,F,Cl,Br,I,o,s,nX3,#7v5,#15v5,#16v4,#16v6,*+1,*+2,*+3])]	1.53	1.20	657		acceptor atoms for H-bonds (N,O,F)
+33	[C;!$(C=[O,S]);!$(C#N)]O[C;!$(C=[O,S]);!$(C#N)]	1.59	1.19	48		ethers (aliphatic)
+34	[$(C(=[O,S])([O,S][a])N),$(C(=[O,S])([O,S])N[a])]	1.63	0.93	23		(thio-) carbamates (aromatic)
+35	C(=[O,S])([$([O;D1]),$([S;D1]),$([O;D2](C)[A]),$([S;D2](C)[A])])[$([N;D1]),$([N;D2](C)[A]),$([N;D3](C)([A])[A])]	1.66	1.14	17		(thio-) carbamates (aliphatic)
+36	c1cncnc1	1.73	0.88	11		pyrimidines
+37	[$([N;D2;!+]),$([N;D3](C)(C)[C,c])]([C;D3]=[O,S])[C;D3]=[O,S]	1.74	1.24	15		imides (-thio)
+38	O=[$([C;D2]),$([C;D3]C)][O;D2][C,c]	2.11	0.88	37		esters (aliphatic)
+39	[#6;!$(C=O);!$(C#N)]O[a]	2.23	1.22	126		ethers (aromatic)
+40	N#CC	2.31	1.03	15		nitriles (aliphatic)

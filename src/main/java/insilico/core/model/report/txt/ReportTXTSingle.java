@@ -2,12 +2,14 @@ package insilico.core.model.report.txt;
 
 import insilico.core.ad.item.iADIndex;
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModel;
 import insilico.core.model.runner.InsilicoModelWrapper;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.tools.utils.ModelUtilities;
 import insilico.core.version.InsilicoInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,9 +19,9 @@ import java.util.ArrayList;
 /**
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class ReportTXTSingle {
 
-    static Logger logger = LoggerFactory.getLogger(ReportTXTSingle.class);
 
     /**
      * Writes the single report from the model wrapper to std output
@@ -44,13 +46,13 @@ public class ReportTXTSingle {
         ArrayList<InsilicoModelOutput> Results = ModelWrapper.getResult();
 
         // Model info
-        Out.print("Prediction and Applicability Domain analysis for model:" + System.lineSeparator());
-        Out.print(Model.getInfo().getName() + " (version " + Model.getInfo().getVersion() + ")" + System.lineSeparator());
+        Out.print(StringSelectorCore.getString("report_txt_intro") + System.lineSeparator());
+        Out.print(String.format(StringSelectorCore.getString("report_txt_version"), Model.getInfo().getName(), Model.getInfo().getVersion()) + System.lineSeparator());
         try {
             InsilicoInfo icv = new InsilicoInfo();
-            Out.print("(calculation core version: " + icv.getVersion() + ")" + System.lineSeparator());
+            Out.print(String.format(StringSelectorCore.getString("report_txt_core_version"), icv.getVersion()) + System.lineSeparator());
         } catch (InitFailureException ex) {
-            logger.warn("unable to retrieve core information - " + ex.getMessage());
+            log.warn(String.format(StringSelectorCore.getString("report_txt_init_exception"), ex.getMessage()));
         }
 
         Out.print(System.lineSeparator());
@@ -60,20 +62,20 @@ public class ReportTXTSingle {
 
 
         // Headers
-        StringBuilder report_txt = new StringBuilder("No.\tId\tSMILES\tAssessment");
+        StringBuilder report_txt = new StringBuilder(String.format(StringSelectorCore.getString("report_txt_header"), "\t","\t","\t"));
         for (String curResultName : Model.GetResultsName()) {
             report_txt.append("\t").append(curResultName);
         }
-        report_txt.append("\tExperimental");
+        report_txt.append("\t").append(StringSelectorCore.getString("report_txt_experimental"));
         if (Model.GetTrainingSet().hasUnits())
             report_txt.append(" [").append(Model.GetTrainingSet().getUnits()).append("]");
         if (Model.getInfo().hasAlerts())
-            report_txt.append("\tStructural Alerts");
-        report_txt.append("\tADI");
+            report_txt.append("\t").append(StringSelectorCore.getString("report_txt_struct_alerts"));
+        report_txt.append("\t").append(StringSelectorCore.getString("report_txt_adi"));
         for (String curADIName : Model.GetADItemsName()) {
             report_txt.append("\t").append(curADIName);
         }
-        report_txt.append("\tRemarks").append(System.lineSeparator());
+        report_txt.append("\t").append(StringSelectorCore.getString("report_txt_struct_remarks")).append(System.lineSeparator());
         Out.print(report_txt);
 
         // Results
@@ -86,7 +88,7 @@ public class ReportTXTSingle {
 
             if (R.getStatus() < InsilicoModelOutput.OUTPUT_OK) {
 
-                report_txt.append("\t[ERROR]");
+                report_txt.append("\t").append("[").append(StringSelectorCore.getString("report_txt_struct_error")).append("]");
                 int nCols = Model.GetResultsName().length + 1 + (Model.getInfo().hasAlerts()?1:0) + 1 + Model.GetADItemsName().length;
                 for (int j=0; j<nCols; j++)
                     report_txt.append("\t-");
@@ -115,11 +117,11 @@ public class ReportTXTSingle {
 
             StringBuilder msg = new StringBuilder();
             for (int j=0; j<inputMols.get(i).GetWarnings().GetSize(); j++)
-                msg.append("[Molecule warning] ").append(inputMols.get(i).GetWarnings().GetMessages(j)).append(". ");
+                msg.append("[").append(StringSelectorCore.getString("report_txt_molecule_warning")).append("]").append(inputMols.get(i).GetWarnings().GetMessages(j)).append(". ");
             for (int j=0; j<inputMols.get(i).GetErrors().GetSize(); j++)
-                msg.append("[Molecule error] ").append(inputMols.get(i).GetErrors().GetMessages(j)).append(". ");
+                msg.append("[").append(StringSelectorCore.getString("report_txt_molecule_error")).append("]").append(inputMols.get(i).GetErrors().GetMessages(j)).append(". ");
             if (!R.getErrMessage().isEmpty())
-                msg.append("[Model] ").append(R.getErrMessage()).append(".");
+                msg.append("[").append(StringSelectorCore.getString("report_txt_model")).append("]").append(R.getErrMessage()).append(".");
             if (msg.length() == 0)
                 msg = new StringBuilder("-");
 

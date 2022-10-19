@@ -32,6 +32,9 @@ public interface iTrainingSet {
 
     public String getSMILES(int Index) throws GenericFailureException;
 
+    public String getUnitConversion();
+
+    public boolean hasUnitConversion();
 
     /**
      * @param Index index of the molecule
@@ -49,6 +52,8 @@ public interface iTrainingSet {
 
     public String getExperimentalValueFormatted(int Index) throws GenericFailureException;
 
+
+    public double getMolecularWeight(int Index) throws GenericFailureException;
 
     /**
      * @param Index index of the molecule
@@ -69,6 +74,7 @@ public interface iTrainingSet {
     public double getDescriptorMin(int Index) throws GenericFailureException;
 
     public double getDescriptor(int MolIndex, int DescriptorIndex) throws GenericFailureException;
+
 
     /**
      * @param Index the index of the reference molecule

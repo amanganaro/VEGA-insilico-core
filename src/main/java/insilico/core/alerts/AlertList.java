@@ -1,7 +1,11 @@
 package insilico.core.alerts;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
 
 public class AlertList implements Serializable, Cloneable {
 

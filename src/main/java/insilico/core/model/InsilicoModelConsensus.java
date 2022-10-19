@@ -3,18 +3,18 @@ package insilico.core.model;
 import insilico.core.constant.MessagesError;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.runner.InsilicoModelWrapper;
 import insilico.core.molecule.InsilicoMolecule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 
+@Slf4j
 public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
 
-    Logger logger = LoggerFactory.getLogger(InsilicoModelConsensus.class);
 
     protected final static short MODEL_ERROR = -1;
     protected final static short MODEL_CALCULATED = 1;
@@ -112,8 +112,8 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
             ModelStatus = CalculateModel();
         } catch (Throwable ex){
             if (ex.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(ex.getMessage());
-            logger.error("Model calculation: " + ex);
-            throw new GenericFailureException("Unexpected error: " + ex);
+            log.error(StringSelectorCore.getString("ismodel_model_calculation_exception"), ex);
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("ismodel_generic_exception"), ex));
         }
         if (ModelStatus != InsilicoModel.MODEL_CALCULATED) {
             CurOutput.setStatus(InsilicoModelOutput.OUTPUT_ERROR);
@@ -128,8 +128,8 @@ public abstract class InsilicoModelConsensus implements iInsilicoModelConsensus{
             CalculateAssessment();
         } catch (Throwable e) {
             if (e.getClass()==OutOfMemoryError.class) throw new OutOfMemoryError(e.getMessage());
-            logger.error("Assessment calculation: " + e);
-            throw new GenericFailureException("Unexpected error: " + e);
+            log.error(StringSelectorCore.getString("ismodel_assessment_calculation_exception"), e);
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("ismodel_generic_exception"), e));
         }
 
 

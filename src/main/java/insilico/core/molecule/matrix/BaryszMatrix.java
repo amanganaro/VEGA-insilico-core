@@ -1,14 +1,15 @@
 package insilico.core.molecule.matrix;
 
 import insilico.core.descriptor.Descriptor;
-import insilico.core.descriptor.weight.VanDerWaals;
+import insilico.core.descriptor.blocks.weights.basic.WeightsMass;
+import insilico.core.descriptor.blocks.weights.other.WeightsAtomicNumber;
 import insilico.core.tools.utils.MoleculeUtilities;
-import org.openscience.cdk.Atom;
-import org.openscience.cdk.graph.PathTools;
+import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,51 +22,94 @@ public class BaryszMatrix {
     /**
      * Calculates Barysz matrix on different weights.<p>
      * Weight indices:
-     * 0: v (van der waals volume)
+     * 0: Z (atomic number)
+     * 1: m (mass)
+     * 2: v (van der waals volume)
+     * 3: e (sanderson electronegativity)
+     * 4: p (polarizability)
+     * 5: i (ionization potential)
      *
      * @param mol source CDK Molecule
      * @return Barysz Distance matrix
      */
     static public double[][][] getMatrix(IAtomContainer mol) {
 
-        int weigths = 1;
+        int nWeights = 6;
         int nSK = mol.getAtomCount();
-        double[][][] matrix = new double[nSK][nSK][weigths];
+        double[][][] matrix = new double[nSK][nSK][nWeights];
 
-        // van der waals volumes (already scaled on carbon)
-        double[] w_v = VanDerWaals.getWeights(mol);
+        for (int wLayer = 0; wLayer<nWeights; wLayer++) {
 
-        for (int i=0; i<nSK; i++) {
+            // calculate current weighing scheme
+            double[] w;
 
-            // Diagonal
-            matrix[i][i][0] = 1.0 - w_v[i];
+            switch (wLayer) {
+                case 0:
+                    // Z (atomic number)
+                    int[] buf = WeightsAtomicNumber.getWeights(mol);
+                    w = new double[buf.length];
+                    for (int i=0; i<buf.length; i++)
+                        w[i] = (double) buf[i] / 6.0;
+                    break;
+                case 1:
+                    // m (mass)
+                    w = (new WeightsMass()).getScaledWeights(mol);
+                    break;
+                case 2:
+                    // v (van der waals volume)
+                    w = (new insilico.core.descriptor.blocks.weights.basic.WeightsVanDerWaals()).getScaledWeights(mol);
+                    break;
+                case 3:
+                    // e (sanderson electronegativity)
+                    w = (new insilico.core.descriptor.blocks.weights.basic.WeightsElectronegativity()).getScaledWeights(mol);
+                    break;
+                case 4:
+                    w = (new insilico.core.descriptor.blocks.weights.basic.WeightsPolarizability()).getScaledWeights(mol);
+                    // p (polarizability)
+                    break;
+                case 5:
+                    // i (ionization potential)
+                    w = (new insilico.core.descriptor.blocks.weights.basic.WeightsIonizationPotential()).getScaledWeights(mol);
+                    break;
+                default:
+                    w = new double[nSK];
+                    for (double val : w) val = Descriptor.MISSING_VALUE;
+            }
 
-            Atom atStart = (Atom) mol.getAtom(i);
+            // calculate matrix layer
+            for (int i = 0; i < nSK; i++) {
 
-            for (int j=(i+1); j<nSK; j++) {
-                Atom atEnd = (Atom) mol.getAtom(j);
-                List<IAtom> shortestPath = PathTools.getShortestPath(mol, atStart, atEnd);
+                // Diagonal
+                matrix[i][i][wLayer] = 1.0 - (1.0 / w[i]);
 
-                // van der waals volumes
-                double w_sum = 0;
-                for (int a=0; a<(shortestPath.size()-1); a++) {
-                    IAtom at1 = shortestPath.get(a);
-                    IAtom at2 = shortestPath.get(a+1);
-                    IBond bnd = mol.getBond(at1, at2);
+                IAtom atStart = mol.getAtom(i);
 
-                    double bnd_order = MoleculeUtilities.Bond2Double(bnd);
-                    double w1 = VanDerWaals.GetVdWVolume(at1.getSymbol());
-                    double w2 = VanDerWaals.GetVdWVolume(at2.getSymbol());
+                for (int j = (i + 1); j < nSK; j++) {
+                    IAtom atEnd = mol.getAtom(j);
 
-                    if ( (w1 == Descriptor.MISSING_VALUE) || (w2 == Descriptor.MISSING_VALUE) ) {
-                        w_sum = Descriptor.MISSING_VALUE;
-                        break;
+                    ShortestPaths sp = new ShortestPaths(mol, atStart);
+                    List<IAtom> shortestPath = Arrays.asList(sp.atomsTo(atEnd));
+
+                    double w_sum = 0;
+                    for (int a = 0; a < (shortestPath.size() - 1); a++) {
+                        IAtom at1 = shortestPath.get(a);
+                        IAtom at2 = shortestPath.get(a + 1);
+                        IBond bnd = mol.getBond(at1, at2);
+
+                        double bnd_order = MoleculeUtilities.Bond2Double(bnd);
+                        double w1 = w[mol.indexOf(at1)];
+                        double w2 = w[mol.indexOf(at2)];
+
+                        if ((w1 == Descriptor.MISSING_VALUE) || (w2 == Descriptor.MISSING_VALUE)) {
+                            w_sum = Descriptor.MISSING_VALUE;
+                            break;
+                        }
+
+                        w_sum += (1.0 / bnd_order) * (1.0 / (w1 * w2));
                     }
-
-                    w_sum += (1.0 / bnd_order) * ( 1 / (w1 * w2) );
+                    matrix[i][j][wLayer] = w_sum;
+                    matrix[j][i][wLayer] = matrix[i][j][wLayer];
                 }
-                matrix[i][j][0] = w_sum;
-                matrix[j][i][0] = matrix[i][j][0];
             }
         }
 

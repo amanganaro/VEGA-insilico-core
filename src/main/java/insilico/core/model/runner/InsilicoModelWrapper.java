@@ -3,6 +3,7 @@ package insilico.core.model.runner;
 
 import insilico.core.descriptor.DescriptorsEngine;
 import insilico.core.exception.GenericFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModel;
 import insilico.core.model.InsilicoModelOutput;
 import insilico.core.model.iInsilicoModel;
@@ -37,9 +38,11 @@ public class InsilicoModelWrapper {
         try {
             result.add(model.Execute(input, DescEngine, CalculateAlerts));
         } catch (GenericFailureException e) {
-            throw new GenericFailureException("Error during model " + model.getInfo().getName() + " execution - " + e.getMessage());
+            throw new GenericFailureException(String.format(StringSelectorCore.getString("runner_consensus_exception"), model.getInfo().getName(),  e.getMessage()));
         }
     }
+
+
 
     /**
      * @return the model

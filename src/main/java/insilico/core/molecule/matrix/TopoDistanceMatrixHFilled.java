@@ -2,11 +2,13 @@ package insilico.core.molecule.matrix;
 
 import insilico.core.exception.GenericFailureException;
 import insilico.core.molecule.tools.Manipulator;
-import org.openscience.cdk.Atom;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.graph.PathTools;
+import org.openscience.cdk.graph.ShortestPaths;
 import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,7 +26,7 @@ public class TopoDistanceMatrixHFilled {
      * @param molecule source CDK Molecule
      * @return Topological Distance matrix
      */
-    static public int[][] getMatrix(IAtomContainer molecule) {
+    static public double[][] getMatrix(IAtomContainer molecule) {
 
         IAtomContainer molH;
         try {
@@ -34,16 +36,20 @@ public class TopoDistanceMatrixHFilled {
         }
 
         int nSK = molH.getAtomCount();
-        int[][] matrix = new int[nSK][nSK];
+        double[][] matrix = new double[nSK][nSK];
 
         for (int i=0; i<nSK; i++) {
             matrix[i][i] = 0;  // diagonal
-            Atom atStart = (Atom) molH.getAtom(i);
+            IAtom atStart =  molH.getAtom(i);
 
             for (int j=(i+1); j<nSK; j++) {
-                Atom atEnd = (Atom) molH.getAtom(j);
-                List<IAtom> shortestPaths =
-                        PathTools.getShortestPath(molH, atStart, atEnd);
+                IAtom atEnd =  molH.getAtom(j);
+
+                ShortestPaths sp = new ShortestPaths(molH, atStart);
+                List<IAtom> shortestPaths = Arrays.asList(sp.atomsTo(atEnd));
+                // DEPRECATED METHOD
+//                List<IAtom> shortestPaths = PathTools.getShortestPath(molH, atStart, atEnd);
+
                 matrix[i][j] = shortestPaths.size()-1;
                 matrix[j][i] = matrix[i][j];
             }

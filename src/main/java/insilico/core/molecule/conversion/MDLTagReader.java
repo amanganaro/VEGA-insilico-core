@@ -1,7 +1,6 @@
 package insilico.core.molecule.conversion;
 
-import org.openscience.cdk.tools.ILoggingTool;
-import org.openscience.cdk.tools.LoggingToolFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,10 +12,9 @@ import java.util.ArrayList;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class MDLTagReader {
-
-    Logger logger = LoggerFactory.getLogger(MDLMolecule.class);
-
+    
     private final static int DefaultMaxMolNum = 20;
     private int MaxMolNum;
     private ArrayList<String> Tags;
@@ -67,7 +65,7 @@ public class MDLTagReader {
             }
             br.close();
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
         }
 
         return Tags;
@@ -105,7 +103,7 @@ public class MDLTagReader {
             }
             br.close();
         } catch (Exception e) {
-            logger.warn(e.getMessage());
+            log.warn(e.getMessage());
         }
 
         return Tags;

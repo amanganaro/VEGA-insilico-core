@@ -29,6 +29,7 @@ public abstract class DescriptorBlock extends PropertyContainer implements Clone
     public DescriptorBlock() {
         super();
         DescList = new ArrayList<>();
+        this.GenerateDescriptors();
         Name = "";
     }
 

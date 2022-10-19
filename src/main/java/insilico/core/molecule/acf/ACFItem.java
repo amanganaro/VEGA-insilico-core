@@ -49,7 +49,7 @@ public class ACFItem implements Serializable, Cloneable {
      * @param Frequency the Frequency to set
      */
     public void setFrequency(int Frequency) {
-        this.frequency = frequency;
+        this.frequency = Frequency;
     }
 
     public Object Clone() throws CloneNotSupportedException {

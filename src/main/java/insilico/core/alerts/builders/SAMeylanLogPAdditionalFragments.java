@@ -4,10 +4,10 @@ import insilico.core.alerts.*;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.isomorphism.matchers.QueryAtomContainer;
-import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
+import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
+import org.openscience.cdk.isomorphism.Pattern;
+import org.openscience.cdk.smarts.SmartsPattern;
 
 /**
  *
@@ -15,7 +15,7 @@ import org.openscience.cdk.smiles.smarts.parser.SMARTSParser;
  */
 public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implements iAlertBlock {
 
-    private QueryAtomContainer[] SA;
+    private Pattern[] SA;
     private double GlobalCoefficient;
 
     private final static String[] SMARTSFragments = {
@@ -65,7 +65,7 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
 
 
     public SAMeylanLogPAdditionalFragments() throws InitFailureException {
-        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_ADDITIONAL, "Meylan additional fragments for LoP calculation (Kowwin)");
+        super(InsilicoConstants.SA_BLOCK_LOGP_MEYLAN_ADDITIONAL, StringSelectorCore.getString("sa_meylan_logp_add_initialization"));
     }
 
 
@@ -75,7 +75,7 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
         for (int i=0; i<SMARTSFragments.length; i++) {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (i+1)));
             curSA.setName("MEYA" + (i+1));
-            curSA.setDescription("Meylan additional fragment for LogP calculation no. " + (i+1) + " defined by SMARTS: " +  SMARTSFragments[i]);
+            curSA.setDescription(String.format(StringSelectorCore.getString("sa_meylan_logp_add_description"), i+1, SMARTSFragments[i]));
             Alerts.add(curSA);
         }
 
@@ -88,15 +88,14 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
 
         try {
 
-            SA = new QueryAtomContainer[SMARTSFragments.length];
+            SA = new Pattern[SMARTSFragments.length];
 
             for (int i=0; i<SMARTSFragments.length; i++)
 
-                // TODO: 25/06/2020 Builder?
-                SA[i] = SMARTSParser.parse(SMARTSFragments[i], DefaultChemObjectBuilder.getInstance());
+                SA[i] = SmartsPattern.create(SMARTSFragments[i]).setPrepare(false);
 
         } catch (Exception e) {
-            throw new InitFailureException("Unable to initialize SMARTS");
+            throw new InitFailureException(StringSelectorCore.getString("sa_exception_smarts_initialization"));
         }
     }
 
@@ -109,10 +108,11 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
         try {
 
             for (int i=0; i<SA.length; i++) {
-                if (Matcher.matches(SA[i])) {
+                if (SA[i].matches(CurMol.GetStructure())) {
                     Res.add((Alert)Alerts.get(i).clone());
 
-                    int nMatches = Matcher.countUniqueMatches();
+
+                    int nMatches = SA[i].matchAll(CurMol.GetStructure()).countUnique();
                     if (i == 15)
                         GlobalCoefficient += SMARTSCoeff[i] * 1; // correction - not related to number of matches
                     else
@@ -120,8 +120,8 @@ public class SAMeylanLogPAdditionalFragments extends AlertBlockFromSMARTS implem
                 }
             }
 
-        } catch (CDKException | CloneNotSupportedException e) {
-            throw new GenericFailureException("Error while calculating SMARTS matching");
+        } catch (CloneNotSupportedException | InvalidMoleculeException e) {
+            throw new GenericFailureException(StringSelectorCore.getString("sa_exception_smarts_matching_ge"));
         }
 
         return Res;

@@ -1,5 +1,6 @@
 package insilico.core.model;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import insilico.core.ad.item.iADIndex;
 import insilico.core.ad.reasoning.iReasoningItem;
 import insilico.core.alerts.AlertList;
@@ -8,10 +9,13 @@ import insilico.core.similarity.SimilarMolecule;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY, getterVisibility = JsonAutoDetect.Visibility.NONE, setterVisibility = JsonAutoDetect.Visibility.NONE)
+
 public class InsilicoModelOutput implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public final static short OUTPUT_OK_AD_NOT_APPLICABLE = 3;
     public final static short OUTPUT_OK_AD_MISSING = 2;
     public final static short OUTPUT_OK = 1;
     public final static short OUTPUT_NOT_CALCULATED = 0;
@@ -156,10 +160,10 @@ public class InsilicoModelOutput implements Serializable {
 
 
     /**
-     * @param Experimental the Experimental to set
+//     * @param Experimental the Experimental to set
      */
     public void setExperimental(double Value) {
-        this.Experimental = new Double(Value);
+        this.Experimental = Value;
     }
 
 

@@ -2,31 +2,27 @@ package insilico.core.descriptor.blocks;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorBlock;
-import insilico.core.descriptor.weight.Electronegativity;
-import insilico.core.descriptor.weight.Mass;
-import insilico.core.descriptor.weight.Polarizability;
-import insilico.core.descriptor.weight.VanDerWaals;
+import insilico.core.descriptor.blocks.weights.basic.WeightsMass;
+import insilico.core.descriptor.blocks.weights.iBasicWeight;
 import insilico.core.exception.InvalidMoleculeException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
-import org.openscience.cdk.Atom;
-import org.openscience.cdk.Bond;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
+import org.openscience.cdk.interfaces.IAtom;
 import org.openscience.cdk.interfaces.IAtomContainer;
 import org.openscience.cdk.interfaces.IBond;
 
 /**
  * Constitutional descriptors block.<p>
- * NOTE: by default, the molecular weight (MW and AMW) is calculated on
- * carbon-scaled values (carbon mass equal to 1, all other values are scaled
- * on carbon).
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-public class Constitutional extends DescriptorBlock{
+@Slf4j
+public class Constitutional extends DescriptorBlock {
 
     private static final long serialVersionUID = 1L;
-    private static final String BlockName = "Constitutional Descriptors";
-
+//    private static final String BlockName = ;
 
 
     /**
@@ -34,54 +30,56 @@ public class Constitutional extends DescriptorBlock{
      */
     public Constitutional() {
         super();
-        this.Name = Constitutional.BlockName;
+        this.Name = StringSelectorCore.getString("descriptors_constitutional_name");
     }
-
-
 
     @Override
     protected final void GenerateDescriptors() {
         DescList.clear();
-        this.Add("MW", "");
-        this.Add("AMW", "");
-        this.Add("Sv", "");
-        this.Add("Mv", "");
-        this.Add("Sp", "");
-        this.Add("Mp", "");
-        this.Add("Se", "");
-        this.Add("Me", "");
+        this.Add("MW", StringSelectorCore.getString("descriptors_constitutional_mw"));
+        this.Add("AMW", StringSelectorCore.getString("descriptors_constitutional_amw"));
+        this.Add("MW_da", StringSelectorCore.getString("descriptors_constitutional_mw_da"));
+        this.Add("AMW_da", StringSelectorCore.getString("descriptors_constitutional_amw_da"));
+        this.Add("Sv", StringSelectorCore.getString("descriptors_constitutional_sv"));
+        this.Add("Mv", StringSelectorCore.getString("descriptors_constitutional_mv"));
+        this.Add("Sp", StringSelectorCore.getString("descriptors_constitutional_sp"));
+        this.Add("Mp", StringSelectorCore.getString("descriptors_constitutional_mp"));
+        this.Add("Se", StringSelectorCore.getString("descriptors_constitutional_se"));
+        this.Add("Me", StringSelectorCore.getString("descriptors_constitutional_me"));
+        this.Add("Si", StringSelectorCore.getString("descriptors_constitutional_si"));
+        this.Add("Mi", StringSelectorCore.getString("descriptors_constitutional_mi"));
 
-        this.Add("nAt", "");
-        this.Add("nSk", "");
+        this.Add("nAt", StringSelectorCore.getString("descriptors_constitutional_nAt"));
+        this.Add("nSk", StringSelectorCore.getString("descriptors_constitutional_nSk"));
 
-        this.Add("nBt", ""); // Total no. of bonds
-        this.Add("nBo", ""); // no. of non-H bonds
-        this.Add("nBm", ""); // no. of multiple (order>1) bonds
-        this.Add("nDblBo", "");
-        this.Add("nTrpBo", "");
-        this.Add("nArBo", "");
-        this.Add("SCBO", "");
+        this.Add("nBt", StringSelectorCore.getString("descriptors_constitutional_nBt"));
+        this.Add("nBo", StringSelectorCore.getString("descriptors_constitutional_nBo"));
+        this.Add("nBm", StringSelectorCore.getString("descriptors_constitutional_nBm"));
+        this.Add("nDB", StringSelectorCore.getString("descriptors_constitutional_nDB"));
+        this.Add("nTB", StringSelectorCore.getString("descriptors_constitutional_nTB"));
+        this.Add("nAB", StringSelectorCore.getString("descriptors_constitutional_nAB"));
+        this.Add("SCBO", StringSelectorCore.getString("descriptors_constitutional_SCBO"));
 
-        this.Add("nH", "");
-        this.Add("nC", "");
-        this.Add("nN", "");
-        this.Add("nO", "");
-        this.Add("nP", "");
-        this.Add("nS", "");
-        this.Add("nF", "");
-        this.Add("nCl", "");
-        this.Add("nBr", "");
-        this.Add("nI", "");
-        this.Add("nB", "");
+        this.Add("nH", StringSelectorCore.getString("descriptors_constitutional_nH"));
+        this.Add("nC", StringSelectorCore.getString("descriptors_constitutional_nC"));
+        this.Add("nN", StringSelectorCore.getString("descriptors_constitutional_nN"));
+        this.Add("nO", StringSelectorCore.getString("descriptors_constitutional_nO"));
+        this.Add("nP", StringSelectorCore.getString("descriptors_constitutional_nP"));
+        this.Add("nS", StringSelectorCore.getString("descriptors_constitutional_nS"));
+        this.Add("nF", StringSelectorCore.getString("descriptors_constitutional_nF"));
+        this.Add("nCl", StringSelectorCore.getString("descriptors_constitutional_nCl"));
+        this.Add("nBr", StringSelectorCore.getString("descriptors_constitutional_nBr"));
+        this.Add("nI", StringSelectorCore.getString("descriptors_constitutional_nI"));
+        this.Add("nB", StringSelectorCore.getString("descriptors_constitutional_nB"));
 
-        this.Add("HPerc", "");
-        this.Add("CPerc", "");
-        this.Add("NPerc", "");
-        this.Add("OPerc", "");
-        this.Add("XPerc", "");
+        this.Add("HPerc", StringSelectorCore.getString("descriptors_constitutional_Hperc"));
+        this.Add("CPerc", StringSelectorCore.getString("descriptors_constitutional_CPerc"));
+        this.Add("NPerc", StringSelectorCore.getString("descriptors_constitutional_NPerc"));
+        this.Add("OPerc", StringSelectorCore.getString("descriptors_constitutional_OPerc"));
+        this.Add("XPerc", StringSelectorCore.getString("descriptors_constitutional_XPerc"));
 
-        this.Add("nHet", "");
-        this.Add("nX", "");
+        this.Add("nHet", StringSelectorCore.getString("descriptors_constitutional_NHet"));
+        this.Add("nX", StringSelectorCore.getString("descriptors_constitutional_nX"));
 
         SetAllValues(Descriptor.MISSING_VALUE);
     }
@@ -102,6 +100,7 @@ public class Constitutional extends DescriptorBlock{
         try {
             curMol = mol.GetStructure();
         } catch (InvalidMoleculeException e) {
+            log.warn(String.format(StringSelectorCore.getString("descriptors_invalid_structure"), this.Name));
             SetAllValues(Descriptor.MISSING_VALUE);
             return;
         }
@@ -110,26 +109,26 @@ public class Constitutional extends DescriptorBlock{
 
             int nSK = curMol.getAtomCount();
             int nBO = curMol.getBondCount();
-            int H[] = new int[nSK];
+            int[] H = new int[nSK];
 
-            int nTotH=0;
-            int nC=0, nN=0, nO=0, nP=0, nS=0;
-            int nI=0, nF=0, nCl=0, nBr=0, nB=0;
-            int nHet=0;
-            double mw=0, amw=0, sv=0, mv=0, sp=0, mp=0, se=0, me=0;
+            int nTotH = 0;
+            int nC = 0, nN = 0, nO = 0, nP = 0, nS = 0;
+            int nI = 0, nF = 0, nCl = 0, nBr = 0, nB = 0;
+            int nHet = 0;
 
 
             //// Counts on atoms
 
-            for (int i=0; i<nSK; i++) {
+            for (int i = 0; i < nSK; i++) {
 
-                Atom CurAt = (Atom) curMol.getAtom(i);
+                IAtom CurAt = curMol.getAtom(i);
 
                 // Hydrogens
                 H[i] = 0;
                 try {
                     H[i] = CurAt.getImplicitHydrogenCount();
-                } catch (Exception e) { }
+                } catch (Exception e) {
+                }
                 nTotH += H[i];
 
 
@@ -174,11 +173,11 @@ public class Constitutional extends DescriptorBlock{
             this.SetByName("nI", nI);
             this.SetByName("nB", nB);
 
-            this.SetByName("HPerc", (nTotH/(double)(nSK + nTotH))*100);
-            this.SetByName("CPerc", (nC/(double)(nSK + nTotH))*100);
-            this.SetByName("NPerc", (nN/(double)(nSK + nTotH))*100);
-            this.SetByName("OPerc", (nO/(double)(nSK + nTotH))*100);
-            this.SetByName("XPerc", ((nI + nF + nCl + nBr)/(double)(nSK + nTotH))*100);
+            this.SetByName("HPerc", (nTotH / (double) (nSK + nTotH)) * 100);
+            this.SetByName("CPerc", (nC / (double) (nSK + nTotH)) * 100);
+            this.SetByName("NPerc", (nN / (double) (nSK + nTotH)) * 100);
+            this.SetByName("OPerc", (nO / (double) (nSK + nTotH)) * 100);
+            this.SetByName("XPerc", ((nI + nF + nCl + nBr) / (double) (nSK + nTotH)) * 100);
 
             this.SetByName("nHet", nHet);
             this.SetByName("nX", nI + nF + nCl + nBr);
@@ -186,12 +185,12 @@ public class Constitutional extends DescriptorBlock{
 
             //// Counts on bonds
 
-            int nArBonds=0, nDblBonds=0, nTrpBonds=0, nMulBonds=0;
-            double scbo=0;
+            int nArBonds = 0, nDblBonds = 0, nTrpBonds = 0, nMulBonds = 0;
+            double scbo = 0;
 
-            for (int i=0; i<nBO; i++) {
+            for (int i = 0; i < nBO; i++) {
 
-                Bond CurBo = (Bond) curMol.getBond(i);
+                IBond CurBo = curMol.getBond(i);
 
                 if (CurBo.getFlag(CDKConstants.ISAROMATIC)) {
                     nArBonds++;
@@ -218,82 +217,110 @@ public class Constitutional extends DescriptorBlock{
             this.SetByName("nBt", nBO + nTotH);
             this.SetByName("nBo", nBO);
             this.SetByName("nBm", nMulBonds);
-            this.SetByName("nDblBo", nDblBonds);
-            this.SetByName("nTrpBo", nTrpBonds);
-            this.SetByName("nArBo", nArBonds);
+            this.SetByName("nDB", nDblBonds);
+            this.SetByName("nTB", nTrpBonds);
+            this.SetByName("nAB", nArBonds);
             this.SetByName("SCBO", scbo);
 
 
-            // Weights sums
-            double[] wMass = Mass.getWeights(curMol);
-            double HMass = Mass.GetMass("H");
-            double[] wVdW = VanDerWaals.getWeights(curMol);
-            double HVdW = VanDerWaals.GetVdWVolume("H");
-            double[] wPol = Polarizability.getWeights(curMol);
-            double HPol = Polarizability.GetPolarizability("H");
-            double[] wEl = Electronegativity.getWeights(curMol);
-            double HEl = Electronegativity.GetElectronegativity("H");
+            for (int w = 0; w < 5; w++) {
 
-            // for non-scaled molecular weight
-//            double[] wMassNS = new double[wMass.length];
-//            double CarbonWeight = 12.011;
-//            double HMassNS = HMass * CarbonWeight;
-//            for (int i=0; i<nSK; i++)
-//                wMassNS[i] = wMass[i] * CarbonWeight;
+                iBasicWeight ws;
+                switch (w) {
+                    case 0:
+                        ws = new WeightsMass();
+                        break;
+                    case 1:
+                        ws = new insilico.core.descriptor.blocks.weights.basic.WeightsVanDerWaals();
+                        break;
+                    case 2:
+                        ws = new insilico.core.descriptor.blocks.weights.basic.WeightsPolarizability();
+                        break;
+                    case 3:
+                        ws = new insilico.core.descriptor.blocks.weights.basic.WeightsElectronegativity();
+                        break;
+                    case 4:
+                        ws = new insilico.core.descriptor.blocks.weights.basic.WeightsIonizationPotential();
+                        break;
+                    default:
+                        throw new Exception(StringSelectorCore.getString("descriptors_weight_not_found"));
+                }
 
-            for (int i=0; i<nSK; i++) {
-                if (wMass[i] == -999)
-                    mw = -999;
-                if (wVdW[i] == -999)
-                    sv = -999;
-                if (wPol[i] == -999)
-                    sp = -999;
-                if (wEl[i] == -999)
-                    se = -999;
-            }
+                double[] weights = ws.getScaledWeights(curMol);
+                double weightH = ws.getScaledWeight("H");
 
-            for (int i=0; i<nSK; i++) {
-                if (mw != -999) {
-                    mw += wMass[i];
-                    if (H[i]>0) {
-                        mw += HMass * H[i];
+                double sum = 0;
+                for (int i = 0; i < nSK; i++) {
+                    if (weights[i] == Descriptor.MISSING_VALUE) {
+                        sum = Descriptor.MISSING_VALUE;
+                        break;
+                    } else {
+                        // all values INCLUDING MW are scaled on carbon
+                        sum += weights[i];
+                        if (H[i] > 0)
+                            sum += weightH * H[i];
                     }
                 }
-                if (sv != -999) {
-                    sv += wVdW[i];
-                    if (H[i]>0)
-                        sv += HVdW * H[i];
-                }
-                if (sp != -999) {
-                    sp += wPol[i];
-                    if (H[i]>0)
-                        sp += HPol * H[i];
-                }
-                if (se != -999) {
-                    se += wEl[i];
-                    if (H[i]>0)
-                        se += HEl * H[i];
+
+                double ave = Descriptor.MISSING_VALUE;
+                if (sum != Descriptor.MISSING_VALUE)
+                    ave = sum / (nSK + nTotH);
+
+                switch (w) {
+                    case 0:
+                        this.SetByName("MW", sum);
+                        this.SetByName("AMW", ave);
+                        break;
+                    case 1:
+                        this.SetByName("Sv", sum);
+                        this.SetByName("Mv", ave);
+                        break;
+                    case 2:
+                        this.SetByName("Sp", sum);
+                        this.SetByName("Mp", ave);
+                        break;
+                    case 3:
+                        this.SetByName("Se", sum);
+                        this.SetByName("Me", ave);
+                        break;
+                    case 4:
+                        this.SetByName("Si", sum);
+                        this.SetByName("Mi", ave);
+                        break;
+                    default:
+                        throw new Exception(StringSelectorCore.getString("descriptors_weight_not_found"));
                 }
             }
 
-            if (mw != -999)
-                amw = mw/(nSK + nTotH);
-            if (sv != -999)
-                mv = sv/(nSK + nTotH);
-            if (sp != -999)
-                mp = sp/(nSK + nTotH);
-            if (se != -999)
-                me = se/(nSK + nTotH);
-            this.SetByName("MW", mw);
-            this.SetByName("AMW", amw);
-            this.SetByName("Sv", sv);
-            this.SetByName("Mv", mv);
-            this.SetByName("Sp", sp);
-            this.SetByName("Mp", mp);
-            this.SetByName("Se", se);
-            this.SetByName("Me", me);
+            // added - calculation for MW in dalton (NOT scaled)
+            {
+                iBasicWeight mws = new WeightsMass();
+
+                double[] weights = mws.getWeights(curMol);
+                double weightH = mws.getWeight("H");
+
+                double sum = 0;
+                for (int i=0; i<nSK; i++) {
+                    if (weights[i] == Descriptor.MISSING_VALUE) {
+                        sum = Descriptor.MISSING_VALUE;
+                        break;
+                    } else {
+                        sum += weights[i];
+                        if (H[i] > 0)
+                            sum += weightH * H[i];
+                    }
+                }
+
+                double ave = Descriptor.MISSING_VALUE;
+                if (sum != Descriptor.MISSING_VALUE)
+                    ave = sum/(nSK + nTotH);
+
+                this.SetByName("MW_da", sum);
+                this.SetByName("AMW_da", ave);
+            }
 
         } catch (Throwable e) {
+            log.warn(String.format(StringSelectorCore.getString("descriptors_unable_calculate"), this.Name, e.getMessage()));
             this.SetAllValues(Descriptor.MISSING_VALUE);
         }
 

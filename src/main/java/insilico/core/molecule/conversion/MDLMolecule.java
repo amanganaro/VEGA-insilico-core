@@ -3,9 +3,11 @@ package insilico.core.molecule.conversion;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.MoleculeConversionException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.custom.CustomMDLWriter;
-import insilico.core.molecule.tools.Normalizer;
+import insilico.core.molecule.tools.InsilicoMoleculeNormalization;
+import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.AtomContainer;
 import org.openscience.cdk.exception.CDKException;
 import org.openscience.cdk.graph.ConnectivityChecker;
@@ -21,19 +23,18 @@ import java.io.*;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class MDLMolecule {
-
-    static Logger logger = LoggerFactory.getLogger(MDLMolecule.class);
-
+    
 
     static public boolean EXCLUDE_DISCONNECTED_STRUCTURES = true;
 
-    final static String ERR_HEADER = "Conversion from MDL: ";
+    final static String ERR_HEADER = StringSelectorCore.getString("conversion_mdl_header_error");
 
     public static InsilicoMolecule Convert(byte[] MDL) {
 
         InsilicoMolecule isMol = new InsilicoMolecule();
-        logger.debug("Starting conversion for MDL");
+        log.debug(StringSelectorCore.getString("conversion_mdl_header_start"));
 
         try {
 
@@ -45,7 +46,7 @@ public class MDLMolecule {
             try {
                 Mol = reader.read(Mol);
             } catch (CDKException e) {
-                throw new MoleculeConversionException(ERR_HEADER + "unable to convert MDL code (" + e.getMessage() + ")");
+                throw new MoleculeConversionException(ERR_HEADER + String.format(StringSelectorCore.getString("conversion_mdl_molecule_exception"), e.getMessage()));
             }
 
             // CAS
@@ -61,19 +62,20 @@ public class MDLMolecule {
             // Checks for disconnected structures
             if (EXCLUDE_DISCONNECTED_STRUCTURES)
                 if (!ConnectivityChecker.isConnected(Mol))
-                    throw new MoleculeConversionException(ERR_HEADER + "molecule has disconnected structures");
+                    throw new MoleculeConversionException(ERR_HEADER + StringSelectorCore.getString("conversion_mdl_molecule_exception_disc_structs"));
 
             // Configures generated structure
             try {
-                Normalizer MolNorm = new Normalizer();
-                Mol = MolNorm.ConfigureMolecule(Mol, isMol.GetWarnings());
+//                Normalizer normalizer = new Normalizer();
+//                Mol = normalizer.ConfigureMolecule(Mol, new InsilicoMoleculeMessages());
+                Mol = InsilicoMoleculeNormalization.Normalize(Mol);
             } catch (InitFailureException e) {
-                String err = ERR_HEADER + "unable to init normalizer for MDL molecule";
-                logger.error(err + " (" + e.getMessage() + ")");
+                String err = ERR_HEADER + StringSelectorCore.getString("conversion_mdl_molecule_normalizer_init");
+                log.error(err + " (" + e.getMessage() + ")");
                 throw new MoleculeConversionException(err);
-            } catch (MoleculeConversionException e) {
-                String err = ERR_HEADER + "unable to normalize MDL molecule (" + e.getMessage() + ")";
-                logger.error(err);
+            } catch (Exception e) {
+                String err = ERR_HEADER + String.format(StringSelectorCore.getString("conversion_mdl_molecule_normalize"), e.getMessage());
+                log.error(err);
                 throw new MoleculeConversionException(err);
             }
 
@@ -85,13 +87,13 @@ public class MDLMolecule {
             isMol.MarkAsValid();
 
         } catch (MoleculeConversionException e) {
-            logger.error("Molecule conversion failed for MDL (" + e.getMessage() + ")");
+            log.error(String.format(StringSelectorCore.getString("conversion_mdl_molecule_conversion_fail"), e.getMessage()));
             for (String s : e.getMessageList())
                 isMol.AddError(s);
             isMol.MarkAsInvalid();
         }
 
-        logger.debug("MDL molecule converted");
+        log.debug(StringSelectorCore.getString("conversion_mdl_molecule_conversion"));
         return isMol;
     }
 
@@ -116,10 +118,10 @@ public class MDLMolecule {
                 if (curCAS != null)
                     isMol.SetCAS(CAS.NormalizeCAS(curCAS));
                 else
-                    logger.warn(ERR_HEADER + "unable to find the " + CASTag + " tag in the MDL code, CAS not set");
+                    log.warn(ERR_HEADER + String.format(StringSelectorCore.getString("conversion_unable_find_cas"), CASTag));
             } catch (GenericFailureException e) {
-                String Warn = ERR_HEADER + "error while searching the " + CASTag + " tag, CAS not set";
-                logger.warn(Warn);
+                String Warn = ERR_HEADER + String.format(StringSelectorCore.getString("conversion_unable_find_cas_error"), CASTag);
+                log.warn(Warn);
                 isMol.AddWarning(Warn);
             }
 
@@ -130,10 +132,10 @@ public class MDLMolecule {
                 if (curId != null)
                     isMol.SetId(curId);
                 else
-                    logger.warn(ERR_HEADER + "unable to find the " + IdTag + " tag in the MDL code, Id not set");
+                    log.warn(ERR_HEADER + String.format(StringSelectorCore.getString("conversion_unable_find_id"), IdTag));
             } catch (GenericFailureException e) {
-                String Warn = ERR_HEADER + "error while searching the " + IdTag + " tag, Id not set";
-                logger.warn(Warn);
+                String Warn = ERR_HEADER + String.format(StringSelectorCore.getString("conversion_unable_find_id_error"), IdTag);
+                log.warn(Warn);
                 isMol.AddWarning(Warn);
             }
 
@@ -197,8 +199,8 @@ public class MDLMolecule {
             writer.close();
             OutMol = baos.toByteArray();
         } catch (Exception e) {
-            logger.error(ERR_HEADER + "unable to generate MDL.");
-            throw new MoleculeConversionException(ERR_HEADER + "unable to generate MDL.");
+            log.error(ERR_HEADER + StringSelectorCore.getString("conversion_mdl_unable_to_generate"));
+            throw new MoleculeConversionException(ERR_HEADER + StringSelectorCore.getString("conversion_mdl_unable_to_generate"));
         }
 
         return OutMol;

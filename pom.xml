@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>InSilicoCore</groupId>
-    <artifactId>InSilicoCore</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
+    <groupId>InSilico</groupId>
+    <artifactId>Core</artifactId>
+    <version>1.3.16</version>
+    <packaging>jar</packaging>
 
     <name>InSilicoCore</name>
     <description>
@@ -20,13 +20,14 @@
     </properties>
 
     <distributionManagement>
+
         <snapshotRepository>
             <id>nexus-snapshots</id>
-            <url>http://localhost:8081/repository/maven-snapshots/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
         <repository>
             <id>nexus-releases</id>
-            <url>http://localhost:8081/repository/maven-releases/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-releases/</url>
         </repository>
 
     </distributionManagement>
@@ -34,16 +35,18 @@
     <repositories>
         <repository>
             <id>maven-group</id>
-            <url>http://localhost:8081/repository/maven-group/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-group/</url>
         </repository>
     </repositories>
 
     <dependencies>
+
         <dependency>
             <groupId>net.sf.jni-inchi</groupId>
             <artifactId>jni-inchi</artifactId>
             <version>0.8</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.openscience.cdk</groupId>
@@ -51,49 +54,87 @@
             <version>2.3</version>
         </dependency>
 
-<!--        Swagger packages-->
+
         <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ow2.asm</groupId>
-            <artifactId>asm</artifactId>
-            <version>6.2</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.0-jre</version>
         </dependency>
 
-<!--        Logger -->
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6</version>
         </dependency>
 
-        <!--        JPMML FOR MARKUP LANGUAGE-->
         <dependency>
-            <groupId>org.jpmml</groupId>
-            <artifactId>jpmml</artifactId>
-            <version>1.0.22</version>
-            <type>pom</type>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.25.0-GA</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.jpmml/pmml-evaluator -->
+<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.jpmml/pmml-evaluator &ndash;&gt;-->
         <dependency>
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-evaluator</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
 
         <dependency>
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-model</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>org.jpmml</groupId>
+            <artifactId>pmml-agent</artifactId>
+            <version>1.5.6</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-math3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Thanks for using https://jar-download.com -->
 
@@ -103,21 +144,31 @@
             <version>2.3.2</version>
         </dependency>
 
-
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.12</version>
-            <scope>provided</scope>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.2</version>
         </dependency>
 
 
 
-<!--        iText for PDF Reporting-->
         <dependency>
-            <groupId>com.lowagie</groupId>
-            <artifactId>itext</artifactId>
-            <version>2.1.7</version>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.20</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.8</version>
         </dependency>
 
 <!--        OpenJavax for java 11-->
@@ -128,20 +179,94 @@
             <version>11-ea+24</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>5.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.32</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.32</version>
+        </dependency>
+
+        <dependency>
+            <groupId>InSilico</groupId>
+            <artifactId>AlertsPNG</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.8.2</version>
+            <scope>test</scope>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>InSilico</groupId>-->
+<!--            <artifactId>VegaModels-CarcinogenicityISSCANGX</artifactId>-->
+<!--            <version>1.0.2</version>-->
+<!--        </dependency>-->
+
+<!--        <dependency>-->
+<!--            <groupId>org.hsqldb</groupId>-->
+<!--            <artifactId>hsqldb</artifactId>-->
+<!--            <version>2.5.1</version>-->
+<!--&lt;!&ndash;            <scope>test</scope>&ndash;&gt;-->
+<!--        </dependency>-->
 
 
 
     </dependencies>
 
     <build>
+
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+<!--                <filtering>true</filtering>-->
+            </resource>
+
+            <resource>
+                <directory>src/main/resources/alerts_data</directory>
+                <targetPath>../classes/alerts_data</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources/data</directory>
+                <targetPath>../classes/data</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources/descriptor</directory>
+                <targetPath>../classes/descriptor</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources/images</directory>
+                <targetPath>../classes/images</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources/version</directory>
+                <targetPath>../classes/version</targetPath>
+            </resource>
+        </resources>
+
+
+
         <plugins>
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--                <configuration>-->
-<!--                    <includeSystemScope>true</includeSystemScope>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+            </plugin>
+
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -151,11 +276,27 @@
                     <target>11</target>
                     <release>11</release>
 
+                    <excludes>
+                        <exclude>insilico/core/alerts/builders/toberefactored/*.java</exclude>
+<!--                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>-->
+<!--                        <exclude>insilico/core/molecule/matrix/old/*.java</exclude>-->
+<!--                        <exclude>insilico/core/descriptor/blocks/pro/**</exclude>-->
+                        <exclude>insilico/core/descriptor/blocks/old/*.java</exclude>
+                        <exclude>insilico/core/descriptor/blocks/old/*</exclude>
+                        <exclude>insilico/core/descriptor/blocks/old/AtomCenteredFragments.java</exclude>
+                        <exclude>insilico/core/descriptor/blocks/old/logp/*.java</exclude>
+                        <exclude>insilico/core/descriptor/blocks/old/weight/*.java</exclude>
+                        <exclude>insilico/core/model/old/*.java</exclude>
+                        <exclude>insilico/core/tools/utils/old/logger/*.java</exclude>
+                        <exclude>insilico/core/CoreUtils.java</exclude>
+<!--                        <exclude>insilico/core/descriptor/blocks/old/*.java</exclude>-->
+                    </excludes>
+
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.12</version>
+                            <version>1.18.20</version>
                         </path>
                     </annotationProcessorPaths>
 
@@ -192,6 +333,16 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.12.4</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+
 
             <plugin>
                 <groupId>org.asciidoctor</groupId>
@@ -210,14 +361,50 @@
                         </configuration>
                     </execution>
                 </executions>
-<!--                <dependencies>
+                <dependencies>
                     <dependency>
                         <groupId>org.springframework.restdocs</groupId>
                         <artifactId>spring-restdocs-asciidoctor</artifactId>
                         <version>LATEST</version>
                     </dependency>
-                </dependencies>-->
+                </dependencies>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+<!--                            <archive>-->
+<!--                                <manifest>-->
+<!--                                    <mainClass>-->
+<!--                                        com.baeldung.executable.ExecutableMavenJar-->
+<!--                                    </mainClass>-->
+<!--                                </manifest>-->
+<!--                            </archive>-->
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
 
         </plugins>
     </build>
