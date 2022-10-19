@@ -22,7 +22,7 @@
     <repositories>
         <repository>
             <id>maven-group</id>
-            <url>http://tech.kode-datacenter.net:8081/repository/maven-releases/</url>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-group/</url>
         </repository>
     </repositories>
 
@@ -40,6 +40,8 @@
             <artifactId>cdk-bundle</artifactId>
             <version>2.3</version>
         </dependency>
+
+
 
 
         <dependency>
@@ -197,7 +199,11 @@
         </dependency>
 
 
-
+        <dependency>
+            <groupId>InSilico</groupId>
+            <artifactId>Descriptors</artifactId>
+            <version>1.2.3</version>
+        </dependency>
 
     </dependencies>
 
