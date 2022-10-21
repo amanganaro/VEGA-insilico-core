@@ -2,7 +2,6 @@ package insilico.core.model;
 
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import insilico.core.model.old.InsilicoModelInfoOLD;
 import insilico.core.model.runner.InsilicoModelWrapper;
 import insilico.core.molecule.InsilicoMolecule;
 
