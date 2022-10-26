@@ -20,7 +20,7 @@ import insilico.core.molecule.fragmenter.FragmenterCRS4;
 import insilico.core.molecule.tools.Depiction;
 //import insilico.tpo_oberon.ismTpoOberon;
 //import insilico.fish_knn.ismFishKnn;
-import insilico.mutagenicity_knn.ismMutagenicityKnn;
+//import insilico.mutagenicity_knn.ismMutagenicityKnn;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.depict.DepictionGenerator;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -55,11 +55,11 @@ public class main {
 
 //        InsilicoMolecule mol = SmilesMolecule.Convert("CCCCCc1cc(O)c2c(c1)OC(C)(C)C1CCC(C)=CC21                  \n \n \t");
 ////
-        InsilicoModel model = new ismMutagenicityKnn();
+//        InsilicoModel model = new ismMutagenicityKnn();
 //
-        insilicoKnnQualitative pred = new insilicoKnnQualitative();
-        insilicoKnnPrediction res = pred.Calculate(SmilesMolecule.Convert("O=[N+]([O-])c1cc(cc(c1N(CCC)CCC)[N+](=O)[O-])S(=O)(=O)C"), model.GetTrainingSet());
-        System.out.println();
+//        insilicoKnnQualitative pred = new insilicoKnnQualitative();
+//        insilicoKnnPrediction res = pred.Calculate(SmilesMolecule.Convert("O=[N+]([O-])c1cc(cc(c1N(CCC)CCC)[N+](=O)[O-])S(=O)(=O)C"), model.GetTrainingSet());
+//        System.out.println();
 //        SmartsPattern pattern1 = SmartsPattern.create("[R2][R2]", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
 
 
