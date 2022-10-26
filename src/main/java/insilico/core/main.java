@@ -3,6 +3,9 @@ package insilico.core;
 //import insilico.carcinogenicity_isscancgx.ismCarcinogenicityIsscanCgx;
 //import insilico.bcf_caesar.ismBCFCaesar;
 import insilico.core.descriptor.blocks.FunctionalGroups;
+import insilico.core.knn.insilicoKnnPrediction;
+import insilico.core.knn.insilicoKnnQualitative;
+import insilico.core.knn.insilicoKnnQuantitative;
 import insilico.core.model.InsilicoModel;
 import insilico.core.model.guide.GuidePDFGenerator;
 import insilico.core.model.report.pdf.ReportPDF;
@@ -16,7 +19,8 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.fragmenter.FragmenterCRS4;
 import insilico.core.molecule.tools.Depiction;
 //import insilico.tpo_oberon.ismTpoOberon;
-import insilico.fish_knn.ismFishKnn;
+//import insilico.fish_knn.ismFishKnn;
+import insilico.mutagenicity_knn.ismMutagenicityKnn;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.depict.DepictionGenerator;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -51,11 +55,11 @@ public class main {
 
 //        InsilicoMolecule mol = SmilesMolecule.Convert("CCCCCc1cc(O)c2c(c1)OC(C)(C)C1CCC(C)=CC21                  \n \n \t");
 ////
-        InsilicoModel model = new ismFishKnn();
+        InsilicoModel model = new ismMutagenicityKnn();
 //
-//        insilicoKnnQualitative pred = new insilicoKnnQualitative();
-//        pred.Calculate(SmilesMolecule.Convert("CCCCCc1cc(O)c2c(c1)OC(C)(C)C1CCC(C)=CC21"), model.GetTrainingSet());
-
+        insilicoKnnQualitative pred = new insilicoKnnQualitative();
+        insilicoKnnPrediction res = pred.Calculate(SmilesMolecule.Convert("O=[N+]([O-])c1cc(cc(c1N(CCC)CCC)[N+](=O)[O-])S(=O)(=O)C"), model.GetTrainingSet());
+        System.out.println();
 //        SmartsPattern pattern1 = SmartsPattern.create("[R2][R2]", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
 
 

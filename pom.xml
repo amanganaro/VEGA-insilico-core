@@ -26,6 +26,21 @@
         </repository>
     </repositories>
 
+    <distributionManagement>
+
+        <snapshotRepository>
+            <id>nexus-snapshots</id>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+
+        <repository>
+            <id>nexus-releases</id>
+            <url>http://tech.kode-datacenter.net:8081/repository/maven-releases/</url>
+        </repository>
+
+
+    </distributionManagement>
+
     <dependencies>
 
         <dependency>
@@ -41,7 +56,11 @@
             <version>2.3</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>InSilico</groupId>
+            <artifactId>VegaModels-MutagenicityKNN</artifactId>
+            <version>1.0.1</version>
+        </dependency>
 
 
         <dependency>

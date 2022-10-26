@@ -12,12 +12,14 @@ import java.util.ArrayList;
  */
 public class insilicoKnnQuantitative extends insilicoKnn {
 
-    public insilicoKnnQuantitative(){
+    public insilicoKnnQuantitative() {
         super();
     }
 
+
     @Override
-    protected insilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours, iTrainingSet TrainSet) throws GenericFailureException {
+    protected insilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours,
+                                                        iTrainingSet TrainSet) throws GenericFailureException {
 
         double pred = 0;
         double weight = 0;

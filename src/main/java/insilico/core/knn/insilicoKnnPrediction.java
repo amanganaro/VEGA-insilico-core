@@ -2,9 +2,11 @@ package insilico.core.knn;
 
 import insilico.core.descriptor.Descriptor;
 import insilico.core.similarity.SimilarMolecule;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 
+@Slf4j
 public class insilicoKnnPrediction {
 
     public final static short KNN_MISSING_EQUAL_CLASSESS = -3;
