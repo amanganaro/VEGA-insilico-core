@@ -11,15 +11,15 @@ import java.util.HashMap;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-public class InsilicoKnnQualitative extends InsilicoKnn{
+public class insilicoKnnQualitative extends insilicoKnn {
 
-    public InsilicoKnnQualitative(){
+    public insilicoKnnQualitative(){
         super();
     }
 
 
     @Override
-    protected InsilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours, iTrainingSet TrainSet) throws GenericFailureException {
+    protected insilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours, iTrainingSet TrainSet) throws GenericFailureException {
 
         HashMap<Double, Double> ClassWeights = new HashMap<>();
 
@@ -58,14 +58,14 @@ public class InsilicoKnnQualitative extends InsilicoKnn{
         }
 
         if (eq) {
-            InsilicoKnnPrediction prediction = new InsilicoKnnPrediction();
-            prediction.setStatus(InsilicoKnnPrediction.KNN_MISSING_EQUAL_CLASSESS);
+            insilicoKnnPrediction prediction = new insilicoKnnPrediction();
+            prediction.setStatus(insilicoKnnPrediction.KNN_MISSING_EQUAL_CLASSESS);
             return prediction;
         } else {
-            InsilicoKnnPrediction prediction = new InsilicoKnnPrediction();
+            insilicoKnnPrediction prediction = new insilicoKnnPrediction();
             prediction.setPrediction(MaxClass);
             prediction.setNeighbours(Neighbours);
-            prediction.setStatus(InsilicoKnnPrediction.KNN_NORMAL_PREDICTION);
+            prediction.setStatus(insilicoKnnPrediction.KNN_NORMAL_PREDICTION);
             return prediction;
         }
 

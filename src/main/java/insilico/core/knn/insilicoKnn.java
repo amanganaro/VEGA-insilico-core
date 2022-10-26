@@ -19,9 +19,9 @@ import java.util.Arrays;
  * Absract class
  * @author Alberto Manganaro <a.manganaro@kode-solutions.net>
  */
-public abstract class InsilicoKnn {
+public abstract class insilicoKnn {
 
-    Logger logger = LoggerFactory.getLogger(InsilicoKnn.class);
+    Logger logger = LoggerFactory.getLogger(insilicoKnn.class);
 
     protected int NeighboursNumber;
     protected double MinSimilarity;
@@ -38,7 +38,7 @@ public abstract class InsilicoKnn {
     /**
      * Constructor
      */
-    public InsilicoKnn(){
+    public insilicoKnn(){
         SimDescEngine = new SimilarityDescriptorsBuilder();
         SimCalculator = new Similarity();
 
@@ -150,13 +150,13 @@ public abstract class InsilicoKnn {
     }
 
 
-    abstract protected InsilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours, iTrainingSet TrainSet) throws GenericFailureException;
+    abstract protected insilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours, iTrainingSet TrainSet) throws GenericFailureException;
 
-    public InsilicoKnnPrediction Calculate(InsilicoMolecule mol, iTrainingSet TrainSet) throws GenericFailureException {
+    public insilicoKnnPrediction Calculate(InsilicoMolecule mol, iTrainingSet TrainSet) throws GenericFailureException {
         return Calculate(mol, TrainSet, false);
     }
 
-    public InsilicoKnnPrediction Calculate(InsilicoMolecule mol, iTrainingSet TrainSet, boolean SkipExp) throws GenericFailureException {
+    public insilicoKnnPrediction Calculate(InsilicoMolecule mol, iTrainingSet TrainSet, boolean SkipExp) throws GenericFailureException {
 
         // Init similarity for mol against Training Set
         CalculateSimilarity(mol, TrainSet);
@@ -184,11 +184,11 @@ public abstract class InsilicoKnn {
         }
 
         // Possibile outcomes
-        InsilicoKnnPrediction prediction = new InsilicoKnnPrediction();
+        insilicoKnnPrediction prediction = new insilicoKnnPrediction();
 
         // 1 - No Molecules
         if(KNeighbours.isEmpty()){
-            prediction.setStatus(InsilicoKnnPrediction.KNN_MISSING_NO_MOLECULES);
+            prediction.setStatus(insilicoKnnPrediction.KNN_MISSING_NO_MOLECULES);
             return prediction;
         }
 
@@ -196,18 +196,18 @@ public abstract class InsilicoKnn {
         if (KNeighbours.get(0).getSimilarity() == 1){
             prediction.setPrediction(TrainSet.getExperimentalValue((int) KNeighbours.get(0).getIndex()));
             prediction.getNeighbours().add(KNeighbours.get(0));
-            prediction.setStatus(InsilicoKnnPrediction.KNN_EXPERIMENTAL);
+            prediction.setStatus(insilicoKnnPrediction.KNN_EXPERIMENTAL);
         }
 
         // 3 - Prediction one molecule
         if (KNeighbours.size() == 1){
             if(KNeighbours.get(0).getSimilarity() < MinSimilarityForSingleResult){
-                prediction.setStatus(InsilicoKnnPrediction.KNN_MISSING_NO_MOLECULES);
+                prediction.setStatus(insilicoKnnPrediction.KNN_MISSING_NO_MOLECULES);
                 return prediction;
             } else {
                 prediction.setPrediction(TrainSet.getExperimentalValue((int) KNeighbours.get(0).getIndex()));
                 prediction.getNeighbours().add(KNeighbours.get(0));
-                prediction.setStatus(InsilicoKnnPrediction.KNN_NORMAL_PREDICTION);
+                prediction.setStatus(insilicoKnnPrediction.KNN_NORMAL_PREDICTION);
             }
         }
 
@@ -227,7 +227,7 @@ public abstract class InsilicoKnn {
         SimilarMols = new SimilarMolecule[TrainSet.getMoleculesSize()];
 
         // Obtain similarity for all molecules
-        for (int i = 0; i < TrainSet.getDescriptorSize(); i++){
+        for (int i = 0; i < TrainSet.getMoleculesSize(); i++){
             double curSim;
             try {
                 curSim = sim.Calculate(mol.GetSimilarityDescriptors(), TrainSet.getSimilarityDescriptor(i));

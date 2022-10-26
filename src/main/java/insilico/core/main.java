@@ -16,6 +16,7 @@ import insilico.core.molecule.conversion.SmilesMolecule;
 import insilico.core.molecule.fragmenter.FragmenterCRS4;
 import insilico.core.molecule.tools.Depiction;
 //import insilico.tpo_oberon.ismTpoOberon;
+import insilico.fish_knn.ismFishKnn;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.depict.DepictionGenerator;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -48,8 +49,13 @@ public class main {
 
     public static void main(String[] args) throws Exception {
 
-        InsilicoMolecule mol = SmilesMolecule.Convert("CCCCCc1cc(O)c2c(c1)OC(C)(C)C1CCC(C)=CC21                  \n \n \t");
+//        InsilicoMolecule mol = SmilesMolecule.Convert("CCCCCc1cc(O)c2c(c1)OC(C)(C)C1CCC(C)=CC21                  \n \n \t");
+////
+        InsilicoModel model = new ismFishKnn();
 //
+//        insilicoKnnQualitative pred = new insilicoKnnQualitative();
+//        pred.Calculate(SmilesMolecule.Convert("CCCCCc1cc(O)c2c(c1)OC(C)(C)C1CCC(C)=CC21"), model.GetTrainingSet());
+
 //        SmartsPattern pattern1 = SmartsPattern.create("[R2][R2]", DefaultChemObjectBuilder.getInstance()).setPrepare(false);
 
 

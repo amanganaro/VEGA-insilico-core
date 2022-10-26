@@ -10,14 +10,14 @@ import java.util.ArrayList;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
-public class InsilicoKnnQuantitative extends InsilicoKnn {
+public class insilicoKnnQuantitative extends insilicoKnn {
 
-    public InsilicoKnnQuantitative(){
+    public insilicoKnnQuantitative(){
         super();
     }
 
     @Override
-    protected InsilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours, iTrainingSet TrainSet) throws GenericFailureException {
+    protected insilicoKnnPrediction CalculatePrediction(ArrayList<SimilarMolecule> Neighbours, iTrainingSet TrainSet) throws GenericFailureException {
 
         double pred = 0;
         double weight = 0;
@@ -45,15 +45,15 @@ public class InsilicoKnnQuantitative extends InsilicoKnn {
 
         if (UseExperimentalRange)
             if ( Math.abs(max-min) > ExperimentalRange ) {
-                InsilicoKnnPrediction Prediction = new InsilicoKnnPrediction();
-                Prediction.setStatus(InsilicoKnnPrediction.KNN_MISSING_RANGE);
+                insilicoKnnPrediction Prediction = new insilicoKnnPrediction();
+                Prediction.setStatus(insilicoKnnPrediction.KNN_MISSING_RANGE);
                 return Prediction;
             }
 
-        InsilicoKnnPrediction Prediction = new InsilicoKnnPrediction();
+        insilicoKnnPrediction Prediction = new insilicoKnnPrediction();
         Prediction.setPrediction(pred);
         Prediction.setNeighbours(Neighbours);
-        Prediction.setStatus(InsilicoKnnPrediction.KNN_NORMAL_PREDICTION);
+        Prediction.setStatus(insilicoKnnPrediction.KNN_NORMAL_PREDICTION);
         return Prediction;
     }
 }
