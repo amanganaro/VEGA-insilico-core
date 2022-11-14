@@ -51,6 +51,32 @@ public class Depiction {
         return getBufferedImage(width, height, bufferedImage);
     }
 
+    public static BufferedImage DepictMoleculeWithSubstructuresList(InsilicoMolecule mol, int width, int height, List<DepicSub> depicSubList,  double highlightWidth )throws GenericFailureException, CDKException, InvalidMoleculeException {
+        if(!mol.IsValid())
+            throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_generic_fail"));
+
+
+        // Image generators
+        List<IGenerator<IAtomContainer>> generators = new ArrayList<>();
+        generators.add(new BasicSceneGenerator());
+        generators.add(new RingGenerator());
+        generators.add(new BasicAtomGenerator());
+
+        DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
+                .withAtomMapNumbers().withAromaticDisplay();
+
+        for(DepicSub curDepicSub: depicSubList){
+            generator.withHighlight(curDepicSub.getSubstructure(), curDepicSub.getColorSub());
+        }
+
+        generator.withOuterGlowHighlight(highlightWidth);
+
+        BufferedImage bufferedImage = generator.depict(mol.GetStructure()).toImg();
+
+        return getBufferedImage(width, height, bufferedImage);
+    }
+
+
     public static BufferedImage DepictMoleculeWith2Substructures(InsilicoMolecule mol, int width, int height,
                                                                  Iterable<IChemObject> substructure1, Iterable<IChemObject> substructure2, Color colorSub1, Color colorSub2, double highlightWidth) throws GenericFailureException, CDKException, InvalidMoleculeException {
 
@@ -66,6 +92,33 @@ public class Depiction {
 
         DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
                 .withAtomMapNumbers().withAromaticDisplay().withHighlight(substructure1, colorSub1).withHighlight(substructure2, colorSub2).withOuterGlowHighlight(highlightWidth);
+
+
+        // Build the image object
+        BufferedImage bufferedImage = generator.depict(mol.GetStructure()).toImg();
+
+        return getBufferedImage(width, height, bufferedImage);
+    }
+
+    public static BufferedImage DepictMoleculeWith3Substructures(InsilicoMolecule mol, int width, int height,
+                                                                 Iterable<IChemObject> substructure1, Iterable<IChemObject> substructure2, Iterable<IChemObject> substructure3, Color colorSub1, Color colorSub2, Color colorSub3, double highlightWidth) throws GenericFailureException, CDKException, InvalidMoleculeException {
+
+        if(!mol.IsValid())
+            throw new GenericFailureException(StringSelectorCore.getString("tool_depicture_generic_fail"));
+
+
+        // Image generators
+        List<IGenerator<IAtomContainer>> generators = new ArrayList<>();
+        generators.add(new BasicSceneGenerator());
+        generators.add(new RingGenerator());
+        generators.add(new BasicAtomGenerator());
+
+        DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
+                .withAtomMapNumbers().withAromaticDisplay()
+                .withHighlight(substructure1, colorSub1)
+                .withHighlight(substructure2, colorSub2)
+                .withHighlight(substructure3, colorSub3)
+                .withOuterGlowHighlight(highlightWidth);
 
 
         // Build the image object
