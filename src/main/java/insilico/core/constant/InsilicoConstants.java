@@ -67,6 +67,9 @@ public class InsilicoConstants implements Serializable {
         public static final int SA_BLOCK_MOA_IRFMN = 51;
         public static final int SA_BLOCK_SKIN_IRR_CONCERT = 52;
         public static final int SA_BLOCK_DEVTOX_CONCERT = 53;
+        public static final int SA_BLOCK_SKIN_SENS_CONCERT = 54;
+        public static final int SA_BLOCK_SKIN_IRRITATION_CONCERT_B3 = 55;
+        public static final int SA_BLOCK_EYE_IRRITATION_CONCERT = 56;
 
         // Property keys used for read-across in Alert objects
         public static final String KEY_ALERT_SHOW_SIMILAR_MOLS = "ra_sim";
@@ -131,6 +134,9 @@ public class InsilicoConstants implements Serializable {
         public static final String KEY_ALERT_SKIN_IRR = "skin_irr";
         public static final String KEY_ALERT_SKIN_NON_IRR = "skin_non_irr";
 
+        public static final String KEY_ALERT_EYE_IRR = "eye_irr";
+        public static final String KEY_ALERT_EYE_NON_IRR = "eye_non_irr";
+
         public static final String KEY_ALERT_MICRONUCLEUS_ACTIVE = "mn_act";
         public static final String KEY_ALERT_MICRONUCLEUS_INACTIVE = "mn_inact";
         public static final String KEY_ALERT_MICRONUCLEUS_INVIVO_SA_BLOCK = "mn_alertblock";
@@ -140,6 +146,9 @@ public class InsilicoConstants implements Serializable {
         public static final String KEY_ALERT_AR_COMPARA_SARPY_ALL15_INACT_INF = "er_a15_ii";
         public static final String KEY_ALERT_AR_COMPARA_SARPY_ALL15_INACT_NONINF = "er_a15_in";
         public static final String KEY_ALERT_AR_COMPARA_SARPY_ACT6 = "er_a6";
+
+        public static final String KEY_ALERT_SARPY_STATS_INF = "sarpy_inf";
+        public static final String KEY_ALERT_SARPY_STATS_LESS_THAN_INF = "sarpy_noninf";
 
         // Keys for reasoning items (AD)
         public static final short REASONING_UNCERTAINTY = 1;
