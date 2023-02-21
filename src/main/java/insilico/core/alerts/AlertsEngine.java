@@ -153,6 +153,15 @@ public class AlertsEngine {
                 case InsilicoConstants.SA_BLOCK_DEVTOX_CONCERT:
                     Alerts.add(new SADevtoxConcert());
                     break;
+                case InsilicoConstants.SA_BLOCK_SKIN_SENS_CONCERT:
+                    Alerts.add(new SASkinSensitizationConcert());
+                    break;
+                case InsilicoConstants.SA_BLOCK_SKIN_IRRITATION_CONCERT_B3:
+                    Alerts.add(new SASkinIrritationConcert());
+                    break;
+                case InsilicoConstants.SA_BLOCK_EYE_IRRITATION_CONCERT:
+                    Alerts.add(new SAEyeIrritationConcert());
+                    break;
                 default:
                     throw new InitFailureException(String.format(StringSelectorCore.getString("sa_alert_not_available"), AlertBlockId));
             }
