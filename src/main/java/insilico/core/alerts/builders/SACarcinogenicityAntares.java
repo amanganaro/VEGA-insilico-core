@@ -161,6 +161,7 @@ public class SACarcinogenicityAntares extends AlertBlockFromSMARTS implements iA
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (i+1)));
             curSA.setName(StringSelectorCore.getString("sa_carc_antares_name") + (i+1));
             curSA.setDescription(StringSelectorCore.getString("sa_carc_antares_description") + CarcSMARTS[i]);
+            curSA.setSMARTS(CarcSMARTS[i]);
             Alerts.add(curSA);
         }
 

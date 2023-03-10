@@ -22,6 +22,7 @@ public class Alert extends PropertyContainer implements Serializable, Cloneable 
     private String Description;
     private String ImageURL;
     private String ParentAlerts;
+    private String SMARTS;
     private ArrayList<SimilarMolecule> SimilarMols;
 
     public Alert(int Block, String Id) {
@@ -32,6 +33,7 @@ public class Alert extends PropertyContainer implements Serializable, Cloneable 
         Description = "";
         ImageURL = null;
         ParentAlerts = "";
+        SMARTS = "";
         SimilarMols = new ArrayList<>();
     }
 

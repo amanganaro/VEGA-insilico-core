@@ -76,6 +76,7 @@ public class SASkinIrritationConcert extends AlertBlockFromSMARTS implements iAl
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
             curSA.setName("Skin Irritation " + SMARTS_MAX[i][1] + " alert no. " + (i+1));
             curSA.setDescription("Structural alert for Skin Irritation "+ SMARTS_MAX[i][1] + " compounds with good reliability, defined by the SMARTS: " + SMARTS_MAX[i][0]);
+            curSA.setSMARTS(SMARTS_MAX[i][0]);
             if (SMARTS_MAX[i][1].equalsIgnoreCase(ACTIVE))
                 curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_SKIN_IRR, true);
             else
@@ -89,6 +90,7 @@ public class SASkinIrritationConcert extends AlertBlockFromSMARTS implements iAl
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
             curSA.setName("Skin Irritation " + SMARTS_MIN[i][1] + " alert no. " + (i+1));
             curSA.setDescription("Structural alert for Skin Irritation "+ SMARTS_MIN[i][1] + " compounds with moderate reliability, defined by the SMARTS: " + SMARTS_MIN[i][0]);
+            curSA.setSMARTS(SMARTS_MIN[i][0]);
             if (SMARTS_MIN[i][1].equalsIgnoreCase(ACTIVE))
                 curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_SKIN_IRR, true);
             else

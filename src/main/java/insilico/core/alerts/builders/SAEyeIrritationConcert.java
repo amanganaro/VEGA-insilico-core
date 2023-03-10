@@ -94,6 +94,7 @@ public class SAEyeIrritationConcert extends AlertBlockFromSMARTS implements iAle
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
             curSA.setName("Eye Irritation " + SMARTS_MAX[i][1] + " alert no. " + (i+1));
             curSA.setDescription("Structural alert for Eye Irritation "+ SMARTS_MAX[i][1] + " compounds with good reliability, defined by the SMARTS: " + SMARTS_MAX[i][0]);
+            curSA.setSMARTS(SMARTS_MAX[i][0]);
             if (SMARTS_MAX[i][1].equalsIgnoreCase(ACTIVE))
                 curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_EYE_IRR, true);
             else
@@ -107,6 +108,7 @@ public class SAEyeIrritationConcert extends AlertBlockFromSMARTS implements iAle
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
             curSA.setName("Eye Irritation " + SMARTS_MIN[i][1] + " alert no. " + (i+1));
             curSA.setDescription("Structural alert for Eye Irritation "+ SMARTS_MIN[i][1] + " compounds with moderate reliability, defined by the SMARTS: " + SMARTS_MIN[i][0]);
+            curSA.setSMARTS(SMARTS_MIN[i][0]);
             if (SMARTS_MIN[i][1].equalsIgnoreCase(ACTIVE))
                 curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_EYE_IRR, true);
             else

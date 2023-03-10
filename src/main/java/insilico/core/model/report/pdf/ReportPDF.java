@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.beans.JavaBean;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -1566,12 +1567,28 @@ public class ReportPDF {
 
                     // show fragment
 
+                    // try loading from resource
                     try {
                         if (curSA.getImageURL() == null) throw new Exception();
                         URL uImg = getClass().getResource(curSA.getImageURL());
                         gif = Image.getInstance(ImageIO.read(uImg.openStream()),null);
                     } catch (Exception e) {
                         gif = null;
+                    }
+
+                    // try depiction
+                    if (gif == null) {
+                        try {
+                            String SMARTS = curSA.getSMARTS();
+                            if (SMARTS == null) throw new Exception();
+                            if (SMARTS.isEmpty()) throw new Exception();
+
+                            InsilicoMolecule mol = SmilesMolecule.Convert(SMARTS);
+                            gif = Image.getInstance (Depiction.DepictMolecule(mol.GetStructure(), 200, 200), null);
+                        } catch (Exception e) {
+                            gif = null;
+                        }
+
                     }
 
                     widths[0] = 0f;

@@ -74,7 +74,7 @@ public class SASkinConcert extends AlertBlockFromSMARTS implements iAlertBlock {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
             curSA.setName("Skin irritation ACTIVE alert no. " + (i+1));
             curSA.setDescription("Structural alert for Skin irritation ACTIVE defined by the SMARTS: " + SMARTS_ACTIVE[i]);
-//            curSA.setImageURL("/insilico/core/alerts/png/skinvermeer/SKIN_VER_" + (idx+1) + ".png");
+            curSA.setSMARTS(SMARTS_ACTIVE[i]);
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_SKIN_IRR, true);
             Alerts.add(curSA);
             idx++;
@@ -84,7 +84,7 @@ public class SASkinConcert extends AlertBlockFromSMARTS implements iAlertBlock {
             Alert curSA = new Alert(BlockIndex, AlertEncoding.BuildAlertId(BlockIndex, (idx+1)));
             curSA.setName("Skin irritation INACTIVE alert no. " + (i+1));
             curSA.setDescription("Structural alert for Skin irritation INACTIVE defined by the SMARTS: " + SMARTS_INACTIVE[i]);
-//            curSA.setImageURL("/insilico/core/alerts/png/skinvermeer/SKIN_VER_" + (idx+1) + ".png");
+            curSA.setSMARTS(SMARTS_INACTIVE[i]);
             curSA.setBoolProperty(InsilicoConstants.KEY_ALERT_SKIN_NON_IRR, true);
             Alerts.add(curSA);
             idx++;
