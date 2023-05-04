@@ -83,10 +83,11 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
 
             // Calculate all models on the molecule
             for(InsilicoModelWrapper wrapper : ModelWrappers) {
+
                 try {
                     wrapper.Process(molecule, descriptorsEngine, false);
                 } catch (GenericFailureException ex){
-                    throw new GenericFailureException(ex.getMessage());
+                    throw new GenericFailureException("model: " + wrapper.getModel().getInfo().getName() + " - "  + ex.getMessage());
                 }
 
                 // Release memory used by loaded model TS after execution

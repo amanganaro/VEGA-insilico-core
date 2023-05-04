@@ -19,35 +19,33 @@
         <skipTests>true</skipTests>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>maven-group</id>
-            <url>http://tech.kode-datacenter.net:8081/repository/maven-group/</url>
-        </repository>
-    </repositories>
-
     <distributionManagement>
-
         <snapshotRepository>
-            <id>nexus-snapshots</id>
-            <url>http://tech.kode-datacenter.net:8081/repository/maven-snapshots/</url>
+            <id>maven-snapshots</id>
+            <url>http://195.231.76.108:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
-
         <repository>
-            <id>nexus-releases</id>
-            <url>http://tech.kode-datacenter.net:8081/repository/maven-releases/</url>
+            <id>maven-releases</id>
+            <url>http://195.231.76.108:8081/repository/maven-releases/</url>
         </repository>
-
 
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>maven-public</id>
+            <url>http://195.231.76.108:8081/repository/maven-public/</url>
+        </repository>
+    </repositories>
+
+
     <dependencies>
 
-        <dependency>
+       <!-- <dependency>
             <groupId>net.sf.jni-inchi</groupId>
             <artifactId>jni-inchi</artifactId>
             <version>0.8</version>
-        </dependency>
+        </dependency>-->
 
 
         <dependency>
@@ -156,7 +154,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.20</version>
+            <version>1.18.22</version>
             <scope>provided</scope>
         </dependency>
 
@@ -198,7 +196,7 @@
             <version>1.7.32</version>
         </dependency>
 
-        <dependency>
+       <dependency>
             <groupId>InSilico</groupId>
             <artifactId>AlertsPNG</artifactId>
             <version>1.0</version>
@@ -266,7 +264,7 @@
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
-                            <version>1.18.20</version>
+                            <version>1.18.22</version>
                         </path>
                     </annotationProcessorPaths>
 
