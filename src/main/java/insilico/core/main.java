@@ -57,17 +57,17 @@ public class main {
 
     public static void main(String[] args) throws Exception {
 
-//        QMRFMSDoc qm = new QMRFMSDoc(main.class.getResource("/QMRF_MutaAmes_CAESAR.docx"));
-//        String XML = qm.ParseAndConvertToXML();
-//        System.out.println(XML);
+//        QMRFMSDoc qm = new QMRFMSDoc(main.class.getResource("/QMRF_HEPA_NRF2_(TOXCAST).docx"));
+//        qm.SaveXMLtoFile("qmrf_hepa_nrf2.xml");
+//        if (1==1) return;
 
         ////
 
-        String src = "/muta.xml";
+        String src = "/qmrf_hepa_nrf2.xml";
 
         URL u = main.class.getResource(src);
         QMRFDocument doc = new QMRFDocument(u);
-        doc.PrintToScreen(true, true);
+//        doc.PrintToScreen(true, true);
         byte[] bos = doc.CreatePDF();
 
         try (FileOutputStream fos = new FileOutputStream("prova.pdf")) {

@@ -48,7 +48,7 @@ public class SmilesMolecule {
         log.debug(String.format(StringSelectorCore.getString("conversion_smiles_start"), SMILESString));
 
         try {
-            SMILESString = SMILESString.replaceAll("\\s+", "");
+//            SMILESString = SMILESString.replaceAll("\\s+", "");
             SMILESString = GeneralUtilities.TrimString(SMILESString);
 
             String[] bufStr = SMILESString.split(String.valueOf(charTab));

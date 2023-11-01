@@ -1,14 +1,13 @@
 package insilico.core.model.qmrf;
 
+import com.lowagie.text.*;
 import com.lowagie.text.Font;
-import com.lowagie.text.PageSize;
-import com.lowagie.text.Paragraph;
-import com.lowagie.text.pdf.PdfPCell;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.*;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
@@ -39,7 +38,7 @@ public class QMRFDocument {
             "QSAR_Predictivity",
             "QSAR_Interpretation",
             "QSAR_Miscelaneous",
-            "QMRF_Summary",
+//            "QMRF_Summary",
     };
 
     public class QMRFChapter {
@@ -134,32 +133,19 @@ public class QMRFDocument {
         }
     }
 
-//    public void PrintInternal() {
-//        String sections = "";
-//        String chapters = "";
-//
-//        for (QMRFSection s : Sections) {
-//
-//            sections += "{\"" + s.Number + "\", \"" + s.Name + "\", \"" + s.Tag + "\"},\n";
-//            for (QMRFChapter c : s.Chapters)
-//                chapters += "{\"" + c.Number + "\", \"" + c.Name + "\", \"" + c.Tag + "\", \"" + s.Number + "\"},\n";
-//        }
-//
-//        System.out.println(sections);
-//        System.out.println();
-//        System.out.println(chapters);
-//    }
 
     public byte[] CreatePDF() throws Exception {
 
         // create pdf doc and init
         com.lowagie.text.Document document = new com.lowagie.text.Document(PageSize.A4);
+        document.setMargins( 45,45,40,60);
         ByteArrayOutputStream doc_bos = new ByteArrayOutputStream();
         PdfWriter writer = PdfWriter.getInstance(document, doc_bos);
         document.open();
 
         // create fonts
         Font font = new Font(Font.HELVETICA, 9, Font.NORMAL);
+        Font fontPre = new Font(Font.COURIER, 9, Font.NORMAL);
         Font fontForSpacing = new Font(Font.HELVETICA, 3, Font.NORMAL);
         Font fontForSpacingBig = new Font(Font.HELVETICA, 6, Font.NORMAL);
         Font fontTitle = new Font(Font.HELVETICA, 9, Font.BOLD);
@@ -168,6 +154,9 @@ public class QMRFDocument {
         Font fontReference = new Font(Font.HELVETICA, 9, Font.BOLDITALIC);
         Font fontLink = new Font(Font.HELVETICA, 9, Font.BOLD + Font.UNDERLINE);
         fontLink.setColor(Color.BLUE);
+
+//        FontFactory.register( "C:\\Users\\alber\\Desktop\\prova\\JuliaMono-Regular.ttf", "pretext");
+//        Font fontPre = FontFactory.getFont("pretext", 9);
 
         PdfPTable table;
         PdfPCell cell;
@@ -235,7 +224,136 @@ public class QMRFDocument {
                 Paragraph sectionTitle = new Paragraph(ChapterTitle, fontTitle);
                 document.add(sectionTitle);
 
-                for (String line : Value) {
+                for (int idxLine=0; idxLine<Value.length; idxLine++) {
+
+                    String line = Value[idxLine];
+                    int tagIdx;
+
+
+                    // pre formatted text block
+                    ArrayList<String> TextContent = new ArrayList<>();
+                    if (line.contains("[pre]")) {
+                        int idxPreLine = idxLine+1;
+                        while (idxPreLine < Value.length) {
+                            if (Value[idxPreLine].contains("[/pre]"))
+                                break;
+                            TextContent.add(Value[idxPreLine]);
+                            idxPreLine++;
+                        }
+
+                        // print pre text
+                        for (String tc : TextContent) {
+                            tc = ReplaceSpecialChars(tc);
+                            tc = ConvertTabs(tc);
+                            Paragraph sectionContent = new Paragraph(tc, fontPre);
+                            sectionContent.setIndentationLeft(10);
+                            document.add(sectionContent);
+                        }
+
+                        // update index
+                        idxLine = idxPreLine+1;
+                        line = "";
+                    }
+
+
+                    // scan for img tags, then leaves the remaining text in the line variable
+                    while ( (tagIdx = line.indexOf("[img")) != -1 ) {
+
+                        // print previous text
+                        String preText = line.substring(0, tagIdx);
+                        preText = ReplaceSpecialChars(preText);
+
+                        Paragraph sectionContent = new Paragraph(preText, font);
+                        sectionContent.setIndentationLeft(10);
+                        document.add(sectionContent);
+                        document.add(new Paragraph("\n", fontForSpacing));
+
+                        // extract tag
+                        String curTag = "" + line.charAt(tagIdx);
+                        int idxEnd = tagIdx+1;
+                        while (idxEnd<line.length()) {
+                            curTag += line.charAt(idxEnd);
+                            if (line.charAt(idxEnd) == ']')
+                                break;
+                            idxEnd++;
+                        }
+
+                        // process tag and print
+                        boolean ImgError = false;
+                        int srcIdx = curTag.indexOf("src=\"");
+                        if (srcIdx == -1)
+                            ImgError = true;
+                        else {
+                            int i = srcIdx+5;
+                            String ImageSource = "";
+                            while (i<curTag.length()) {
+                                if (curTag.charAt(i) == '\"')
+                                    break;
+                                ImageSource += curTag.charAt(i);
+                                i++;
+                            }
+
+                            try {
+                                uImage = getClass().getResource(ImageSource);
+                                com.lowagie.text.Image curImage = com.lowagie.text.Image.getInstance(ImageIO.read(uImage.openStream()), null);
+
+                                // don't know why images are put in the document with a bigger size
+                                // I apply an empirical factor of 0.8 to reduce it, seems to work fine
+                                float ratio_img = ( curImage.getPlainWidth() / document.getPageSize().getWidth()) * 100f * 0.8f;
+                                float ratio_padding = ( 10f / document.getPageSize().getWidth()) * 100f;
+                                float[] widths_tbl = { ratio_padding, ratio_img, (100f - ratio_img - ratio_padding)};
+
+                                table = new PdfPTable(3);
+                                table.getDefaultCell().setBorder(BOX);
+                                table.setWidths(widths_tbl);
+
+                                cell= new PdfPCell(); // padding
+                                cell.setPadding(0);
+                                cell.setHorizontalAlignment(ALIGN_LEFT);
+                                cell.setVerticalAlignment(ALIGN_MIDDLE);
+                                cell.setBorderColor(Color.WHITE);
+                                table.addCell(cell);
+
+                                cell= new PdfPCell(curImage, true); // image
+                                cell.setPadding(0);
+                                cell.setHorizontalAlignment(ALIGN_LEFT);
+                                cell.setVerticalAlignment(ALIGN_MIDDLE);
+                                cell.setBorderColor(Color.WHITE);
+                                table.addCell(cell);
+
+                                cell= new PdfPCell(); // remaining right space
+                                cell.setPadding(0);
+                                cell.setHorizontalAlignment(ALIGN_LEFT);
+                                cell.setVerticalAlignment(ALIGN_MIDDLE);
+                                cell.setBorderColor(Color.WHITE);
+                                table.addCell(cell);
+
+                                table.setWidthPercentage(100);
+                                document.add(table);
+
+                            } catch (Exception e) {
+                                ImgError = true;
+                            }
+                        }
+
+                        if (ImgError) {
+                            sectionContent = new Paragraph("[Error - image not found]", font);
+                            sectionContent.setIndentationLeft(10);
+                            document.add(sectionContent);
+                            document.add(new Paragraph("\n", fontForSpacing));
+                        }
+
+                        // put remaining text in line
+                        if ((idxEnd+1) >= line.length())
+                            line = "";
+                        else
+                            line = line.substring(idxEnd+1);
+                    }
+
+
+                    // print remaining text
+                    line = ReplaceSpecialChars(line);
+
                     Paragraph sectionContent = new Paragraph(line, font);
                     sectionContent.setIndentationLeft(10);
                     document.add(sectionContent);
@@ -245,8 +363,55 @@ public class QMRFDocument {
         }
 
         document.close();
-        return doc_bos.toByteArray();
 
+        // re-read document from byte array and add page numbers
+        PdfReader bufReader = new PdfReader(doc_bos.toByteArray());
+        ByteArrayOutputStream doc_bos_2 = new ByteArrayOutputStream();
+        PdfStamper stamper = new PdfStamper(bufReader, doc_bos_2);
+        stamper.setRotateContents(false);
+        Font f = new Font(Font.HELVETICA, 8);
+        f.setColor(60,60,60);
+        for (int i = 1; i <= bufReader.getNumberOfPages(); i++) {
+            Phrase t = new Phrase("page " + i + " / " + bufReader.getNumberOfPages(), f);
+            float xt = bufReader.getPageSize(i).getWidth()/2;
+            float yt = bufReader.getPageSize(i).getBottom(30);
+            ColumnText.showTextAligned(
+                    stamper.getOverContent(i), ALIGN_CENTER,
+                    t, xt, yt, 0);
+        }
+        stamper.close();
+        bufReader.close();
+
+        return doc_bos_2.toByteArray();
+    }
+
+    private String ReplaceSpecialChars(String s) {
+        String res = s.replace("&lt;", "<");
+        res = res.replace("&gt;", ">");
+        res = res.replace("&amp;", "&");
+        return res;
+    }
+
+    private String ConvertTabs(String s) {
+        int TabSize = 4;
+
+        String res = "";
+        int count = 0;
+        for (int i=0; i<s.length(); i++) {
+            if (s.charAt(i) == '\t') {
+                res += " ";
+                count++;
+                while ( (count % TabSize) != 0) {
+                    res += " ";
+                    count++;
+                }
+            } else {
+                res += s.charAt(i);
+                count++;
+            }
+        }
+
+        return res;
     }
 
 }

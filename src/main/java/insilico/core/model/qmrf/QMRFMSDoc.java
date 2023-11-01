@@ -5,6 +5,8 @@ import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import java.io.DataInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -105,6 +107,18 @@ public class QMRFMSDoc {
     }
 
 
+    public void SaveXMLtoFile(String filename) {
+        String xml = ParseAndConvertToXML();
+        try {
+            FileWriter f = new FileWriter(filename);
+            f.write(xml);
+            f.flush();
+            f.close();
+        } catch (IOException e) {
+            System.out.println("An error occurred - " + e.getMessage());
+        }
+    }
+
     public String ParseAndConvertToXML() {
 
         String[] text = docText.split("\n");
@@ -163,8 +177,15 @@ public class QMRFMSDoc {
                     // write xml
                     XML += "<" + TAGS_CHAPTER[chapter][2] + " chapter=\"" + TAGS_CHAPTER[chapter][0] + "\" "  +
                             " help=\"\" name=\"" + TAGS_CHAPTER[chapter][1] + "\">\n";
-                    for (String s : value)
+                    for (String s : value) {
+
+                        // check for special chars - messing with XML format
+                        s = s.replace("<", "&lt;");
+                        s = s.replace(">", "&gt;");
+                        s = s.replace("&", "&amp;");
+
                         XML += s + "\n";
+                    }
                     XML += "</" + TAGS_CHAPTER[chapter][2] + ">\n";
                 }
             }
