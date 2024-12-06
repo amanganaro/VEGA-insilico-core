@@ -65,7 +65,7 @@ public class FileUtilities {
         return Ret;
     }
 
-    public static Map<String, String> readRowFromFile(String file, char delimiter, int rowToRead) throws URISyntaxException, IOException, CsvValidationException {
+    public static Map<String, String> readSelectedRowAndHeaderFromFile(String file, char delimiter, int rowToRead) throws URISyntaxException, IOException, CsvValidationException {
 
         Path path = Paths.get(ClassLoader.getSystemResource(file).toURI());
         try(Reader reader = Files.newBufferedReader(path)) {

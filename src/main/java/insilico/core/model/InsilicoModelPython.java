@@ -21,23 +21,37 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         communication = new Communication();
     }
 
+    /***
+     * It is better that each model has its own virtual environment, as recommended by conda docs.
+     * Otherwise, it can be set to default base conda environment
+     * @return
+     */
     public abstract String getCondaEnv();
 
-    public double calculatePythonModel(String endpointName) throws IOException, InterruptedException, CsvValidationException, URISyntaxException {
+    /***
+     * Method that calculate the model prediction. The prediction it is stored in out.csv file.
+     * The Python script file for our standard must be called app.py . Optionally can be passed
+     * other parameters that are required from the script
+     * @return It is returned the entire rows value in pair with the correspondent header value
+     * Therefore it can be used with multitask model or single task
+     * The management of the name is left to the implemented model
+     * @throws IOException
+     * @throws InterruptedException
+     * @throws CsvValidationException
+     * @throws URISyntaxException
+     */
+    public Map<String, String> calculatePythonModel(String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException {
         boolean computationOk = communication.executeScriptInCondaEnv(
-                getCondaEnv(), "app.py", "descriptors.csv");
+                getCondaEnv(), "app.py", params);
 
-        double result=0;
+        Map<String, String> result;
 
         if(computationOk){
-            Map<String, String> resultRow = FileUtilities.readRowFromFile("out.csv", ',', 2);
-
-            result=Double.parseDouble(resultRow.get(endpointName));
+            result = FileUtilities.readSelectedRowAndHeaderFromFile("out.csv", ',', 2);
         }
         else {
-            result=-1;
+            result=null;
         }
-
 
         File file = new File("descriptors.csv");
         file.delete();
@@ -49,8 +63,9 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
 
     /***
      * Method to set up conda environment, it will be moved to the start of GUI where all env will be set all in once
-     * This method will be overrided IF the env require additional file management (like DILI-bayer)
-     * @return
+     * This method should be overridden IF the env require additional file management (like DILI-bayer)
+     * @return boolean result to know if the whole execution is done smoothly. If there are some error, they are
+     * reported in LOG
      * @throws InterruptedException
      * @throws IOException
      */
