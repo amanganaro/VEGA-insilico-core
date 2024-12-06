@@ -1,13 +1,17 @@
 package insilico.core.python;
 
 import insilico.core.tools.utils.GeneralUtilities;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Communication {
 
+    private static final Logger log = LoggerFactory.getLogger(Communication.class);
     private boolean isWindows;
     private Map<String, String> additionalEnvVariables;
 
@@ -56,6 +60,46 @@ public class Communication {
         }
 
         return result;
+    }
+
+    public boolean checkCondaEnv(String envName) throws IOException, InterruptedException {
+        boolean result=false;
+        String uh=System.getProperty("user.home");
+
+        if(isWindows){
+            result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
+                    "cmd.exe", "/c", uh+"\\miniconda3\\_conda env list");
+        }else {
+            result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
+                    "bash", "-c", "source ~/miniconda3/etc/profile.d/conda.sh && conda env list");
+        }
+        return result;
+    }
+
+    public boolean configureCondaEnv(String envName, Path pathToEnvFile) throws InterruptedException, IOException {
+        boolean isSet;
+        boolean temp;
+        String uh=System.getProperty("user.home");
+
+        isSet=checkCondaEnv(envName);
+
+        if(!isSet){
+            if(isWindows){
+                temp= GeneralUtilities.executeCommandLine(additionalEnvVariables, "cmd.exe", "/c",
+                        "conda env create --file "+pathToEnvFile.toString());
+            }else {
+                temp= GeneralUtilities.executeCommandLine(null, "bash", "-c",
+                        "source ~/miniconda3/etc/profile.d/conda.sh && conda env create --file "+pathToEnvFile.toString());
+            }
+            if(temp){
+                isSet=checkCondaEnv(envName);
+            }else{
+                log.error("Conda environment {} failed to be set", envName);
+                System.out.println("Conda environment failed to be set");
+            }
+        }
+
+        return isSet;
     }
 
 }

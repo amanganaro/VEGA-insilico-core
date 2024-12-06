@@ -9,6 +9,7 @@ import insilico.core.tools.utils.GeneralUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,39 +70,9 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @throws InterruptedException
      * @throws IOException
      */
-    public boolean configureCondaEnv() throws InterruptedException, IOException {
-        boolean isSet = false;
-        boolean temp=false;
-        boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
-        String uh=System.getProperty("user.home");
-        Map<String, String> additionalEnvVariables = new HashMap<>();
-        additionalEnvVariables.put("PATH", uh+"\\miniconda3\\Scripts\\;"+uh+"\\miniconda3\\;"+
-                "C:\\Program Files\\Python313\\Scripts\\;C:\\Program Files\\Python313\\;");
+    public boolean configureCondaEnv(Path pathToEnvFile) throws InterruptedException, IOException {
 
-        if(isWindows){
-            isSet = GeneralUtilities.executeCommandLineAndCheckResult(null, getCondaEnv(), "cmd.exe", "/c", uh+"\\miniconda3\\_conda env list");
-        }else {
-            isSet = GeneralUtilities.executeCommandLineAndCheckResult(null, getCondaEnv(), "bash", "-c", "source ~/miniconda3/etc/profile.d/conda.sh && conda env list");
-        }
-
-        if(!isSet){
-            if(isWindows){
-                temp= GeneralUtilities.executeCommandLine(additionalEnvVariables, "cmd.exe", "/c", "conda env create --file "+getCondaEnv()+".yml");
-            }else {
-                temp= GeneralUtilities.executeCommandLine(null, "bash", "-c", "source ~/miniconda3/etc/profile.d/conda.sh && conda env create --file "+getCondaEnv()+".yml");
-            }
-            if(temp){
-                if(isWindows){
-                    isSet = GeneralUtilities.executeCommandLineAndCheckResult(null, getCondaEnv(), "cmd.exe", "/c", uh+"\\miniconda3\\_conda env list");
-                }else {
-                    isSet = GeneralUtilities.executeCommandLineAndCheckResult(null, getCondaEnv(), "bash", "-c", "source ~/miniconda3/etc/profile.d/conda.sh && conda env list");
-                }
-            }else{
-                System.out.println("Conda environment failed to be set");
-            }
-        }
-
-        return isSet;
+        return communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
     }
 
 }
