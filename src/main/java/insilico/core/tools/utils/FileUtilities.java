@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -96,6 +97,23 @@ public class FileUtilities {
             }
         }
 
+    }
+
+    public static boolean copyExternalData(String source, String dest) throws IOException, InterruptedException {
+        Path destinationDirectory = Paths.get(dest);
+        Files.createDirectories(destinationDirectory);
+        Files.walk(Paths.get(source)).forEach(subItem -> {
+            Path destination = Paths.get(dest, subItem.toString().substring(source.length()));
+            try {
+                File f=new File(destination.toString());
+                if(!f.exists())
+                    Files.copy(subItem, destination, StandardCopyOption.REPLACE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        return true;
     }
 
 }

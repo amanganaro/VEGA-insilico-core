@@ -62,8 +62,8 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     }
 
     /***
-     * Method to set up conda environment, it will be moved to the start of GUI where all env will be set all in once
-     * This method should be overridden IF the env require additional file management (like DILI-bayer)
+     * Method to set up conda environment, it will be moved to the startup of GUI, where all envs will be set
+     * all in once. This method should be overridden IF the env require additional file management (like DILI-bayer)
      * @return boolean result to know if the whole execution is done smoothly. If there are some error, they are
      * reported in LOG
      * @throws InterruptedException
