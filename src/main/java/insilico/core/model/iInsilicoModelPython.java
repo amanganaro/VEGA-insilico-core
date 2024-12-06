@@ -10,4 +10,6 @@ public interface iInsilicoModelPython {
 
     public boolean configureCondaEnv() throws InterruptedException, IOException;
 
+    //TODO
+    public boolean prepareInputData();
 }
