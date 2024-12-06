@@ -1,10 +1,23 @@
 package insilico.core.tools.utils;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.localization.StringSelectorCore;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Reader;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * General utilities for file handling/saving/etc
@@ -50,6 +63,39 @@ public class FileUtilities {
             Ret = Source + "_" + AppendStr;
         }
         return Ret;
+    }
+
+    public static Map<String, String> readRowFromFile(String file, char delimiter, int rowToRead) throws URISyntaxException, IOException, CsvValidationException {
+
+        Path path = Paths.get(ClassLoader.getSystemResource(file).toURI());
+        try(Reader reader = Files.newBufferedReader(path)) {
+            CSVParser parser = new CSVParserBuilder()
+                    .withSeparator(delimiter)
+                    .withIgnoreQuotations(true)
+                    .build();
+
+            try (CSVReader csvReader = new CSVReaderBuilder(reader)
+                    .withCSVParser(parser)
+                    .build()) {
+
+                String[] headers = csvReader.readNext();
+
+                for (int i = 1; i < rowToRead; i++) {
+                    csvReader.readNext();
+                }
+
+                String[] rowValues = csvReader.readNext();
+                Map<String, String> rowMap = new HashMap<String,String>();
+                if (headers != null && rowValues != null) {
+                    for (int i = 0; i < headers.length; i++) {
+                        rowMap.put(headers[i], i < rowValues.length ? rowValues[i] : null);
+                    }
+                }
+
+                return rowMap;
+            }
+        }
+
     }
 
 }
