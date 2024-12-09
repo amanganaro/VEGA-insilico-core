@@ -1,25 +1,27 @@
 package insilico.core.model;
 
 import com.opencsv.exceptions.CsvValidationException;
+import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.python.Communication;
 import insilico.core.tools.utils.FileUtilities;
-import insilico.core.tools.utils.GeneralUtilities;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.util.HashMap;
 import java.util.Map;
 
 public abstract class InsilicoModelPython extends InsilicoModel implements iInsilicoModelPython {
 
     private final Communication communication;
     private boolean CHECK_SETUP = true;
+    public String descriptorTempFile;
+    protected String inputTempFile;
+    protected String outputTempFile;
 
 
-    public InsilicoModelPython(String modelData) throws InitFailureException {
+    public InsilicoModelPython(String modelData) throws InitFailureException, GenericFailureException {
         super(modelData);
         communication = new Communication();
     }
@@ -29,16 +31,6 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * Otherwise, it can be set to default base conda environment
      */
     public abstract String getCondaEnv();
-
-    /*
-    * File name to read input molecules
-    * */
-    protected abstract String inputTempFile();
-
-    /*
-    * File name of the model results
-    * */
-    protected abstract String outputTempFile();
 
     /***
      * Method that calculate the model prediction. The prediction it is stored in out.csv file.
@@ -52,20 +44,20 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @throws CsvValidationException
      * @throws URISyntaxException
      */
-    public Map<String, String> calculatePythonModel(Path scriptPath, Path outputFile, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException {
+    public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException {
         boolean computationOk = communication.executeScriptInCondaEnv(
                 getCondaEnv(), scriptPath.toString(), params);
 
         Map<String, String> result;
 
         if(computationOk){
-            result = FileUtilities.readSelectedRowAndHeaderFromFile(outputFile.toString(), ',', 1);
+            result = FileUtilities.readSelectedRowAndHeaderFromFile(outputTempFile, ',', 1);
         }
         else {
             result=null;
         }
 
-        File file = new File(outputFile.toString());
+        File file = new File(outputTempFile);
         file.delete();
 
         return result;
@@ -80,7 +72,6 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @throws IOException
      */
     public boolean configureCondaEnv(Path pathToEnvFile) throws InterruptedException, IOException {
-
         return communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
     }
 
@@ -91,6 +82,11 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      */
     public void setCheckSetup(boolean value){
         CHECK_SETUP = value;
+    }
+
+    public void prepareInputData() throws GenericFailureException {
+        FileUtilities.WriteByteArrayToFile(inputTempFile,
+                ("smiles\r\n"+CurMolecule.GetSMILES()).getBytes());
     }
 
 }

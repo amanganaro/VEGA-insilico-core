@@ -1,18 +1,23 @@
 package insilico.core.model;
 
+import com.opencsv.exceptions.CsvValidationException;
+import insilico.core.exception.GenericFailureException;
+
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.Map;
 
 public interface iInsilicoModelPython {
 
+
     public String getCondaEnv();
 
-    public Map<String, String> calculatePythonModel() throws IOException, InterruptedException;
+    public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException;
 
     public boolean configureCondaEnv() throws InterruptedException, IOException;
 
-    public void setCheckSetup();
+    public void setCheckSetup(boolean value);
 
-    //TODO
-    public boolean prepareInputData();
+    public void prepareInputData() throws GenericFailureException;
 }
