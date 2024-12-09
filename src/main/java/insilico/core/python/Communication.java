@@ -56,7 +56,7 @@ public class Communication {
         }else {
             result = GeneralUtilities.executeCommandLine(null, "bash", "-c",
                     "source ~/miniconda3/etc/profile.d/conda.sh && conda activate "
-                            + env +" && python3 " + command + " " + p);
+                            + env +" && " + command + " " + p);
         }
 
         return result;

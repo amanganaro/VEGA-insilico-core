@@ -1,5 +1,8 @@
 package insilico.core.tools.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,6 +15,8 @@ import java.util.Map;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class GeneralUtilities {
+
+    private static final Logger log = LoggerFactory.getLogger(GeneralUtilities.class);
 
     /**
      * Trims the given string from space, newline and tab characters.
@@ -65,17 +70,15 @@ public class GeneralUtilities {
 
         if(envVariables != null) {
             Map<String, String> env = processBuilder.environment();
-            System.out.println(env.get("Path"));
             envVariables.forEach((key, variables) ->
                     env.compute(key, (k, currentPath) ->
                             variables + (currentPath != null ? currentPath : "")));
-            System.out.println(env.get("Path"));
         }
 
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         String s = readProcessOutput(process.getInputStream()).toString();
-        System.out.println(s);
+        log.info(s);
         int exitCode = process.waitFor();
         return exitCode == 0;
     }
@@ -85,20 +88,17 @@ public class GeneralUtilities {
 
         if(envVariables != null) {
             Map<String, String> env = processBuilder.environment();
-            System.out.println(env.get("Path"));
             envVariables.forEach((key, variables) ->
                     env.compute(key, (k, currentPath) ->
                             variables + (currentPath != null ? currentPath : "")));
-            System.out.println(env.get("Path"));
         }
 
         processBuilder.redirectErrorStream(true);
         processBuilder.command(commands);
         Process process = processBuilder.start();
         StringBuilder sb = readProcessOutput(process.getInputStream());
-        System.out.println(sb.toString());
+        log.info(sb.toString());
         int exitCode = process.waitFor();
-
         return exitCode == 0 && sb.indexOf(expected) != -1;
     }
 

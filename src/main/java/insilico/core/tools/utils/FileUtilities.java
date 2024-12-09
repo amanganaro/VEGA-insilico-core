@@ -66,9 +66,20 @@ public class FileUtilities {
         return Ret;
     }
 
+    /***
+     * Method to read the header and a specified row (index start from 0) and pair them into a Map
+     * with key value items, as key the header row and as value the correspondent selected row value
+     * @param file
+     * @param delimiter
+     * @param rowToRead
+     * @return
+     * @throws URISyntaxException
+     * @throws IOException
+     * @throws CsvValidationException
+     */
     public static Map<String, String> readSelectedRowAndHeaderFromFile(String file, char delimiter, int rowToRead) throws URISyntaxException, IOException, CsvValidationException {
 
-        Path path = Paths.get(ClassLoader.getSystemResource(file).toURI());
+        Path path = Paths.get(file);
         try(Reader reader = Files.newBufferedReader(path)) {
             CSVParser parser = new CSVParserBuilder()
                     .withSeparator(delimiter)
@@ -86,7 +97,7 @@ public class FileUtilities {
                 }
 
                 String[] rowValues = csvReader.readNext();
-                Map<String, String> rowMap = new HashMap<String,String>();
+                Map<String, String> rowMap = new HashMap<>();
                 if (headers != null && rowValues != null) {
                     for (int i = 0; i < headers.length; i++) {
                         rowMap.put(headers[i], i < rowValues.length ? rowValues[i] : null);

@@ -13,9 +13,11 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class InsilicoModelPython extends InsilicoModel implements iInsilicoModel {
+public abstract class InsilicoModelPython extends InsilicoModel implements iInsilicoModelPython {
 
-    private Communication communication;
+    private final Communication communication;
+    private boolean CHECK_SETUP = true;
+
 
     public InsilicoModelPython(String modelData) throws InitFailureException {
         super(modelData);
@@ -25,9 +27,18 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     /***
      * It is better that each model has its own virtual environment, as recommended by conda docs.
      * Otherwise, it can be set to default base conda environment
-     * @return
      */
     public abstract String getCondaEnv();
+
+    /*
+    * File name to read input molecules
+    * */
+    protected abstract String inputTempFile();
+
+    /*
+    * File name of the model results
+    * */
+    protected abstract String outputTempFile();
 
     /***
      * Method that calculate the model prediction. The prediction it is stored in out.csv file.
@@ -41,22 +52,20 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @throws CsvValidationException
      * @throws URISyntaxException
      */
-    public Map<String, String> calculatePythonModel(String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException {
+    public Map<String, String> calculatePythonModel(Path scriptPath, Path outputFile, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException {
         boolean computationOk = communication.executeScriptInCondaEnv(
-                getCondaEnv(), "app.py", params);
+                getCondaEnv(), scriptPath.toString(), params);
 
         Map<String, String> result;
 
         if(computationOk){
-            result = FileUtilities.readSelectedRowAndHeaderFromFile("out.csv", ',', 2);
+            result = FileUtilities.readSelectedRowAndHeaderFromFile(outputFile.toString(), ',', 1);
         }
         else {
             result=null;
         }
 
-        File file = new File("descriptors.csv");
-        file.delete();
-        file = new File("out.csv");
+        File file = new File(outputFile.toString());
         file.delete();
 
         return result;
@@ -73,6 +82,15 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     public boolean configureCondaEnv(Path pathToEnvFile) throws InterruptedException, IOException {
 
         return communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
+    }
+
+    /**
+     * Set the setup check to true if the class checks every time that execute a python command if the correspondent
+     * conda virtual environment is set up
+     * @param value
+     */
+    public void setCheckSetup(boolean value){
+        CHECK_SETUP = value;
     }
 
 }
