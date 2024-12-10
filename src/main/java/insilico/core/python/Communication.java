@@ -79,10 +79,8 @@ public class Communication {
     public boolean configureCondaEnv(String envName, Path pathToEnvFile) throws InterruptedException, IOException {
         boolean isSet;
         boolean temp;
-        String uh=System.getProperty("user.home");
 
         isSet=checkCondaEnv(envName);
-
         if(!isSet){
             if(isWindows){
                 temp= GeneralUtilities.executeCommandLine(additionalEnvVariables, "cmd.exe", "/c",
@@ -93,9 +91,9 @@ public class Communication {
             }
             if(temp){
                 isSet=checkCondaEnv(envName);
+                log.info("Finished to set conda environment.");
             }else{
                 log.error("Conda environment {} failed to be set", envName);
-                System.out.println("Conda environment failed to be set");
             }
         }
 

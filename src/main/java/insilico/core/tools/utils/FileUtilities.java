@@ -8,15 +8,10 @@ import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.localization.StringSelectorCore;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -113,18 +108,81 @@ public class FileUtilities {
     public static boolean copyExternalData(String source, String dest) throws IOException, InterruptedException {
         Path destinationDirectory = Paths.get(dest);
         Files.createDirectories(destinationDirectory);
-        Files.walk(Paths.get(source)).forEach(subItem -> {
-            Path destination = Paths.get(dest, subItem.toString().substring(source.length()));
-            try {
-                File f=new File(destination.toString());
-                if(!f.exists())
-                    Files.copy(subItem, destination, StandardCopyOption.REPLACE_EXISTING);
-            } catch (IOException e) {
-                e.printStackTrace();
+        File sourceFile = new File(source);
+        File destFolder = new File(dest);
+
+        if (sourceFile.isFile()) {
+            Files.copy(
+                    sourceFile.toPath(),
+                    new File(destFolder, sourceFile.getName()).toPath(),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+        } else if (sourceFile.isDirectory()) {
+            /*Files.walk(Paths.get(source)).forEach(subItem -> {
+                Path destination = Paths.get(dest, subItem.toString().substring(source.length()));
+                try {
+                    File f=new File(destination.toString());
+                    if(!f.exists())
+                        Files.copy(subItem, destination, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });*/
+
+            if (!destFolder.exists()) {
+                destFolder.mkdirs();
             }
-        });
+
+            Files.walkFileTree(sourceFile.toPath(), new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+                    Path targetDir = destFolder.toPath().resolve(sourceFile.toPath().relativize(dir));
+                    if (!Files.exists(targetDir)) {
+                        Files.createDirectory(targetDir);
+                    }
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Path targetFile = destFolder.toPath().resolve(sourceFile.toPath().relativize(file));
+                    Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
+
 
         return true;
+    }
+
+    public static boolean copyExternalDataV2(String source, String dest) throws IOException, InterruptedException {
+        Path destinationDirectory = Paths.get(dest);
+        Files.createDirectories(destinationDirectory);
+
+        // Check if source exists as a file system path
+        try {
+            Path sourcePath = Paths.get(source); // Throws exception if source is not a file system path
+            Files.walk(sourcePath).forEach((subItem) -> {
+                Path destination = destinationDirectory.resolve(sourcePath.relativize(subItem));
+                try {
+                    Files.copy(subItem, destination, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            // If source is not a file system path (e.g., inside JAR), copy manually
+            try (InputStream is = FileUtilities.class.getResourceAsStream(source)) {
+                if (is == null) {
+                    throw new IOException("Resource not found: " + source);
+                }
+                Path destFile = destinationDirectory.resolve(new File(source).getName());
+                Files.copy(is, destFile, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+        return true;
+
     }
 
 }
