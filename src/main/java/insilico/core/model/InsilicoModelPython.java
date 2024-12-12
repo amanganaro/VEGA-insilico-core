@@ -6,11 +6,13 @@ import insilico.core.exception.InitFailureException;
 import insilico.core.python.Communication;
 import insilico.core.tools.utils.FileUtilities;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -20,11 +22,10 @@ import java.util.logging.ErrorManager;
 public abstract class InsilicoModelPython extends InsilicoModel implements iInsilicoModelPython {
 
     private final Communication communication;
-    private boolean CHECK_SETUP = true;
-    public String descriptorTempFile;
     protected String inputTempFile;
     protected String outputTempFile;
     protected Path pathToExternalFolder;
+    public boolean isUsingCdddDescriptor=false;
 
 
     public InsilicoModelPython(String modelData) throws InitFailureException, GenericFailureException {
@@ -51,14 +52,11 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @throws URISyntaxException
      */
     public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException {
-
         log.info("Start calculating model results.");
-        boolean computationOk = communication.executeScriptInCondaEnv(
-                getCondaEnv(), scriptPath.toString(), params);
+        boolean computationOk = communication.executeScriptInCondaEnv(getCondaEnv(), scriptPath.toString(), params);
         log.info("Finish calculating model results.");
 
         Map<String, String> result;
-
         if(computationOk){
             result = FileUtilities.readSelectedRowAndHeaderFromFile(outputTempFile, ',', 1);
         }
@@ -66,9 +64,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             result=null;
         }
 
-        File file = new File(outputTempFile);
-        file.delete();
-
+        FileUtils.delete(new File(outputTempFile));
         return result;
     }
 
@@ -83,27 +79,17 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @throws IOException
      */
     public boolean configureCondaEnv(URL urlSourceEnv, URL urlSourceAppFile) throws InterruptedException, IOException, URISyntaxException {
-
-        log.info("Start setting conda env.");
-        if(urlSourceEnv!=null && urlSourceAppFile != null) {
-            FileUtilities.copyExternalData(Paths.get(urlSourceEnv.toURI()).toString(), pathToExternalFolder.toString());
-            FileUtilities.copyExternalData(Paths.get(urlSourceAppFile.toURI()).toString(), pathToExternalFolder.toString());
-            return communication.configureCondaEnv(getCondaEnv(), Paths.get(urlSourceAppFile.toURI()));
+        boolean isSet=communication.checkCondaEnv(getCondaEnv());
+        if(!isSet) {
+            if (urlSourceEnv != null && urlSourceAppFile != null) {
+                FileUtilities.copyExternalData(Paths.get(urlSourceEnv.toURI()).toString(), pathToExternalFolder.toString());
+                FileUtilities.copyExternalData(Paths.get(urlSourceAppFile.toURI()).toString(), pathToExternalFolder.toString());
+                isSet = communication.configureCondaEnv(getCondaEnv(), Paths.get(urlSourceAppFile.toURI()));
+            } else {
+                log.error("Error in copying files of conda environments: app.py or {}.yml", getCondaEnv());
+            }
         }
-        else {
-            log.error("Error in copying files of conda environments: app.py or {}.yml",getCondaEnv());
-            return false;
-        }
-
-    }
-
-    /**
-     * Set the setup check to true if the class checks every time that execute a python command if the correspondent
-     * conda virtual environment is set up
-     * @param value
-     */
-    public void setCheckSetup(boolean value){
-        CHECK_SETUP = value;
+        return isSet;
     }
 
     public void prepareInputData() throws GenericFailureException {

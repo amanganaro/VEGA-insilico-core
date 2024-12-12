@@ -1,0 +1,180 @@
+package insilico.core.python;
+
+import insilico.core.exception.GenericFailureException;
+import insilico.core.exception.InitFailureException;
+import insilico.core.tools.utils.FileUtilities;
+import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.FileSystemNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.Map;
+
+public class CdddDescriptors {
+
+    Communication communication;
+    private static final Logger log = LoggerFactory.getLogger(CdddDescriptors.class);
+    private Path pathToExternalFolder;
+    private List<String> smilesList;
+    private Map<String, String> smilesFileMap;
+    private String descriptorDirectory;
+    private String inputSmilesFileName;
+
+    public CdddDescriptors(List<String> smilesList) throws IOException, URISyntaxException, InterruptedException, InitFailureException {
+
+
+        String uh=System.getProperty("user.home");
+        communication = new Communication();
+        communication.setAdditionalEnvVariables(Map.of(
+                "PATH", uh+"\\miniconda3\\Scripts\\;"+uh+"\\miniconda3\\;"+
+                        "C:\\Program Files\\Python313\\Scripts\\;C:\\Program Files\\Python313\\;"));
+
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            pathToExternalFolder = Paths.get(System.getProperty("user.home"),
+                    "\\AppData\\Local\\vega-models\\descriptors\\cddd\\").resolve("");
+        }
+        else {
+            pathToExternalFolder = Paths.get(System.getProperty("user.home") ,"/.local/share/vega-models/descriptors/cddd/");
+        }
+
+        boolean isEnvSet=configureCondaEnv();
+        if(!isEnvSet) {
+            throw new InitFailureException("Conda environment "+getCondaEnv()+" not set");
+        }
+        this.smilesList=smilesList;
+    }
+
+    public void prepareInputData(String inputFile) throws GenericFailureException {
+        StringBuilder sb=new StringBuilder();
+        sb.append("smiles\n");
+        for (String smiles:smilesList) {
+            sb.append(smiles).append("\n");
+        }
+
+        FileUtilities.WriteByteArrayToFile(inputFile,sb.toString().getBytes());
+        log.info("Prepared input file.");
+    }
+
+    /***
+     * Calculate cddd descriptors from cddd library. It executes a python script that calculate from a csv input file
+     * the 512 descriptors and for each smiles generates a csv file within the correspondent descriptors
+     * @param inputFile path of input file
+     * @param outputDirectory directory within the csv output files will be saved
+     * @return true if the computation went smoothly otherwise false
+     */
+    public boolean calculateDescriptors(String inputFile, String outputDirectory) throws IOException, InterruptedException, URISyntaxException, GenericFailureException {
+        inputSmilesFileName=inputFile;
+        descriptorDirectory=outputDirectory;
+        prepareInputData(inputFile);
+
+        log.info("Start to calculate descriptors");
+        String pathToScriptFile = Paths.get(pathToExternalFolder.toString(), "app.py").toAbsolutePath().toString();
+        boolean result = communication.executeScriptInCondaEnv("cddd", pathToScriptFile,
+                "--input "+inputFile,
+                " --output "+ outputDirectory);
+        if(result){
+            for(int i = 0; i<smilesList.size(); i++){
+                smilesFileMap.put(smilesList.get(i), outputDirectory+File.separator+i+".csv");
+            }
+        }
+
+        log.info("Finish to calculate descriptors");
+        return result;
+    }
+
+    public String getCondaEnv(){
+        return "cddd";
+    }
+
+
+    /***
+     * Move the .yml .whl and default_model folder into Local data folder to use that files to
+     * setup the configuration. This is made to use external data instead the one in the project
+     * @return
+     */
+    public boolean configureCondaEnv() throws InterruptedException, IOException, URISyntaxException {
+        boolean isSet=false;//communication.checkCondaEnv(getCondaEnv());
+        if(!isSet){
+            try {
+                URL urlEnv = getClass().getResource("/python/" + getCondaEnv() + ".yml");
+                URL urlScript = getClass().getResource("/python/app.py");
+                URL urlWheel = getClass().getResource("/python/cddd-1.2.3-py3-none-any.whl");
+                URL urlModelDefaultFolder = getClass().getResource("/python/default_model");
+
+                if (urlEnv != null && urlWheel != null && urlModelDefaultFolder != null && urlScript != null) {
+                    FileUtilities.copyExternalDataV2(Paths.get(urlEnv.toURI()).toString(), pathToExternalFolder.toString());
+                    FileUtilities.copyExternalData(Paths.get(urlScript.toURI()).toString(), pathToExternalFolder.toAbsolutePath().toString());
+                    FileUtilities.copyExternalData(Paths.get(urlWheel.toURI()).toString(), pathToExternalFolder.toAbsolutePath().toString());
+
+                    Path pathToEnvFile = Paths.get(urlEnv.toURI()).toAbsolutePath();
+                    isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
+                    if (isSet) {
+                        // add default model folder to put the model data into the directory of cddd conda env
+                        String destination = System.getProperty("user.home");
+                        if (System.getProperty("os.name").startsWith("Windows")) {
+                            destination += "\\AppData\\Local\\cddd\\cddd\\default_model\\";
+                        } else {
+                            destination += "/.local/share/cddd/default_model/";
+                        }
+
+                        isSet = FileUtilities.copyExternalData(Paths.get(urlModelDefaultFolder.toURI()).toString(),
+                                destination);
+                    } else {
+                        log.error("Error in set up conda environment {}", getCondaEnv());
+                    }
+                } else {
+                    log.error("Some files to setup cddd conda environment {} are missing", getCondaEnv());
+                }
+            }catch(FileSystemNotFoundException ex){
+                InputStream urlEnv = getClass().getResourceAsStream("/python/" + getCondaEnv() + ".yml");
+                InputStream urlScript = getClass().getResource("/python/app.py");
+                InputStream urlWheel = getClass().getResource("/python/cddd-1.2.3-py3-none-any.whl");
+                InputStream urlModelDefaultFolder = getClass().getResource("/python/default_model");
+
+                if (urlEnv != null && urlWheel != null && urlModelDefaultFolder != null && urlScript != null) {
+                    FileUtilities.copyExternalData(Paths.get(urlEnv.toURI()).toString(), pathToExternalFolder.toString());
+                    FileUtilities.copyExternalData(Paths.get(urlScript.toURI()).toString(), pathToExternalFolder.toAbsolutePath().toString());
+                    FileUtilities.copyExternalData(Paths.get(urlWheel.toURI()).toString(), pathToExternalFolder.toAbsolutePath().toString());
+
+                    Path pathToEnvFile = Paths.get(urlEnv.toURI()).toAbsolutePath();
+                    isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
+                    if (isSet) {
+                        // add default model folder to put the model data into the directory of cddd conda env
+                        String destination = System.getProperty("user.home");
+                        if (System.getProperty("os.name").startsWith("Windows")) {
+                            destination += "\\AppData\\Local\\cddd\\cddd\\default_model\\";
+                        } else {
+                            destination += "/.local/share/cddd/default_model/";
+                        }
+
+                        isSet = FileUtilities.copyExternalData(Paths.get(urlModelDefaultFolder.toURI()).toString(),
+                                destination);
+                    } else {
+                        log.error("Error in set up conda environment {}", getCondaEnv());
+                    }
+                } else {
+                    log.error("Some files to setup cddd conda environment {} are missing", getCondaEnv());
+                }
+            }
+        }
+        log.info("Conda environment {} set up {}", getCondaEnv(), isSet ? "correctly": "failed");
+        return isSet;
+    }
+
+    public String getFilePathOf(String smiles){
+        return smilesFileMap.get(smiles);
+    }
+
+    public void dispose() throws IOException {
+        FileUtils.deleteDirectory(new File(descriptorDirectory));
+        FileUtils.delete(new File(inputSmilesFileName));
+    }
+}
