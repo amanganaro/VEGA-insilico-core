@@ -39,6 +39,13 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      */
     public abstract String getCondaEnv();
 
+    /**
+     * Each python model must have a script file with unique name
+     * Suggestion "app+model-name.py"
+     * @return
+     */
+    public abstract String getScriptName();
+
     /***
      * Method that calculate the model prediction. The prediction it is stored in out.csv file.
      * The Python script file for our standard must be called app.py . Optionally can be passed
@@ -82,8 +89,12 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         boolean isSet=communication.checkCondaEnv(getCondaEnv());
         if(!isSet) {
             if (urlSourceEnv != null && urlSourceAppFile != null) {
-                FileUtilities.copyExternalData(Paths.get(urlSourceEnv.toURI()).toString(), pathToExternalFolder.toString());
-                FileUtilities.copyExternalData(Paths.get(urlSourceAppFile.toURI()).toString(), pathToExternalFolder.toString());
+                FileUtilities.copyResourcesRecursively(urlSourceEnv,
+                        new File(pathToExternalFolder.toString()));
+                log.info("Env file copied successfully.");
+                FileUtilities.copyResourcesRecursively(urlSourceAppFile,
+                        new File(pathToExternalFolder.toString()));
+                log.info("App file successfully.");
                 isSet = communication.configureCondaEnv(getCondaEnv(), Paths.get(urlSourceAppFile.toURI()));
             } else {
                 log.error("Error in copying files of conda environments: app.py or {}.yml", getCondaEnv());

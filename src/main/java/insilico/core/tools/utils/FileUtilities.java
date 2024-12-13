@@ -7,13 +7,23 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.localization.StringSelectorCore;
+import insilico.core.python.CdddDescriptors;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.JarURLConnection;
 import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * General utilities for file handling/saving/etc
@@ -21,6 +31,8 @@ import java.util.Map;
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class FileUtilities {
+
+    private static final Logger log = LoggerFactory.getLogger(FileUtilities.class);
 
     /**
      * Saves a byte[] object to file.
@@ -105,84 +117,109 @@ public class FileUtilities {
 
     }
 
-    public static boolean copyExternalData(String source, String dest) throws IOException, InterruptedException {
-        Path destinationDirectory = Paths.get(dest);
-        Files.createDirectories(destinationDirectory);
-        File sourceFile = new File(source);
-        File destFolder = new File(dest);
-
-        if (sourceFile.isFile()) {
-            Files.copy(
-                    sourceFile.toPath(),
-                    new File(destFolder, sourceFile.getName()).toPath(),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-        } else if (sourceFile.isDirectory()) {
-            /*Files.walk(Paths.get(source)).forEach(subItem -> {
-                Path destination = Paths.get(dest, subItem.toString().substring(source.length()));
-                try {
-                    File f=new File(destination.toString());
-                    if(!f.exists())
-                        Files.copy(subItem, destination, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            });*/
-
-            if (!destFolder.exists()) {
-                destFolder.mkdirs();
-            }
-
-            Files.walkFileTree(sourceFile.toPath(), new SimpleFileVisitor<Path>() {
-                @Override
-                public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-                    Path targetDir = destFolder.toPath().resolve(sourceFile.toPath().relativize(dir));
-                    if (!Files.exists(targetDir)) {
-                        Files.createDirectory(targetDir);
-                    }
-                    return FileVisitResult.CONTINUE;
-                }
-
-                @Override
-                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                    Path targetFile = destFolder.toPath().resolve(sourceFile.toPath().relativize(file));
-                    Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
-                    return FileVisitResult.CONTINUE;
-                }
-            });
-        }
-
-
-        return true;
-    }
-
-    public static boolean copyExternalDataV2(String source, String dest) throws IOException, InterruptedException {
-        Path destinationDirectory = Paths.get(dest);
-        Files.createDirectories(destinationDirectory);
-
-        // Check if source exists as a file system path
+    public static boolean copyResourcesRecursively(final URL originUrl, final File destination) {
         try {
-            Path sourcePath = Paths.get(source); // Throws exception if source is not a file system path
-            Files.walk(sourcePath).forEach((subItem) -> {
-                Path destination = destinationDirectory.resolve(sourcePath.relativize(subItem));
-                try {
-                    Files.copy(subItem, destination, StandardCopyOption.REPLACE_EXISTING);
-                } catch (IOException e) {
-                    e.printStackTrace();
+            final URLConnection urlConnection = originUrl.openConnection();
+            if (urlConnection instanceof JarURLConnection) {
+                return copyJarResourcesRecursively(destination,
+                        (JarURLConnection) urlConnection);
+            } else {
+                return copyFilesRecursively(new File(originUrl.getPath()),
+                        destination);
+            }
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static boolean copyFile(final File toCopy, final File destFile) {
+        try {
+            if(destFile.createNewFile())
+                return copyStream(new FileInputStream(toCopy), new FileOutputStream(destFile));
+        } catch (final FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    private static boolean copyFilesRecursively(final File toCopy, final File destDir) {
+        assert destDir.isDirectory();
+
+        if (!toCopy.isDirectory()) {
+            return copyFile(toCopy, new File(destDir, toCopy.getName()));
+        } else {
+            final File newDestDir = new File(destDir, toCopy.getName());
+            if (!newDestDir.exists() && !newDestDir.mkdir()) {
+                return false;
+            }
+            for (final File child : toCopy.listFiles()) {
+                if (!copyFilesRecursively(child, newDestDir)) {
+                    return false;
                 }
-            });
-        } catch (Exception e) {
-            // If source is not a file system path (e.g., inside JAR), copy manually
-            try (InputStream is = FileUtilities.class.getResourceAsStream(source)) {
-                if (is == null) {
-                    throw new IOException("Resource not found: " + source);
-                }
-                Path destFile = destinationDirectory.resolve(new File(source).getName());
-                Files.copy(is, destFile, StandardCopyOption.REPLACE_EXISTING);
             }
         }
         return true;
-
     }
 
+    private static boolean copyJarResourcesRecursively(final File destDir, final JarURLConnection jarConnection) throws IOException {
+
+        final JarFile jarFile = jarConnection.getJarFile();
+
+        for (final Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
+            final JarEntry entry = e.nextElement();
+            if (entry.getName().startsWith(jarConnection.getEntryName())) {
+                final String filename = entry.getName().substring(entry.getName().lastIndexOf(File.separator) + 1);//StringUtils.removeStart(entry.getName(), jarConnection.getEntryName());
+                final File f = new File(destDir, filename);
+                if (!entry.isDirectory()) {
+                    final InputStream entryInputStream = jarFile.getInputStream(entry);
+                    if(!copyStream(entryInputStream, f)){
+                        return false;
+                    }
+                    entryInputStream.close();
+                } else {
+                    if (!ensureDirectoryExists(f)) {
+                        throw new IOException("Could not create directory: "
+                                + f.getAbsolutePath());
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private static boolean copyStream(final InputStream is, final File f) {
+        try {
+            if(f.createNewFile())
+                return copyStream(is, new FileOutputStream(f));
+        } catch (final FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return false;
+    }
+
+    private static boolean copyStream(final InputStream is, final OutputStream os) {
+        try {
+            final byte[] buf = new byte[1024];
+
+            int len = 0;
+            while ((len = is.read(buf)) > 0) {
+                os.write(buf, 0, len);
+            }
+            is.close();
+            os.close();
+            return true;
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static boolean ensureDirectoryExists(final File f) {
+        return f.exists() || f.mkdir();
+    }
 }

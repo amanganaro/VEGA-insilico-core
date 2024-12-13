@@ -14,6 +14,8 @@ public interface iInsilicoModelPython {
 
     public String getCondaEnv();
 
+    public String getScriptName();
+
     public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException;
 
     public boolean configureCondaEnv(URL urlSourceEnv, URL urlSourceAppFile) throws InterruptedException, IOException, URISyntaxException;
