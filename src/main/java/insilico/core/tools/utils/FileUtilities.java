@@ -145,18 +145,19 @@ public class FileUtilities {
         return false;
     }
 
-    private static boolean copyFilesRecursively(final File toCopy, final File destDir) {
+    private static boolean copyFilesRecursively(final File toCopy, final File destDir) throws IOException {
         assert destDir.isDirectory();
 
         if (!toCopy.isDirectory()) {
             return copyFile(toCopy, new File(destDir, toCopy.getName()));
         } else {
-            final File newDestDir = new File(destDir, toCopy.getName());
-            if (!newDestDir.exists() && !newDestDir.mkdir()) {
+            Files.createDirectories(destDir.toPath());
+            //final File newDestDir = new File(destDir, toCopy.getName());
+            if (!destDir.exists()) {
                 return false;
             }
             for (final File child : toCopy.listFiles()) {
-                if (!copyFilesRecursively(child, newDestDir)) {
+                if (!copyFilesRecursively(child, destDir)) {
                     return false;
                 }
             }
@@ -171,9 +172,10 @@ public class FileUtilities {
         for (final Enumeration<JarEntry> e = jarFile.entries(); e.hasMoreElements();) {
             final JarEntry entry = e.nextElement();
             if (entry.getName().startsWith(jarConnection.getEntryName())) {
-                final String filename = entry.getName().substring(entry.getName().lastIndexOf(File.separator) + 1);//StringUtils.removeStart(entry.getName(), jarConnection.getEntryName());
+                final String filename = entry.getName().substring(entry.getName().lastIndexOf("/") + 1);//StringUtils.removeStart(entry.getName(), jarConnection.getEntryName());
                 final File f = new File(destDir, filename);
                 if (!entry.isDirectory()) {
+                    Files.createDirectories(f.getParentFile().toPath());
                     final InputStream entryInputStream = jarFile.getInputStream(entry);
                     if(!copyStream(entryInputStream, f)){
                         return false;
@@ -219,7 +221,8 @@ public class FileUtilities {
         return false;
     }
 
-    private static boolean ensureDirectoryExists(final File f) {
-        return f.exists() || f.mkdir();
+    private static boolean ensureDirectoryExists(final File f) throws IOException {
+        Files.createDirectories(f.toPath());
+        return f.exists() || f.mkdir() ;
     }
 }

@@ -95,7 +95,8 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
                 FileUtilities.copyResourcesRecursively(urlSourceAppFile,
                         new File(pathToExternalFolder.toString()));
                 log.info("App file successfully.");
-                isSet = communication.configureCondaEnv(getCondaEnv(), Paths.get(urlSourceAppFile.toURI()));
+                isSet = communication.configureCondaEnv(getCondaEnv(),
+                        Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml"));
             } else {
                 log.error("Error in copying files of conda environments: app.py or {}.yml", getCondaEnv());
             }

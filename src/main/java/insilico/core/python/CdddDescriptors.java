@@ -13,6 +13,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,8 @@ public class CdddDescriptors {
                     "\\AppData\\Local\\vega-models\\descriptors\\cddd\\").resolve("");
         }
         else {
-            pathToExternalFolder = Paths.get(System.getProperty("user.home") ,"/.local/share/vega-models/descriptors/cddd/");
+            pathToExternalFolder = Paths.get(System.getProperty("user.home") ,
+                    "/.local/share/vega-models/descriptors/cddd/");
         }
 
         if(!bypassCheckCondaEnv){
@@ -81,6 +83,9 @@ public class CdddDescriptors {
                 " --output "+ outputDirectory);
         if(result){
             for(int i = 0; i<smilesList.size(); i++){
+                if(smilesFileMap==null){
+                    smilesFileMap=new HashMap<>();
+                }
                 smilesFileMap.put(smilesList.get(i), outputDirectory+File.separator+i+".csv");
             }
         }
@@ -117,7 +122,7 @@ public class CdddDescriptors {
                 FileUtilities.copyResourcesRecursively(urlWheel, new File(pathToExternalFolder.toString()));
                 log.info("Copied cddd descriptors wheel file");
 
-                Path pathToEnvFile = Paths.get(urlEnv.toURI()).toAbsolutePath();
+                Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");
                 isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
                 if (isSet) {
                     // add default model folder to put the model data into the directory of cddd conda env
