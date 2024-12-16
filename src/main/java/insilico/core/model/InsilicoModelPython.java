@@ -3,6 +3,7 @@ package insilico.core.model;
 import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.python.CdddDescriptors;
 import insilico.core.python.Communication;
 import insilico.core.tools.utils.FileUtilities;
 import lombok.extern.slf4j.Slf4j;
@@ -110,4 +111,5 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         log.info("Prepared input file.");
     }
 
+    public abstract void setDescriptorGenerator(Object descriptorGenerator);
 }

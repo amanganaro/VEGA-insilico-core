@@ -12,11 +12,13 @@ import java.util.Map;
 public interface iInsilicoModelPython {
 
 
-    public String getCondaEnv();
+    String getCondaEnv();
 
-    public String getScriptName();
+    String getScriptName();
 
-    public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException;
+    Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException;
 
-    public boolean configureCondaEnv(URL urlSourceEnv, URL urlSourceAppFile) throws InterruptedException, IOException, URISyntaxException;
+    boolean configureCondaEnv(URL urlSourceEnv, URL urlSourceAppFile) throws InterruptedException, IOException, URISyntaxException;
+
+    void setDescriptorGenerator(Object descriptorGenerator);
 }

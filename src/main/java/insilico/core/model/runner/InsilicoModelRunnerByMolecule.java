@@ -8,9 +8,15 @@ import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.localization.StringSelectorCore;
+import insilico.core.model.InsilicoModelPython;
 import insilico.core.molecule.InsilicoMolecule;
+import insilico.core.python.CdddDescriptors;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -28,27 +34,55 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
             Messenger.SendMessage(StringSelectorCore.getString("runner_consensus_init_engine"));
         DescriptorsEngine descriptorsEngine;
         AlertsEngine alertsEngine;
+        CdddDescriptors cdddDescriptors = null;
 
         try{
             descriptorsEngine = new DescriptorsEngine();
             alertsEngine = new AlertsEngine();
 
+            boolean isTherePythonModel = false;
+            boolean isTherePythonModelUsingCDDD = false;
+
             for (InsilicoModelWrapper wrapper : ModelWrappers){
                 descriptorsEngine.AddDescriptorBlock(wrapper.getModel().GetRequiredDescriptorBlocks());
                 alertsEngine.AddAlertsBlock(wrapper.getModel().GetRequiredAlertBlocks());
+                if(InsilicoModelPython.class.isAssignableFrom(wrapper.getModel().getClass())){
+                    isTherePythonModel = true;
+                    if(((InsilicoModelPython) wrapper.getModel()).isUsingCdddDescriptor){
+                        isTherePythonModelUsingCDDD = true;
+                    }
+                }
+            }
+
+            // Initialize CDDD Descriptor class
+            if(isTherePythonModelUsingCDDD){
+                List<String> smilesList = Mols.stream().map(InsilicoMolecule::GetSMILES).collect(Collectors.toList());
+                cdddDescriptors = new CdddDescriptors(smilesList, false);
+                if(!cdddDescriptors.calculateDescriptors()){
+                    throw new GenericFailureException(String.format(StringSelectorCore
+                            .getString("runner_consensus_exception_init_blocks"),
+                                "CDDD descriptors failing execution"));
+                }
             }
 
             // Add dependencies for similarity calculation
             descriptorsEngine.AddDescriptorBlock(new Constitutional());
             descriptorsEngine.AddDescriptorBlock(new FunctionalGroups());
 
-        } catch (InitFailureException | CloneNotSupportedException ex) {
-            throw new GenericFailureException(String.format(StringSelectorCore.getString("runner_consensus_exception_init_blocks"), ex.getMessage()));
+        } catch (InitFailureException | CloneNotSupportedException | IOException | URISyntaxException |
+                 InterruptedException ex) {
+            throw new GenericFailureException(String.format(StringSelectorCore
+                    .getString("runner_consensus_exception_init_blocks"), ex.getMessage()));
         }
 
         // Reset results in each model wrapper
-        for (InsilicoModelWrapper wrapper : ModelWrappers)
+        for (InsilicoModelWrapper wrapper : ModelWrappers) {
             wrapper.ResetResults();
+            if(InsilicoModelPython.class.isAssignableFrom(wrapper.getModel().getClass()) &&
+                    ((InsilicoModelPython) wrapper.getModel()).isUsingCdddDescriptor){
+                ((InsilicoModelPython) wrapper.getModel()).setDescriptorGenerator(cdddDescriptors);
+            }
+        }
         for(InsilicoModelConsensusWrapper wrapper : ModelConsensusWrappers)
             wrapper.ResetResult();
 
@@ -107,7 +141,14 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
                 }
 
             moleculeIndex++;
+        }
 
+        if(cdddDescriptors!=null){
+            try {
+                cdddDescriptors.dispose();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 

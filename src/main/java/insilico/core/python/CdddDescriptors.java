@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -44,6 +45,11 @@ public class CdddDescriptors {
                     "/.local/share/vega-models/descriptors/cddd/");
         }
 
+        File f=File.createTempFile("input-smiles", ".csv");
+        inputSmilesFileName = f.getAbsolutePath();
+        f = Files.createTempDirectory("cddd-descriptors").toFile();
+        descriptorDirectory = f.getAbsolutePath();
+
         if(!bypassCheckCondaEnv){
             boolean isEnvSet=configureCondaEnv();
             if(!isEnvSet) {
@@ -67,26 +73,22 @@ public class CdddDescriptors {
     /***
      * Calculate cddd descriptors from cddd library. It executes a python script that calculate from a csv input file
      * the 512 descriptors and for each smiles generates a csv file within the correspondent descriptors
-     * @param inputFile path of input file
-     * @param outputDirectory directory within the csv output files will be saved
      * @return true if the computation went smoothly otherwise false
      */
-    public boolean calculateDescriptors(String inputFile, String outputDirectory) throws IOException, InterruptedException, URISyntaxException, GenericFailureException {
-        inputSmilesFileName=inputFile;
-        descriptorDirectory=outputDirectory;
-        prepareInputData(inputFile);
+    public boolean calculateDescriptors() throws IOException, InterruptedException, URISyntaxException, GenericFailureException {
+        prepareInputData(inputSmilesFileName);
 
         log.info("Start to calculate descriptors");
         String pathToScriptFile = Paths.get(pathToExternalFolder.toString(), "app-cddd.py").toAbsolutePath().toString();
         boolean result = communication.executeScriptInCondaEnv("cddd", pathToScriptFile,
-                "--input "+inputFile,
-                " --output "+ outputDirectory);
+                "--input "+inputSmilesFileName,
+                " --output "+ descriptorDirectory);
         if(result){
             for(int i = 0; i<smilesList.size(); i++){
                 if(smilesFileMap==null){
                     smilesFileMap=new HashMap<>();
                 }
-                smilesFileMap.put(smilesList.get(i), outputDirectory+File.separator+i+".csv");
+                smilesFileMap.put(smilesList.get(i), descriptorDirectory+File.separator+i+".csv");
             }
         }
 
@@ -154,5 +156,9 @@ public class CdddDescriptors {
     public void dispose() throws IOException {
         FileUtils.deleteDirectory(new File(descriptorDirectory));
         FileUtils.delete(new File(inputSmilesFileName));
+    }
+
+    public String getOutputDirectory() {
+        return descriptorDirectory;
     }
 }
