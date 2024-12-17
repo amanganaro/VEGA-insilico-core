@@ -26,7 +26,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     protected String inputTempFile;
     protected String outputTempFile;
     protected Path pathToExternalFolder;
-    public boolean isUsingCdddDescriptor=false;
+    private boolean isUsingCdddDescriptor=false;
 
 
     public InsilicoModelPython(String modelData) throws InitFailureException, GenericFailureException {
@@ -87,21 +87,27 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @throws IOException
      */
     public boolean configureCondaEnv(URL urlSourceEnv, URL urlSourceAppFile) throws InterruptedException, IOException, URISyntaxException {
-        boolean isSet=communication.checkCondaEnv(getCondaEnv());
-        if(!isSet) {
-            if (urlSourceEnv != null && urlSourceAppFile != null) {
-                FileUtilities.copyResourcesRecursively(urlSourceEnv,
-                        new File(pathToExternalFolder.toString()));
-                log.info("Env file copied successfully.");
-                FileUtilities.copyResourcesRecursively(urlSourceAppFile,
-                        new File(pathToExternalFolder.toString()));
-                log.info("App file successfully.");
+
+        boolean isSet=false;
+
+        if (urlSourceEnv != null && urlSourceAppFile != null) {
+            FileUtilities.copyResourcesRecursively(urlSourceEnv,
+                    new File(pathToExternalFolder.toString()));
+            log.info("Env file copied successfully.");
+            FileUtilities.copyResourcesRecursively(urlSourceAppFile,
+                    new File(pathToExternalFolder.toString()));
+            log.info("App file successfully.");
+
+            isSet=communication.checkCondaEnv(getCondaEnv());
+
+            if(!isSet) {
                 isSet = communication.configureCondaEnv(getCondaEnv(),
-                        Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml"));
-            } else {
-                log.error("Error in copying files of conda environments: app.py or {}.yml", getCondaEnv());
+                        Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
             }
+        } else {
+            log.error("Error in copying files of conda environments: app.py or {}.yml", getCondaEnv());
         }
+
         return isSet;
     }
 
@@ -112,4 +118,8 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     }
 
     public abstract void setDescriptorGenerator(Object descriptorGenerator);
+
+    public boolean isUsingCdddDescriptor() {
+        return isUsingCdddDescriptor;
+    }
 }

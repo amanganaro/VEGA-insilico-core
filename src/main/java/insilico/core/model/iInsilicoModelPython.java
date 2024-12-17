@@ -21,4 +21,6 @@ public interface iInsilicoModelPython {
     boolean configureCondaEnv(URL urlSourceEnv, URL urlSourceAppFile) throws InterruptedException, IOException, URISyntaxException;
 
     void setDescriptorGenerator(Object descriptorGenerator);
+
+    public boolean isUsingCdddDescriptor();
 }

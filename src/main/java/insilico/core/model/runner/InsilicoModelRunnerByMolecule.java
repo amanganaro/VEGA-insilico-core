@@ -48,7 +48,7 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
                 alertsEngine.AddAlertsBlock(wrapper.getModel().GetRequiredAlertBlocks());
                 if(InsilicoModelPython.class.isAssignableFrom(wrapper.getModel().getClass())){
                     isTherePythonModel = true;
-                    if(((InsilicoModelPython) wrapper.getModel()).isUsingCdddDescriptor){
+                    if(((InsilicoModelPython) wrapper.getModel()).isUsingCdddDescriptor()){
                         isTherePythonModelUsingCDDD = true;
                     }
                 }
@@ -79,7 +79,7 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
         for (InsilicoModelWrapper wrapper : ModelWrappers) {
             wrapper.ResetResults();
             if(InsilicoModelPython.class.isAssignableFrom(wrapper.getModel().getClass()) &&
-                    ((InsilicoModelPython) wrapper.getModel()).isUsingCdddDescriptor){
+                    ((InsilicoModelPython) wrapper.getModel()).isUsingCdddDescriptor()){
                 ((InsilicoModelPython) wrapper.getModel()).setDescriptorGenerator(cdddDescriptors);
             }
         }
@@ -119,7 +119,11 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
             for(InsilicoModelWrapper wrapper : ModelWrappers) {
 
                 try {
-                    wrapper.Process(molecule, descriptorsEngine, false);
+                    if(InsilicoModelPython.class.isAssignableFrom(wrapper.getModel().getClass())){
+                        wrapper.Process(molecule, null, false);
+                    }else{
+                        wrapper.Process(molecule, descriptorsEngine, false);
+                    }
                 } catch (GenericFailureException ex){
                     throw new GenericFailureException("model: " + wrapper.getModel().getInfo().getName() + " - "  + ex.getMessage());
                 }
