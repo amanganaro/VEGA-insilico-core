@@ -3,6 +3,7 @@ package insilico.core.model;
 import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.python.CdddDescriptors;
 import insilico.core.python.Communication;
 import insilico.core.tools.utils.FileUtilities;
@@ -26,12 +27,30 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     protected String inputTempFile;
     protected String outputTempFile;
     protected Path pathToExternalFolder;
-    private boolean isUsingCdddDescriptor=false;
+    private final boolean isUsingCdddDescriptor=false;
+    protected iInsilicoModelRunnerMessenger messenger;
 
 
     public InsilicoModelPython(String modelData) throws InitFailureException, GenericFailureException {
         super(modelData);
         communication = new Communication();
+        messenger = new iInsilicoModelRunnerMessenger() {
+            @Override
+            public void SendMessage(String msg) {
+                System.out.println(msg);
+            }
+
+            @Override
+            public void UpdateProgress() {
+                System.out.println("No progress update");
+            }
+        };;
+    }
+
+    public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger) throws InitFailureException, GenericFailureException {
+        super(modelData);
+        communication = new Communication();
+        this.messenger = messenger;
     }
 
     /***
@@ -98,9 +117,17 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
                     new File(pathToExternalFolder.toString()));
             log.info("App file successfully.");
 
+            if (messenger != null)
+                messenger.SendMessage("Model " + super.getInfo().getName() + " is checking conda environment");
+
             isSet=communication.checkCondaEnv(getCondaEnv());
 
             if(!isSet) {
+
+                if (messenger != null)
+                    messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.\n"+
+                            "Downloading files and installing dependencies. Please wait.");
+
                 isSet = communication.configureCondaEnv(getCondaEnv(),
                         Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
             }
@@ -121,5 +148,12 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
 
     public boolean isUsingCdddDescriptor() {
         return isUsingCdddDescriptor;
+    }
+
+    public iInsilicoModelRunnerMessenger getMessenger() {
+        return messenger;
+    }
+    public void setMessenger(iInsilicoModelRunnerMessenger messenger) {
+        this.messenger = messenger;
     }
 }
