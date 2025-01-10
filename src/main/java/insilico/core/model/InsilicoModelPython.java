@@ -125,7 +125,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             if(!isSet) {
 
                 if (messenger != null)
-                    messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.\n"+
+                    messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.\n\r"+
                             "Downloading files and installing dependencies. Please wait.");
 
                 isSet = communication.configureCondaEnv(getCondaEnv(),

@@ -76,7 +76,7 @@ public class CdddDescriptors {
 
         log.info("Start to calculate descriptors");
         String pathToScriptFile = Paths.get(pathToExternalFolder.toString(), "app-cddd.py").toAbsolutePath().toString();
-        boolean result = communication.executeScriptInCondaEnv("cddd", pathToScriptFile,
+        boolean result = communication.executeScriptInCondaEnv(getCondaEnv(), pathToScriptFile,
                 "--input "+inputSmilesFileName,
                 " --output "+ descriptorDirectory);
         if(result){
@@ -93,7 +93,7 @@ public class CdddDescriptors {
     }
 
     public String getCondaEnv(){
-        return "cddd";
+        return "VEGA_cddd";
     }
 
 
