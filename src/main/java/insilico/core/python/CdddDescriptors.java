@@ -30,11 +30,7 @@ public class CdddDescriptors {
 
     public CdddDescriptors(List<String> smilesList, boolean bypassCheckCondaEnv) throws IOException, URISyntaxException, InterruptedException, InitFailureException {
 
-        String uh=System.getProperty("user.home");
         communication = new Communication();
-        communication.setAdditionalEnvVariables(Map.of(
-                "PATH", uh+"\\miniconda3\\Scripts\\;"+uh+"\\miniconda3\\;"+
-                        "C:\\Program Files\\Python313\\Scripts\\;C:\\Program Files\\Python313\\;"));
 
         if (System.getProperty("os.name").startsWith("Windows")) {
             pathToExternalFolder = Paths.get(System.getProperty("user.home"),
@@ -107,7 +103,7 @@ public class CdddDescriptors {
      * @return
      */
     public boolean configureCondaEnv() throws InterruptedException, IOException, URISyntaxException {
-        boolean isSet = communication.checkCondaEnv(getCondaEnv());
+        boolean isSet = false; // communication.checkCondaEnv(getCondaEnv());
         if(!isSet){
             URL urlEnv = getClass().getResource("/python/" + getCondaEnv() + ".yml");
             URL urlScript = getClass().getResource("/python/app-cddd.py");
@@ -115,17 +111,17 @@ public class CdddDescriptors {
             URL urlModelDefaultFolder = getClass().getResource("/python/default_model");
 
             if (urlEnv != null && urlWheel != null && urlModelDefaultFolder != null && urlScript != null) {
-                FileUtilities.copyResourcesRecursively(urlEnv, new File(pathToExternalFolder.toString()));
-                log.info("Copied cddd descriptors env file");
+                boolean copied=FileUtilities.copyResourcesRecursively(urlEnv, new File(pathToExternalFolder.toString()));
+                log.info("{} cddd descriptors env file", copied ? "Copied" : "Already existing and not copied");
 
-                FileUtilities.copyResourcesRecursively(urlScript, new File(pathToExternalFolder.toString()));
-                log.info("Copied cddd descriptors script file");
+                copied = FileUtilities.copyResourcesRecursively(urlScript, new File(pathToExternalFolder.toString()));
+                log.info("{} cddd descriptors script file", copied ? "Copied" : "Already existing and not copied");
 
-                FileUtilities.copyResourcesRecursively(urlWheel, new File(pathToExternalFolder.toString()));
-                log.info("Copied cddd descriptors wheel file");
+                copied = FileUtilities.copyResourcesRecursively(urlWheel, new File(pathToExternalFolder.toString()));
+                log.info("{} cddd descriptors wheel file", copied ? "Copied" : "Already existing and not copied");
 
                 Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");
-                isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
+                isSet = true;//communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
                 if (isSet) {
                     // add default model folder to put the model data into the directory of cddd conda env
                     String destination = System.getProperty("user.home");
@@ -135,9 +131,8 @@ public class CdddDescriptors {
                         destination += "/.local/share/cddd/default_model";
                     }
 
-                    isSet = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder,
-                            new File(destination));
-                    log.info("Copied cddd descriptors default model file");
+                    copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destination));
+                    log.info("{} cddd descriptors default model file", copied ? "Copied" : "Already existing and not copied");
                 } else {
                     log.error("Error in set up conda environment {}", getCondaEnv());
                 }

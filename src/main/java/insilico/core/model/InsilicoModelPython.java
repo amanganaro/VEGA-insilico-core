@@ -110,12 +110,12 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         boolean isSet=false;
 
         if (urlSourceEnv != null && urlSourceAppFile != null) {
-            FileUtilities.copyResourcesRecursively(urlSourceEnv,
+            boolean copied = FileUtilities.copyResourcesRecursively(urlSourceEnv,
                     new File(pathToExternalFolder.toString()));
-            log.info("Env file copied successfully.");
-            FileUtilities.copyResourcesRecursively(urlSourceAppFile,
+            log.info("{} env file.", copied ? "Copied" : "Already existing and not copied");
+            copied = FileUtilities.copyResourcesRecursively(urlSourceAppFile,
                     new File(pathToExternalFolder.toString()));
-            log.info("App file successfully.");
+            log.info("{} app file.", copied ? "Copied" : "Already existing and not copied");
 
             if (messenger != null)
                 messenger.SendMessage("Model " + super.getInfo().getName() + " is checking conda environment");

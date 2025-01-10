@@ -33,7 +33,7 @@ public class Communication {
         String p=String.join(" ", params);
         boolean result=false;
         if(isWindows){
-            result = GeneralUtilities.executeCommandLine(additionalEnvVariables, "cmd.exe", "/c",
+            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     "conda activate " + env + " && python " + scriptName + " " + p);
         }else {
             result = GeneralUtilities.executeCommandLine(null, "bash", "-c",
@@ -52,7 +52,7 @@ public class Communication {
         String p=String.join(" ", params);
         boolean result;
         if(isWindows){
-            result = GeneralUtilities.executeCommandLine(additionalEnvVariables, "cmd.exe", "/c",
+            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     "conda activate " + env + " && " + command + " " + p);
         }else {
             result = GeneralUtilities.executeCommandLine(null, "bash", "-c",
@@ -65,14 +65,13 @@ public class Communication {
     public boolean checkCondaEnv(String envName) throws IOException, InterruptedException {
         log.info("Check conda env {}.", envName);
         boolean result=false;
-        String uh=System.getProperty("user.home");
 
         if(isWindows){
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
-                    "cmd.exe", "/c", uh+"\\miniconda3\\_conda env list");
+                    "cmd.exe", "/c", "conda env list");
         }else {
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
-                    "bash", "-c", "source ~/miniconda3/etc/profile.d/conda.sh && conda env list");
+                    "bash", "-c", "conda env list");
         }
         return result;
     }
@@ -82,11 +81,11 @@ public class Communication {
         boolean isSet=false;
         boolean temp;
         if(isWindows){
-            temp= GeneralUtilities.executeCommandLine(additionalEnvVariables, "cmd.exe", "/c",
-                    "conda env create --file "+pathToEnvFile.toString());
+            temp= GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+                    "conda env create --file " + pathToEnvFile.toString());
         }else {
             temp= GeneralUtilities.executeCommandLine(null, "bash", "-c",
-                    "source ~/miniconda3/etc/profile.d/conda.sh && conda env create --file "+pathToEnvFile.toString());
+                    "conda env create --file " + pathToEnvFile.toString());
         }
         if(temp){
             isSet=checkCondaEnv(envName);
@@ -94,7 +93,7 @@ public class Communication {
         }else{
             log.error("Conda environment {} failed to be set", envName);
         }
-        log.info("Finish setting conda env {}.", envName);
+        log.info("{} setting conda env {}.", isSet ? "Finish correctly" : "Failed ", envName);
         return isSet;
     }
 
