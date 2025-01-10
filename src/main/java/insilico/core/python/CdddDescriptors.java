@@ -103,7 +103,7 @@ public class CdddDescriptors {
      * @return
      */
     public boolean configureCondaEnv() throws InterruptedException, IOException, URISyntaxException {
-        boolean isSet = false; // communication.checkCondaEnv(getCondaEnv());
+        boolean isSet = communication.checkCondaEnv(getCondaEnv());
         if(!isSet){
             URL urlEnv = getClass().getResource("/python/" + getCondaEnv() + ".yml");
             URL urlScript = getClass().getResource("/python/app-cddd.py");
@@ -121,7 +121,7 @@ public class CdddDescriptors {
                 log.info("{} cddd descriptors wheel file", copied ? "Copied" : "Already existing and not copied");
 
                 Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");
-                isSet = true;//communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
+                isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
                 if (isSet) {
                     // add default model folder to put the model data into the directory of cddd conda env
                     String destination = System.getProperty("user.home");
