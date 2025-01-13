@@ -97,4 +97,18 @@ public class Communication {
         return isSet;
     }
 
+    public boolean removeCondaEnv(String condaEnv) throws IOException, InterruptedException {
+        boolean result = false;
+        log.info("Removing conda env {}.", condaEnv);
+        if(isWindows){
+            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+                    "conda env remove -n " + condaEnv + " --yes");
+        }else{
+            result = GeneralUtilities.executeCommandLine(null, "bash", "-c",
+                    "conda env remove -n " + condaEnv + " --yes");
+        }
+        log.info("{} in removing conda env {}.", result ? "Success" : "Error" , condaEnv);
+        return result;
+    }
+
 }

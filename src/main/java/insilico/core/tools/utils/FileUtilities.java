@@ -8,6 +8,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.python.CdddDescriptors;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +116,10 @@ public class FileUtilities {
             }
         }
 
+    }
+
+    public static void deleteFolder(String path) throws IOException {
+        FileUtils.deleteDirectory(new File(path));
     }
 
     public static boolean copyResourcesRecursively(final URL originUrl, final File destination) {

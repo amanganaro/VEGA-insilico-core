@@ -44,7 +44,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             public void UpdateProgress() {
                 System.out.println("No progress update");
             }
-        };;
+        };
     }
 
     public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger) throws InitFailureException, GenericFailureException {
@@ -136,6 +136,10 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         }
 
         return isSet;
+    }
+
+    public boolean removeCondaEnv() throws IOException, InterruptedException {
+        return communication.removeCondaEnv(getCondaEnv());
     }
 
     public void prepareInputData() throws GenericFailureException {

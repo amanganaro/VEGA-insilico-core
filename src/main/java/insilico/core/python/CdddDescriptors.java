@@ -144,6 +144,10 @@ public class CdddDescriptors {
         return isSet;
     }
 
+    public boolean removeCondaEnv() throws IOException, InterruptedException {
+        return communication.removeCondaEnv(getCondaEnv());
+    }
+
     public String getFilePathOf(String smiles){
         return smilesFileMap.get(smiles);
     }
