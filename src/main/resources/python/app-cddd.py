@@ -16,15 +16,26 @@ def main():
     print("Start calculating cddd descriptors")
     input_df = pd.read_csv(file_location)
     input_df["smiles_preprocessed"] = input_df.smiles.map(preprocess_smiles)
-    input_df = input_df.dropna()
+    
+    #####input_df = input_df.dropna()
     smiles_list = input_df["smiles_preprocessed"].tolist()
+    filtered_smiles_list = input_df.dropna()["smiles_preprocessed"].tolist()
+    non_nan_mask = ~pd.isnull(smiles_list)
 
+    # Process the non-NaN smiles with the model
     inference_model = InferenceModel()
-    smiles_embedding = inference_model.seq_to_emb(smiles_list)
+    filtered_smiles_embedding = inference_model.seq_to_emb(filtered_smiles_list)
+
+    # Create the final embeddings list, filling NaN positions with None
+    smiles_embedding = [[]] * len(smiles_list)
+    j = 0
+    for i, is_non_nan in enumerate(non_nan_mask):
+        if is_non_nan:
+            smiles_embedding[i] = filtered_smiles_embedding[j]
+            j += 1
 
     embedding_df = pd.DataFrame(smiles_embedding,
-                                columns=[f'cddd_{i+1}' for i in range(len(smiles_embedding[0]))])
-
+                                columns=[f'cddd_{i+1}' for i in range(len(filtered_smiles_embedding[0]))])
     output_df = pd.concat([input_df.reset_index(drop=True), embedding_df], axis=1)
 
     for index, row in output_df.iterrows():
