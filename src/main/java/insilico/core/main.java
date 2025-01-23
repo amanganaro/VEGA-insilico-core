@@ -2,6 +2,7 @@ package insilico.core;
 
 //import insilico.carcinogenicity_isscancgx.ismCarcinogenicityIsscanCgx;
 //import insilico.bcf_caesar.ismBCFCaesar;
+import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.blocks.FunctionalGroups;
 import insilico.core.knn.insilicoKnnPrediction;
 import insilico.core.knn.insilicoKnnQualitative;
@@ -58,9 +59,14 @@ public class main {
 
     public static void main(String[] args) throws Exception {
 
-//        QMRFMSDoc qm = new QMRFMSDoc(main.class.getResource("/QMRF_HEPA_NRF2_(TOXCAST).docx"));
-//        qm.SaveXMLtoFile("qmrf_hepa_nrf2.xml");
-//        if (1==1) return;
+        InsilicoMolecule mu = SmilesMolecule.Convert("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)");
+        Descriptor de = mu.GetBasicDescriptorByName("MW_da");
+        System.out.println(de.getValue());
+        if (1==1) return;
+
+        QMRFMSDoc qm = new QMRFMSDoc(main.class.getResource("/QMRF_BCF_CAESAR.docx"));
+        qm.SaveXMLtoFile("qmrf_bcf_caesar.xml");
+        if (1==1) return;
 
         ////
 
