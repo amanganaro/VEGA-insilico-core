@@ -3,20 +3,24 @@ package insilico.core.model;
 import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
+import insilico.core.model.trainingset.TrainingSet;
 import insilico.core.python.CdddDescriptors;
 import insilico.core.python.Communication;
 import insilico.core.tools.utils.FileUtilities;
+import insilico.core.tools.utils.GeneralUtilities;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.ErrorManager;
 
@@ -27,30 +31,28 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     protected String inputTempFile;
     protected String outputTempFile;
     protected Path pathToExternalFolder;
-    private final boolean isUsingCdddDescriptor=false;
+    protected boolean isUsingCdddDescriptor=false;
     protected iInsilicoModelRunnerMessenger messenger;
 
-
-    public InsilicoModelPython(String modelData) throws InitFailureException, GenericFailureException {
-        super(modelData);
-        communication = new Communication();
-        messenger = new iInsilicoModelRunnerMessenger() {
-            @Override
-            public void SendMessage(String msg) {
-                System.out.println(msg);
-            }
-
-            @Override
-            public void UpdateProgress() {
-                System.out.println("No progress update");
-            }
-        };
-    }
 
     public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger) throws InitFailureException, GenericFailureException {
         super(modelData);
         communication = new Communication();
-        this.messenger = messenger;
+        if(messenger!=null) {
+            this.messenger = messenger;
+        }else{
+            this.messenger = new iInsilicoModelRunnerMessenger() {
+                @Override
+                public void SendMessage(String msg) {
+                    System.out.println(msg);
+                }
+
+                @Override
+                public void UpdateProgress() {
+                    System.out.println("No progress update");
+                }
+            };
+        }
     }
 
     /***
@@ -159,5 +161,58 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     }
     public void setMessenger(iInsilicoModelRunnerMessenger messenger) {
         this.messenger = messenger;
+    }
+
+    @Override
+    public void ProcessTrainingSet() throws Exception {
+        this.setSkipADandTSLoading(true);
+        TrainingSet TS = new TrainingSet();
+        String TSPath = this.getInfo().getTrainingSetURL();
+        String[] buf = TSPath.split("/");
+        String DatName = buf[buf.length-1];
+        TSPath = TSPath.substring(0, TSPath.length()-3) + "txt";
+
+        //build the csv file with all the molecules
+        List<String> molecules = buildMoleculeListFromTxt(TSPath);
+
+        //if the model use the cddd then calculate them
+        if(isUsingCdddDescriptor){
+            CdddDescriptors cddd = new CdddDescriptors(molecules, false);
+            if(!cddd.calculateDescriptors()){
+                throw new GenericFailureException(String.format(StringSelectorCore
+                                .getString("runner_consensus_exception_init_blocks"),
+                        "CDDD descriptors failing execution"));
+            }
+            this.setDescriptorGenerator(cddd);
+            //calculate the results
+            TS.Build(TSPath, this);
+            TS.SerializeToFile(DatName);
+            cddd.dispose();
+        }
+        else{
+            TS.Build(TSPath, this);
+            TS.SerializeToFile(DatName);
+        }
+    }
+
+    private List<String> buildMoleculeListFromTxt(String molFilePath) throws IOException, GenericFailureException {
+        URL tsURL = getClass().getResource(molFilePath);
+        DataInputStream in = new DataInputStream(tsURL.openStream());
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
+        String[] parsedString = bufferedReader.readLine().split("\t");
+        if(parsedString.length < 5)
+            throw new GenericFailureException(StringSelectorCore.getString("trainingset_header_error"));
+
+        List<String> molecules = new ArrayList<>();
+        String string;
+
+        while((string = bufferedReader.readLine()) != null) {
+            string = GeneralUtilities.TrimString(string);
+            if (string.isEmpty())
+                continue;
+            molecules.add(string.split("\t")[2]);
+        }
+
+        return molecules;
     }
 }
