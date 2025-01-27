@@ -2,13 +2,14 @@ package insilico.core.python;
 
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.localization.StringSelectorCore;
 import insilico.core.tools.utils.FileUtilities;
+import insilico.core.tools.utils.HTTPUtils;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -17,12 +18,14 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Scanner;
 
 public class CdddDescriptors {
 
     Communication communication;
     private static final Logger log = LoggerFactory.getLogger(CdddDescriptors.class);
     private Path pathToExternalFolder;
+    private Path pathToVEGAFolder;
     private List<String> smilesList;
     private Map<String, String> smilesFileMap;
     private String descriptorDirectory;
@@ -34,11 +37,15 @@ public class CdddDescriptors {
 
         if (System.getProperty("os.name").startsWith("Windows")) {
             pathToExternalFolder = Paths.get(System.getProperty("user.home"),
-                    "\\AppData\\Local\\vega-models\\descriptors\\cddd\\").resolve("");
+                    "\\AppData\\Local\\vega-models\\descriptors\\cddd\\descriptors\\").resolve("");
+            pathToVEGAFolder = Paths.get(System.getProperty("user.home"),
+                    "\\AppData\\Local\\vega-models\\descriptors\\").resolve("");
         }
         else {
             pathToExternalFolder = Paths.get(System.getProperty("user.home") ,
                     "/.local/share/vega-models/descriptors/cddd/");
+            pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,
+                    "/.local/share/vega-models/descriptors/");
         }
 
         File f=File.createTempFile("input-smiles", ".csv");
@@ -105,40 +112,38 @@ public class CdddDescriptors {
     public boolean configureCondaEnv() throws InterruptedException, IOException, URISyntaxException {
         boolean isSet = communication.checkCondaEnv(getCondaEnv());
         if(!isSet){
-            URL urlEnv = getClass().getResource("/python/" + getCondaEnv() + ".yml");
-            URL urlScript = getClass().getResource("/python/app-cddd.py");
-            URL urlWheel = getClass().getResource("/python/cddd-1.2.3-py3-none-any.whl");
-            URL urlModelDefaultFolder = getClass().getResource("/python/default_model");
+            File f = new File(pathToVEGAFolder.toString());
+            if(!f.exists()) {
+                log.info("Start to download the zip file.");
+                String zipFilePath = HTTPUtils.downloadFile("https://amcc.it/vega/cddd.zip", "cddd.zip");
+                log.info("Finish to download the zip file.");
+                FileUtilities.extractFilesFromZip(zipFilePath, pathToVEGAFolder.toString());
 
-            if (urlEnv != null && urlWheel != null && urlModelDefaultFolder != null && urlScript != null) {
-                boolean copied=FileUtilities.copyResourcesRecursively(urlEnv, new File(pathToExternalFolder.toString()));
-                log.info("{} cddd descriptors env file", copied ? "Copied" : "Already existing and not copied");
-
-                copied = FileUtilities.copyResourcesRecursively(urlScript, new File(pathToExternalFolder.toString()));
-                log.info("{} cddd descriptors script file", copied ? "Copied" : "Already existing and not copied");
-
-                copied = FileUtilities.copyResourcesRecursively(urlWheel, new File(pathToExternalFolder.toString()));
-                log.info("{} cddd descriptors wheel file", copied ? "Copied" : "Already existing and not copied");
-
-                Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");
-                isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
-                if (isSet) {
-                    // add default model folder to put the model data into the directory of cddd conda env
-                    String destination = System.getProperty("user.home");
-                    if (System.getProperty("os.name").startsWith("Windows")) {
-                        destination += "\\AppData\\Local\\cddd\\cddd\\default_model";
-                    } else {
-                        destination += "/.local/share/cddd/default_model";
-                    }
-
-                    copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destination));
-                    log.info("{} cddd descriptors default model file", copied ? "Copied" : "Already existing and not copied");
+                // add default model folder into the directory wanted from cddd
+                String destination = System.getProperty("user.home");
+                if (System.getProperty("os.name").startsWith("Windows")) {
+                    destination += "\\AppData\\Local\\cddd\\cddd\\default_model";
                 } else {
-                    log.error("Error in set up conda environment {}", getCondaEnv());
+                    destination += "/.local/share/cddd/default_model";
                 }
-            } else {
-                log.error("Some files to setup cddd conda environment {} are missing", getCondaEnv());
+
+                URL urlModelDefaultFolder = Paths.get(pathToExternalFolder.toString(), "default_model").toUri().toURL();
+                boolean copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destination));
+                log.info("{} cddd descriptors default model file", copied ? "Copied" : "Already existing and not copied");
+
+                f = new File(urlModelDefaultFolder.toString());
+                f.delete();
+                f = new File(zipFilePath);
+                f.delete();
+                log.info("Copied all necessary file from zip file.");
             }
+
+            Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");
+            isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
+            if (!isSet) {
+                log.error("Error in set up conda environment {}", getCondaEnv());
+            }
+
         }
         log.info("Conda environment {} set up {}", getCondaEnv(), isSet ? "correctly": "failed");
         return isSet;
@@ -159,5 +164,33 @@ public class CdddDescriptors {
 
     public String getOutputDirectory() {
         return descriptorDirectory;
+    }
+
+    public boolean checkIfCdddFileIsValid(String smiles) {
+
+        if (getFilePathOf(smiles) == null) {
+            return false;
+        }
+
+        Scanner myReader = null;
+        try {
+            File f = new File(getFilePathOf(smiles));
+            myReader = new Scanner(f);
+            //skip the header
+            myReader.nextLine();
+            String[] parsedString = myReader.nextLine().split(",");
+            if (parsedString[1] == null && !parsedString[1].trim().isEmpty()) {
+                myReader.close();
+                return false;
+            }
+
+        } catch (FileNotFoundException | ArrayIndexOutOfBoundsException ex) {
+            return false;
+        } finally {
+            if(myReader != null)
+                myReader.close();
+        }
+
+        return true;
     }
 }

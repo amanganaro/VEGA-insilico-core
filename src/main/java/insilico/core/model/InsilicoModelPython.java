@@ -10,6 +10,7 @@ import insilico.core.python.CdddDescriptors;
 import insilico.core.python.Communication;
 import insilico.core.tools.utils.FileUtilities;
 import insilico.core.tools.utils.GeneralUtilities;
+import insilico.core.tools.utils.HTTPUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -20,9 +21,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.ErrorManager;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 @Slf4j
 public abstract class InsilicoModelPython extends InsilicoModel implements iInsilicoModelPython {
@@ -30,6 +35,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     private final Communication communication;
     protected String inputTempFile;
     protected String outputTempFile;
+    protected Path pathToVEGAFolder;
     protected Path pathToExternalFolder;
     protected boolean isUsingCdddDescriptor=false;
     protected iInsilicoModelRunnerMessenger messenger;
@@ -52,6 +58,13 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
                     System.out.println("No progress update");
                 }
             };
+        }
+
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            pathToVEGAFolder = Paths.get(System.getProperty("user.home"),"\\AppData\\Local\\vega-models").resolve("");
+        }
+        else {
+            pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,"/.local/share/vega-models").resolve("");
         }
     }
 
@@ -107,34 +120,36 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @throws InterruptedException
      * @throws IOException
      */
-    public boolean configureCondaEnv(URL urlSourceEnv, URL urlSourceAppFile) throws InterruptedException, IOException, URISyntaxException {
+    public boolean configureCondaEnv(String httpUrl) throws InterruptedException, IOException {
 
         boolean isSet=false;
+        File f = new File(pathToVEGAFolder.toString());
+        if(!f.exists()) {
+            log.info("Start to download the zip file.");
+            String zipFilePath = HTTPUtils.downloadFile(httpUrl, this.getInfo().getName()+".zip");
+            log.info("Finish to download the zip file.");
+            FileUtilities.extractFilesFromZip(zipFilePath, pathToVEGAFolder.toString());
+            f = new File(zipFilePath);
+            f.delete();
+            log.info("Copied all necessary file from zip file.");
+        }
+        else{
+            log.info("Already existing files and not copied.");
+        }
 
-        if (urlSourceEnv != null && urlSourceAppFile != null) {
-            boolean copied = FileUtilities.copyResourcesRecursively(urlSourceEnv,
-                    new File(pathToExternalFolder.toString()));
-            log.info("{} env file.", copied ? "Copied" : "Already existing and not copied");
-            copied = FileUtilities.copyResourcesRecursively(urlSourceAppFile,
-                    new File(pathToExternalFolder.toString()));
-            log.info("{} app file.", copied ? "Copied" : "Already existing and not copied");
+        if (messenger != null) {
+            messenger.SendMessage("Model " + super.getInfo().getName() + " is checking conda environment");
+        }
 
+        isSet=communication.checkCondaEnv(getCondaEnv());
+
+        if(!isSet) {
             if (messenger != null)
-                messenger.SendMessage("Model " + super.getInfo().getName() + " is checking conda environment");
+                messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.\n\r"+
+                        "Downloading files and installing dependencies. Please wait.");
 
-            isSet=communication.checkCondaEnv(getCondaEnv());
-
-            if(!isSet) {
-
-                if (messenger != null)
-                    messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.\n\r"+
-                            "Downloading files and installing dependencies. Please wait.");
-
-                isSet = communication.configureCondaEnv(getCondaEnv(),
-                        Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
-            }
-        } else {
-            log.error("Error in copying files of conda environments: app.py or {}.yml", getCondaEnv());
+            isSet = communication.configureCondaEnv(getCondaEnv(),
+                    Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
         }
 
         return isSet;

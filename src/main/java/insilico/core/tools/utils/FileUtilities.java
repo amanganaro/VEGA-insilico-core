@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * General utilities for file handling/saving/etc
@@ -122,6 +124,8 @@ public class FileUtilities {
         FileUtils.deleteDirectory(new File(path));
     }
 
+
+
     public static boolean copyResourcesRecursively(final URL originUrl, final File destination) {
         try {
             final URLConnection urlConnection = originUrl.openConnection();
@@ -197,7 +201,7 @@ public class FileUtilities {
         return true;
     }
 
-    private static boolean copyStream(final InputStream is, final File f) {
+    public static boolean copyStream(final InputStream is, final File f) {
         try {
             if(f.createNewFile())
                 return copyStream(is, new FileOutputStream(f));
@@ -229,5 +233,50 @@ public class FileUtilities {
     private static boolean ensureDirectoryExists(final File f) throws IOException {
         Files.createDirectories(f.toPath());
         return f.exists() || f.mkdir() ;
+    }
+
+    public static void extractFilesFromZip(String zipFile, String pathFolderIntoCopy) throws IOException {
+        byte[] buffer = new byte[1024];
+        ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
+        ZipEntry zipEntry = zis.getNextEntry();
+        while (zipEntry != null) {
+            File newFile = newFileFromZip(new File(pathFolderIntoCopy), zipEntry);
+            if (zipEntry.isDirectory()) {
+                Files.createDirectories(newFile.toPath());
+                if (!newFile.isDirectory() && !newFile.exists()) {
+                    throw new IOException("Failed to create directory " + newFile);
+                }
+            } else {
+                // fix for Windows-created archives
+                File parent = newFile.getParentFile();
+                if (!parent.isDirectory() && !parent.mkdirs()) {
+                    throw new IOException("Failed to create directory " + parent);
+                }
+
+                // write file content
+                FileOutputStream fos = new FileOutputStream(newFile);
+                int len;
+                while ((len = zis.read(buffer)) > 0) {
+                    fos.write(buffer, 0, len);
+                }
+                fos.close();
+            }
+            zis.closeEntry();
+            zipEntry = zis.getNextEntry();
+        }
+        zis.close();
+    }
+
+    public static File newFileFromZip(File destinationDir, ZipEntry zipEntry) throws IOException {
+        File destFile = new File(destinationDir, zipEntry.getName());
+
+        String destDirPath = destinationDir.getCanonicalPath();
+        String destFilePath = destFile.getCanonicalPath();
+
+        if (!destFilePath.startsWith(destDirPath + File.separator)) {
+            throw new IOException("Entry is outside of the target dir: " + zipEntry.getName());
+        }
+
+        return destFile;
     }
 }

@@ -25,6 +25,8 @@ import insilico.core.molecule.fragmenter.FragmenterCRS4;
 //import insilico.fish_knn.ismFishKnn;
 //import insilico.mutagenicity_knn.ismMutagenicityKnn;
 import insilico.core.python.CdddDescriptors;
+import insilico.core.tools.utils.FileUtilities;
+import insilico.core.tools.utils.HTTPUtils;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.depict.DepictionGenerator;
 import org.openscience.cdk.interfaces.IAtomContainer;
@@ -46,18 +48,38 @@ import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 public class main {
 
 
     public static void main(String[] args) throws Exception {
+
+        try {
+            HTTPUtils.downloadFile("https://amcc.it/vega/apical-cardio-tox.zip", "apical-cardio-tox.zip");
+
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+        //Path pathToExternalFolder = Paths.get(System.getProperty("user.home"),"\\AppData\\Local\\vega-models-test").resolve("");
+        //FileUtilities.extractFilesFromZip(zipFilePath, pathToExternalFolder.toString());
+
+        if(1==1){
+            return;
+        }
 
         InsilicoMolecule mu = SmilesMolecule.Convert("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)");
         Descriptor de = mu.GetBasicDescriptorByName("MW_da");
