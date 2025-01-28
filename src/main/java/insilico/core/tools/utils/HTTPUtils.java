@@ -14,7 +14,7 @@ import java.nio.file.StandardCopyOption;
 
 public class HTTPUtils {
 
-    public static String downloadFile(String resourceUrl, String fileName) throws IOException {
+    public static void downloadFile(String resourceUrl, String filePath) throws IOException {
         int maxTries = 5;
 
         URL url = new URL(resourceUrl);
@@ -24,11 +24,10 @@ public class HTTPUtils {
         long fileLength = httpConnection.getContentLengthLong();
         long existingFileSize = 0;
 
-        File file = new File(fileName);
+        File file = new File(filePath);
         if(file.exists()){
             existingFileSize = file.length();
         }
-        System.out.println("Existing file size " + existingFileSize);
         while(existingFileSize < fileLength && maxTries > 0){
             HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
             if(file.exists())
@@ -67,6 +66,6 @@ public class HTTPUtils {
             throw new IOException("Cannot download file");
         }
 
-        return System.getProperty("user.dir") + File.separator + fileName;
+        System.out.println("Download complete.");
     }
 }

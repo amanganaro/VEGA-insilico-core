@@ -123,14 +123,17 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     public boolean configureCondaEnv(String httpUrl) throws InterruptedException, IOException {
 
         boolean isSet=false;
-        File f = new File(pathToVEGAFolder.toString());
+        File f = new File(pathToExternalFolder.toString());
         if(!f.exists()) {
+            if (messenger != null) {
+                messenger.SendMessage("Model " + super.getInfo().getName() + " is downloading support files");
+            }
             log.info("Start to download the zip file.");
-            String zipFilePath = HTTPUtils.downloadFile(httpUrl, this.getInfo().getName()+".zip");
+            File zipFile = File.createTempFile(this.getInfo().getKey(), ".zip");
+            HTTPUtils.downloadFile(httpUrl,  zipFile.getAbsolutePath());
             log.info("Finish to download the zip file.");
-            FileUtilities.extractFilesFromZip(zipFilePath, pathToVEGAFolder.toString());
-            f = new File(zipFilePath);
-            f.delete();
+            FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
+            zipFile.delete();
             log.info("Copied all necessary file from zip file.");
         }
         else{

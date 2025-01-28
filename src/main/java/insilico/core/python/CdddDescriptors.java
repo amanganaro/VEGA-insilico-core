@@ -37,7 +37,7 @@ public class CdddDescriptors {
 
         if (System.getProperty("os.name").startsWith("Windows")) {
             pathToExternalFolder = Paths.get(System.getProperty("user.home"),
-                    "\\AppData\\Local\\vega-models\\descriptors\\cddd\\descriptors\\").resolve("");
+                    "\\AppData\\Local\\vega-models\\descriptors\\cddd\\").resolve("");
             pathToVEGAFolder = Paths.get(System.getProperty("user.home"),
                     "\\AppData\\Local\\vega-models\\descriptors\\").resolve("");
         }
@@ -115,9 +115,10 @@ public class CdddDescriptors {
             File f = new File(pathToVEGAFolder.toString());
             if(!f.exists()) {
                 log.info("Start to download the zip file.");
-                String zipFilePath = HTTPUtils.downloadFile("https://amcc.it/vega/cddd.zip", "cddd.zip");
+                File zipFile = File.createTempFile("CDDD", ".zip");
+                HTTPUtils.downloadFile("https://amcc.it/vega/cddd.zip", zipFile.getAbsolutePath());
                 log.info("Finish to download the zip file.");
-                FileUtilities.extractFilesFromZip(zipFilePath, pathToVEGAFolder.toString());
+                FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
 
                 // add default model folder into the directory wanted from cddd
                 String destination = System.getProperty("user.home");
@@ -127,14 +128,13 @@ public class CdddDescriptors {
                     destination += "/.local/share/cddd/default_model";
                 }
 
-                URL urlModelDefaultFolder = Paths.get(pathToExternalFolder.toString(), "default_model").toUri().toURL();
+                URL urlModelDefaultFolder = Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model").toUri().toURL();
                 boolean copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destination));
                 log.info("{} cddd descriptors default model file", copied ? "Copied" : "Already existing and not copied");
 
                 f = new File(urlModelDefaultFolder.toString());
                 f.delete();
-                f = new File(zipFilePath);
-                f.delete();
+                zipFile.delete();
                 log.info("Copied all necessary file from zip file.");
             }
 

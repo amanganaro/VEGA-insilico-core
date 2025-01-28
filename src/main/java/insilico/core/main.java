@@ -3,11 +3,13 @@ package insilico.core;
 //import insilico.carcinogenicity_isscancgx.ismCarcinogenicityIsscanCgx;
 //import insilico.bcf_caesar.ismBCFCaesar;
 import insilico.core.descriptor.Descriptor;
+import insilico.core.descriptor.DescriptorsEngine;
 import insilico.core.descriptor.blocks.FunctionalGroups;
 import insilico.core.knn.insilicoKnnPrediction;
 import insilico.core.knn.insilicoKnnQualitative;
 import insilico.core.knn.insilicoKnnQuantitative;
 import insilico.core.model.InsilicoModel;
+import insilico.core.model.InsilicoModelPython;
 import insilico.core.model.guide.GuidePDFGenerator;
 import insilico.core.model.qmrf.QMRFDocument;
 import insilico.core.model.qmrf.QMRFMSDoc;
@@ -68,18 +70,19 @@ public class main {
 
     public static void main(String[] args) throws Exception {
 
-        try {
-            HTTPUtils.downloadFile("https://amcc.it/vega/apical-cardio-tox.zip", "apical-cardio-tox.zip");
-
-        }catch(Exception e){
-            System.out.println(e.getMessage());
-        }
-        //Path pathToExternalFolder = Paths.get(System.getProperty("user.home"),"\\AppData\\Local\\vega-models-test").resolve("");
-        //FileUtilities.extractFilesFromZip(zipFilePath, pathToExternalFolder.toString());
-
-        if(1==1){
-            return;
-        }
+//        System.out.println("Insilico Model");
+//        try {
+//            File tempFile = File.createTempFile("DILI_ONTOX", ".zip");
+//            HTTPUtils.downloadFile("https://amcc.it/vega/dili-bayer.zip", tempFile.getAbsolutePath());
+//
+//        }catch(Exception e){
+//            System.out.println(e.getMessage());
+//        }
+//
+//
+//        if(1==1){
+//            return;
+//        }
 
         InsilicoMolecule mu = SmilesMolecule.Convert("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)");
         Descriptor de = mu.GetBasicDescriptorByName("MW_da");
