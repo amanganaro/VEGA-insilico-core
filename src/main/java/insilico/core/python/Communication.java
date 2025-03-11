@@ -36,9 +36,8 @@ public class Communication {
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     "conda activate " + env + " && python " + scriptName + " " + p);
         }else {
-            result = GeneralUtilities.executeCommandLine(null, "bash", "-c",
-                    "source ~/miniconda3/etc/profile.d/conda.sh && conda activate "
-                            + env +" && python3 " + scriptName + " " + p);
+            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+                    "conda activate " + env +" && python " + scriptName + " " + p);
         }
         return result;
     }
@@ -55,9 +54,8 @@ public class Communication {
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     "conda activate " + env + " && " + command + " " + p);
         }else {
-            result = GeneralUtilities.executeCommandLine(null, "bash", "-c",
-                    "source ~/miniconda3/etc/profile.d/conda.sh && conda activate "
-                            + env +" && " + command + " " + p);
+            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+                    "conda activate " + env +" && " + command + " " + p);
         }
         return result;
     }
@@ -71,7 +69,7 @@ public class Communication {
                     "cmd.exe", "/c", "conda env list");
         }else {
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
-                    "bash", "-c", "conda env list");
+                    "bash", "--login", "-c", "conda env list");
         }
         return result;
     }
@@ -84,7 +82,7 @@ public class Communication {
             temp= GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     "conda env create --file " + pathToEnvFile.toString());
         }else {
-            temp= GeneralUtilities.executeCommandLine(null, "bash", "-c",
+            temp= GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     "conda env create --file " + pathToEnvFile.toString());
         }
         if(temp){
@@ -104,7 +102,7 @@ public class Communication {
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     "conda env remove -n " + condaEnv + " --yes");
         }else{
-            result = GeneralUtilities.executeCommandLine(null, "bash", "-c",
+            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     "conda env remove -n " + condaEnv + " --yes");
         }
         log.info("{} in removing conda env {}.", result ? "Success" : "Error" , condaEnv);

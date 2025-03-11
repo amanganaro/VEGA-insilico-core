@@ -2,6 +2,7 @@ package insilico.core.model;
 
 import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
+import insilico.core.exception.InitFailureException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -16,9 +17,9 @@ public interface iInsilicoModelPython {
 
     String getScriptName();
 
-    public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException;
+    public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws GenericFailureException;
 
-    public boolean configureCondaEnv(String httpUrl) throws InterruptedException, IOException;
+    public boolean configureCondaEnv(String httpUrl) throws InitFailureException;
 
     void setDescriptorGenerator(Object descriptorGenerator);
 

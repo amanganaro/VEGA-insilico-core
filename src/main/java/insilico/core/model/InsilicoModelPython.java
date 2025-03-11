@@ -88,25 +88,22 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @return It is returned the entire rows value in pair with the correspondent header value
      * Therefore it can be used with multitask model or single task
      * The management of the name is left to the implemented model
-     * @throws IOException
-     * @throws InterruptedException
-     * @throws CsvValidationException
-     * @throws URISyntaxException
      */
-    public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws IOException, InterruptedException, CsvValidationException, URISyntaxException {
-        log.info("Start calculating model results.");
-        boolean computationOk = communication.executeScriptInCondaEnv(getCondaEnv(), scriptPath.toString(), params);
-        log.info("Finish calculating model results.");
+    public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws GenericFailureException{
+        Map<String, String> result=null;
+        try {
+            log.info("Start calculating model results.");
+            boolean computationOk = communication.executeScriptInCondaEnv(getCondaEnv(), scriptPath.toString(), params);
+            log.info("Finish calculating model results.");
 
-        Map<String, String> result;
-        if(computationOk){
-            result = FileUtilities.readSelectedRowAndHeaderFromFile(outputTempFile, ',', 1);
-        }
-        else {
-            result=null;
-        }
+            if (computationOk) {
+                result = FileUtilities.readSelectedRowAndHeaderFromFile(outputTempFile, ',', 1);
+            }
 
-        FileUtils.delete(new File(outputTempFile));
+            FileUtils.delete(new File(outputTempFile));
+        }catch(IOException | InterruptedException | CsvValidationException | URISyntaxException ex){
+            throw new GenericFailureException(ex.getMessage());
+        }
         return result;
     }
 
@@ -117,42 +114,42 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * all in once. This method should be overridden IF the env require additional file management (like DILI-bayer)
      * @return boolean result to know if the whole execution is done smoothly. If there are some error, they are
      * reported in LOG
-     * @throws InterruptedException
-     * @throws IOException
      */
-    public boolean configureCondaEnv(String httpUrl) throws InterruptedException, IOException {
-
+    public boolean configureCondaEnv(String httpUrl) throws InitFailureException {
         boolean isSet=false;
-        File f = new File(pathToExternalFolder.toString());
-        if(!f.exists()) {
-            if (messenger != null) {
-                messenger.SendMessage("Model " + super.getInfo().getName() + " is downloading support files");
+        try {
+            File f = new File(pathToExternalFolder.toString());
+            if (!f.exists()) {
+                if (messenger != null) {
+                    messenger.SendMessage("Model " + super.getInfo().getName() + " is downloading support files");
+                }
+                log.info("Start to download the zip file.");
+                File zipFile = File.createTempFile(this.getInfo().getKey(), ".zip");
+                HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
+                log.info("Finish to download the zip file.");
+                FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
+                zipFile.delete();
+                log.info("Copied all necessary file from zip file.");
+            } else {
+                log.info("Already existing files and not copied.");
             }
-            log.info("Start to download the zip file.");
-            File zipFile = File.createTempFile(this.getInfo().getKey(), ".zip");
-            HTTPUtils.downloadFile(httpUrl,  zipFile.getAbsolutePath());
-            log.info("Finish to download the zip file.");
-            FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
-            zipFile.delete();
-            log.info("Copied all necessary file from zip file.");
-        }
-        else{
-            log.info("Already existing files and not copied.");
-        }
 
-        if (messenger != null) {
-            messenger.SendMessage("Model " + super.getInfo().getName() + " is checking conda environment");
-        }
+            if (messenger != null) {
+                messenger.SendMessage("Model " + super.getInfo().getName() + " is checking conda environment");
+            }
 
-        isSet=communication.checkCondaEnv(getCondaEnv());
+            isSet = communication.checkCondaEnv(getCondaEnv());
 
-        if(!isSet) {
-            if (messenger != null)
-                messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.\n\r"+
-                        "Downloading files and installing dependencies. Please wait.");
+            if (!isSet) {
+                if (messenger != null)
+                    messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.\n\r" +
+                            "Downloading files and installing dependencies. Please wait.");
 
-            isSet = communication.configureCondaEnv(getCondaEnv(),
-                    Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
+                isSet = communication.configureCondaEnv(getCondaEnv(),
+                        Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
+            }
+        }catch (InterruptedException | IOException ex){
+            throw new InitFailureException(ex.getMessage());
         }
 
         return isSet;
