@@ -69,10 +69,8 @@ public class GeneralUtilities {
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
 
         if(envVariables != null) {
-            Map<String, String> env = processBuilder.environment();
-            envVariables.forEach((key, variables) ->
-                    env.compute(key, (k, currentPath) ->
-                            variables + (currentPath != null ? currentPath : "")));
+            envVariables.forEach((key, value) ->
+                    processBuilder.environment().put(key, String.valueOf(value)));
         }
 
         processBuilder.redirectErrorStream(true);

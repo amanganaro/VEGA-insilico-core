@@ -192,7 +192,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
 
         //if the model use the cddd then calculate them
         if(isUsingCdddDescriptor){
-            CdddDescriptors cddd = new CdddDescriptors(molecules, false);
+            CdddDescriptors cddd = new CdddDescriptors(molecules, false, messenger);
             if(!cddd.calculateDescriptors()){
                 throw new GenericFailureException(String.format(StringSelectorCore
                                 .getString("runner_consensus_exception_init_blocks"),

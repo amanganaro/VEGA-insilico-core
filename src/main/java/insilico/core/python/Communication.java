@@ -1,11 +1,14 @@
 package insilico.core.python;
 
 import insilico.core.tools.utils.GeneralUtilities;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,15 +16,17 @@ public class Communication {
 
     private static final Logger log = LoggerFactory.getLogger(Communication.class);
     private boolean isWindows;
+    @Setter
     private Map<String, String> additionalEnvVariables;
+    private final Path condaInstallationPath = Paths.get(System.getProperty("user.home"), "vega", "conda");
+    private final String envVariables = condaInstallationPath.toAbsolutePath().toString() + ";" +
+            condaInstallationPath.toAbsolutePath().toString()+ File.separator+"Scripts";
+    @Setter
+    private Map<String, String> env = Map.of("Path", envVariables);
 
     public Communication(){
         isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
         additionalEnvVariables = new HashMap<>();
-    }
-
-    public void setAdditionalEnvVariables(Map<String, String> additionalEnvVariables) {
-        this.additionalEnvVariables = additionalEnvVariables;
     }
 
     /**
@@ -33,10 +38,10 @@ public class Communication {
         String p=String.join(" ", params);
         boolean result=false;
         if(isWindows){
-            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+            result = GeneralUtilities.executeCommandLine(this.env, "cmd.exe", "/c",
                     "conda activate " + env + " && python " + scriptName + " " + p);
         }else {
-            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+            result = GeneralUtilities.executeCommandLine(this.env, "bash", "--login", "-c",
                     "conda activate " + env +" && python " + scriptName + " " + p);
         }
         return result;
@@ -51,10 +56,10 @@ public class Communication {
         String p=String.join(" ", params);
         boolean result;
         if(isWindows){
-            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+            result = GeneralUtilities.executeCommandLine(this.env, "cmd.exe", "/c",
                     "conda activate " + env + " && " + command + " " + p);
         }else {
-            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+            result = GeneralUtilities.executeCommandLine(this.env, "bash", "--login", "-c",
                     "conda activate " + env +" && " + command + " " + p);
         }
         return result;
@@ -65,10 +70,10 @@ public class Communication {
         boolean result=false;
 
         if(isWindows){
-            result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
+            result = GeneralUtilities.executeCommandLineAndCheckResult(this.env, envName,
                     "cmd.exe", "/c", "conda env list");
         }else {
-            result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
+            result = GeneralUtilities.executeCommandLineAndCheckResult(this.env, envName,
                     "bash", "--login", "-c", "conda env list");
         }
         return result;
@@ -79,10 +84,10 @@ public class Communication {
         boolean isSet=false;
         boolean temp;
         if(isWindows){
-            temp= GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+            temp= GeneralUtilities.executeCommandLine(this.env, "cmd.exe", "/c",
                     "conda env create --file " + pathToEnvFile.toString());
         }else {
-            temp= GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+            temp= GeneralUtilities.executeCommandLine(this.env, "bash", "--login", "-c",
                     "conda env create --file " + pathToEnvFile.toString());
         }
         if(temp){
@@ -99,10 +104,10 @@ public class Communication {
         boolean result = false;
         log.info("Removing conda env {}.", condaEnv);
         if(isWindows){
-            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+            result = GeneralUtilities.executeCommandLine(this.env, "cmd.exe", "/c",
                     "conda env remove -n " + condaEnv + " --yes");
         }else{
-            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+            result = GeneralUtilities.executeCommandLine(this.env, "bash", "--login", "-c",
                     "conda env remove -n " + condaEnv + " --yes");
         }
         log.info("{} in removing conda env {}.", result ? "Success" : "Error" , condaEnv);

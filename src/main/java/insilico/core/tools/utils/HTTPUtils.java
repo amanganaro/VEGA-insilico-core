@@ -65,7 +65,5 @@ public class HTTPUtils {
         if(maxTries < 0){
             throw new IOException("Cannot download file");
         }
-
-        System.out.println("Download complete.");
     }
 }

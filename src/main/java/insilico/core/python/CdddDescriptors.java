@@ -3,6 +3,7 @@ package insilico.core.python;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.localization.StringSelectorCore;
+import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.tools.utils.FileUtilities;
 import insilico.core.tools.utils.HTTPUtils;
 import org.apache.commons.io.FileUtils;
@@ -30,9 +31,25 @@ public class CdddDescriptors {
     private Map<String, String> smilesFileMap;
     private String descriptorDirectory;
     private String inputSmilesFileName;
+    protected iInsilicoModelRunnerMessenger messenger;
 
-    public CdddDescriptors(List<String> smilesList, boolean bypassCheckCondaEnv) throws IOException, URISyntaxException, InterruptedException, InitFailureException {
+    public CdddDescriptors(List<String> smilesList, boolean bypassCheckCondaEnv, iInsilicoModelRunnerMessenger messenger) throws InitFailureException {
 
+        if(messenger!=null) {
+            this.messenger = messenger;
+        }else{
+            this.messenger = new iInsilicoModelRunnerMessenger() {
+                @Override
+                public void SendMessage(String msg) {
+                    System.out.println(msg);
+                }
+
+                @Override
+                public void UpdateProgress() {
+                    System.out.println("No progress update");
+                }
+            };
+        }
         communication = new Communication();
 
         if (System.getProperty("os.name").startsWith("Windows")) {
@@ -48,16 +65,24 @@ public class CdddDescriptors {
                     "/.local/share/vega-models/descriptors/");
         }
 
-        File f=File.createTempFile("input-smiles", ".csv");
-        inputSmilesFileName = f.getAbsolutePath();
-        f = Files.createTempDirectory("cddd-descriptors").toFile();
-        descriptorDirectory = f.getAbsolutePath();
+        try {
+            File f = File.createTempFile("input-smiles", ".csv");
+            inputSmilesFileName = f.getAbsolutePath();
+            f = Files.createTempDirectory("cddd-descriptors").toFile();
+            descriptorDirectory = f.getAbsolutePath();
 
-        if(!bypassCheckCondaEnv){
-            boolean isEnvSet=configureCondaEnv();
-            if(!isEnvSet) {
-                throw new InitFailureException("Conda environment "+getCondaEnv()+" not set");
+            if (!bypassCheckCondaEnv) {
+                boolean isEnvSet = configureCondaEnv();
+                if (!isEnvSet) {
+                    throw new InitFailureException("Conda environment " + getCondaEnv() + " not set");
+                }
             }
+        } catch (IOException e) {
+            log.error(e.getMessage());
+            throw new InitFailureException("Error in creating cddd support files. Conda environment " + getCondaEnv() + " not set");
+        } catch (URISyntaxException | InterruptedException e) {
+            log.error(e.getMessage());
+            throw new InitFailureException("Conda environment " + getCondaEnv() + " not set");
         }
         this.smilesList=smilesList;
     }
@@ -114,6 +139,7 @@ public class CdddDescriptors {
         if(!isSet){
             File f = new File(pathToVEGAFolder.toString());
             if(!f.exists()) {
+                messenger.SendMessage("Start to download CDDD descriptor files");
                 log.info("Start to download the zip file.");
                 File zipFile = File.createTempFile("CDDD", ".zip");
                 HTTPUtils.downloadFile("https://amcc.it/vega/cddd.zip", zipFile.getAbsolutePath());
@@ -139,6 +165,7 @@ public class CdddDescriptors {
             }
 
             Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");
+            messenger.SendMessage("Configuring conda environment of CDDD descriptors");
             isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
             if (!isSet) {
                 log.error("Error in set up conda environment {}", getCondaEnv());
