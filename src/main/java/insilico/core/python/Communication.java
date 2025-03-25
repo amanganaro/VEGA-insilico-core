@@ -2,6 +2,7 @@ package insilico.core.python;
 
 import insilico.core.tools.utils.GeneralUtilities;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,9 +13,9 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class Communication {
 
-    private static final Logger log = LoggerFactory.getLogger(Communication.class);
     private boolean isWindows;
     @Setter
     private Map<String, String> additionalEnvVariables;
@@ -85,7 +86,7 @@ public class Communication {
         boolean temp;
         if(isWindows){
             temp= GeneralUtilities.executeCommandLine(this.env, "cmd.exe", "/c",
-                    "conda env create --file " + pathToEnvFile.toString());
+                    "conda env create --file " + pathToEnvFile.toString() + " --debug");
         }else {
             temp= GeneralUtilities.executeCommandLine(this.env, "bash", "--login", "-c",
                     "conda env create --file " + pathToEnvFile.toString());
@@ -96,7 +97,7 @@ public class Communication {
         }else{
             log.error("Conda environment {} failed to be set", envName);
         }
-        log.info("{} setting conda env {}.", isSet ? "Finish correctly" : "Failed ", envName);
+        log.info("{} setting conda env {}.", isSet ? "Finish correctly" : "Failed", envName);
         return isSet;
     }
 

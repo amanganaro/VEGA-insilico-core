@@ -2,13 +2,11 @@ package insilico.core.python;
 
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
-import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.tools.utils.FileUtilities;
 import insilico.core.tools.utils.HTTPUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -21,10 +19,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
+@Slf4j
 public class CdddDescriptors {
 
     Communication communication;
-    private static final Logger log = LoggerFactory.getLogger(CdddDescriptors.class);
     private Path pathToExternalFolder;
     private Path pathToVEGAFolder;
     private List<String> smilesList;
@@ -162,6 +160,9 @@ public class CdddDescriptors {
                 f.delete();
                 zipFile.delete();
                 log.info("Copied all necessary file from zip file.");
+            }
+            else{
+                log.info("All support file already present. Not copied.");
             }
 
             Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");

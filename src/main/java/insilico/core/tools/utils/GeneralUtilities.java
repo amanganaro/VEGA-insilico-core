@@ -1,5 +1,6 @@
 package insilico.core.tools.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,9 +15,8 @@ import java.util.Map;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class GeneralUtilities {
-
-    private static final Logger log = LoggerFactory.getLogger(GeneralUtilities.class);
 
     /**
      * Trims the given string from space, newline and tab characters.
@@ -76,7 +76,7 @@ public class GeneralUtilities {
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         String s = readProcessOutput(process.getInputStream()).toString();
-        log.info(s);
+        log.info("Process builder: {}",s);
         int exitCode = process.waitFor();
         return exitCode == 0;
     }
@@ -95,8 +95,9 @@ public class GeneralUtilities {
         processBuilder.command(commands);
         Process process = processBuilder.start();
         StringBuilder sb = readProcessOutput(process.getInputStream());
-        log.info(sb.toString());
+        log.info("Process builder: {}", sb.toString());
         int exitCode = process.waitFor();
+        System.out.println("Exit code: "+exitCode);
         return exitCode == 0 && sb.indexOf(expected) != -1;
     }
 

@@ -7,6 +7,7 @@ import com.opencsv.CSVReaderBuilder;
 import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.localization.StringSelectorCore;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,8 @@ import java.util.zip.ZipInputStream;
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
+@Slf4j
 public class FileUtilities {
-
-    private static final Logger log = LoggerFactory.getLogger(FileUtilities.class);
 
     /**
      * Saves a byte[] object to file.
