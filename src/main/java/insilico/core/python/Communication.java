@@ -20,10 +20,6 @@ public class Communication {
     @Setter
     private Map<String, String> additionalEnvVariables;
     private final Path condaInstallationPath = Paths.get(System.getProperty("user.home"), "vega", "conda");
-    private final String envVariables = condaInstallationPath.toAbsolutePath().toString() + ";" +
-            condaInstallationPath.toAbsolutePath().toString()+ File.separator+"Scripts";
-    @Setter
-    private Map<String, String> env = Map.of("Path", envVariables);
 
     public Communication(){
         isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
@@ -39,10 +35,12 @@ public class Communication {
         String p=String.join(" ", params);
         boolean result=false;
         if(isWindows){
-            result = GeneralUtilities.executeCommandLine(this.env, "cmd.exe", "/c",
-                    "conda activate " + env + " && python " + scriptName + " " + p);
+            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
+                            "conda activate " + env + " && python " + scriptName + " " + p);
         }else {
-            result = GeneralUtilities.executeCommandLine(this.env, "bash", "--login", "-c",
+            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
                     "conda activate " + env +" && python " + scriptName + " " + p);
         }
         return result;
@@ -57,11 +55,13 @@ public class Communication {
         String p=String.join(" ", params);
         boolean result;
         if(isWindows){
-            result = GeneralUtilities.executeCommandLine(this.env, "cmd.exe", "/c",
-                    "conda activate " + env + " && " + command + " " + p);
+            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
+                            "conda activate " + env + " && " + command + " " + p);
         }else {
-            result = GeneralUtilities.executeCommandLine(this.env, "bash", "--login", "-c",
-                    "conda activate " + env +" && " + command + " " + p);
+            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                            "conda activate " + env +" && " + command + " " + p);
         }
         return result;
     }
@@ -71,11 +71,14 @@ public class Communication {
         boolean result=false;
 
         if(isWindows){
-            result = GeneralUtilities.executeCommandLineAndCheckResult(this.env, envName,
-                    "cmd.exe", "/c", "conda env list");
+            result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
+                    "cmd.exe", "/c",
+                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
+                            "conda env list");
         }else {
-            result = GeneralUtilities.executeCommandLineAndCheckResult(this.env, envName,
-                    "bash", "--login", "-c", "conda env list");
+            result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
+                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                            "bash", "--login", "-c", "conda env list");
         }
         return result;
     }
@@ -85,11 +88,14 @@ public class Communication {
         boolean isSet=false;
         boolean temp;
         if(isWindows){
-            temp= GeneralUtilities.executeCommandLine(this.env, "cmd.exe", "/c",
-                    "conda env create --file " + pathToEnvFile.toString() + " --debug");
+            temp= GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat " +
+                            "&& conda env create --file "+pathToEnvFile.toString());
+                    //"conda env create --file " + pathToEnvFile.toString() + " --debug");
         }else {
-            temp= GeneralUtilities.executeCommandLine(this.env, "bash", "--login", "-c",
-                    "conda env create --file " + pathToEnvFile.toString());
+            temp= GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                            "conda env create --file " + pathToEnvFile.toString());
         }
         if(temp){
             isSet=checkCondaEnv(envName);
@@ -105,11 +111,13 @@ public class Communication {
         boolean result = false;
         log.info("Removing conda env {}.", condaEnv);
         if(isWindows){
-            result = GeneralUtilities.executeCommandLine(this.env, "cmd.exe", "/c",
-                    "conda env remove -n " + condaEnv + " --yes");
+            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
+                            "conda env remove -n " + condaEnv + " --yes");
         }else{
-            result = GeneralUtilities.executeCommandLine(this.env, "bash", "--login", "-c",
-                    "conda env remove -n " + condaEnv + " --yes");
+            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                            "conda env remove -n " + condaEnv + " --yes");
         }
         log.info("{} in removing conda env {}.", result ? "Success" : "Error" , condaEnv);
         return result;

@@ -97,7 +97,6 @@ public class GeneralUtilities {
         StringBuilder sb = readProcessOutput(process.getInputStream());
         log.info("Process builder: {}", sb.toString());
         int exitCode = process.waitFor();
-        System.out.println("Exit code: "+exitCode);
         return exitCode == 0 && sb.indexOf(expected) != -1;
     }
 

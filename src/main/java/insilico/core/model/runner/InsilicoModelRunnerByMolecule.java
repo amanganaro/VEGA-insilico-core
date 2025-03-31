@@ -57,7 +57,7 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
             // Initialize CDDD Descriptor class
             if(isTherePythonModelUsingCDDD){
                 List<String> smilesList = Mols.stream().map(InsilicoMolecule::getInputSMILES).collect(Collectors.toList());
-                cdddDescriptors = new CdddDescriptors(smilesList, false, Messenger);
+                cdddDescriptors = new CdddDescriptors(smilesList, true, Messenger);
                 if(!cdddDescriptors.calculateDescriptors()){
                     throw new GenericFailureException(String.format(StringSelectorCore
                             .getString("runner_consensus_exception_init_blocks"),
