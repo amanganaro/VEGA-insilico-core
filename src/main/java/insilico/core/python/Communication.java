@@ -59,7 +59,7 @@ public class Communication {
                     condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
                             "conda activate " + env + " && " + command + " " + p);
         }else {
-            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+            result = GeneralUtilities.executeCommandLine(null, "bash", /*"--login",*/ "-c",
                     "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
                             "conda activate " + env +" && " + command + " " + p);
         }
@@ -77,8 +77,9 @@ public class Communication {
                             "conda env list");
         }else {
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
-                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
-                            "bash", "--login", "-c", "conda env list");
+                    "bash", /*"--login",*/ "-c", "source "
+                            +condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                            "conda env list");
         }
         return result;
     }
@@ -93,7 +94,7 @@ public class Communication {
                             "&& conda env create --file "+pathToEnvFile.toString());
                     //"conda env create --file " + pathToEnvFile.toString() + " --debug");
         }else {
-            temp= GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+            temp= GeneralUtilities.executeCommandLine(null, "bash", /*"--login",*/ "-c",
                     "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
                             "conda env create --file " + pathToEnvFile.toString());
         }
@@ -115,7 +116,7 @@ public class Communication {
                     condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
                             "conda env remove -n " + condaEnv + " --yes");
         }else{
-            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+            result = GeneralUtilities.executeCommandLine(null, "bash", /*"--login",*/ "-c",
                     "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
                             "conda env remove -n " + condaEnv + " --yes");
         }
