@@ -137,7 +137,7 @@ public class CdddDescriptors {
         if(!isSet){
             File f = new File(pathToVEGAFolder.toString());
             if(!f.exists()) {
-                messenger.SendMessage("Start to download CDDD descriptor files");
+                messenger.SendMessage("CDDD descriptors are downloading support files");
                 log.info("Start to download the zip file.");
                 File zipFile = File.createTempFile("CDDD", ".zip");
                 HTTPUtils.downloadFile("https://amcc.it/vega/cddd.zip", zipFile.getAbsolutePath());
@@ -166,7 +166,7 @@ public class CdddDescriptors {
             }
 
             Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");
-            messenger.SendMessage("Configuring conda environment of CDDD descriptors");
+            messenger.SendMessage("CDDD descriptors installing conda environment.");
             isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
             if (!isSet) {
                 log.error("Error in set up conda environment {}", getCondaEnv());
