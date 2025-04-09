@@ -20,6 +20,8 @@ public class Communication {
     @Setter
     private Map<String, String> additionalEnvVariables;
     private final Path condaInstallationPath = Paths.get(System.getProperty("user.home"), "vega", "conda");
+    @Setter
+    private static boolean USE_CUSTOM_CONDA = true;
 
     public Communication(){
         isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
@@ -36,11 +38,11 @@ public class Communication {
         boolean result=false;
         if(isWindows){
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
-                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
+                    (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
                             "conda activate " + env + " && python " + scriptName + " " + p);
         }else {
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
-                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                    (USE_CUSTOM_CONDA ? "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && " : "") +
                     "conda activate " + env +" && python " + scriptName + " " + p);
         }
         return result;
@@ -56,11 +58,11 @@ public class Communication {
         boolean result;
         if(isWindows){
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
-                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
+                    (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
                             "conda activate " + env + " && " + command + " " + p);
         }else {
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
-                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                    (USE_CUSTOM_CONDA ? "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && " : "") +
                             "conda activate " + env +" && " + command + " " + p);
         }
         return result;
@@ -73,12 +75,12 @@ public class Communication {
         if(isWindows){
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
                     "cmd.exe", "/c",
-                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
+                    (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
                             "conda env list");
         }else {
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
-                    "bash", "--login", "-c", "source "
-                            +condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                    "bash", "--login", "-c",
+                    (USE_CUSTOM_CONDA ? "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && " : "") +
                             "conda env list");
         }
         return result;
@@ -90,11 +92,11 @@ public class Communication {
         boolean temp;
         if(isWindows){
             temp= GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
-                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat " +
-                            "&& conda env create --file "+pathToEnvFile.toString());
+                    (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
+                            "conda env create --file "+pathToEnvFile.toString());
         }else {
             temp= GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
-                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                    (USE_CUSTOM_CONDA ? "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && " : "") +
                             "conda env create --file " + pathToEnvFile.toString());
         }
         if(temp){
@@ -112,11 +114,11 @@ public class Communication {
         log.info("Removing conda env {}.", condaEnv);
         if(isWindows){
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
-                    condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " +
+                    (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
                             "conda env remove -n " + condaEnv + " --yes");
         }else{
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
-                    "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && "+
+                    (USE_CUSTOM_CONDA ? "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && " : "") +
                             "conda env remove -n " + condaEnv + " --yes");
         }
         log.info("{} in removing conda env {}.", result ? "Success" : "Error" , condaEnv);
