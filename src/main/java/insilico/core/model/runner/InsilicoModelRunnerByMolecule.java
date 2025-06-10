@@ -69,8 +69,7 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
             descriptorsEngine.AddDescriptorBlock(new Constitutional());
             descriptorsEngine.AddDescriptorBlock(new FunctionalGroups());
 
-        } catch (InitFailureException | CloneNotSupportedException | IOException | URISyntaxException |
-                 InterruptedException ex) {
+        } catch (InitFailureException | CloneNotSupportedException ex) {
             throw new GenericFailureException(String.format(StringSelectorCore
                     .getString("runner_consensus_exception_init_blocks"), ex.getMessage()));
         }

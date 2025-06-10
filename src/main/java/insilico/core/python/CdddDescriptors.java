@@ -101,25 +101,31 @@ public class CdddDescriptors {
      * the 512 descriptors and for each smiles generates a csv file within the correspondent descriptors
      * @return true if the computation went smoothly otherwise false
      */
-    public boolean calculateDescriptors() throws IOException, InterruptedException, URISyntaxException, GenericFailureException {
-        prepareInputData(inputSmilesFileName);
+    public boolean calculateDescriptors() throws GenericFailureException {
+        try {
+            prepareInputData(inputSmilesFileName);
 
-        log.info("Start to calculate descriptors");
-        String pathToScriptFile = Paths.get(pathToExternalFolder.toString(), "app-cddd.py").toAbsolutePath().toString();
-        boolean result = communication.executeScriptInCondaEnv(getCondaEnv(), pathToScriptFile,
-                "--input "+inputSmilesFileName,
-                " --output "+ descriptorDirectory);
-        if(result){
-            for(int i = 0; i<smilesList.size(); i++){
-                if(smilesFileMap==null){
-                    smilesFileMap=new HashMap<>();
+            log.info("Start to calculate descriptors");
+            String pathToScriptFile = Paths.get(pathToExternalFolder.toString(), "app-cddd.py").toAbsolutePath().toString();
+            boolean result = communication.executeScriptInCondaEnv(getCondaEnv(), pathToScriptFile,
+                    "--input " + inputSmilesFileName,
+                    " --output " + descriptorDirectory);
+            if (result) {
+                for (int i = 0; i < smilesList.size(); i++) {
+                    if (smilesFileMap == null) {
+                        smilesFileMap = new HashMap<>();
+                    }
+                    smilesFileMap.put(smilesList.get(i), descriptorDirectory + File.separator + i + ".csv");
                 }
-                smilesFileMap.put(smilesList.get(i), descriptorDirectory+File.separator+i+".csv");
             }
-        }
 
-        log.info("Finish to calculate descriptors");
-        return result;
+            log.info("Finish to calculate descriptors");
+            return result;
+
+        }catch(IOException | InterruptedException ex){
+            log.error(ex.getMessage());
+            throw new GenericFailureException(ex.getMessage());
+        }
     }
 
     public String getCondaEnv(){

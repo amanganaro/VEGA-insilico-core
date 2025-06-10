@@ -21,13 +21,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.ErrorManager;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
-import java.util.zip.ZipFile;
 
 @Slf4j
 public abstract class InsilicoModelPython extends InsilicoModel implements iInsilicoModelPython {
@@ -69,10 +64,17 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     }
 
     /***
-     * It is better that each model has its own virtual environment, as recommended by conda docs.
-     * Otherwise, it can be set to default base conda environment
+     * Each model has own conda environment, an environment can be used for more than one model, if the requirements
+     * can be satisfied. There are already some conda environments set by default
      */
-    public abstract String getCondaEnv();
+    public String getCondaEnv(String ENV_TAG){
+        switch(ENV_TAG){
+            case "GLOBAL":
+                return "VEGA_global_V2";
+            default:
+                return "VEGA_global_V2";
+        }
+    }
 
     /**
      * Each python model must have a script file with unique name
