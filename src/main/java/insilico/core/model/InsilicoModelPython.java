@@ -34,6 +34,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     protected Path pathToExternalFolder;
     protected boolean isUsingCdddDescriptor=false;
     protected iInsilicoModelRunnerMessenger messenger;
+    protected String envTag = "GLOBAL";
 
 
     public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger) throws InitFailureException, GenericFailureException {
@@ -67,8 +68,8 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * Each model has own conda environment, an environment can be used for more than one model, if the requirements
      * can be satisfied. There are already some conda environments set by default
      */
-    public String getCondaEnv(String ENV_TAG){
-        switch(ENV_TAG){
+    public String getCondaEnv(){
+        switch(envTag){
             case "GLOBAL":
                 return "VEGA_global_V2";
             default:
