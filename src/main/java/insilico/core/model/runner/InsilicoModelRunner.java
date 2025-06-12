@@ -99,7 +99,7 @@ public abstract class InsilicoModelRunner {
     public void AddModel(InsilicoModel model){
         boolean found = false;
         for(InsilicoModelWrapper modelWrapper : ModelWrappers){
-            if (modelWrapper.getModel().getClass() == model.getClass()) {
+            if (modelWrapper.getModel().getInfo().getKey().equals(model.getInfo().getKey())) {
                 found = true;
                 break;
             }
@@ -112,7 +112,7 @@ public abstract class InsilicoModelRunner {
     public void AddModel(iInsilicoModel model, boolean FlagForOutput) {
         boolean found = false;
         for (InsilicoModelWrapper modelWrapper : ModelWrappers)
-            if (modelWrapper.getModel().getClass() == model.getClass()) {
+            if (modelWrapper.getModel().getInfo().getKey().equals(model.getInfo().getKey())) {
                 found = true;
                 break;
             }
@@ -123,7 +123,7 @@ public abstract class InsilicoModelRunner {
     public void AddModel(iInsilicoModelConsensus model) {
         boolean found = false;
         for (InsilicoModelConsensusWrapper mw : ModelConsensusWrappers)
-            if (mw.getModel().getClass() == model.getClass()) {
+            if (mw.getModel().getInfo().getKey().equals(model.getInfo().getKey())) {
                 found = true;
                 break;
             }

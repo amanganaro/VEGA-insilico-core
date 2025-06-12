@@ -34,12 +34,15 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     protected Path pathToExternalFolder;
     protected boolean isUsingCdddDescriptor=false;
     protected iInsilicoModelRunnerMessenger messenger;
-    protected String envTag = "GLOBAL";
+    protected String envTag;
+    String httpUrl;
 
-
-    public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger) throws InitFailureException, GenericFailureException {
+    public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger, String modelReferenceName, String envTag, boolean bypassCheckCondaEnv) throws InitFailureException, GenericFailureException {
         super(modelData);
+
         communication = new Communication();
+        this.envTag = envTag;
+
         if(messenger!=null) {
             this.messenger = messenger;
         }else{
@@ -56,11 +59,24 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             };
         }
 
+        httpUrl = "https://amcc.it/vega/"+modelReferenceName+".zip";
+
         if (System.getProperty("os.name").startsWith("Windows")) {
-            pathToVEGAFolder = Paths.get(System.getProperty("user.home"),"\\AppData\\Local\\vega-models").resolve("");
+            pathToVEGAFolder = Paths.get(System.getProperty("user.home"),"AppData", "Local", "vega-models").resolve("");
+            pathToExternalFolder = Paths.get(System.getProperty("user.home"),"AppData","Local","vega-models", modelReferenceName).resolve("");
         }
         else {
-            pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,"/.local/share/vega-models").resolve("");
+            pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,".local", "share", "vega-models").resolve("");
+            pathToExternalFolder = Paths.get(System.getProperty("user.home") ,".local", "share", "vega-models", modelReferenceName).resolve("");
+        }
+
+        setSupportFiles();
+
+        if(!bypassCheckCondaEnv) {
+            boolean isEnvSet = configureCondaEnv();
+            if(!isEnvSet) {
+                throw new InitFailureException("Conda environment "+getCondaEnv()+" not set");
+            }
         }
     }
 
@@ -72,6 +88,8 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         switch(envTag){
             case "GLOBAL":
                 return "VEGA_global_V2";
+            case "TEST":
+                return "test";
             default:
                 return "VEGA_global_V2";
         }
@@ -110,16 +128,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         return result;
     }
 
-    /**
-     * Set up the conda environment, if there are additional files specific to the model, add them in the subclass
-     * override method.
-     * It will be moved to the startup of GUI, where all envs will be set
-     * all in once. This method should be overridden IF the env require additional file management (like DILI-bayer)
-     * @return boolean result to know if the whole execution is done smoothly. If there are some error, they are
-     * reported in LOG
-     */
-    public boolean configureCondaEnv(String httpUrl) throws InitFailureException {
-        boolean isSet=false;
+    public void setSupportFiles() throws InitFailureException {
         try {
             File f = new File(pathToExternalFolder.toString());
             if (!f.exists()) {
@@ -136,7 +145,23 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             } else {
                 log.info("Already existing files and not copied.");
             }
+        }
+        catch(IOException ex){
+            throw new InitFailureException(ex.getMessage());
+        }
+    }
 
+    /**
+     * Set up the conda environment, if there are additional files specific to the model, add them in the subclass
+     * override method.
+     * It will be moved to the startup of GUI, where all envs will be set
+     * all in once. This method should be overridden IF the env require additional file management (like DILI-bayer)
+     * @return boolean result to know if the whole execution is done smoothly. If there are some error, they are
+     * reported in LOG
+     */
+    public boolean configureCondaEnv() throws InitFailureException {
+        boolean isSet;
+        try {
             if (messenger != null) {
                 messenger.SendMessage("Model " + super.getInfo().getName() + " is checking conda environment");
             }
@@ -147,8 +172,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
                 if (messenger != null)
                     messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.");
 
-                isSet = communication.configureCondaEnv(getCondaEnv(),
-                        Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
+                isSet = communication.configureCondaEnv(getCondaEnv(), Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
             }
         }catch (InterruptedException | IOException ex){
             throw new InitFailureException(ex.getMessage());

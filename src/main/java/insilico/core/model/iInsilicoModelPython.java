@@ -14,7 +14,9 @@ public interface iInsilicoModelPython {
 
     Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws GenericFailureException;
 
-    boolean configureCondaEnv(String httpUrl) throws InitFailureException;
+    boolean configureCondaEnv() throws InitFailureException;
+
+    void setSupportFiles() throws InitFailureException;
 
     void setDescriptorGenerator(Object descriptorGenerator);
 
