@@ -498,7 +498,7 @@ public class ReportPDF {
         String[] ModelDesc = new String[nModels];
         for (InsilicoModelConsensusWrapper mw : modelConsWrappers) {
             InsilicoModelInfo curInfo = mw.getModel().getInfo();
-            ModelTitle[modelIdx] = curInfo.getName() + "(" + StringSelectorCore.getString("report_generator_version") + " " + curInfo.getVersion() + ")\n";
+            ModelTitle[modelIdx] = curInfo.getName() + " (" + StringSelectorCore.getString("report_generator_version") + " " + curInfo.getVersion() + ")\n";
             ModelDesc[modelIdx] = curInfo.getSummary() + "\n"; ;
             modelIdx++;
         }
@@ -506,7 +506,7 @@ public class ReportPDF {
             if (!mw.isFlagForOutput())
                 continue;
             InsilicoModelInfo curInfo = mw.getModel().getInfo();
-            ModelTitle[modelIdx] = curInfo.getName() + "(" + StringSelectorCore.getString("report_generator_version") + " " + curInfo.getVersion() + ")\n";
+            ModelTitle[modelIdx] = curInfo.getName() + " (" + StringSelectorCore.getString("report_generator_version") + " " + curInfo.getVersion() + ")\n";
             ModelDesc[modelIdx] = curInfo.getSummary() + "\n"; ;
             modelIdx++;
         }
