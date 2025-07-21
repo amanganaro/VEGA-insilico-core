@@ -83,7 +83,8 @@ public class main {
 //        if(1==1){
 //            return;
 //        }
-        CdddDescriptors cd = new CdddDescriptors(List.of("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)"),
+        CdddDescriptors cd = new CdddDescriptors(
+                List.of("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)"),
                 false, null);
 
         InsilicoMolecule mu = SmilesMolecule.Convert("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)");

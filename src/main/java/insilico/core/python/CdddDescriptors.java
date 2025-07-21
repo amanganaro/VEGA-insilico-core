@@ -69,6 +69,8 @@ public class CdddDescriptors {
             f = Files.createTempDirectory("cddd-descriptors").toFile();
             descriptorDirectory = f.getAbsolutePath();
 
+            setSupportFiles();
+
             if (!bypassCheckCondaEnv) {
                 boolean isEnvSet = configureCondaEnv();
                 if (!isEnvSet) {
@@ -132,22 +134,18 @@ public class CdddDescriptors {
         return "VEGA_cddd";
     }
 
-
-    /***
-     * Move the .yml .whl and default_model folder into Local data folder to use that files to
-     * setup the configuration. This is made to use external data instead the one in the project
-     * @return
-     */
-    public boolean configureCondaEnv() throws InterruptedException, IOException, URISyntaxException {
-        boolean isSet = communication.checkCondaEnv(getCondaEnv());
-        if(!isSet){
-            File f = new File(pathToVEGAFolder.toString());
-            if(!f.exists()) {
-                messenger.SendMessage("CDDD descriptors are downloading support files");
-                log.info("Start to download the zip file.");
+    public void setSupportFiles() throws InitFailureException {
+        try {
+            File f = new File(pathToExternalFolder.toString());
+            File f2 = new File(Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model").toUri());
+            if (!f.exists() || !f2.exists()) {
+                if (messenger != null) {
+                    messenger.SendMessage("CDDD descriptors are downloading support files");
+                }
+                log.info("Start to download the cddd zip file.");
                 File zipFile = File.createTempFile("CDDD", ".zip");
                 HTTPUtils.downloadFile("https://amcc.it/vega/cddd.zip", zipFile.getAbsolutePath());
-                log.info("Finish to download the zip file.");
+                log.info("Finish to download the cddd zip file.");
                 FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
 
                 // add default model folder into the directory wanted from cddd
@@ -165,12 +163,27 @@ public class CdddDescriptors {
                 f = new File(urlModelDefaultFolder.toString());
                 f.delete();
                 zipFile.delete();
-                log.info("Copied all necessary file from zip file.");
-            }
-            else{
-                log.info("All support file already present. Not copied.");
-            }
 
+                log.info("Copied all necessary file from cddd zip file.");
+            } else {
+                log.info("Already existing files and not copied.");
+            }
+        }
+        catch(IOException ex){
+            throw new InitFailureException(ex.getMessage());
+        }
+    }
+
+
+    /***
+     * Move the .yml .whl and default_model folder into Local data folder to use that files to
+     * setup the configuration. This is made to use external data instead the one in the project
+     * @return
+     */
+    public boolean configureCondaEnv() throws InterruptedException, IOException, URISyntaxException {
+        boolean isSet = communication.checkCondaEnv(getCondaEnv());
+
+        if(!isSet) {
             Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");
             messenger.SendMessage("CDDD descriptors installing conda environment.");
             isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
@@ -178,8 +191,9 @@ public class CdddDescriptors {
                 log.error("Error in set up conda environment {}", getCondaEnv());
             }
 
+            log.info("Conda environment {} set up {}", getCondaEnv(), isSet ? "correctly": "failed");
         }
-        log.info("Conda environment {} set up {}", getCondaEnv(), isSet ? "correctly": "failed");
+
         return isSet;
     }
 
