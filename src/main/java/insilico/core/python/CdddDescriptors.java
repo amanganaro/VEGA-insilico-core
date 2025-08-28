@@ -120,6 +120,9 @@ public class CdddDescriptors {
                     smilesFileMap.put(smilesList.get(i), descriptorDirectory + File.separator + i + ".csv");
                 }
             }
+            else{
+                dispose();
+            }
 
             log.info("Finish to calculate descriptors");
             return result;

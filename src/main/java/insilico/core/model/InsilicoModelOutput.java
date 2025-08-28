@@ -155,7 +155,10 @@ public class InsilicoModelOutput implements Serializable {
      * @return the Experimental
      */
     public double getExperimental() {
-        return Experimental.doubleValue();
+        if(Experimental != null)
+            return Experimental.doubleValue();
+        else
+            return Double.NaN;
     }
 
 
