@@ -30,16 +30,17 @@ public class HTTPUtils {
         }
         while(existingFileSize < fileLength && maxTries > 0){
             HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
-            if(file.exists())
-                httpUrlConnection.setRequestProperty("Range", "bytes=" + file.length() + "-");
-            BufferedInputStream in = new BufferedInputStream(httpUrlConnection.getInputStream());
             FileOutputStream fos;
-            if(file.exists())
+            if(file.exists()) {
+                httpUrlConnection.setRequestProperty("Range", "bytes=" + file.length() + "-");
                 fos = new FileOutputStream(file, true); //resume download, append to existing file
-            else
+            }
+            else{
                 fos = new FileOutputStream(file);
-
+            }
+            BufferedInputStream in = new BufferedInputStream(httpUrlConnection.getInputStream());
             BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
+
             try{
                 byte[] data = new byte[1024];
                 int x = 0;

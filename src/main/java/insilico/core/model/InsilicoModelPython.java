@@ -147,6 +147,11 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             }
         }
         catch(IOException ex){
+            try {
+                FileUtilities.deleteFolder(pathToExternalFolder.toString());
+            } catch (IOException e) {
+                throw new InitFailureException(ex.getMessage());
+            }
             throw new InitFailureException(ex.getMessage());
         }
     }

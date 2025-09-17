@@ -138,10 +138,20 @@ public class CdddDescriptors {
     }
 
     public void setSupportFiles() throws InitFailureException {
+
+        String destinationCdddModelDefault = System.getProperty("user.home");
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            destinationCdddModelDefault += "\\AppData\\Local\\cddd\\cddd\\default_model";
+        } else {
+            destinationCdddModelDefault += "/.local/share/cddd/default_model";
+        }
+
         try {
+
             File f = new File(pathToExternalFolder.toString());
             File f2 = new File(Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model").toUri());
-            if (!f.exists() || !f2.exists()) {
+            File f3 = new File(destinationCdddModelDefault);
+            if (!f.exists() || !f2.exists() || !f3.exists()) {
                 if (messenger != null) {
                     messenger.SendMessage("CDDD descriptors are downloading support files");
                 }
@@ -152,15 +162,8 @@ public class CdddDescriptors {
                 FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
 
                 // add default model folder into the directory wanted from cddd
-                String destination = System.getProperty("user.home");
-                if (System.getProperty("os.name").startsWith("Windows")) {
-                    destination += "\\AppData\\Local\\cddd\\cddd\\default_model";
-                } else {
-                    destination += "/.local/share/cddd/default_model";
-                }
-
                 URL urlModelDefaultFolder = Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model").toUri().toURL();
-                boolean copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destination));
+                boolean copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destinationCdddModelDefault));
                 log.info("{} cddd descriptors default model file", copied ? "Copied" : "Already existing and not copied");
 
                 f = new File(urlModelDefaultFolder.toString());
@@ -173,6 +176,13 @@ public class CdddDescriptors {
             }
         }
         catch(IOException ex){
+            try {
+                FileUtilities.deleteFolder(pathToExternalFolder.toString());
+                FileUtilities.deleteFolder(destinationCdddModelDefault);
+            } catch (IOException e) {
+                throw new InitFailureException(ex.getMessage());
+            }
+            log.error("CDDD files are not copied, an network error might be occurred.");
             throw new InitFailureException(ex.getMessage());
         }
     }
