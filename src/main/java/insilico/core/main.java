@@ -87,6 +87,8 @@ public class main {
                 List.of("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)"),
                 false, null);
 
+        if (1==1) return;
+
         InsilicoMolecule mu = SmilesMolecule.Convert("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)");
         Descriptor de = mu.GetBasicDescriptorByName("MW_da");
         System.out.println(de.getValue());

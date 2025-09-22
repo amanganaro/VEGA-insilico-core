@@ -149,9 +149,8 @@ public class CdddDescriptors {
         try {
 
             File f = new File(pathToExternalFolder.toString());
-            File f2 = new File(Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model").toUri());
             File f3 = new File(destinationCdddModelDefault);
-            if (!f.exists() || !f2.exists() || !f3.exists()) {
+            if (!f.exists() || !f3.exists()) {
                 if (messenger != null) {
                     messenger.SendMessage("CDDD descriptors are downloading support files");
                 }
@@ -166,9 +165,8 @@ public class CdddDescriptors {
                 boolean copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destinationCdddModelDefault));
                 log.info("{} cddd descriptors default model file", copied ? "Copied" : "Already existing and not copied");
 
-                f = new File(urlModelDefaultFolder.toString());
-                f.delete();
                 zipFile.delete();
+                FileUtilities.deleteFolder(Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model").toString());
 
                 log.info("Copied all necessary file from cddd zip file.");
             } else {
@@ -194,11 +192,18 @@ public class CdddDescriptors {
      * @return
      */
     public boolean configureCondaEnv() throws InterruptedException, IOException, URISyntaxException {
+
+        if (messenger != null) {
+            messenger.SendMessage("CDDD descriptors checking conda environment.");
+        }
+
         boolean isSet = communication.checkCondaEnv(getCondaEnv());
 
         if(!isSet) {
             Path pathToEnvFile = Paths.get(pathToExternalFolder.toString(), getCondaEnv()+".yml");
-            messenger.SendMessage("CDDD descriptors installing conda environment.");
+            if (messenger != null) {
+                messenger.SendMessage("CDDD descriptors installing conda environment.");
+            }
             isSet = communication.configureCondaEnv(getCondaEnv(), pathToEnvFile);
             if (!isSet) {
                 log.error("Error in set up conda environment {}", getCondaEnv());
