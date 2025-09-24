@@ -70,19 +70,6 @@ public class main {
 
     public static void main(String[] args) throws Exception {
 
-//        System.out.println("Insilico Model");
-//        try {
-//            File tempFile = File.createTempFile("DILI_ONTOX", ".zip");
-//            HTTPUtils.downloadFile("https://amcc.it/vega/dili-bayer.zip", tempFile.getAbsolutePath());
-//
-//        }catch(Exception e){
-//            System.out.println(e.getMessage());
-//        }
-//
-//
-//        if(1==1){
-//            return;
-//        }
         CdddDescriptors cd = new CdddDescriptors(
                 List.of("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)"),
                 false, null);

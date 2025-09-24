@@ -3,6 +3,7 @@ package insilico.core.python;
 import insilico.core.tools.utils.GeneralUtilities;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,6 @@ import java.util.Map;
 @Slf4j
 public class Communication {
 
-    private boolean isWindows;
     @Setter
     private Map<String, String> additionalEnvVariables;
     private final Path condaInstallationPath = Paths.get(System.getProperty("user.home"), "vega", "conda");
@@ -24,7 +24,6 @@ public class Communication {
     private static boolean USE_CUSTOM_CONDA = true;
 
     public Communication(){
-        isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
         additionalEnvVariables = new HashMap<>();
     }
 
@@ -36,7 +35,7 @@ public class Communication {
         log.info("Executing script {} in conda env {}.", scriptName, env);
         String p=String.join(" ", params);
         boolean result=false;
-        if(isWindows){
+        if(SystemUtils.IS_OS_WINDOWS){
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
                             "conda activate " + env + " && python " + scriptName + " " + p);
@@ -56,7 +55,7 @@ public class Communication {
         log.info("Executing command {} in conda env {}.", command, env);
         String p=String.join(" ", params);
         boolean result;
-        if(isWindows){
+        if(SystemUtils.IS_OS_WINDOWS){
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
                             "conda activate " + env + " && " + command + " " + p);
@@ -72,7 +71,7 @@ public class Communication {
         log.info("Check conda env {}.", envName);
         boolean result=false;
 
-        if(isWindows){
+        if(SystemUtils.IS_OS_WINDOWS){
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
                     "cmd.exe", "/c",
                     (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
@@ -90,7 +89,7 @@ public class Communication {
         log.info("Start setting conda env {}.", envName);
         boolean isSet=false;
         boolean temp;
-        if(isWindows){
+        if(SystemUtils.IS_OS_WINDOWS){
             temp= GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
                             "conda env create --file "+pathToEnvFile.toString());
@@ -112,7 +111,7 @@ public class Communication {
     public boolean removeCondaEnv(String condaEnv) throws IOException, InterruptedException {
         boolean result = false;
         log.info("Removing conda env {}.", condaEnv);
-        if(isWindows){
+        if(SystemUtils.IS_OS_WINDOWS){
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     (USE_CUSTOM_CONDA ? condaInstallationPath.toAbsolutePath().toString()+"\\Scripts\\activate.bat && " : "") +
                             "conda env remove -n " + condaEnv + " --yes");

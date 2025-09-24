@@ -7,6 +7,7 @@ import insilico.core.tools.utils.FileUtilities;
 import insilico.core.tools.utils.HTTPUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -50,17 +51,23 @@ public class CdddDescriptors {
         }
         communication = new Communication();
 
-        if (System.getProperty("os.name").startsWith("Windows")) {
+        if (SystemUtils.IS_OS_WINDOWS) {
             pathToExternalFolder = Paths.get(System.getProperty("user.home"),
                     "\\AppData\\Local\\vega-models\\descriptors\\cddd\\").resolve("");
             pathToVEGAFolder = Paths.get(System.getProperty("user.home"),
                     "\\AppData\\Local\\vega-models\\descriptors\\").resolve("");
         }
-        else {
+        else if(SystemUtils.IS_OS_LINUX){
             pathToExternalFolder = Paths.get(System.getProperty("user.home") ,
                     "/.local/share/vega-models/descriptors/cddd/");
             pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,
                     "/.local/share/vega-models/descriptors/");
+        }
+        else if (SystemUtils.IS_OS_MAC) {
+            pathToExternalFolder = Paths.get(System.getProperty("user.home") ,
+                    "/Library/Application Support/vega-models/descriptors/cddd/");
+            pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,
+                    "/Library/Application Support/vega-models/descriptors/");
         }
 
         try {
@@ -140,10 +147,14 @@ public class CdddDescriptors {
     public void setSupportFiles() throws InitFailureException {
 
         String destinationCdddModelDefault = System.getProperty("user.home");
-        if (System.getProperty("os.name").startsWith("Windows")) {
+        if (SystemUtils.IS_OS_WINDOWS) {
             destinationCdddModelDefault += "\\AppData\\Local\\cddd\\cddd\\default_model";
-        } else {
+        }
+        else if(SystemUtils.IS_OS_LINUX) {
             destinationCdddModelDefault += "/.local/share/cddd/default_model";
+        }
+        else if(SystemUtils.IS_OS_MAC){
+            destinationCdddModelDefault += "/Library/Application Support/cddd/default_model";
         }
 
         try {

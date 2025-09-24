@@ -13,6 +13,7 @@ import insilico.core.tools.utils.GeneralUtilities;
 import insilico.core.tools.utils.HTTPUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -61,13 +62,17 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
 
         httpUrl = "https://amcc.it/vega/"+modelReferenceName+".zip";
 
-        if (System.getProperty("os.name").startsWith("Windows")) {
+        if (SystemUtils.IS_OS_WINDOWS) {
             pathToVEGAFolder = Paths.get(System.getProperty("user.home"),"AppData", "Local", "vega-models").resolve("");
             pathToExternalFolder = Paths.get(System.getProperty("user.home"),"AppData","Local","vega-models", modelReferenceName).resolve("");
         }
-        else {
+        else if (SystemUtils.IS_OS_LINUX){
             pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,".local", "share", "vega-models").resolve("");
             pathToExternalFolder = Paths.get(System.getProperty("user.home") ,".local", "share", "vega-models", modelReferenceName).resolve("");
+        }
+        else if (SystemUtils.IS_OS_MAC){
+            pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,"Library", "Application Support", "vega-models").resolve("");
+            pathToExternalFolder = Paths.get(System.getProperty("user.home") ,"Library", "Application Support", "vega-models", modelReferenceName).resolve("");
         }
 
         setSupportFiles();
