@@ -27,26 +27,9 @@ import insilico.core.molecule.fragmenter.FragmenterCRS4;
 //import insilico.fish_knn.ismFishKnn;
 //import insilico.mutagenicity_knn.ismMutagenicityKnn;
 import insilico.core.python.CdddDescriptors;
-import insilico.core.tools.utils.FileUtilities;
-import insilico.core.tools.utils.HTTPUtils;
-import org.openscience.cdk.DefaultChemObjectBuilder;
-import org.openscience.cdk.depict.DepictionGenerator;
-import org.openscience.cdk.interfaces.IAtomContainer;
-import org.openscience.cdk.interfaces.IChemObject;
-import org.openscience.cdk.isomorphism.Pattern;
-import org.openscience.cdk.renderer.generators.BasicAtomGenerator;
-import org.openscience.cdk.renderer.generators.BasicSceneGenerator;
-import org.openscience.cdk.renderer.generators.IGenerator;
-import org.openscience.cdk.renderer.generators.RingGenerator;
-import org.openscience.cdk.smarts.SmartsPattern;
-//import insilico.daphnia_demetra.ismDaphniaDemetra;
-//import insilico.mutagenicity_bb.ismMutagenicityBB;
-//import insilico.mutagenicity_bb.ismMutagenicityBB;
-//import insilico.daphnia_demetra.ismDaphniaDemetra;
-//import insilico.mutagenicity_bb.ismMutagenicityBB;
+
 
 import javax.imageio.ImageIO;
-import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -70,20 +53,20 @@ public class main {
 
     public static void main(String[] args) throws Exception {
 
-        CdddDescriptors cd = new CdddDescriptors(
-                List.of("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)"),
-                false, null);
-
-        if (1==1) return;
-
-        InsilicoMolecule mu = SmilesMolecule.Convert("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)");
-        Descriptor de = mu.GetBasicDescriptorByName("MW_da");
-        System.out.println(de.getValue());
-        if (1==1) return;
-
-        QMRFMSDoc qm = new QMRFMSDoc(main.class.getResource("/QMRF_BCF_CAESAR.docx"));
-        qm.SaveXMLtoFile("qmrf_bcf_caesar.xml");
-        if (1==1) return;
+//        CdddDescriptors cd = new CdddDescriptors(
+//                List.of("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)"),
+//                false, null);
+//
+//        if (1==1) return;
+//
+//        InsilicoMolecule mu = SmilesMolecule.Convert("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)");
+//        Descriptor de = mu.GetBasicDescriptorByName("MW_da");
+//        System.out.println(de.getValue());
+//        if (1==1) return;
+//
+//        QMRFMSDoc qm = new QMRFMSDoc(main.class.getResource("/QMRF_BCF_CAESAR.docx"));
+//        qm.SaveXMLtoFile("qmrf_bcf_caesar.xml");
+//        if (1==1) return;
 
         ////
 

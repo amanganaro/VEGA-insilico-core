@@ -96,7 +96,7 @@ public class Communication {
         }else {
             temp= GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && " : "") +
-                            "conda env create --file " + pathToEnvFile.toString());
+                            "conda env create --file \"" + pathToEnvFile.toString()+"\"");
         }
         if(temp){
             isSet=checkCondaEnv(envName);

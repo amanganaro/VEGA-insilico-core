@@ -3,7 +3,6 @@ package insilico.core.pmml;
 import insilico.core.exception.InitFailureException;
 import insilico.core.localization.StringSelectorCore;
 import org.dmg.pmml.FieldName;
-import org.dmg.pmml.Model;
 import org.dmg.pmml.PMML;
 import org.jpmml.evaluator.*;
 

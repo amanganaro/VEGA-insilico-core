@@ -181,7 +181,8 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             if (!isSet) {
                 if (messenger != null)
                     messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.");
-
+                System.out.println(Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
+                System.out.println(Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml").resolve(""));
                 isSet = communication.configureCondaEnv(getCondaEnv(), Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
             }
         }catch (InterruptedException | IOException ex){
@@ -228,7 +229,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
 
         //if the model use the cddd then calculate them
         if(isUsingCdddDescriptor){
-            CdddDescriptors cddd = new CdddDescriptors(molecules, false, messenger);
+            CdddDescriptors cddd = new CdddDescriptors(molecules, true, messenger);
             if(!cddd.calculateDescriptors()){
                 throw new GenericFailureException(String.format(StringSelectorCore
                                 .getString("runner_consensus_exception_init_blocks"),
