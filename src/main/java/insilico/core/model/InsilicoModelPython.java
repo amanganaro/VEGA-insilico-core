@@ -181,8 +181,6 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             if (!isSet) {
                 if (messenger != null)
                     messenger.SendMessage("Model " + super.getInfo().getName() + " installing conda environment.");
-                System.out.println(Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
-                System.out.println(Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml").resolve(""));
                 isSet = communication.configureCondaEnv(getCondaEnv(), Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
             }
         }catch (InterruptedException | IOException ex){

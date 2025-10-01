@@ -53,21 +53,21 @@ public class CdddDescriptors {
 
         if (SystemUtils.IS_OS_WINDOWS) {
             pathToExternalFolder = Paths.get(System.getProperty("user.home"),
-                    "\\AppData\\Local\\vega-models\\descriptors\\cddd\\").resolve("");
+                    "AppData", "Local", "vega-models", "descriptors", "cddd").resolve("");
             pathToVEGAFolder = Paths.get(System.getProperty("user.home"),
-                    "\\AppData\\Local\\vega-models\\descriptors\\").resolve("");
+                    "AppData", "Local", "vega-models", "descriptors").resolve("");
         }
         else if(SystemUtils.IS_OS_LINUX){
             pathToExternalFolder = Paths.get(System.getProperty("user.home") ,
-                    "/.local/share/vega-models/descriptors/cddd/");
+                    ".local", "share", "vega-models", "descriptors", "cddd");
             pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,
-                    "/.local/share/vega-models/descriptors/");
+                    ".local", "share", "vega-models", "descriptors");
         }
         else if (SystemUtils.IS_OS_MAC) {
             pathToExternalFolder = Paths.get(System.getProperty("user.home") ,
-                    "/Library/Application Support/vega-models/descriptors/cddd/");
+                    "Library", "Application Support", "vega-models", "descriptors", "cddd");
             pathToVEGAFolder = Paths.get(System.getProperty("user.home") ,
-                    "/Library/Application Support/vega-models/descriptors/");
+                    "Library", "Application Support", "vega-models", "descriptors");
         }
 
         try {
@@ -146,21 +146,24 @@ public class CdddDescriptors {
 
     public void setSupportFiles() throws InitFailureException {
 
-        String destinationCdddModelDefault = System.getProperty("user.home");
+        Path destinationCdddModelDefault = null;
         if (SystemUtils.IS_OS_WINDOWS) {
-            destinationCdddModelDefault += "\\AppData\\Local\\cddd\\cddd\\default_model";
+            destinationCdddModelDefault = Paths.get(System.getProperty("user.home"),
+                    "AppData", "Local", "vega-models", "descriptors", "cddd", "default_model");
         }
         else if(SystemUtils.IS_OS_LINUX) {
-            destinationCdddModelDefault += "/.local/share/cddd/default_model";
+            destinationCdddModelDefault = Paths.get(System.getProperty("user.home"),
+                    ".local", "share", "vega-models", "descriptors", "cddd", "default_model");
         }
         else if(SystemUtils.IS_OS_MAC){
-            destinationCdddModelDefault += "/Library/Application Support/cddd/default_model";
+            destinationCdddModelDefault = Paths.get(System.getProperty("user.home"),
+                    "Library", "Application Support", "vega-models", "descriptors", "cddd", "default_model");
         }
 
         try {
 
             File f = new File(pathToExternalFolder.toString());
-            File f3 = new File(destinationCdddModelDefault);
+            File f3 = new File(destinationCdddModelDefault.toString());
             if (!f.exists() || !f3.exists()) {
                 if (messenger != null) {
                     messenger.SendMessage("CDDD descriptors are downloading support files");
@@ -173,7 +176,7 @@ public class CdddDescriptors {
 
                 // add default model folder into the directory wanted from cddd
                 URL urlModelDefaultFolder = Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model").toUri().toURL();
-                boolean copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destinationCdddModelDefault));
+                boolean copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destinationCdddModelDefault.toString()));
                 log.info("{} cddd descriptors default model file", copied ? "Copied" : "Already existing and not copied");
 
                 zipFile.delete();
@@ -187,7 +190,7 @@ public class CdddDescriptors {
         catch(IOException ex){
             try {
                 FileUtilities.deleteFolder(pathToExternalFolder.toString());
-                FileUtilities.deleteFolder(destinationCdddModelDefault);
+                FileUtilities.deleteFolder(destinationCdddModelDefault.toString());
             } catch (IOException e) {
                 throw new InitFailureException(ex.getMessage());
             }

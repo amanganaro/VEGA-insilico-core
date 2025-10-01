@@ -42,7 +42,7 @@ public class Communication {
         }else {
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source "+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate && " : "") +
-                    "conda activate " + env +" && python " + scriptName + " " + p);
+                    "conda activate " + env +" && python \"" + scriptName + "\" " + p);
         }
         return result;
     }
