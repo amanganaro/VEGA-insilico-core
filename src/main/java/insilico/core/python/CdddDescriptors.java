@@ -149,15 +149,15 @@ public class CdddDescriptors {
         Path destinationCdddModelDefault = null;
         if (SystemUtils.IS_OS_WINDOWS) {
             destinationCdddModelDefault = Paths.get(System.getProperty("user.home"),
-                    "AppData", "Local", "vega-models", "descriptors", "cddd", "default_model");
+                    "AppData", "Local", "cddd", "cddd", "default_model");
         }
         else if(SystemUtils.IS_OS_LINUX) {
             destinationCdddModelDefault = Paths.get(System.getProperty("user.home"),
-                    ".local", "share", "vega-models", "descriptors", "cddd", "default_model");
+                    ".local", "share", "cddd", "default_model");
         }
         else if(SystemUtils.IS_OS_MAC){
             destinationCdddModelDefault = Paths.get(System.getProperty("user.home"),
-                    "Library", "Application Support", "vega-models", "descriptors", "cddd", "default_model");
+                    "Library", "Application Support", "cddd", "default_model");
         }
 
         try {
