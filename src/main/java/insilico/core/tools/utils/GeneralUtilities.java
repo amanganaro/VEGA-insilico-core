@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -66,6 +67,22 @@ public class GeneralUtilities {
      * @throws InterruptedException
      */
     public static boolean executeCommandLine(Map<String, String> envVariables, String... commands) throws IOException, InterruptedException{
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+
+        if(envVariables != null) {
+            envVariables.forEach((key, value) ->
+                    processBuilder.environment().put(key, String.valueOf(value)));
+        }
+
+        processBuilder.redirectErrorStream(true);
+        Process process = processBuilder.start();
+        String s = readProcessOutput(process.getInputStream()).toString();
+        log.info("Process builder: {}",s);
+        int exitCode = process.waitFor();
+        return exitCode == 0;
+    }
+
+    public static boolean executeCommandLine(Map<String, String> envVariables, List<String> commands) throws IOException, InterruptedException{
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
 
         if(envVariables != null) {

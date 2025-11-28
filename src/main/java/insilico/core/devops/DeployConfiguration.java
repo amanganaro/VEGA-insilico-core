@@ -57,10 +57,10 @@ public class DeployConfiguration {
                     p = Paths.get(args[3], "src", "main", "resources", model.getInfo().getTrainingSetURL());
                 }
                 ModelsDeployment.BuildDataset(model, p.toString());
-
-            } else {
-                log.error("The model could not be found");
             }
+        }
+        else {
+            log.error("The model could not be found");
         }
 
     }
