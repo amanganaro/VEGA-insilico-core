@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -68,6 +69,8 @@ public class GeneralUtilities {
      */
     public static boolean executeCommandLine(Map<String, String> envVariables, String... commands) throws IOException, InterruptedException{
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        String commandString = String.join(" ", commands);
+        log.info("Process builder command: {}", commandString);
 
         if(envVariables != null) {
             envVariables.forEach((key, value) ->
@@ -77,13 +80,15 @@ public class GeneralUtilities {
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         String s = readProcessOutput(process.getInputStream()).toString();
-        log.info("Process builder: {}",s);
+        log.info("Process builder result: {}",s);
         int exitCode = process.waitFor();
         return exitCode == 0;
     }
 
     public static boolean executeCommandLine(Map<String, String> envVariables, List<String> commands) throws IOException, InterruptedException{
         ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        String commandString = String.join(" ", commands);
+        log.info("Process builder command: {}", commandString);
 
         if(envVariables != null) {
             envVariables.forEach((key, value) ->
@@ -93,13 +98,15 @@ public class GeneralUtilities {
         processBuilder.redirectErrorStream(true);
         Process process = processBuilder.start();
         String s = readProcessOutput(process.getInputStream()).toString();
-        log.info("Process builder: {}",s);
+        log.info("Process builder result: {}",s);
         int exitCode = process.waitFor();
         return exitCode == 0;
     }
 
     public static boolean executeCommandLineAndCheckResult(Map<String, String> envVariables, String expected, String... commands) throws IOException, InterruptedException{
         ProcessBuilder processBuilder = new ProcessBuilder();
+        String commandString = String.join(" ", commands);
+        log.info("Process builder command: {}", commandString);
 
         if(envVariables != null) {
             Map<String, String> env = processBuilder.environment();
@@ -112,7 +119,28 @@ public class GeneralUtilities {
         processBuilder.command(commands);
         Process process = processBuilder.start();
         StringBuilder sb = readProcessOutput(process.getInputStream());
-        log.info("Process builder: {}", sb.toString());
+        log.info("Process builder result: {}", sb.toString());
+        int exitCode = process.waitFor();
+        return exitCode == 0 && sb.indexOf(expected) != -1;
+    }
+
+
+    public static boolean executeCommandLineAndCheckResult(Map<String, String> envVariables, String expected, List<String> commands) throws IOException, InterruptedException{
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        String commandString = String.join(" ", commands);
+        log.info("Process builder command: {}", commandString);
+
+        if(envVariables != null) {
+            Map<String, String> env = processBuilder.environment();
+            envVariables.forEach((key, variables) ->
+                    env.compute(key, (k, currentPath) ->
+                            variables + (currentPath != null ? currentPath : "")));
+        }
+
+        processBuilder.redirectErrorStream(true);
+        Process process = processBuilder.start();
+        StringBuilder sb = readProcessOutput(process.getInputStream());
+        log.info("Process builder result: {}", sb.toString());
         int exitCode = process.waitFor();
         return exitCode == 0 && sb.indexOf(expected) != -1;
     }

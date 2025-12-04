@@ -178,7 +178,7 @@
             <groupId>InSilico</groupId>
             <artifactId>AlertsPNG</artifactId>
             <version>1.0</version>
-        </dependency>
+       </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
