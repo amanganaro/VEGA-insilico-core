@@ -50,8 +50,8 @@ public class Communication {
      */
     public boolean executeScriptInCondaEnv(String env, String scriptName, String... params) throws IOException, InterruptedException {
         log.info("Executing script {} in conda env {}.", scriptName, env);
-        String p=String.join(" ", params);
-        boolean result=false;
+        String p = String.join(" ", params);
+        boolean result = false;
 
         if(SystemUtils.IS_OS_WINDOWS){
 
@@ -60,8 +60,8 @@ public class Communication {
             additionalEnvVariables.put("PATH", Paths.get(
                     condaInstallationPath.toAbsolutePath().toString(), "envs", env, "Library", "bin").toAbsolutePath().toString());
             additionalEnvVariables.put("CONDA_DEFAULT_ENV", env);
-            result = GeneralUtilities.executeCommandLine(additionalEnvVariables, "cmd.exe", "/c",
-                    (USE_CUSTOM_CONDA ? "\"" + Paths.get(System.getProperty("user.home"), "vega", "conda", "envs", env, "python.exe").toAbsolutePath().toString() + "\" "
+            result = GeneralUtilities.executeCommandLine(additionalEnvVariables,
+                    (USE_CUSTOM_CONDA ? "\"" + Paths.get(condaInstallationPath.toAbsolutePath().toString(), "envs", env, "python.exe").toAbsolutePath().toString() + "\" "
                             : ("conda activate " + env + " && python ")) +
                             "\""+scriptName + "\" " + p);
 
@@ -79,20 +79,17 @@ public class Communication {
         boolean result=false;
 
         if(SystemUtils.IS_OS_WINDOWS){
-
-            List<String> cmd = new ArrayList<>();
-            cmd.add("cmd.exe");
-            cmd.add("/c");
+            String cmd;
             if (USE_CUSTOM_CONDA) {
-                cmd.add(pythonOfcondaPath.toAbsolutePath().toString());
-                cmd.add(condaScriptPath.toAbsolutePath().toString());
+                cmd = "\""+pythonOfcondaPath.toAbsolutePath().toString()+"\" " +
+                        "\""+condaScriptPath.toAbsolutePath().toString()+"\"";
             }else{
-                cmd.add("conda");
+                cmd = "conda";
             }
-            cmd.add("env");
-            cmd.add("list");
+            cmd += " env list";
 
-            result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName, cmd);
+            result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
+                    "cmd.exe", "/c", cmd);
         }else {
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
                     "bash", "--login", "-c",
@@ -108,20 +105,15 @@ public class Communication {
         boolean isSet=false;
         boolean temp;
         if(SystemUtils.IS_OS_WINDOWS){
-            // used the list instead of string concatenation because it will be resulted in an error
-            List<String> cmd = new ArrayList<>();
-            cmd.add("cmd.exe");
-            cmd.add("/c");
+
+            String cmd;
             if (USE_CUSTOM_CONDA) {
-                cmd.add(pythonOfcondaPath.toAbsolutePath().toString());
-                cmd.add(condaScriptPath.toAbsolutePath().toString());
+                cmd = "\""+pythonOfcondaPath.toAbsolutePath().toString()+"\" " +
+                        "\""+condaScriptPath.toAbsolutePath().toString()+"\"";
             }else{
-                cmd.add("conda");
+                cmd = "conda";
             }
-            cmd.add("env");
-            cmd.add("create");
-            cmd.add("--file");
-            cmd.add(pathToEnvFile.toAbsolutePath().toString());
+            cmd += " env create --file \""+ pathToEnvFile.toAbsolutePath().toString()+"\"";
             temp = GeneralUtilities.executeCommandLine(null, cmd);
 
         }else {
@@ -145,22 +137,16 @@ public class Communication {
         log.info("Removing conda env {}.", condaEnv);
         if(SystemUtils.IS_OS_WINDOWS){
 
-            List<String> cmd = new ArrayList<>();
-            cmd.add("cmd.exe");
-            cmd.add("/c");
+            String cmd;
             if (USE_CUSTOM_CONDA) {
-                cmd.add(pythonOfcondaPath.toAbsolutePath().toString());
-                cmd.add(condaScriptPath.toAbsolutePath().toString());
+                cmd = "\""+pythonOfcondaPath.toAbsolutePath().toString()+"\" " +
+                        "\""+condaScriptPath.toAbsolutePath().toString()+"\"";
             }else{
-                cmd.add("conda");
+                cmd = "conda";
             }
-            cmd.add("env");
-            cmd.add("remove");
-            cmd.add("-n");
-            cmd.add(condaEnv);
-            cmd.add("--yes");
+            cmd += " env remove --n " + condaEnv + " --yes";
+            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c", cmd);
 
-            result = GeneralUtilities.executeCommandLine(null, cmd);
         }else{
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source " + "\"" + condaInstallationPath.toAbsolutePath().toString()

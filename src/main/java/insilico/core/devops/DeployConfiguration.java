@@ -20,47 +20,48 @@ public class DeployConfiguration {
 
         InsilicoModel model = null;
 
-        try {
-            System.out.println(Arrays.toString(args));
-            Class<?> clazz = Class.forName(args[0]);
-            //se modello python aggiungere argomenti
-            Object instance;
-            if(InsilicoModelPython.class.isAssignableFrom(clazz)) {
+
+        //make the training set only if specified in the pom file
+        if(args[1].equalsIgnoreCase("true") ) {
+
+            try {
+                System.out.println(Arrays.toString(args));
+                Class<?> clazz = Class.forName(args[0]);
+                //se modello python aggiungere argomenti
+                Object instance;
+                if (InsilicoModelPython.class.isAssignableFrom(clazz)) {
 //                if(args[1].equals("insilico.ontox_assay.ismOntoxAssay")){
 //                    generateModelsForOntoxAssays(clazz);
 //                }
-                if(args[2].equals("VOID")) {
-                    instance = clazz.getDeclaredConstructor(boolean.class, iInsilicoModelRunnerMessenger.class).newInstance(true, null);
-                }else{
-                    instance = clazz.getDeclaredConstructor( boolean.class, null, String.class).newInstance(true, null, args[2]);
-                }
-            }else
-                instance = clazz.getDeclaredConstructor().newInstance();
-            model = (InsilicoModel) instance;
+                    if (args[2].equals("VOID")) {
+                        instance = clazz.getDeclaredConstructor(boolean.class, iInsilicoModelRunnerMessenger.class).newInstance(true, null);
+                    } else {
+                        instance = clazz.getDeclaredConstructor(boolean.class, iInsilicoModelRunnerMessenger.class, String.class).newInstance(true, null, args[2]);
+                    }
+                } else
+                    instance = clazz.getDeclaredConstructor().newInstance();
+                model = (InsilicoModel) instance;
 
-        } catch (ClassNotFoundException e) {
-            log.error("The class {} was not found", args[0]);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            log.error(Arrays.toString(e.getStackTrace()));
-        }
+            } catch (ClassNotFoundException e) {
+                log.error("The class {} was not found", args[0]);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                log.error(Arrays.toString(e.getStackTrace()));
+            }
 
-        if (model != null) {
-
-            //make the training set only if specified in the pom file
-            if(args[1].equalsIgnoreCase("true") ) {
+            if (model != null) {
 
                 Path p;
-                if(System.getProperty("user.dir").toLowerCase().endsWith(args[3].toLowerCase())){
+                if (System.getProperty("user.dir").toLowerCase().endsWith(args[3].toLowerCase())) {
                     p = Paths.get("src", "main", "resources", model.getInfo().getTrainingSetURL());
-                }else{
+                } else {
                     p = Paths.get(args[3], "src", "main", "resources", model.getInfo().getTrainingSetURL());
                 }
                 ModelsDeployment.BuildDataset(model, p.toString());
+
+            } else {
+                log.error("The model could not be found");
             }
-        }
-        else {
-            log.error("The model could not be found");
         }
 
     }

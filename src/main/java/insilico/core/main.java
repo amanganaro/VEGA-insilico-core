@@ -54,7 +54,10 @@ public class main {
     public static void main(String[] args) throws Exception {
 
         CdddDescriptors cd = new CdddDescriptors(
-                List.of("O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)"),
+                List.of(
+                        "O=C(NC4CCN(CCCCC2(C(=O)NCC(F)(F)F)(c3ccccc3(c1ccccc12)))CC4)c6ccccc6(c5ccc(cc5)C(F)(F)F)",
+                        "CCCCC"
+                ),
                 false, null);
 
         cd.calculateDescriptors();

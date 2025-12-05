@@ -117,8 +117,8 @@ public class CdddDescriptors {
             log.info("Start to calculate descriptors");
             String pathToScriptFile = Paths.get(pathToExternalFolder.toString(), "app-cddd.py").toAbsolutePath().toString();
             boolean result = communication.executeScriptInCondaEnv(getCondaEnv(), pathToScriptFile,
-                    "--input " + inputSmilesFileName,
-                    " --output " + descriptorDirectory);
+                    "--input \"" + inputSmilesFileName+"\"",
+                    " --output \"" + descriptorDirectory+"\"");
             if (result) {
                 for (int i = 0; i < smilesList.size(); i++) {
                     if (smilesFileMap == null) {
