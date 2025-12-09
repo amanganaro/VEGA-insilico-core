@@ -2,6 +2,7 @@ package insilico.core.molecule.conversion;
 
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.exception.MoleculeConversionException;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
@@ -81,6 +82,20 @@ public class MDLMolecule {
 
             // Generates the SMILES for the molecule
             String SMI = SmilesMolecule.GenerateSmiles(Mol);
+
+            // WORKAROUND
+            // CDK structure generated from an MDL seems to have problems with the updated classes for SMARTS matching
+            // for now we just generate the final molecule from the SMILES created after importing the MDL
+            // we basically do the same conversion job twice but this should fix the problem (although it will be a
+            // remarkable overhead for complex structures that require some time to be parsed and converted)
+            InsilicoMolecule molFromSMI = SmilesMolecule.Convert(SMI);
+            if (!molFromSMI.IsValid())
+                throw new MoleculeConversionException(ERR_HEADER + " - unable to create structure from SMILES derived from the original MDL");
+            try {
+                Mol = molFromSMI.GetStructure();
+            } catch (InvalidMoleculeException e) {
+                throw new MoleculeConversionException(ERR_HEADER + " - unable to create structure from SMILES derived from the original MDL");
+            }
 
             // Mark as valid molecule
             isMol.SetSMILESAndStructure(SMI, Mol);
