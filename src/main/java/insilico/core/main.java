@@ -5,6 +5,7 @@ package insilico.core;
 import insilico.core.descriptor.Descriptor;
 import insilico.core.descriptor.DescriptorsEngine;
 import insilico.core.descriptor.blocks.FunctionalGroups;
+import insilico.core.exception.PythonEnvironemntFailedException;
 import insilico.core.knn.insilicoKnnPrediction;
 import insilico.core.knn.insilicoKnnQualitative;
 import insilico.core.knn.insilicoKnnQuantitative;
@@ -40,6 +41,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -52,6 +54,32 @@ public class main {
 
 
     public static void main(String[] args) throws Exception {
+
+
+        Path sourceDir = Paths.get("C:","Users", "Public", "Documents", "da_copiare");
+        final Path destinationCdddModelDefault = Paths.get("C:","Users", "Public", "Documents", "da_copiare_qui");
+        Files.walk(sourceDir)
+                .forEach(source -> {
+                    Path relative = sourceDir.relativize(source);
+                    Path destination = destinationCdddModelDefault.resolve(relative);
+
+                    try {
+                        if (Files.isDirectory(source)) {
+                            Files.createDirectories(destination);
+                        } else {
+                            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        throw new PythonEnvironemntFailedException("Cddd support files do not set");
+                    }
+                });
+
+
+
+        if (1==1) return;
+
+
 
         CdddDescriptors cd = new CdddDescriptors(
                 List.of(

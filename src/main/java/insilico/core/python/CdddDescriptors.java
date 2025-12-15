@@ -2,6 +2,7 @@ package insilico.core.python;
 
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.PythonEnvironemntFailedException;
 import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.tools.utils.FileUtilities;
 import insilico.core.tools.utils.HTTPUtils;
@@ -15,6 +16,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -173,11 +175,30 @@ public class CdddDescriptors {
                 HTTPUtils.downloadFile("https://amcc.it/vega/cddd.zip", zipFile.getAbsolutePath());
                 log.info("Finish to download the cddd zip file.");
                 FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
-
+                log.info("Extracted cddd folder.");
                 // add default model folder into the directory wanted from cddd
-                URL urlModelDefaultFolder = Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model").toUri().toURL();
-                boolean copied = FileUtilities.copyResourcesRecursively(urlModelDefaultFolder, new File(destinationCdddModelDefault.toString()));
-                log.info("{} cddd descriptors default model file", copied ? "Copied" : "Already existing and not copied");
+
+                final Path destinationCdddModelDefaultFinal = destinationCdddModelDefault;
+                Path sourceDir = Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model");
+
+                Files.walk(sourceDir)
+                        .forEach(source -> {
+                            Path relative = sourceDir.relativize(source);
+                            Path destination = destinationCdddModelDefaultFinal.resolve(relative);
+
+                            try {
+                                if (Files.isDirectory(source)) {
+                                    Files.createDirectories(destination);
+                                } else {
+                                    Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                                }
+                            } catch (IOException e) {
+                                log.error("Error in copy CDDD default model. Error copying {} to {}: {}", source, destination, e.getMessage());
+                                throw new PythonEnvironemntFailedException("Cddd support files do not set");
+                            }
+                        });
+
+                log.info("Copied cddd descriptors default model file");
 
                 zipFile.delete();
                 FileUtilities.deleteFolder(Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model").toString());
