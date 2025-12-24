@@ -113,14 +113,14 @@ public class Communication {
             }else{
                 cmd = "conda";
             }
-            cmd += " env create --file \""+ pathToEnvFile.toAbsolutePath().toString()+"\"";
+            cmd += " env create  --quiet --file \""+ pathToEnvFile.toAbsolutePath().toString()+"\"";
             temp = GeneralUtilities.executeCommandLine(null, cmd);
 
         }else {
             temp= GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source " + "\"" + condaInstallationPath.toAbsolutePath().toString()
                             +"/bin/activate\"" + " && " : "") +
-                            "conda env create --file \"" + pathToEnvFile.toString()+"\"");
+                            "conda env create  --quiet --file \"" + pathToEnvFile.toString()+"\"");
         }
         if(temp){
             isSet=checkCondaEnv(envName);

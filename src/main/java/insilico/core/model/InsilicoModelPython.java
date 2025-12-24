@@ -38,6 +38,11 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     protected String envTag;
     String httpUrl;
 
+    public InsilicoModelPython(String modelData) throws InitFailureException {
+        super(modelData);
+        communication = new Communication();
+    }
+
     public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger, String modelReferenceName, String envTag, boolean bypassCheckCondaEnv) throws InitFailureException, GenericFailureException {
         super(modelData);
 
