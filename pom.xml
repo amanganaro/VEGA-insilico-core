@@ -11,39 +11,35 @@
 
     <name>InSilicoCore</name>
     <description>
-        Core libraries for the inSilico project (VEGA etc) - Updated to CDK 2.3, OpenJDK 11
+        Core libraries for the VEGA project - Updated to CDK 2.3, OpenJDK 17
     </description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <skipTests>true</skipTests>
     </properties>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>amcc-maven-snapshots</id>
-            <url>http://tech-amcc.it:8081/repository/amcc-maven-snapshots/</url>
-        </snapshotRepository>
         <repository>
-            <id>amcc-maven-releases</id>
-            <url>http://tech-amcc.it:8081/repository/amcc-maven-releases/</url>
+            <id>protoqsar-maven-releases</id>
+            <url>https://nexus.protoqsar.com/repository/maven-releases/</url>
         </repository>
     </distributionManagement>
 
     <repositories>
         <repository>
-            <id>maven-public</id>
-            <url>http://tech-amcc.it:8081/repository/maven-public/</url>
+            <id>maven-central</id>
+            <url>https://repo1.maven.org/maven2/</url>
+        </repository>
+        <repository>
+            <!-- public repo hosted by ProtoQSAR, access with maven-public:maven-public -->
+            <id>protoqsar-maven-public</id>
+            <url>https://nexus.protoqsar.com/repository/maven-public/</url>
         </repository>
     </repositories>
 
-    <dependencies>
 
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>5.2.3</version>
-        </dependency>
+    <dependencies>
 
         <dependency>
             <groupId>org.openscience.cdk</groupId>
@@ -52,24 +48,11 @@
         </dependency>
 
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>30.0-jre</version>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>5.2.3</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.25.0-GA</version>
-        </dependency>
-
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/org.jpmml/pmml-evaluator &ndash;&gt;-->
         <dependency>
             <groupId>org.jpmml</groupId>
             <artifactId>pmml-evaluator</artifactId>
@@ -89,7 +72,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
 
         <dependency>
             <groupId>org.jpmml</groupId>
@@ -129,6 +111,24 @@
                     <artifactId>javassist</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.0-jre</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.25.0-GA</version>
         </dependency>
 
         <dependency>
@@ -239,9 +239,9 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.0</version>
                 <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                    <release>11</release>
+                    <source>17</source>
+                    <target>17</target>
+                    <release>17</release>
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
@@ -252,6 +252,7 @@
 
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -293,33 +294,6 @@
                 </configuration>
             </plugin>
 
-
-            <plugin>
-                <groupId>org.asciidoctor</groupId>
-                <artifactId>asciidoctor-maven-plugin</artifactId>
-                <version>1.5.8</version>
-                <executions>
-                    <execution>
-                        <id>generate-docs</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>process-asciidoc</goal>
-                        </goals>
-                        <configuration>
-                            <backend>html</backend>
-                            <doctype>book</doctype>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.springframework.restdocs</groupId>
-                        <artifactId>spring-restdocs-asciidoctor</artifactId>
-                        <version>LATEST</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -346,8 +320,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-
 
         </plugins>
     </build>

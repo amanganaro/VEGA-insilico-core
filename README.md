@@ -1,3 +1,7 @@
-Vega core libraries - 1.16 - Written in Java OpenJDK 11
+# VEGA - Core libraries
 
-Run mvn -install to download ad install dependencies on your local maven repository
+Core libraries for the VEGA project - Updated to CDK 2.3, OpenJDK 17
+
+---   
+
+Released under the LGPL v.3 license.
