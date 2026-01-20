@@ -97,11 +97,11 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     public String getCondaEnv(){
         switch(envTag){
             case "GLOBAL":
-                return "VEGA_global_V2";
+                return "VEGA_global_V3";
             case "TEST":
                 return "test";
             default:
-                return "VEGA_global_V2";
+                return "VEGA_global_V3";
         }
     }
 

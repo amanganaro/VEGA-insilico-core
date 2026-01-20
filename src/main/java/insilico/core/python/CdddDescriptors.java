@@ -143,7 +143,7 @@ public class CdddDescriptors {
     }
 
     public String getCondaEnv(){
-        return "VEGA_cddd";
+        return "VEGA_cddd_V2";
     }
 
     public void setSupportFiles() throws InitFailureException {
