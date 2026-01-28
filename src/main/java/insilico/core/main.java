@@ -28,6 +28,9 @@ import insilico.core.molecule.fragmenter.FragmenterCRS4;
 //import insilico.fish_knn.ismFishKnn;
 //import insilico.mutagenicity_knn.ismMutagenicityKnn;
 import insilico.core.python.CdddDescriptors;
+import insilico.core.tools.utils.FileUtilities;
+import insilico.core.tools.utils.HTTPUtils;
+import lombok.extern.slf4j.Slf4j;
 
 
 import javax.imageio.ImageIO;
@@ -50,36 +53,24 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+@Slf4j
 public class main {
 
 
     public static void main(String[] args) throws Exception {
 
 
-        Path sourceDir = Paths.get("C:","Users", "Public", "Documents", "da_copiare");
-        final Path destinationCdddModelDefault = Paths.get("C:","Users", "Public", "Documents", "da_copiare_qui");
-        Files.walk(sourceDir)
-                .forEach(source -> {
-                    Path relative = sourceDir.relativize(source);
-                    Path destination = destinationCdddModelDefault.resolve(relative);
-
-                    try {
-                        if (Files.isDirectory(source)) {
-                            Files.createDirectories(destination);
-                        } else {
-                            Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        throw new PythonEnvironemntFailedException("Cddd support files do not set");
-                    }
-                });
-
-
+        Path pathToVEGAFolder = Paths.get(System.getProperty("user.home"),"AppData", "Local", "vega-models").resolve("");
+        String modelReferenceName = "cox-dili_1_0_0";
+        String httpUrl = "https://amcc.it/vega/"+modelReferenceName+".zip";
+        File zipFile = File.createTempFile(modelReferenceName, ".zip");
+        HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
+        log.info("Finish to download the zip file.");
+        FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
+        zipFile.delete();
+        log.info("Copied all necessary file from zip file.");
 
         if (1==1) return;
-
-
 
         CdddDescriptors cd = new CdddDescriptors(
                 List.of(

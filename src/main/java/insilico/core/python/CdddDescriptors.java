@@ -1,8 +1,6 @@
 package insilico.core.python;
 
-import insilico.core.exception.GenericFailureException;
-import insilico.core.exception.InitFailureException;
-import insilico.core.exception.PythonEnvironemntFailedException;
+import insilico.core.exception.*;
 import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.tools.utils.FileUtilities;
 import insilico.core.tools.utils.HTTPUtils;
@@ -11,6 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -34,7 +33,7 @@ public class CdddDescriptors {
     private String inputSmilesFileName;
     protected iInsilicoModelRunnerMessenger messenger;
 
-    public CdddDescriptors(List<String> smilesList, boolean bypassCheckCondaEnv, iInsilicoModelRunnerMessenger messenger) throws InitFailureException {
+    public CdddDescriptors(List<String> smilesList, boolean bypassCheckCondaEnv, iInsilicoModelRunnerMessenger messenger) throws InitFailureException, InitFailurePythonException {
 
         if(messenger!=null) {
             this.messenger = messenger;
@@ -73,25 +72,27 @@ public class CdddDescriptors {
         }
 
         try {
-            File f = File.createTempFile("input-smiles", ".csv");
-            inputSmilesFileName = f.getAbsolutePath();
-            f = Files.createTempDirectory("cddd-descriptors").toFile();
-            descriptorDirectory = f.getAbsolutePath();
+            if(smilesList != null &&  !smilesList.isEmpty()) {
+                File f = File.createTempFile("input-smiles", ".csv");
+                inputSmilesFileName = f.getAbsolutePath();
+                f = Files.createTempDirectory("cddd-descriptors").toFile();
+                descriptorDirectory = f.getAbsolutePath();
+            }
 
             setSupportFiles();
 
             if (!bypassCheckCondaEnv) {
                 boolean isEnvSet = configureCondaEnv();
                 if (!isEnvSet) {
-                    throw new InitFailureException("Conda environment " + getCondaEnv() + " not set");
+                    throw new InitFailurePythonException("Conda environment " + getCondaEnv() + " not set");
                 }
             }
         } catch (IOException e) {
             log.error(e.getMessage());
-            throw new InitFailureException("Error in creating cddd support files. Conda environment " + getCondaEnv() + " not set");
+            throw new InitFailurePythonException("Error in creating cddd support files. Conda environment " + getCondaEnv() + " not set");
         } catch (URISyntaxException | InterruptedException e) {
             log.error(e.getMessage());
-            throw new InitFailureException("Conda environment " + getCondaEnv() + " not set");
+            throw new InitFailurePythonException("Conda environment " + getCondaEnv() + " not set");
         }
         this.smilesList=smilesList;
     }
@@ -146,7 +147,7 @@ public class CdddDescriptors {
         return "VEGA_cddd_V2";
     }
 
-    public void setSupportFiles() throws InitFailureException {
+    public void setSupportFiles() throws InitFailurePythonException {
 
         Path destinationCdddModelDefault = null;
         if (SystemUtils.IS_OS_WINDOWS) {
@@ -208,15 +209,20 @@ public class CdddDescriptors {
                 log.info("Already existing files and not copied.");
             }
         }
+        catch (ConnectException ex){
+            log.error("Url of the model is unreachable");
+            throw new PythonModelResourceNotFoundException(ex.getMessage());
+        }
         catch(IOException ex){
             try {
                 FileUtilities.deleteFolder(pathToExternalFolder.toString());
                 FileUtilities.deleteFolder(destinationCdddModelDefault.toString());
             } catch (IOException e) {
-                throw new InitFailureException(ex.getMessage());
+                log.error("CDDD files are not copied, an network error might be occurred.");
+                throw new InitFailurePythonException(ex.getMessage());
             }
             log.error("CDDD files are not copied, an network error might be occurred.");
-            throw new InitFailureException(ex.getMessage());
+            throw new InitFailurePythonException(ex.getMessage());
         }
     }
 

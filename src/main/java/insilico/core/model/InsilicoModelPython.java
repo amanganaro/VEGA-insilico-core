@@ -3,6 +3,8 @@ package insilico.core.model;
 import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
+import insilico.core.exception.InitFailurePythonException;
+import insilico.core.exception.PythonModelResourceNotFoundException;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.model.trainingset.TrainingSet;
@@ -16,6 +18,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -43,7 +46,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         communication = new Communication();
     }
 
-    public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger, String modelReferenceName, String envTag, boolean bypassCheckCondaEnv) throws InitFailureException, GenericFailureException {
+    public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger, String modelReferenceName, String envTag, boolean bypassCheckCondaEnv) throws InitFailureException, GenericFailureException, InitFailurePythonException {
         super(modelData);
 
         communication = new Communication();
@@ -85,7 +88,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         if(!bypassCheckCondaEnv) {
             boolean isEnvSet = configureCondaEnv();
             if(!isEnvSet) {
-                throw new InitFailureException("Conda environment "+getCondaEnv()+" not set");
+                throw new InitFailurePythonException("Conda environment "+getCondaEnv()+" not set");
             }
         }
     }
@@ -132,13 +135,19 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             }
 
             FileUtils.delete(new File(outputTempFile));
+
+            if(!computationOk) {
+                log.error("Error while calculating model {}", this.getInfo().getName());
+                throw new GenericFailureException("Error while calculating model " + this.getInfo().getName());
+            }
+
         }catch(IOException | InterruptedException | CsvValidationException | URISyntaxException ex){
             throw new GenericFailureException(ex.getMessage());
         }
         return result;
     }
 
-    public void setSupportFiles() throws InitFailureException {
+    public void setSupportFiles() throws InitFailurePythonException, PythonModelResourceNotFoundException {
         try {
             File f = new File(pathToExternalFolder.toString());
             if (!f.exists()) {
@@ -156,13 +165,17 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
                 log.info("Already existing files and not copied.");
             }
         }
+        catch (ConnectException ex){
+            log.error("Url of the model is unreachable");
+            throw new PythonModelResourceNotFoundException(ex.getMessage());
+        }
         catch(IOException ex){
             try {
                 FileUtilities.deleteFolder(pathToExternalFolder.toString());
             } catch (IOException e) {
-                throw new InitFailureException(ex.getMessage());
+                throw new InitFailurePythonException(ex.getMessage());
             }
-            throw new InitFailureException(ex.getMessage());
+            throw new InitFailurePythonException(ex.getMessage());
         }
     }
 
@@ -174,7 +187,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * @return boolean result to know if the whole execution is done smoothly. If there are some error, they are
      * reported in LOG
      */
-    public boolean configureCondaEnv() throws InitFailureException {
+    public boolean configureCondaEnv() throws InitFailurePythonException {
         boolean isSet;
         try {
             if (messenger != null) {
@@ -189,7 +202,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
                 isSet = communication.configureCondaEnv(getCondaEnv(), Paths.get(pathToExternalFolder.toString(), getCondaEnv() + ".yml"));
             }
         }catch (InterruptedException | IOException ex){
-            throw new InitFailureException(ex.getMessage());
+            throw new InitFailurePythonException(ex.getMessage());
         }
 
         return isSet;
