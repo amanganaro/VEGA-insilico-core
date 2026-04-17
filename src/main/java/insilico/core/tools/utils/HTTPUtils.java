@@ -3,6 +3,7 @@ package insilico.core.tools.utils;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,7 +15,7 @@ import java.nio.file.StandardCopyOption;
 
 public class HTTPUtils {
 
-    public static void downloadFile(String resourceUrl, String filePath) throws IOException {
+    public static void downloadFile(String resourceUrl, String filePath) throws IOException, ConnectException {
         int maxTries = 5;
 
         URL url = new URL(resourceUrl);
@@ -23,6 +24,11 @@ public class HTTPUtils {
 
         long fileLength = httpConnection.getContentLengthLong();
         long existingFileSize = 0;
+
+        // url not reachable maybe due a problem of firewall
+        if(fileLength < 0){
+            throw new ConnectException("Resource not reachable, it could be that firewall is blocking connection to the server.");
+        }
 
         File file = new File(filePath);
         if(file.exists()){
@@ -47,8 +53,6 @@ public class HTTPUtils {
                 while ((x = in.read(data, 0, 1024)) >= 0){
                     bout.write(data, 0, x);
                 }
-            }catch(Exception e){
-                throw e;
             }finally{
                 if(bout!=null){
                     bout.flush();
@@ -60,8 +64,15 @@ public class HTTPUtils {
                 }
             }
             existingFileSize = file.length();
+            
+            System.out.println(existingFileSize);
+            
             maxTries--;
         }
+
+        System.out.println(fileLength);
+        System.out.println(existingFileSize);
+        System.out.println(maxTries);
 
         if(maxTries < 0){
             throw new IOException("Cannot download file");
