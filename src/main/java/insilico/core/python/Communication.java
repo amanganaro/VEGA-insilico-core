@@ -1,6 +1,11 @@
 package insilico.core.python;
 
+import insilico.core.exception.InitFailurePythonException;
+import insilico.core.exception.PythonEnvironemntFailedException;
+import insilico.core.exception.PythonModelResourceNotFoundException;
+import insilico.core.tools.utils.FileUtilities;
 import insilico.core.tools.utils.GeneralUtilities;
+import insilico.core.tools.utils.HTTPUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SystemUtils;
@@ -9,6 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
@@ -68,10 +75,52 @@ public class Communication {
         }else {
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source \""+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate\"" +
-                            " && " : "") +
-                    "conda activate " + env +" && python \"" + scriptName + "\" " + p);
+                                        " && " : "") +
+                            "conda activate " + env +" && python \"" + scriptName + "\" " + p);
         }
         return result;
+    }
+
+    public boolean executeScriptInPythonEnv(String env, String scriptName, String... params) throws IOException, InterruptedException {
+        log.info("Executing script {} in python env {}.", scriptName, env);
+        String p = String.join(" ", params);
+        boolean result = false;
+        String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", env, "python.exe").toAbsolutePath().toString();
+
+        if(SystemUtils.IS_OS_WINDOWS){
+            result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
+                    "\"" + pythonPath + "\" \"" + scriptName + "\" " + p);
+
+        }else {
+            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
+                    pythonPath +" \"" + scriptName + "\" " + p);
+        }
+        return result;
+    }
+
+    /***
+     * Method to execute a script into a python environment. These environment must be found under user/vega/python folder
+     * The environment is specified by the envName, equals to the name of the folder where python is.
+     * This is suitable to execute commands that do not need of shell feature such as &&, || and similar.
+     *
+     * @param env = Name of the folder within the python to execute (under user/vega/python folder)
+     * @param scriptName = path of the script to be executed
+     * @param params = list of parameters passed to script
+     * @return
+     * @throws IOException
+     * @throws InterruptedException
+     */
+    public boolean executePureCommandInPythonEnv(String env, String scriptName, String... params) throws IOException, InterruptedException {
+        log.info("Executing script {} in python env {}.", scriptName, env);
+
+        String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", env, "python.exe").toAbsolutePath().toString();
+
+        List<String> command = new ArrayList<>();
+        command.add(pythonPath);
+        command.add(scriptName);
+        Collections.addAll(command, params);
+
+        return GeneralUtilities.executeCommandLine(null, command);
     }
 
     public boolean checkCondaEnv(String envName) throws IOException, InterruptedException {
@@ -94,8 +143,23 @@ public class Communication {
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
                     "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source " + "\"" +condaInstallationPath.toAbsolutePath().toString()
-                            +"/bin/activate" + "\"" +" && " : "") +
+                                        +"/bin/activate" + "\"" +" && " : "") +
                             "conda env list");
+        }
+        return result;
+    }
+
+    public boolean checkPythonEnv(String envName) throws IOException, InterruptedException {
+        log.info("Check python env {}.", envName);
+        boolean result=false;
+        String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", envName, "python.exe").toAbsolutePath().toString();
+
+        if(SystemUtils.IS_OS_WINDOWS){
+            String cmd = "\""+pythonPath+"\" --version" ;
+            result = GeneralUtilities.executeCommandLine(null,"cmd.exe", "/c", cmd);
+        }else {
+            String cmd = pythonPath + " --version" ;
+            result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c", cmd);
         }
         return result;
     }
@@ -119,7 +183,7 @@ public class Communication {
         }else {
             temp= GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source " + "\"" + condaInstallationPath.toAbsolutePath().toString()
-                            +"/bin/activate\"" + " && " : "") +
+                                        +"/bin/activate\"" + " && " : "") +
                             "conda env create  --quiet --file \"" + pathToEnvFile.toString()+"\"");
         }
         if(temp){
@@ -129,6 +193,56 @@ public class Communication {
             log.error("Conda environment {} failed to be set", envName);
         }
         log.info("{} setting conda env {}.", isSet ? "Finish correctly" : "Failed", envName);
+        return isSet;
+    }
+
+    public boolean configurePythonEnv(String envName) throws PythonEnvironemntFailedException {
+        log.info("Start setting python env {}.", envName);
+        boolean isSet=false;
+
+        Path vegaPythonPath = Paths.get(System.getProperty("user.home"), "vega", "python").resolve("");
+
+        try {
+
+            try {
+                String httpUrl = "https://amcc.it/vega/" + envName + ".zip";
+                File zipFile = File.createTempFile(envName, ".zip");
+                HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
+
+                log.info("Finish to download the zip file.");
+
+                FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), vegaPythonPath.toString());
+                zipFile.delete();
+
+                log.info("Copied all necessary file from zip file.");
+
+            } catch (ConnectException ex) {
+                log.error("Url of the environment {} is unreachable", envName);
+                throw new PythonEnvironemntFailedException(ex.getMessage());
+            }
+
+            if (SystemUtils.IS_OS_WINDOWS) {
+
+                String cmd = Paths.get(vegaPythonPath.toAbsolutePath().toString(), envName, "Scripts",
+                        "conda-unpack.exe").toAbsolutePath().toString();
+                isSet = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c", cmd);
+
+            } else {
+                // TODO CONTROLLARE ESTENSIONE DI CONDA-PACK
+                String cmd = Paths.get(vegaPythonPath.toAbsolutePath().toString(), envName, "bin",
+                        "conda-unpack").toAbsolutePath().toString();
+                isSet = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c", cmd);
+            }
+            if (isSet) {
+                isSet = checkCondaEnv(envName);
+            }
+        }
+        catch(InterruptedException | IOException ex){
+            log.error(ex.getMessage());
+            throw new PythonEnvironemntFailedException(ex.getMessage());
+        }
+
+        log.info("{} setting python env {}.", isSet ? "Finish correctly" : "Failed", envName);
         return isSet;
     }
 
@@ -150,10 +264,33 @@ public class Communication {
         }else{
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source " + "\"" + condaInstallationPath.toAbsolutePath().toString()
-                            +"/bin/activate" + "\"" + " && " : "") +
+                                        +"/bin/activate" + "\"" + " && " : "") +
                             "conda env remove -n " + condaEnv + " --yes");
         }
         log.info("{} in removing conda env {}.", result ? "Success" : "Error" , condaEnv);
+        return result;
+    }
+
+    public boolean removePythonEnv(String condaEnv) throws IOException, InterruptedException {
+        boolean result = false;
+        log.info("Removing python env {}.", condaEnv);
+        Path envPath = Paths.get(System.getProperty("user.home"), "vega", "python", condaEnv);
+        String envFolder = envPath.toAbsolutePath().toString();
+
+        if(Files.exists(envPath)) {
+            if (SystemUtils.IS_OS_WINDOWS) {
+                String cmd = "rmdir /s /q \"" + envFolder + "\"";
+                result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c", cmd);
+
+            } else {
+                String cmd = "rm -rf" + envFolder;
+                result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c", cmd);
+            }
+            log.info("{} in removing conda env {}.", result ? "Success" : "Error" , condaEnv);
+        }
+        else{
+            result = true;
+        }
         return result;
     }
 }

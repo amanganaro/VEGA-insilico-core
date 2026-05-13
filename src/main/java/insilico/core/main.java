@@ -60,17 +60,17 @@ public class main {
     public static void main(String[] args) throws Exception {
 
 
-        Path pathToVEGAFolder = Paths.get(System.getProperty("user.home"),"AppData", "Local", "vega-models").resolve("");
-        String modelReferenceName = "cox-dili_1_0_0";
-        String httpUrl = "https://amcc.it/vega/"+modelReferenceName+".zip";
-        File zipFile = File.createTempFile(modelReferenceName, ".zip");
-        HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
-        log.info("Finish to download the zip file.");
-        FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
-        zipFile.delete();
-        log.info("Copied all necessary file from zip file.");
-
-        if (1==1) return;
+//        Path pathToVEGAFolder = Paths.get(System.getProperty("user.home"),"AppData", "Local", "vega-models").resolve("");
+//        String modelReferenceName = "cox-dili_1_0_0";
+//        String httpUrl = "https://amcc.it/vega/"+modelReferenceName+".zip";
+//        File zipFile = File.createTempFile(modelReferenceName, ".zip");
+//        HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
+//        log.info("Finish to download the zip file.");
+//        FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
+//        zipFile.delete();
+//        log.info("Copied all necessary file from zip file.");
+//
+//        if (1==1) return;
 
         CdddDescriptors cd = new CdddDescriptors(
                 List.of(

@@ -82,15 +82,19 @@ public class CdddDescriptors {
             setSupportFiles();
 
             if (!bypassCheckCondaEnv) {
-                boolean isEnvSet = configureCondaEnv();
+//                boolean isEnvSet = configureCondaEnv();
+//                if (!isEnvSet) {
+//                    throw new InitFailurePythonException("Conda environment " + getCondaEnv() + " not set");
+//                }
+                boolean isEnvSet = configurePythonEnv();
                 if (!isEnvSet) {
-                    throw new InitFailurePythonException("Conda environment " + getCondaEnv() + " not set");
+                    throw new InitFailurePythonException("Python environment " + getPythonEnv() + " not set");
                 }
             }
         } catch (IOException e) {
             log.error(e.getMessage());
             throw new InitFailurePythonException("Error in creating cddd support files. Conda environment " + getCondaEnv() + " not set");
-        } catch (URISyntaxException | InterruptedException e) {
+        } catch (InterruptedException e) {
             log.error(e.getMessage());
             throw new InitFailurePythonException("Conda environment " + getCondaEnv() + " not set");
         }
@@ -119,9 +123,11 @@ public class CdddDescriptors {
 
             log.info("Start to calculate descriptors");
             String pathToScriptFile = Paths.get(pathToExternalFolder.toString(), "app-cddd.py").toAbsolutePath().toString();
-            boolean result = communication.executeScriptInCondaEnv(getCondaEnv(), pathToScriptFile,
-                    "--input \"" + inputSmilesFileName+"\"",
-                    " --output \"" + descriptorDirectory+"\"");
+//            boolean result = communication.executeScriptInCondaEnv(getCondaEnv(), pathToScriptFile,
+//                    "--input \"" + inputSmilesFileName+"\"",
+//                    " --output \"" + descriptorDirectory+"\"");
+            boolean result = communication.executePureCommandInPythonEnv(getPythonEnv(), pathToScriptFile,
+                    "--input", inputSmilesFileName, "--output", descriptorDirectory);
             if (result) {
                 for (int i = 0; i < smilesList.size(); i++) {
                     if (smilesFileMap == null) {
@@ -144,6 +150,10 @@ public class CdddDescriptors {
     }
 
     public String getCondaEnv(){
+        return "VEGA_cddd_V2";
+    }
+
+    public String getPythonEnv(){
         return "VEGA_cddd_V2";
     }
 
@@ -232,7 +242,7 @@ public class CdddDescriptors {
      * setup the configuration. This is made to use external data instead the one in the project
      * @return
      */
-    public boolean configureCondaEnv() throws InterruptedException, IOException, URISyntaxException {
+    public boolean configureCondaEnv() throws InterruptedException, IOException {
 
         if (messenger != null) {
             messenger.SendMessage("CDDD descriptors checking conda environment.");
@@ -256,8 +266,35 @@ public class CdddDescriptors {
         return isSet;
     }
 
+    public boolean configurePythonEnv() throws InterruptedException, IOException {
+
+        if (messenger != null) {
+            messenger.SendMessage("CDDD descriptors checking python environment.");
+        }
+
+        boolean isSet = communication.checkPythonEnv(getPythonEnv());
+
+        if(!isSet) {
+            if (messenger != null) {
+                messenger.SendMessage("CDDD descriptors installing python environment.");
+            }
+            isSet = communication.configurePythonEnv(getPythonEnv());
+            if (!isSet) {
+                log.error("Error in set up python environment {}", getPythonEnv());
+            }
+
+            log.info("Python environment {} set up {}", getPythonEnv(), isSet ? "correctly": "failed");
+        }
+
+        return isSet;
+    }
+
     public boolean removeCondaEnv() throws IOException, InterruptedException {
         return communication.removeCondaEnv(getCondaEnv());
+    }
+
+    public boolean removePythonEnv() throws IOException, InterruptedException {
+        return communication.removePythonEnv(getPythonEnv());
     }
 
     public String getFilePathOf(String smiles){
