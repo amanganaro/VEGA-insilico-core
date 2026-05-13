@@ -1,10 +1,7 @@
 package insilico.core.model;
 
 import com.opencsv.exceptions.CsvValidationException;
-import insilico.core.exception.GenericFailureException;
-import insilico.core.exception.InitFailureException;
-import insilico.core.exception.InitFailurePythonException;
-import insilico.core.exception.PythonModelResourceNotFoundException;
+import insilico.core.exception.*;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.model.trainingset.TrainingSet;
@@ -86,9 +83,13 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         setSupportFiles();
 
         if(!bypassCheckCondaEnv) {
-            boolean isEnvSet = configureCondaEnv();
+//            boolean isEnvSet = configureCondaEnv();
+//            if(!isEnvSet) {
+//                throw new InitFailurePythonException("Conda environment "+getCondaEnv()+" not set");
+//            }
+            boolean isEnvSet = configurePythonEnv();
             if(!isEnvSet) {
-                throw new InitFailurePythonException("Conda environment "+getCondaEnv()+" not set");
+                throw new InitFailurePythonException("Python environment "+getPythonEnv()+" not set");
             }
         }
     }
@@ -98,6 +99,17 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * can be satisfied. There are already some conda environments set by default
      */
     public String getCondaEnv(){
+        switch(envTag){
+            case "GLOBAL":
+                return "VEGA_global_V3";
+            case "TEST":
+                return "test";
+            default:
+                return "VEGA_global_V3";
+        }
+    }
+
+    public String getPythonEnv(){
         switch(envTag){
             case "GLOBAL":
                 return "VEGA_global_V3";
@@ -127,7 +139,8 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         Map<String, String> result=null;
         try {
             log.info("Start calculating model results.");
-            boolean computationOk = communication.executeScriptInCondaEnv(getCondaEnv(), scriptPath.toString(), params);
+            //boolean computationOk = communication.executeScriptInCondaEnv(getCondaEnv(), scriptPath.toString(), params);
+            boolean computationOk = communication.executePureCommandInPythonEnv(getPythonEnv(), scriptPath.toString(), params);
             log.info("Finish calculating model results.");
 
             if (computationOk) {
@@ -208,13 +221,37 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         return isSet;
     }
 
+    public boolean configurePythonEnv() throws PythonEnvironemntFailedException {
+        boolean isSet;
+        try {
+            if (messenger != null) {
+                messenger.SendMessage("Model " + super.getInfo().getName() + " is checking python environment");
+            }
+
+            isSet = communication.checkPythonEnv(getPythonEnv());
+
+            if (!isSet) {
+                if (messenger != null)
+                    messenger.SendMessage("Model " + super.getInfo().getName() + " installing python environment.");
+                isSet = communication.configurePythonEnv(getPythonEnv());
+            }
+        }catch (InterruptedException | IOException ex){
+            throw new PythonEnvironemntFailedException(ex.getMessage());
+        }
+
+        return isSet;
+    }
+
     public boolean removeCondaEnv() throws IOException, InterruptedException {
         return communication.removeCondaEnv(getCondaEnv());
     }
 
+    public boolean removePythonEnv() throws IOException, InterruptedException {
+        return communication.removePythonEnv(getPythonEnv());
+    }
+
     public void prepareInputData() throws GenericFailureException {
-        FileUtilities.WriteByteArrayToFile(inputTempFile,
-                ("smiles\r\n"+CurMolecule.GetSMILES()).getBytes());
+        FileUtilities.WriteByteArrayToFile(inputTempFile, ("smiles\r\n"+CurMolecule.GetSMILES()).getBytes());
         log.info("Prepared input file.");
     }
 
