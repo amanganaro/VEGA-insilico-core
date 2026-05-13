@@ -201,25 +201,32 @@ public class Communication {
         boolean isSet=false;
 
         Path vegaPythonPath = Paths.get(System.getProperty("user.home"), "vega", "python").resolve("");
+        Path envPath = Paths.get(vegaPythonPath.toAbsolutePath().toString(), envName).resolve("");
 
         try {
 
             try {
+
+                log.info("Start to download the zip file for {} environment.", envName);
+
                 String httpUrl = "https://amcc.it/vega/" + envName + ".zip";
                 File zipFile = File.createTempFile(envName, ".zip");
                 HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
 
                 log.info("Finish to download the zip file.");
+                log.info("Start to extract the file from zip file.");
 
-                FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), vegaPythonPath.toString());
+                FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), envPath.toString());
                 zipFile.delete();
 
-                log.info("Copied all necessary file from zip file.");
+                log.info("Extracted all necessary file from zip file.");
 
             } catch (ConnectException ex) {
                 log.error("Url of the environment {} is unreachable", envName);
                 throw new PythonEnvironemntFailedException(ex.getMessage());
             }
+
+            log.info("Start to unpack the {} environment.", envName);
 
             if (SystemUtils.IS_OS_WINDOWS) {
 
@@ -233,8 +240,11 @@ public class Communication {
                         "conda-unpack").toAbsolutePath().toString();
                 isSet = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c", cmd);
             }
+
+            log.info("Unpacked the {} environment.", envName);
+
             if (isSet) {
-                isSet = checkCondaEnv(envName);
+                isSet = checkPythonEnv(envName);
             }
         }
         catch(InterruptedException | IOException ex){
