@@ -75,8 +75,8 @@ public class Communication {
         }else {
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source \""+condaInstallationPath.toAbsolutePath().toString()+"/bin/activate\"" +
-                            " && " : "") +
-                    "conda activate " + env +" && python \"" + scriptName + "\" " + p);
+                                        " && " : "") +
+                            "conda activate " + env +" && python \"" + scriptName + "\" " + p);
         }
         return result;
     }
@@ -143,7 +143,7 @@ public class Communication {
             result = GeneralUtilities.executeCommandLineAndCheckResult(null, envName,
                     "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source " + "\"" +condaInstallationPath.toAbsolutePath().toString()
-                            +"/bin/activate" + "\"" +" && " : "") +
+                                        +"/bin/activate" + "\"" +" && " : "") +
                             "conda env list");
         }
         return result;
@@ -183,7 +183,7 @@ public class Communication {
         }else {
             temp= GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source " + "\"" + condaInstallationPath.toAbsolutePath().toString()
-                            +"/bin/activate\"" + " && " : "") +
+                                        +"/bin/activate\"" + " && " : "") +
                             "conda env create  --quiet --file \"" + pathToEnvFile.toString()+"\"");
         }
         if(temp){
@@ -264,7 +264,7 @@ public class Communication {
         }else{
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     (USE_CUSTOM_CONDA ? "source " + "\"" + condaInstallationPath.toAbsolutePath().toString()
-                            +"/bin/activate" + "\"" + " && " : "") +
+                                        +"/bin/activate" + "\"" + " && " : "") +
                             "conda env remove -n " + condaEnv + " --yes");
         }
         log.info("{} in removing conda env {}.", result ? "Success" : "Error" , condaEnv);
