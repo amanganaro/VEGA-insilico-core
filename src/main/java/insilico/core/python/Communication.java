@@ -85,13 +85,16 @@ public class Communication {
         log.info("Executing script {} in python env {}.", scriptName, env);
         String p = String.join(" ", params);
         boolean result = false;
-        String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", env, "python.exe").toAbsolutePath().toString();
 
         if(SystemUtils.IS_OS_WINDOWS){
+            String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", env, "python.exe")
+                    .toAbsolutePath().toString();
             result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c",
                     "\"" + pythonPath + "\" \"" + scriptName + "\" " + p);
 
         }else {
+            String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", env, "bin",
+                    "python").toAbsolutePath().toString();
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c",
                     pythonPath +" \"" + scriptName + "\" " + p);
         }
@@ -113,7 +116,12 @@ public class Communication {
     public boolean executePureCommandInPythonEnv(String env, String scriptName, String... params) throws IOException, InterruptedException {
         log.info("Executing script {} in python env {}.", scriptName, env);
 
-        String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", env, "python.exe").toAbsolutePath().toString();
+        String pythonPath = "";
+        if(SystemUtils.IS_OS_WINDOWS){
+            pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", env, "python.exe").toAbsolutePath().toString();
+        } else if (SystemUtils.IS_OS_LINUX) {
+            pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", env, "bin", "python").toAbsolutePath().toString();
+        }
 
         List<String> command = new ArrayList<>();
         command.add(pythonPath);
@@ -152,12 +160,14 @@ public class Communication {
     public boolean checkPythonEnv(String envName) throws IOException, InterruptedException {
         log.info("Check python env {}.", envName);
         boolean result=false;
-        String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", envName, "python.exe").toAbsolutePath().toString();
 
         if(SystemUtils.IS_OS_WINDOWS){
+            String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", envName, "python.exe").toAbsolutePath().toString();
             String cmd = "\""+pythonPath+"\" --version" ;
             result = GeneralUtilities.executeCommandLine(null,"cmd.exe", "/c", cmd);
         }else {
+            String pythonPath = Paths.get(System.getProperty("user.home"), "vega", "python", envName, "bin",
+                    "python").toAbsolutePath().toString();
             String cmd = pythonPath + " --version" ;
             result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c", cmd);
         }
@@ -209,7 +219,18 @@ public class Communication {
 
                 log.info("Start to download the zip file for {} environment.", envName);
 
-                String httpUrl = "https://amcc.it/vega/" + envName + ".zip";
+                String httpUrl;
+
+                if(SystemUtils.IS_OS_WINDOWS){
+                    httpUrl = "https://amcc.it/vega/" + envName + ".zip";
+                }
+                else if(SystemUtils.IS_OS_MAC){
+                    httpUrl = "";
+                }
+                else{
+                    httpUrl = "https://amcc.it/vega/" + envName + "_linux.zip";
+                }
+
                 File zipFile = File.createTempFile(envName, ".zip");
                 HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
 
@@ -235,7 +256,6 @@ public class Communication {
                 isSet = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c", cmd);
 
             } else {
-                // TODO CONTROLLARE ESTENSIONE DI CONDA-PACK
                 String cmd = Paths.get(vegaPythonPath.toAbsolutePath().toString(), envName, "bin",
                         "conda-unpack").toAbsolutePath().toString();
                 isSet = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c", cmd);
