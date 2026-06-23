@@ -133,6 +133,12 @@
             <version>2.0.17</version>
         </dependency>
 
+        <dependency>
+            <groupId>InSilico</groupId>
+            <artifactId>PadelAdapter</artifactId>
+            <version>0.3</version>
+        </dependency>
+
     </dependencies>
 
     <build>
