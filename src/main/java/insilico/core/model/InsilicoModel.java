@@ -93,9 +93,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
 
         String curLang = StringSelectorCore.getLanguage();
 
-        if(curLang.equals("en") || curLang.equals("")){
-
-        } else {
+        if(!curLang.equals("en") && !curLang.equals("")){
             String[] fileNames = ModelData.split(".xml");
             ModelData = fileNames[0] + "-" + curLang + ".xml";
         }
@@ -108,8 +106,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
         ADItemsName = new String[0];
 
         // Init decimal format objects
-        DecimalFormatSymbols InternationalSymbols =
-                new DecimalFormatSymbols();
+        DecimalFormatSymbols InternationalSymbols = new DecimalFormatSymbols();
         InternationalSymbols.setDecimalSeparator('.');
         Format_2D = new DecimalFormat("0.##", InternationalSymbols);
         Format_3D = new DecimalFormat("0.###", InternationalSymbols);
@@ -159,8 +156,7 @@ public abstract class InsilicoModel implements iInsilicoModel {
 
 
     @Override
-    public InsilicoModelOutput Execute(InsilicoMolecule mol)
-            throws GenericFailureException {
+    public InsilicoModelOutput Execute(InsilicoMolecule mol) throws GenericFailureException {
         return Execute(mol, null, true);
     }
 
