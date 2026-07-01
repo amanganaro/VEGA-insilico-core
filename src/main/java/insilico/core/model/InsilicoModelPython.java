@@ -36,7 +36,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     protected boolean isUsingCdddDescriptor=false;
     protected iInsilicoModelRunnerMessenger messenger;
     protected String envTag;
-    String httpUrl;
+    String resourceFileZip;
 
     public InsilicoModelPython(String modelData) throws InitFailureException {
         super(modelData);
@@ -65,7 +65,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             };
         }
 
-        httpUrl = "https://amcc.it/vega/"+modelReferenceName+".zip";
+        resourceFileZip = modelReferenceName+".zip";
 
         if (SystemUtils.IS_OS_WINDOWS) {
             pathToVEGAFolder = Paths.get(System.getProperty("user.home"),"AppData", "Local", "vega-models").resolve("");
@@ -164,18 +164,30 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         try {
             File f = new File(pathToExternalFolder.toString());
             if (!f.exists()) {
-                if (messenger != null) {
-                    messenger.SendMessage("Model " + super.getInfo().getName() + " is downloading support files");
+
+                log.info("Start to extract the {} zip file.", resourceFileZip);
+
+                InputStream is = getClass().getResourceAsStream("/data/"+resourceFileZip);
+                if (is == null) {
+                    log.error("File {} not found", resourceFileZip);
+                    throw new PythonModelResourceNotFoundException("File " + resourceFileZip + " in resource folder not found");
                 }
-                log.info("Start to download the zip file.");
-                File zipFile = File.createTempFile(this.getInfo().getKey(), ".zip");
-                HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
-                log.info("Finish to download the zip file.");
+
+                // extract the file form resource jar to a temporary file zip
+                // then from that temporary file extract the files
+                File zipFile = File.createTempFile("insilico-model-", ".zip");
+                zipFile.deleteOnExit();
+                try(
+                        InputStream in = is;
+                        OutputStream out = new FileOutputStream(zipFile)
+                ){
+                    in.transferTo(out);
+                }
                 FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
-                zipFile.delete();
-                log.info("Copied all necessary file from zip file.");
+
+                log.info("Copied all necessary files from {}", resourceFileZip);
             } else {
-                log.info("Already existing files and not copied.");
+                log.info("Already existing files and not copied of {}", resourceFileZip);
             }
         }
         catch (ConnectException ex){
@@ -183,6 +195,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             throw new PythonModelResourceNotFoundException(ex.getMessage());
         }
         catch(IOException ex){
+            log.error("Problem in extracting {} file", resourceFileZip);
             try {
                 FileUtilities.deleteFolder(pathToExternalFolder.toString());
             } catch (IOException e) {
