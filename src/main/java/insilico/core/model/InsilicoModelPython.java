@@ -83,14 +83,20 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         setSupportFiles();
 
         if(!bypassCheckCondaEnv) {
-//            boolean isEnvSet = configureCondaEnv();
-//            if(!isEnvSet) {
-//                throw new InitFailurePythonException("Conda environment "+getCondaEnv()+" not set");
-//            }
-            boolean isEnvSet = configurePythonEnv();
-            if(!isEnvSet) {
-                throw new InitFailurePythonException("Python environment "+getPythonEnv()+" not set");
+            boolean isEnvSet;
+            if (SystemUtils.IS_OS_WINDOWS) {
+                isEnvSet = configurePythonEnv();
+                if(!isEnvSet) {
+                    throw new InitFailurePythonException("Python environment "+getPythonEnv()+" not set");
+                }
             }
+            else{
+                isEnvSet = configureCondaEnv();
+                if(!isEnvSet) {
+                    throw new InitFailurePythonException("Conda environment "+getCondaEnv()+" not set");
+                }
+            }
+
         }
     }
 
@@ -139,8 +145,15 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         Map<String, String> result=null;
         try {
             log.info("Start calculating model results.");
-            //boolean computationOk = communication.executeScriptInCondaEnv(getCondaEnv(), scriptPath.toString(), params);
-            boolean computationOk = communication.executePureCommandInPythonEnv(getPythonEnv(), scriptPath.toString(), params);
+            boolean computationOk;
+
+            if(SystemUtils.IS_OS_WINDOWS){
+                computationOk = communication.executePureCommandInPythonEnv(getPythonEnv(), scriptPath.toString(), params);
+            }
+            else{
+                computationOk = communication.executeScriptInCondaEnv(getCondaEnv(), scriptPath.toString(), params);
+            }
+
             log.info("Finish calculating model results.");
 
             if (computationOk) {
@@ -165,7 +178,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             File f = new File(pathToExternalFolder.toString());
             if (!f.exists()) {
 
-                log.info("Start to extract the {} zip file.", resourceFileZip);
+                log.info("Start to extract the {} file.", resourceFileZip);
 
                 InputStream is = getClass().getResourceAsStream("/data/"+resourceFileZip);
                 if (is == null) {

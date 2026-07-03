@@ -3,15 +3,12 @@ package insilico.core.python;
 import insilico.core.exception.*;
 import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.tools.utils.FileUtilities;
-import insilico.core.tools.utils.HTTPUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.*;
 import java.net.ConnectException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -82,13 +79,18 @@ public class CdddDescriptors {
             setSupportFiles();
 
             if (!bypassCheckCondaEnv) {
-//                boolean isEnvSet = configureCondaEnv();
-//                if (!isEnvSet) {
-//                    throw new InitFailurePythonException("Conda environment " + getCondaEnv() + " not set");
-//                }
-                boolean isEnvSet = configurePythonEnv();
-                if (!isEnvSet) {
-                    throw new InitFailurePythonException("Python environment " + getPythonEnv() + " not set");
+
+                if (SystemUtils.IS_OS_WINDOWS) {
+                    boolean isEnvSet = configurePythonEnv();
+                    if (!isEnvSet) {
+                        throw new InitFailurePythonException("Python environment " + getPythonEnv() + " not set");
+                    }
+                }
+                else{
+                    boolean isEnvSet = configureCondaEnv();
+                    if (!isEnvSet) {
+                        throw new InitFailurePythonException("Conda environment " + getCondaEnv() + " not set");
+                    }
                 }
             }
         } catch (IOException e) {
@@ -181,14 +183,27 @@ public class CdddDescriptors {
                 if (messenger != null) {
                     messenger.SendMessage("CDDD descriptors are downloading support files");
                 }
-                log.info("Start to download the cddd zip file.");
-                File zipFile = File.createTempFile("CDDD", ".zip");
-                HTTPUtils.downloadFile("https://amcc.it/vega/cddd.zip", zipFile.getAbsolutePath());
-                log.info("Finish to download the cddd zip file.");
+
+                log.info("Start to extract the cddd.zip file.");
+
+                InputStream is = getClass().getResourceAsStream("/descriptor/cddd.zip");
+                if (is == null) {
+                    log.error("File cddd.zip not found");
+                    throw new PythonModelResourceNotFoundException("File cddd.zip not in resource folder not found");
+                }
+
+                File zipFile = File.createTempFile("insilico-model-", ".zip");
+                zipFile.deleteOnExit();
+                try(
+                        InputStream in = is;
+                        OutputStream out = new FileOutputStream(zipFile)
+                ){
+                    in.transferTo(out);
+                }
                 FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
                 log.info("Extracted cddd folder.");
-                // add default model folder into the directory wanted from cddd
 
+                // add default model folder into the directory wanted from cddd
                 final Path destinationCdddModelDefaultFinal = destinationCdddModelDefault;
                 Path sourceDir = Paths.get(pathToVEGAFolder.toString(),"cddd", "default_model");
 

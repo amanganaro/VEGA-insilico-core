@@ -12,8 +12,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.ConnectException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -214,32 +213,53 @@ public class Communication {
         Path envPath = Paths.get(vegaPythonPath.toAbsolutePath().toString(), envName).resolve("");
 
         try {
-
             try {
 
-                log.info("Start to download the zip file for {} environment.", envName);
-
+                File zipFile;
                 String httpUrl;
 
                 if(SystemUtils.IS_OS_WINDOWS){
-                    httpUrl = "https://amcc.it/vega/" + envName + ".zip";
+
+                    String resourceFileZip = envName+".zip";
+
+                    InputStream is = getClass().getResourceAsStream("/condapack-env/"+resourceFileZip);
+                    if (is == null) {
+                        log.error("File {} not found", resourceFileZip);
+                        throw new PythonModelResourceNotFoundException("File " + resourceFileZip + " in resource folder not found");
+                    }
+
+                    // extract the file form resource jar to a temporary file zip
+                    // then from that temporary file extract the files
+                    zipFile = File.createTempFile("insilico-model-", ".zip");
+                    zipFile.deleteOnExit();
+                    try(
+                            InputStream in = is;
+                            OutputStream out = new FileOutputStream(zipFile)
+                    ){
+                        in.transferTo(out);
+                    }
+
                 }
-                else if(SystemUtils.IS_OS_MAC){
-                    httpUrl = "";
-                }
-                else{
-                    httpUrl = "https://amcc.it/vega/" + envName + "_linux.zip";
+                else {
+                    if(SystemUtils.IS_OS_MAC){
+                        httpUrl = "";
+                    }
+                    else{
+                        httpUrl = "https://amcc.it/vega/" + envName + "_linux.zip";
+                    }
+
+                    log.info("Start to download the zip file for {} environment.", envName);
+
+                    zipFile = File.createTempFile(envName, ".zip");
+                    zipFile.deleteOnExit();
+
+                    HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
+
+                    log.info("Finish to download the zip file.");
                 }
 
-                File zipFile = File.createTempFile(envName, ".zip");
-                HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
-
-                log.info("Finish to download the zip file.");
                 log.info("Start to extract the file from zip file.");
-
                 FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), envPath.toString());
-                zipFile.delete();
-
                 log.info("Extracted all necessary file from zip file.");
 
             } catch (ConnectException ex) {
