@@ -1,6 +1,5 @@
 package insilico.core.python;
 
-import insilico.core.exception.InitFailurePythonException;
 import insilico.core.exception.PythonEnvironemntFailedException;
 import insilico.core.exception.PythonModelResourceNotFoundException;
 import insilico.core.tools.utils.FileUtilities;
@@ -9,8 +8,6 @@ import insilico.core.tools.utils.HTTPUtils;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SystemUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.ConnectException;

@@ -13,10 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 @Slf4j
 public class CdddDescriptors {
@@ -32,21 +29,17 @@ public class CdddDescriptors {
 
     public CdddDescriptors(List<String> smilesList, boolean bypassCheckCondaEnv, iInsilicoModelRunnerMessenger messenger) throws InitFailureException, InitFailurePythonException {
 
-        if(messenger!=null) {
-            this.messenger = messenger;
-        }else{
-            this.messenger = new iInsilicoModelRunnerMessenger() {
-                @Override
-                public void SendMessage(String msg) {
-                    System.out.println(msg);
-                }
+        this.messenger = Objects.requireNonNullElseGet(messenger, () -> new iInsilicoModelRunnerMessenger() {
+            @Override
+            public void SendMessage(String msg) {
+                System.out.println(msg);
+            }
 
-                @Override
-                public void UpdateProgress() {
-                    System.out.println("No progress update");
-                }
-            };
-        }
+            @Override
+            public void UpdateProgress() {
+                System.out.println("No progress update");
+            }
+        });
         communication = new Communication();
 
         if (SystemUtils.IS_OS_WINDOWS) {
@@ -181,7 +174,7 @@ public class CdddDescriptors {
             File f3 = new File(destinationCdddModelDefault.toString());
             if (!f.exists() || !f3.exists()) {
                 if (messenger != null) {
-                    messenger.SendMessage("CDDD descriptors are downloading support files");
+                    messenger.SendMessage("CDDD descriptors package is extracting support files");
                 }
 
                 log.info("Start to extract the cddd.zip file.");
@@ -233,10 +226,6 @@ public class CdddDescriptors {
             } else {
                 log.info("Already existing files and not copied.");
             }
-        }
-        catch (ConnectException ex){
-            log.error("Url of the model is unreachable");
-            throw new PythonModelResourceNotFoundException(ex.getMessage());
         }
         catch(IOException ex){
             try {

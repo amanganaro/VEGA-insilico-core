@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public abstract class InsilicoModelPython extends InsilicoModel implements iInsilicoModelPython {
@@ -49,21 +50,17 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         communication = new Communication();
         this.envTag = envTag;
 
-        if(messenger!=null) {
-            this.messenger = messenger;
-        }else{
-            this.messenger = new iInsilicoModelRunnerMessenger() {
-                @Override
-                public void SendMessage(String msg) {
-                    System.out.println(msg);
-                }
+        this.messenger = Objects.requireNonNullElseGet(messenger, () -> new iInsilicoModelRunnerMessenger() {
+            @Override
+            public void SendMessage(String msg) {
+                System.out.println(msg);
+            }
 
-                @Override
-                public void UpdateProgress() {
-                    System.out.println("No progress update");
-                }
-            };
-        }
+            @Override
+            public void UpdateProgress() {
+                System.out.println("No progress update");
+            }
+        });
 
         resourceFileZip = modelReferenceName+".zip";
 
