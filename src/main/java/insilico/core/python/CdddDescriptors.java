@@ -26,6 +26,7 @@ public class CdddDescriptors {
     private String descriptorDirectory;
     private String inputSmilesFileName;
     protected iInsilicoModelRunnerMessenger messenger;
+    private Path destinationCdddModelDefault = null;
 
     public CdddDescriptors(List<String> smilesList, boolean bypassCheckCondaEnv, iInsilicoModelRunnerMessenger messenger) throws InitFailureException, InitFailurePythonException {
 
@@ -40,7 +41,34 @@ public class CdddDescriptors {
                 System.out.println("No progress update");
             }
         });
-        communication = new Communication();
+        try {
+            communication = new Communication();
+        }catch (IOException e){
+            log.error("Communication class can not be initialized: {}", e.getMessage());
+            throw new InitFailurePythonException(e.getMessage());
+        }
+
+        // check if conda or conda pack is installed
+        try {
+            if (SystemUtils.IS_OS_WINDOWS) {
+                if (!checkIfThereIsCondaPackEnv()) {
+                    if (!communication.checkConda()) {
+                        communication.installConda();
+                    }
+                }
+            } else if (SystemUtils.IS_OS_MAC) {
+                if (!communication.checkConda()) {
+                    communication.installConda();
+                }
+            } else if (SystemUtils.IS_OS_LINUX) {
+                if (!communication.checkConda()) {
+                    communication.installConda();
+                }
+            }
+        }catch (IOException | InterruptedException e){
+            log.error("Error installing conda: {}", e.getMessage());
+            throw new InitFailurePythonException(e.getMessage());
+        }
 
         if (SystemUtils.IS_OS_WINDOWS) {
             pathToExternalFolder = Paths.get(System.getProperty("user.home"),
@@ -73,7 +101,7 @@ public class CdddDescriptors {
 
             if (!bypassCheckCondaEnv) {
 
-                if (SystemUtils.IS_OS_WINDOWS) {
+                if (SystemUtils.IS_OS_WINDOWS && checkIfThereIsCondaPackEnv()) {
                     boolean isEnvSet = configurePythonEnv();
                     if (!isEnvSet) {
                         throw new InitFailurePythonException("Python environment " + getPythonEnv() + " not set");
@@ -154,7 +182,7 @@ public class CdddDescriptors {
 
     public void setSupportFiles() throws InitFailurePythonException {
 
-        Path destinationCdddModelDefault = null;
+
         if (SystemUtils.IS_OS_WINDOWS) {
             destinationCdddModelDefault = Paths.get(System.getProperty("user.home"),
                     "AppData", "Local", "cddd", "cddd", "default_model");
@@ -301,6 +329,13 @@ public class CdddDescriptors {
         return communication.removePythonEnv(getPythonEnv());
     }
 
+    public void removeResourceFolder() throws IOException {
+        FileUtilities.deleteFolder(pathToVEGAFolder.toString());
+        if(destinationCdddModelDefault != null) {
+            FileUtilities.deleteFolder(destinationCdddModelDefault.toString());
+        }
+    }
+
     public String getFilePathOf(String smiles){
         return smilesFileMap.get(smiles);
     }
@@ -340,5 +375,10 @@ public class CdddDescriptors {
         }
 
         return true;
+    }
+
+    private boolean checkIfThereIsCondaPackEnv(){
+        InputStream is = getClass().getResourceAsStream("/condapack-env/"+getPythonEnv()+".zip");
+        return is != null;
     }
 }

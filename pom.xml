@@ -146,6 +146,13 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.protoqsar</groupId>
+            <artifactId>VegaPythonEnv-Cddd</artifactId>
+            <optional>true</optional>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -185,6 +192,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.2.0</version>
             </plugin>
 
             <plugin>

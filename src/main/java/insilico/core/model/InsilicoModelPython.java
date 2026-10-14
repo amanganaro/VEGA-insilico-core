@@ -9,7 +9,6 @@ import insilico.core.python.CdddDescriptors;
 import insilico.core.python.Communication;
 import insilico.core.tools.utils.FileUtilities;
 import insilico.core.tools.utils.GeneralUtilities;
-import insilico.core.tools.utils.HTTPUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -18,7 +17,6 @@ import java.io.*;
 import java.net.ConnectException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -41,14 +39,29 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
 
     public InsilicoModelPython(String modelData) throws InitFailureException {
         super(modelData);
-        communication = new Communication();
+        try {
+            communication = new Communication();
+        }catch (IOException e){
+            log.error("Communication class can not be initialized: {}", e.getMessage());
+            throw new InitFailureException(e.getMessage());
+        }
     }
 
-    public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger, String modelReferenceName, String envTag, boolean bypassCheckCondaEnv) throws InitFailureException, GenericFailureException, InitFailurePythonException {
+    public InsilicoModelPython(String modelData, iInsilicoModelRunnerMessenger messenger, String modelReferenceName,
+                               String envTag, boolean bypassCheckCondaEnv)
+            throws InitFailureException, GenericFailureException, InitFailurePythonException {
         super(modelData);
 
-        communication = new Communication();
+        try {
+            communication = new Communication();
+        }catch (IOException e){
+            log.error("Communication class can not be initialized: {}", e.getMessage());
+            throw new InitFailureException(e.getMessage());
+        }
+
         this.envTag = envTag;
+
+        installConda();
 
         this.messenger = Objects.requireNonNullElseGet(messenger, () -> new iInsilicoModelRunnerMessenger() {
             @Override
@@ -81,7 +94,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
 
         if(!bypassCheckCondaEnv) {
             boolean isEnvSet;
-            if (SystemUtils.IS_OS_WINDOWS) {
+            if (SystemUtils.IS_OS_WINDOWS && checkIfThereIsCondaPackEnv()) {
                 isEnvSet = configurePythonEnv();
                 if(!isEnvSet) {
                     throw new InitFailurePythonException("Python environment "+getPythonEnv()+" not set");
@@ -93,7 +106,6 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
                     throw new InitFailurePythonException("Conda environment "+getCondaEnv()+" not set");
                 }
             }
-
         }
     }
 
@@ -273,6 +285,10 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         return communication.removePythonEnv(getPythonEnv());
     }
 
+    public void removeResourceFolder() throws IOException {
+        FileUtilities.deleteFolder(pathToExternalFolder.toString());
+    }
+
     public void prepareInputData() throws GenericFailureException {
         FileUtilities.WriteByteArrayToFile(inputTempFile, ("smiles\r\n"+CurMolecule.GetSMILES()).getBytes());
         log.info("Prepared input file.");
@@ -287,6 +303,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     public iInsilicoModelRunnerMessenger getMessenger() {
         return messenger;
     }
+
     public void setMessenger(iInsilicoModelRunnerMessenger messenger) {
         this.messenger = messenger;
     }
@@ -342,5 +359,43 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
         }
 
         return molecules;
+    }
+
+    private boolean checkIfThereIsCondaPackEnv(){
+        InputStream is = getClass().getResourceAsStream("/condapack-env/"+getPythonEnv()+".zip");
+        return is != null;
+    }
+
+    private void installConda() throws InitFailurePythonException {
+        // check if conda or conda pack is installed
+        try {
+            if (SystemUtils.IS_OS_WINDOWS) {
+                if (!checkIfThereIsCondaPackEnv()) {
+                    if (!communication.checkConda()) {
+                        communication.installConda();
+                    }
+                }
+            } else if (SystemUtils.IS_OS_MAC) {
+                if (!communication.checkConda()) {
+                    communication.installConda();
+                }
+            } else if (SystemUtils.IS_OS_LINUX) {
+                if (!communication.checkConda()) {
+                    communication.installConda();
+                }
+            }
+        }catch (IOException | InterruptedException e){
+            log.error("Error installing conda: {}", e.getMessage());
+            throw new InitFailurePythonException(e.getMessage());
+        }
+    }
+
+    public void uninstallConda() throws GenericFailureException {
+        try {
+            communication.removeCondaInstallation();
+        }
+        catch (IOException | InterruptedException e){
+            throw new GenericFailureException("Conda not uninstalled properly beacuse: " + e.getMessage());
+        }
     }
 }
