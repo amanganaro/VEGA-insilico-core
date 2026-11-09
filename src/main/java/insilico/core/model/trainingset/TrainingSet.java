@@ -1,5 +1,6 @@
 package insilico.core.model.trainingset;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.alerts.AlertEncoding;
 import insilico.core.constant.InsilicoConstants;
 import insilico.core.exception.GenericFailureException;
@@ -370,35 +371,36 @@ public class TrainingSet implements Serializable, iTrainingSet {
 
             // Read molecule format - 5 columns: Id, CAS, SMILES, Status (Training/Test), Experimental Value
             // Additionally, a 6th column can be present with the already calculated predicted value
-            DataInputStream in;
-            BufferedReader bufferedReader;
             URL tsURL = getClass().getResource(molFilePath);
-            in = new DataInputStream(tsURL.openStream());
-            bufferedReader = new BufferedReader(new InputStreamReader(in));
-
-            // Check the header
-            String[] parsedString = bufferedReader.readLine().split("\t");
-            if(parsedString.length < 5)
-                throw new GenericFailureException(StringSelectorCore.getString("trainingset_header_error"));
-
-            // Number of descriptors, initialization of descriptors names
-            DescriptorSize = Model.getDescriptorsSize();
-            DescriptorName = Model.getDescriptorsNames();
-
-            // Check number of compounds and train/test numbers
-            MoleculesSize = 0;
-            MoleculesTrainSize = 0;
-            MoleculesTestSize = 0;
+            String[] parsedString;
             String string;
-            while((string = bufferedReader.readLine()) != null){
-                string = GeneralUtilities.TrimString(string);
-                if(string.isEmpty())
-                    continue;
-                MoleculesSize++;
-                if(string.split("\t")[3].compareToIgnoreCase("Training") == 0)
-                    MoleculesTrainSize++;
-                if(string.split("\t")[3].compareToIgnoreCase("Test") == 0)
-                    MoleculesTestSize++;
+
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                    new DataInputStream(tsURL.openStream()), StandardCharsets.UTF_8))) {
+
+                // Check the header
+                parsedString = bufferedReader.readLine().split("\t");
+                if(parsedString.length < 5)
+                    throw new GenericFailureException(StringSelectorCore.getString("trainingset_header_error"));
+
+                // Number of descriptors, initialization of descriptors names
+                DescriptorSize = Model.getDescriptorsSize();
+                DescriptorName = Model.getDescriptorsNames();
+
+                // Check number of compounds and train/test numbers
+                MoleculesSize = 0;
+                MoleculesTrainSize = 0;
+                MoleculesTestSize = 0;
+                while((string = bufferedReader.readLine()) != null){
+                    string = GeneralUtilities.TrimString(string);
+                    if(string.isEmpty())
+                        continue;
+                    MoleculesSize++;
+                    if(string.split("\t")[3].compareToIgnoreCase("Training") == 0)
+                        MoleculesTrainSize++;
+                    if(string.split("\t")[3].compareToIgnoreCase("Test") == 0)
+                        MoleculesTestSize++;
+                }
             }
 
             // Init objects
@@ -414,31 +416,28 @@ public class TrainingSet implements Serializable, iTrainingSet {
             if(CalculateDescriptors)
                 Descriptors = new float[MoleculesSize][DescriptorSize];
 
-            // reset reader
-            in.close();
-            in = new DataInputStream(tsURL.openStream());
-            bufferedReader = new BufferedReader(new InputStreamReader(in));
-
-            // Set values for each line
-            int index = 0;
-            bufferedReader.readLine();
-            while ((string = bufferedReader.readLine()) != null) {
-                parsedString = GeneralUtilities.TrimString(string).split("\t");
-                Id[index] = Integer.parseInt(parsedString[0]);
-                CAS[index] = insilico.core.molecule.conversion.CAS.NormalizeCAS(parsedString[1]);
-                SMILES[index] = parsedString[2];
-                if (parsedString[3].compareToIgnoreCase("Training") == 0)
-                    Status[index] = MOLECULE_TRAINING;
-                else if (parsedString[3].compareToIgnoreCase("Test") == 0)
-                    Status[index] = MOLECULE_TEST;
-                else
-                    Status[index] = MOLECULE_UNKNOWN_SET;
-                Experimental[index] = Float.parseFloat(parsedString[4]);
-                if (PredictionFromTxt)
-                    Prediction[index] = Float.parseFloat(parsedString[5]);
-                index++;
+            // read the file again to set values for each line
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                    new DataInputStream(tsURL.openStream()), StandardCharsets.UTF_8))) {
+                int index = 0;
+                bufferedReader.readLine();
+                while ((string = bufferedReader.readLine()) != null) {
+                    parsedString = GeneralUtilities.TrimString(string).split("\t");
+                    Id[index] = Integer.parseInt(parsedString[0]);
+                    CAS[index] = insilico.core.molecule.conversion.CAS.NormalizeCAS(parsedString[1]);
+                    SMILES[index] = parsedString[2];
+                    if (parsedString[3].compareToIgnoreCase("Training") == 0)
+                        Status[index] = MOLECULE_TRAINING;
+                    else if (parsedString[3].compareToIgnoreCase("Test") == 0)
+                        Status[index] = MOLECULE_TEST;
+                    else
+                        Status[index] = MOLECULE_UNKNOWN_SET;
+                    Experimental[index] = Float.parseFloat(parsedString[4]);
+                    if (PredictionFromTxt)
+                        Prediction[index] = Float.parseFloat(parsedString[5]);
+                    index++;
+                }
             }
-            in.close();
 
             // Smiles conversion, additional info
             SimDescriptors = new SimilarityDescriptors[MoleculesSize];
@@ -520,8 +519,6 @@ public class TrainingSet implements Serializable, iTrainingSet {
 
             }
 
-            in.close();
-
         } catch (Exception e){
             log.error(e.getMessage());
             // TODO: 15/06/2020 sviluppare exception
@@ -577,7 +574,7 @@ public class TrainingSet implements Serializable, iTrainingSet {
     }
 
     public void PrintToStdOut(boolean includeAllInfo){
-        Print(new PrintWriter(System.out), includeAllInfo);
+        Print(new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8)), includeAllInfo);
     }
 
 

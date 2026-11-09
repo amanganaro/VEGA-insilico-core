@@ -1,5 +1,6 @@
 package insilico.core.model;
 
+import java.nio.charset.StandardCharsets;
 import com.opencsv.exceptions.CsvValidationException;
 import insilico.core.exception.*;
 import insilico.core.localization.StringSelectorCore;
@@ -290,7 +291,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     }
 
     public void prepareInputData() throws GenericFailureException {
-        FileUtilities.WriteByteArrayToFile(inputTempFile, ("smiles\r\n"+CurMolecule.GetSMILES()).getBytes());
+        FileUtilities.WriteByteArrayToFile(inputTempFile, ("smiles\r\n"+CurMolecule.GetSMILES()).getBytes(StandardCharsets.UTF_8));
         log.info("Prepared input file.");
     }
 
@@ -342,28 +343,29 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
 
     private List<String> buildMoleculeListFromTxt(String molFilePath) throws IOException, GenericFailureException {
         URL tsURL = getClass().getResource(molFilePath);
-        DataInputStream in = new DataInputStream(tsURL.openStream());
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(in));
-        String[] parsedString = bufferedReader.readLine().split("\t");
-        if(parsedString.length < 5)
-            throw new GenericFailureException(StringSelectorCore.getString("trainingset_header_error"));
+        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(
+                new DataInputStream(tsURL.openStream()), StandardCharsets.UTF_8))) {
+            String[] parsedString = bufferedReader.readLine().split("\t");
+            if(parsedString.length < 5)
+                throw new GenericFailureException(StringSelectorCore.getString("trainingset_header_error"));
 
-        List<String> molecules = new ArrayList<>();
-        String string;
+            List<String> molecules = new ArrayList<>();
+            String string;
 
-        while((string = bufferedReader.readLine()) != null) {
-            string = GeneralUtilities.TrimString(string);
-            if (string.isEmpty())
-                continue;
-            molecules.add(string.split("\t")[2]);
+            while((string = bufferedReader.readLine()) != null) {
+                string = GeneralUtilities.TrimString(string);
+                if (string.isEmpty())
+                    continue;
+                molecules.add(string.split("\t")[2]);
+            }
+
+            return molecules;
         }
-
-        return molecules;
     }
 
     private boolean checkIfThereIsCondaPackEnv(){
-        InputStream is = getClass().getResourceAsStream("/condapack-env/"+getPythonEnv()+".zip");
-        return is != null;
+        // only checks that the resource exists, without opening a stream on it
+        return getClass().getResource("/condapack-env/"+getPythonEnv()+".zip") != null;
     }
 
     private void installConda() throws InitFailurePythonException {

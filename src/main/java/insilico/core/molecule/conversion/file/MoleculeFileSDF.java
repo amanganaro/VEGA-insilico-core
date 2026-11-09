@@ -1,5 +1,6 @@
 package insilico.core.molecule.conversion.file;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.molecule.conversion.MDLMolecule;
@@ -67,7 +68,7 @@ public class MoleculeFileSDF extends MoleculeFile {
 
             Count++;
 
-            byte[] bytes = MDLMol.getBytes();
+            byte[] bytes = MDLMol.getBytes(StandardCharsets.UTF_8);
             InsilicoMolecule m = MDLMolecule.Convert(bytes, CASTag, IdTag);
             if (m.GetId().isEmpty())
                 m.SetId("Molecule " + Count);

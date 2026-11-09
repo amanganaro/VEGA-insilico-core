@@ -1,5 +1,7 @@
 package insilico.core.model.report.txt;
 
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import insilico.core.exception.InitFailureException;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.InsilicoModelConsensusOutput;
@@ -31,7 +33,7 @@ public class ReportTXTConsensusSingle {
      * @param ModelWrapper
      */
     public static void PrintReport(ArrayList<InsilicoMolecule> inputMols, InsilicoModelConsensusWrapper ModelWrapper) {
-        PrintWriter pw = new PrintWriter(System.out);
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
         PrintReport(inputMols, ModelWrapper, pw);
     }
 
@@ -43,7 +45,7 @@ public class ReportTXTConsensusSingle {
      * @throws java.io.IOException
      */
     public static void PrintReport(ArrayList<InsilicoMolecule> inputMols, InsilicoModelConsensusWrapper ModelWrapper, String FileName) throws IOException {
-        PrintWriter pw = new PrintWriter(new File(FileName));
+        PrintWriter pw = new PrintWriter(new File(FileName), StandardCharsets.UTF_8);
         PrintReport(inputMols, ModelWrapper, pw);
         pw.close();
     }

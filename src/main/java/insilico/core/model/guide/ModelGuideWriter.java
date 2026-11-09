@@ -1,5 +1,6 @@
 package insilico.core.model.guide;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.model.information.InsilicoModelInformation;
 
 import java.io.*;
@@ -34,7 +35,7 @@ public class ModelGuideWriter {
         unzip(src.openStream(), new File(path));
         
         // save html file
-        PrintWriter pw = new PrintWriter(new FileWriter(path + "/vega_model_guide_" + Info.getKey() + ".html"));
+        PrintWriter pw = new PrintWriter(new FileWriter(path + "/vega_model_guide_" + Info.getKey() + ".html", StandardCharsets.UTF_8));
         pw.write(html);
         pw.flush();
         pw.close();

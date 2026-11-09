@@ -474,7 +474,7 @@ public class CustomQueryMatcher {
             if (tmp.size() > 0) atomMapping.add(tmp);
 
             // If there is only one bond, check if it matches both ways.
-            if (list.size() == 1 && atom1.getAtomicNumber() == atom2.getAtomicNumber()) {
+            if (list.size() == 1 && atom1.getAtomicNumber().equals(atom2.getAtomicNumber())) {
                 List<Integer> tmp2 = new ArrayList<Integer>();
                 tmp2.add(tmp.get(0));
                 tmp2.add(tmp.get(1));

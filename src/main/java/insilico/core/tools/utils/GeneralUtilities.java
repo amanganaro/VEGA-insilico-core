@@ -1,5 +1,6 @@
 package insilico.core.tools.utils;
 
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +51,7 @@ public class GeneralUtilities {
      * @throws IOException
      */
     public static StringBuilder readProcessOutput(InputStream inputStream) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         StringBuilder output = new StringBuilder();
         String line;
         while ((line = reader.readLine()) != null) {

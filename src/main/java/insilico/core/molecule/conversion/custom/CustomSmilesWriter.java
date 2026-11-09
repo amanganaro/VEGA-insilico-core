@@ -765,7 +765,7 @@ public class CustomSmilesWriter {
         }
 
         IIsotope majorIsotope = isotopeFactory.getMajorIsotope(atom.getSymbol());
-        if (majorIsotope == null || majorIsotope.getMassNumber() == atom.getMassNumber())
+        if (majorIsotope == null || majorIsotope.getMassNumber().equals(atom.getMassNumber()))
             return "";
         else if (atom.getMassNumber() == null) return "";
         else return Integer.toString(atom.getMassNumber());

@@ -1,5 +1,7 @@
 package insilico.core.model.report.txt;
 
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import insilico.core.ad.item.iADIndex;
 import insilico.core.exception.InitFailureException;
 import insilico.core.localization.StringSelectorCore;
@@ -29,7 +31,7 @@ public class ReportTXTSingle {
      * @param ModelWrapper
      */
     public static void PrintReport(ArrayList<InsilicoMolecule> inputMols, InsilicoModelWrapper ModelWrapper) {
-        PrintWriter pw = new PrintWriter(System.out);
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
         PrintReport(inputMols, ModelWrapper, pw);
     }
 

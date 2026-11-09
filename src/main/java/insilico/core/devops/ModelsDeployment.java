@@ -1,5 +1,6 @@
 package insilico.core.devops;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.descriptor.DescriptorBlock;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
@@ -29,7 +30,7 @@ public class ModelsDeployment {
 
         TrainingSet trainingSet = (TrainingSet) model.GetTrainingSet();
 
-        PrintWriter writer = new PrintWriter(model.getInfo().getKey() + ".csv");
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(model.getInfo().getKey() + ".csv"), StandardCharsets.UTF_8));
         StringBuilder builder = new StringBuilder("id")
                 .append("\t").append("SMILES")
                 .append("\t").append("Experimental Value")
@@ -65,7 +66,7 @@ public class ModelsDeployment {
         StringBuilder stringBuilder = new StringBuilder("#" + "\t" + "Smiles (ionized)");
         String line;
         boolean printHeader = true;
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(url.openStream())))){
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(url.openStream()), StandardCharsets.UTF_8))){
             while ((line = br.readLine()) != null) {
                 if(printHeader){
                     printHeader = false;
@@ -102,13 +103,13 @@ public class ModelsDeployment {
             stringBuilder.append(descriptorName).append("\t");
 
 
-        PrintWriter printWriter = new PrintWriter(filename + ".csv");
+        PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(filename + ".csv"), StandardCharsets.UTF_8));
         printWriter.print(stringBuilder + "\n");
         printWriter.flush();
 
 
         String line;
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(url.openStream())))){
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(url.openStream()), StandardCharsets.UTF_8))){
             br.readLine();
             while ((line = br.readLine()) != null) {
                 smilesList.add(line.split("\t")[2]);
@@ -142,7 +143,7 @@ public class ModelsDeployment {
         String datasetUrl = model.getInfo().getTrainingSetURL().split("\\.")[0] + ".txt";
         URL url = ModelsDeployment.class.getResource(datasetUrl);
         String line;
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(url.openStream())))){
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(new DataInputStream(url.openStream()), StandardCharsets.UTF_8))){
             br.readLine();
             while ((line = br.readLine()) != null){
                 smilesList.add(line.split("\t")[2]);
@@ -150,7 +151,7 @@ public class ModelsDeployment {
             }
 
         } catch (Exception ex){ }
-        PrintWriter printWriter = new PrintWriter(csvFilename +  ".csv");
+        PrintWriter printWriter = new PrintWriter(new OutputStreamWriter(new FileOutputStream(csvFilename +  ".csv"), StandardCharsets.UTF_8));
         StringBuilder stringBuilder = new StringBuilder("Smiles"  + "\t");
 
         for(String resultName : model.GetResultsName())

@@ -36,31 +36,18 @@ public class HTTPUtils {
         }
         while(existingFileSize < fileLength && maxTries > 0){
             HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
-            FileOutputStream fos;
-            if(file.exists()) {
+            boolean append = file.exists();
+            if(append) {
                 httpUrlConnection.setRequestProperty("Range", "bytes=" + file.length() + "-");
-                fos = new FileOutputStream(file, true); //resume download, append to existing file
             }
-            else{
-                fos = new FileOutputStream(file);
-            }
-            BufferedInputStream in = new BufferedInputStream(httpUrlConnection.getInputStream());
-            BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
 
-            try{
+            // resume download (append to existing file) or start a new file
+            try (BufferedInputStream in = new BufferedInputStream(httpUrlConnection.getInputStream());
+                 BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(file, append), 1024)) {
                 byte[] data = new byte[1024];
                 int x = 0;
                 while ((x = in.read(data, 0, 1024)) >= 0){
                     bout.write(data, 0, x);
-                }
-            }finally{
-                if(bout!=null){
-                    bout.flush();
-                    bout.close();
-                }
-                if(fos!=null){
-                    fos.flush();
-                    fos.close();
                 }
             }
             existingFileSize = file.length();
