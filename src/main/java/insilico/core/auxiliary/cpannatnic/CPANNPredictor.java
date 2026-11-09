@@ -1,5 +1,6 @@
 package insilico.core.auxiliary.cpannatnic;
 
+import java.nio.charset.StandardCharsets;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -88,7 +89,7 @@ public class CPANNPredictor {
         try {
 
             DataInputStream in = new DataInputStream(SrcFile);
-            bufferedReader =  new BufferedReader(new InputStreamReader(in));
+            bufferedReader =  new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
                         
             while((line = bufferedReader.readLine()) != null) {
                 String[] tempstring2;

@@ -52,12 +52,12 @@ public class insilicoKnnQualitative extends insilicoKnn {
             if (ClassWeights.get(key) > ClassWeights.get(MaxClass)) {
                 MaxClass = key;
                 eq = false;
-            } else if (ClassWeights.get(key) == ClassWeights.get(MaxClass)) {
+            } else if (ClassWeights.get(key).equals(ClassWeights.get(MaxClass))) {
                 eq = true;
             }
         }
 
-        if (eq == true) {
+        if (eq) {
 
             insilicoKnnPrediction Prediction = new insilicoKnnPrediction();
             Prediction.setStatus(insilicoKnnPrediction.KNN_MISSING_EQUAL_CLASSESS);

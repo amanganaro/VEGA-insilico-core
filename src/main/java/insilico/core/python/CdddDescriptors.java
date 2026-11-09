@@ -1,5 +1,6 @@
 package insilico.core.python;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.exception.*;
 import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.tools.utils.FileUtilities;
@@ -131,7 +132,7 @@ public class CdddDescriptors {
             sb.append(smiles).append("\n");
         }
 
-        FileUtilities.WriteByteArrayToFile(inputFile,sb.toString().getBytes());
+        FileUtilities.WriteByteArrayToFile(inputFile,sb.toString().getBytes(StandardCharsets.UTF_8));
         log.info("Prepared input file.");
     }
 
@@ -358,7 +359,7 @@ public class CdddDescriptors {
         Scanner myReader = null;
         try {
             File f = new File(getFilePathOf(smiles));
-            myReader = new Scanner(f);
+            myReader = new Scanner(f, StandardCharsets.UTF_8.name());
             //skip the header
             myReader.nextLine();
             String[] parsedString = myReader.nextLine().split(",");
@@ -378,7 +379,7 @@ public class CdddDescriptors {
     }
 
     private boolean checkIfThereIsCondaPackEnv(){
-        InputStream is = getClass().getResourceAsStream("/condapack-env/"+getPythonEnv()+".zip");
-        return is != null;
+        // only checks that the resource exists, without opening a stream on it
+        return getClass().getResource("/condapack-env/"+getPythonEnv()+".zip") != null;
     }
 }

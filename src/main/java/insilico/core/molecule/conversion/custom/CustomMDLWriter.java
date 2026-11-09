@@ -1,5 +1,6 @@
 package insilico.core.molecule.conversion.custom;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.localization.StringSelectorCore;
 import lombok.extern.slf4j.Slf4j;
 import org.openscience.cdk.CDKConstants;
@@ -56,7 +57,7 @@ public class CustomMDLWriter extends DefaultChemObjectWriter {
      * @param   output  The OutputStream to write to
      */
     public CustomMDLWriter(OutputStream output) {
-        this(new OutputStreamWriter(output));
+        this(new OutputStreamWriter(output, StandardCharsets.UTF_8));
     }
 
     public CustomMDLWriter() {
@@ -77,7 +78,7 @@ public class CustomMDLWriter extends DefaultChemObjectWriter {
     }
 
     public void setWriter(OutputStream output) throws CDKException {
-        setWriter(new OutputStreamWriter(output));
+        setWriter(new OutputStreamWriter(output, StandardCharsets.UTF_8));
     }
 
     /**

@@ -1,5 +1,6 @@
 package insilico.core.alerts;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.localization.StringSelectorCore;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class AlertFileClassificationSMARTS {
     public AlertFileClassificationSMARTS (InputStream SourceFile) throws IOException, GenericFailureException {
 
         DataInputStream in = new DataInputStream(SourceFile);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
         ArrayList<String> Lines = new ArrayList<>();
         

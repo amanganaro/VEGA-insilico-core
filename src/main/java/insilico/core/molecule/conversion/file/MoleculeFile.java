@@ -1,5 +1,8 @@
 package insilico.core.molecule.conversion.file;
 
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import insilico.core.molecule.InsilicoMolecule;
 import lombok.extern.slf4j.Slf4j;
 
@@ -60,7 +63,7 @@ public abstract class MoleculeFile {
      */
     public void OpenFile(String FileName) throws FileNotFoundException {
         this.FileName = FileName;
-        reader = new BufferedReader(new FileReader(FileName));
+        reader = new BufferedReader(new InputStreamReader(new FileInputStream(FileName), StandardCharsets.UTF_8));
         Count = 0;
         isFileOpen = true;
     }

@@ -34,7 +34,7 @@ public class CustomHydrogenAtom extends SMARTSAtom {
                     }
 
                     if (atom.getMassNumber() != null) {
-                        if (this.getMassNumber() == atom.getMassNumber()) {
+                        if (this.getMassNumber().equals(atom.getMassNumber())) {
                             return true;
                         }
                     } else if (this.getMassNumber() == 1) {

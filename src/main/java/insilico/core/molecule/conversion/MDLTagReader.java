@@ -1,5 +1,6 @@
 package insilico.core.molecule.conversion;
 
+import java.nio.charset.StandardCharsets;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class MDLTagReader {
 
         try {
             ByteArrayInputStream bain = new ByteArrayInputStream(SDF);
-            BufferedReader br = new BufferedReader(new InputStreamReader(bain));
+            BufferedReader br = new BufferedReader(new InputStreamReader(bain, StandardCharsets.UTF_8));
 
             String strLine = null;
             int MolNum = 0;
@@ -76,7 +77,7 @@ public class MDLTagReader {
         Tags = new ArrayList<String>();
 
         try {
-            BufferedReader br = new BufferedReader(new FileReader(SDF));
+            BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(SDF), StandardCharsets.UTF_8));
 
             String strLine = null;
             int MolNum = 0;

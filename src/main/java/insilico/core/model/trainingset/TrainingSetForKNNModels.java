@@ -1,5 +1,6 @@
 package insilico.core.model.trainingset;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.alerts.AlertEncoding;
 import insilico.core.alerts.iAlertBlock;
 import insilico.core.exception.GenericFailureException;
@@ -54,35 +55,36 @@ public class TrainingSetForKNNModels extends TrainingSet {
             // Format: it must contain 5 columns:
             // Id, CAS, SMILES, Status (Training/Test), Experimental value, Predicted value
 
-            DataInputStream in;
-            BufferedReader br;
             URL TsURL = getClass().getResource(MolFilePath);
-            in = new DataInputStream(TsURL.openStream());
-            br = new BufferedReader(new InputStreamReader(in));
-
-            // First line: header
-            String[] parsedStr = br.readLine().split("\t");
-            if (parsedStr.length < 5)
-                throw new GenericFailureException("Wrong number of fields in table header");
-
-            // Get number of descriptors and init descriptors names
-            DescriptorSize = Model.getDescriptorsSize();
-            DescriptorName = Model.getDescriptorsNames();
-
-            // Check number of compounds and train/test numbers
-            MoleculesSize = 0;
-            MoleculesTrainSize = 0;
-            MoleculesTestSize = 0;
+            String[] parsedStr;
             String str;
-            while ((str = br.readLine()) != null) {
-                str = GeneralUtilities.TrimString(str);
-                if (str.isEmpty())
-                    continue;
-                MoleculesSize++;
-                if (str.split("\t")[3].compareToIgnoreCase("Training") == 0)
-                    MoleculesTrainSize++;
-                else if (str.split("\t")[3].compareToIgnoreCase("Test") == 0)
-                    MoleculesTestSize++;
+
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                    new DataInputStream(TsURL.openStream()), StandardCharsets.UTF_8))) {
+
+                // First line: header
+                parsedStr = br.readLine().split("\t");
+                if (parsedStr.length < 5)
+                    throw new GenericFailureException("Wrong number of fields in table header");
+
+                // Get number of descriptors and init descriptors names
+                DescriptorSize = Model.getDescriptorsSize();
+                DescriptorName = Model.getDescriptorsNames();
+
+                // Check number of compounds and train/test numbers
+                MoleculesSize = 0;
+                MoleculesTrainSize = 0;
+                MoleculesTestSize = 0;
+                while ((str = br.readLine()) != null) {
+                    str = GeneralUtilities.TrimString(str);
+                    if (str.isEmpty())
+                        continue;
+                    MoleculesSize++;
+                    if (str.split("\t")[3].compareToIgnoreCase("Training") == 0)
+                        MoleculesTrainSize++;
+                    else if (str.split("\t")[3].compareToIgnoreCase("Test") == 0)
+                        MoleculesTestSize++;
+                }
             }
 
             // Init objects
@@ -98,31 +100,28 @@ public class TrainingSetForKNNModels extends TrainingSet {
             DescriptorMin = new float[DescriptorSize];
             DescriptorMax = new float[DescriptorSize];
 
-            // Reset reader and starts from beginning
-            in.close();
-            in = new DataInputStream(TsURL.openStream());
-            br = new BufferedReader(new InputStreamReader(in));
+            // Reads the file again from the beginning and sets values for each line
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(
+                    new DataInputStream(TsURL.openStream()), StandardCharsets.UTF_8))) {
+                int idx = 0;
+                br.readLine(); // skip header row
+                while ((str = br.readLine()) != null) {
+                    parsedStr = GeneralUtilities.TrimString(str).split("\t");
+                    Id[idx] = Integer.valueOf(parsedStr[0]);
+                    CAS[idx] = insilico.core.molecule.conversion.CAS.NormalizeCAS(parsedStr[1]);
+                    SMILES[idx] = parsedStr[2];
+                    if (parsedStr[3].compareToIgnoreCase("Training") == 0)
+                        Status[idx] = MOLECULE_TRAINING;
+                    else if (parsedStr[3].compareToIgnoreCase("Test") == 0)
+                        Status[idx] = MOLECULE_TEST;
+                    else
+                        Status[idx] = MOLECULE_UNKNOWN_SET;
+                    Experimental[idx] = Float.valueOf(parsedStr[4]);
+                    Prediction[idx] = Float.valueOf(parsedStr[5]);
 
-            // Reads each line and set values
-            int idx = 0;
-            br.readLine(); // skip header row
-            while ((str = br.readLine()) != null) {
-                parsedStr = GeneralUtilities.TrimString(str).split("\t");
-                Id[idx] = Integer.valueOf(parsedStr[0]);
-                CAS[idx] = insilico.core.molecule.conversion.CAS.NormalizeCAS(parsedStr[1]);
-                SMILES[idx] = parsedStr[2];
-                if (parsedStr[3].compareToIgnoreCase("Training") == 0)
-                    Status[idx] = MOLECULE_TRAINING;
-                else if (parsedStr[3].compareToIgnoreCase("Test") == 0)
-                    Status[idx] = MOLECULE_TEST;
-                else
-                    Status[idx] = MOLECULE_UNKNOWN_SET;
-                Experimental[idx] = Float.valueOf(parsedStr[4]);
-                Prediction[idx] = Float.valueOf(parsedStr[5]);
-
-                idx++;
+                    idx++;
+                }
             }
-            in.close();
 
 
             // Converts SMILES and calculates needed additional info

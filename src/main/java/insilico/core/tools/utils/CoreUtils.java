@@ -1,5 +1,6 @@
 package insilico.core.tools.utils;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.molecule.InsilicoMolecule;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +31,7 @@ public class CoreUtils {
         for (String dataset : datasets) {
 
             String datasetLoc = "datasets/" + dataset + ".txt";
-            BufferedReader datasetsReader = new BufferedReader(new FileReader(datasetLoc));
+            BufferedReader datasetsReader = new BufferedReader(new InputStreamReader(new FileInputStream(datasetLoc), StandardCharsets.UTF_8));
 
             String datasetRow = datasetsReader.readLine();
 
@@ -55,7 +56,7 @@ public class CoreUtils {
 
         String file = "datasets/" + fileName + ".txt";
         File txt = new File(file);
-        FileWriter finalDatasetWriter = new FileWriter(txt);
+        FileWriter finalDatasetWriter = new FileWriter(txt, StandardCharsets.UTF_8);
 
 
         for(String smiles : finalSmiles){
@@ -70,7 +71,7 @@ public class CoreUtils {
     private static ArrayList<String> fetchSmilesFromTXTFile() {
         ArrayList<String> smiles = new ArrayList<>();
         try {
-            BufferedReader buffer = new BufferedReader(new FileReader(System.getProperty("user.dir") + "/src/main/java/VP.txt"));
+            BufferedReader buffer = new BufferedReader(new InputStreamReader(new FileInputStream(System.getProperty("user.dir") + "/src/main/java/VP.txt"), StandardCharsets.UTF_8));
             String lineFetched = null;
             String[] smilesArray;
 

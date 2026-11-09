@@ -1,5 +1,7 @@
 package insilico.core.molecule.tools;
 
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import insilico.core.exception.InvalidMoleculeException;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.molecule.InsilicoMolecule;
@@ -19,7 +21,7 @@ public class MoleculeInfoPrinter {
 
     public static void PrintInfo(InsilicoMolecule Molecule, OutputStream out){
 
-        PrintWriter writer = new PrintWriter(out);
+        PrintWriter writer = new PrintWriter(new OutputStreamWriter(out, StandardCharsets.UTF_8));
 
         writer.println(StringSelectorCore.getString("tool_infoprinter_valid_mol") + Molecule.IsValid());
         writer.println(StringSelectorCore.getString("tool_infoprinter_warn") + Molecule.GetWarnings());

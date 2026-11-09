@@ -1,5 +1,6 @@
 package insilico.core.model.qmrf;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.exception.InitFailureException;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -110,7 +111,7 @@ public class QMRFMSDoc {
     public void SaveXMLtoFile(String filename) {
         String xml = ParseAndConvertToXML();
         try {
-            FileWriter f = new FileWriter(filename);
+            FileWriter f = new FileWriter(filename, StandardCharsets.UTF_8);
             f.write(xml);
             f.flush();
             f.close();

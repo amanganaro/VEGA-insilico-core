@@ -1,5 +1,7 @@
 package insilico.core.model.report.txt;
 
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.localization.StringSelectorCore;
@@ -34,7 +36,7 @@ public class ReportTXTMultiple {
     public static void PrintReport(ArrayList<InsilicoModelWrapper> ModelsWrapper,
                                    ArrayList<InsilicoModelConsensusWrapper> ModelsConsWrapper)
             throws GenericFailureException {
-        PrintWriter pw = new PrintWriter(System.out);
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
         PrintReport(ModelsWrapper, ModelsConsWrapper, pw);
     }
 
@@ -64,7 +66,7 @@ public class ReportTXTMultiple {
     public static void PrintReport(ArrayList<InsilicoModelWrapper> ModelsWrapper,
                                    ArrayList<InsilicoModelConsensusWrapper> ModelsConsWrapper, String FileName)
             throws IOException, GenericFailureException {
-        PrintWriter pw = new PrintWriter(new File(FileName));
+        PrintWriter pw = new PrintWriter(new File(FileName), StandardCharsets.UTF_8);
         PrintReport(ModelsWrapper, ModelsConsWrapper, pw);
         pw.close();
     }

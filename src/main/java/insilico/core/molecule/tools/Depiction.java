@@ -65,11 +65,12 @@ public class Depiction {
         DepictionGenerator generator = new DepictionGenerator().withSize(width,height).withAtomColors()
                 .withAtomMapNumbers().withAromaticDisplay();
 
+        // DepictionGenerator is immutable: each with...() call returns a new instance that must be reassigned
         for(DepicSub curDepicSub: depicSubList){
-            generator.withHighlight(curDepicSub.getSubstructure(), curDepicSub.getColorSub());
+            generator = generator.withHighlight(curDepicSub.getSubstructure(), curDepicSub.getColorSub());
         }
 
-        generator.withOuterGlowHighlight(highlightWidth);
+        generator = generator.withOuterGlowHighlight(highlightWidth);
 
         BufferedImage bufferedImage = generator.depict(mol.GetStructure()).toImg();
 

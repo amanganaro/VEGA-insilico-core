@@ -1,5 +1,6 @@
 package insilico.core.molecule.conversion;
 
+import java.nio.charset.StandardCharsets;
 import insilico.core.exception.GenericFailureException;
 import insilico.core.exception.InitFailureException;
 import insilico.core.exception.InvalidMoleculeException;
@@ -174,7 +175,7 @@ public class MDLMolecule {
     private static String GetTag(byte[] MDL, String Tag) throws GenericFailureException {
 
         ByteArrayInputStream in = new ByteArrayInputStream(MDL);
-        BufferedReader br = new BufferedReader(new InputStreamReader(in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 
         Tag = "<" + Tag + ">";
         try {
