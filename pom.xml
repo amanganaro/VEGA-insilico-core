@@ -17,6 +17,10 @@
     <properties>
         <java.version>17</java.version>
         <skipTests>true</skipTests>
+        <!-- Golden regression tests (src/test/java/golden) run only with the "golden" profile -->
+        <surefire.groups></surefire.groups>
+        <surefire.excludedGroups>golden</surefire.excludedGroups>
+        <surefire.testFailureIgnore>true</surefire.testFailureIgnore>
     </properties>
 
     <distributionManagement>
@@ -250,8 +254,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.6</version>
                 <configuration>
-                    <skipTests>true</skipTests>
-                    <testFailureIgnore>true</testFailureIgnore>
+                    <skipTests>${skipTests}</skipTests>
+                    <testFailureIgnore>${surefire.testFailureIgnore}</testFailureIgnore>
+                    <groups>${surefire.groups}</groups>
+                    <excludedGroups>${surefire.excludedGroups}</excludedGroups>
                 </configuration>
             </plugin>
 
@@ -291,11 +297,33 @@
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
+                        <configuration>
+                            <!-- golden regression tests and their data are internal to this project -->
+                            <excludes>
+                                <exclude>golden/**</exclude>
+                            </excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
 
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            Golden regression tests: mvn test -Pgolden
+            Regenerate reference files: mvn test -Pgolden -Dgolden.update=true
+        -->
+        <profile>
+            <id>golden</id>
+            <properties>
+                <skipTests>false</skipTests>
+                <surefire.groups>golden</surefire.groups>
+                <surefire.excludedGroups></surefire.excludedGroups>
+                <surefire.testFailureIgnore>false</surefire.testFailureIgnore>
+            </properties>
+        </profile>
+    </profiles>
 
 </project>
