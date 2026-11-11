@@ -330,15 +330,8 @@ public class Communication {
         String envFolder = envPath.toAbsolutePath().toString();
 
         if(Files.exists(envPath)) {
-            if (SystemUtils.IS_OS_WINDOWS) {
-                String cmd = "rmdir /s /q \"" + envFolder + "\"";
-                result = GeneralUtilities.executeCommandLine(null, "cmd.exe", "/c", cmd);
-
-            } else {
-                String cmd = "rm -rf" + envFolder;
-                result = GeneralUtilities.executeCommandLine(null, "bash", "--login", "-c", cmd);
-            }
-            log.info("{} in removing conda env {}.", result ? "Success" : "Error" , condaEnv);
+            FileUtilities.deleteFolder(envFolder);
+            log.info("{} in removing python env {}.", result ? "Success" : "Error" , condaEnv);
         }
         else{
             result = true;

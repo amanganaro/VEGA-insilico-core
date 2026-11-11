@@ -59,18 +59,34 @@ public class main {
 
     public static void main(String[] args) throws Exception {
 
+//        Path patToZip= Paths.get(System.getProperty("user.home"),"Documents", "vega-host", "envs", "VEGA_cddd_V2.zip").resolve("");
+//        String actualSha256 = HTTPUtils.sha256(new File(patToZip.toString()));
+//        String modelReferenceName = "VEGA_cddd_V2";
+//        String httpUrl = "https://amcc.it/vega/"+modelReferenceName+".zip";
+//        String expectedSha256 = org.apache.commons.io.IOUtils
+//                .toString(new URL(httpUrl + ".sha256"), java.nio.charset.StandardCharsets.UTF_8)
+//                .trim().split("\\s+")[0];
+//        if (!actualSha256.equalsIgnoreCase(expectedSha256)) {
+//            throw new IOException("Checksum mismatch for " + patToZip.toString() + ": expected " + expectedSha256 +
+//                    ", got " + actualSha256);
+//        }
+//        else{
+//            System.out.println("SHA matches");
+//        }
+//
+//        if (1==1) return;
 
 //        Path pathToVEGAFolder = Paths.get(System.getProperty("user.home"),"AppData", "Local", "vega-models").resolve("");
-//        String modelReferenceName = "cox-dili_1_0_0";
-//        String httpUrl = "https://amcc.it/vega/"+modelReferenceName+".zip";
-//        File zipFile = File.createTempFile(modelReferenceName, ".zip");
-//        HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
-//        log.info("Finish to download the zip file.");
+        String modelReferenceName = "VEGA_cddd_V2";
+        String httpUrl = "https://amcc.it/vega/"+modelReferenceName+".zip";
+        File zipFile = File.createTempFile(modelReferenceName, ".zip");
+        HTTPUtils.downloadFile(httpUrl, zipFile.getAbsolutePath());
+        log.info("Finish to download the zip file.");
 //        FileUtilities.extractFilesFromZip(zipFile.getAbsolutePath(), pathToVEGAFolder.toString());
 //        zipFile.delete();
 //        log.info("Copied all necessary file from zip file.");
 //
-//        if (1==1) return;
+        if (1==1) return;
 
         CdddDescriptors cd = new CdddDescriptors(
                 List.of(

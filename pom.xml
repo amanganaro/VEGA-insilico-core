@@ -147,7 +147,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.protoqsar</groupId>
+            <groupId>InSilico</groupId>
             <artifactId>VegaPythonEnv-Cddd</artifactId>
             <optional>true</optional>
             <version>1.0.0</version>

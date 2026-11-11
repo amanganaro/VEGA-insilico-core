@@ -1,17 +1,12 @@
 package insilico.core.tools.utils;
 
-import org.apache.commons.io.FileUtils;
-
 import java.io.*;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class HTTPUtils {
 
@@ -36,9 +31,24 @@ public class HTTPUtils {
         }
         while(existingFileSize < fileLength && maxTries > 0){
             HttpURLConnection httpUrlConnection = (HttpURLConnection) url.openConnection();
-            boolean append = file.exists();
+            boolean append = file.exists() && file.length() > 0;
             if(append) {
                 httpUrlConnection.setRequestProperty("Range", "bytes=" + file.length() + "-");
+            }
+
+            int responseCode = httpUrlConnection.getResponseCode();
+            if (append && responseCode != HttpURLConnection.HTTP_PARTIAL) {
+                // server ignored the Range header (e.g. 200 OK with full content) or rejected it:
+                // appending would corrupt the file, so restart the download from scratch
+                append = false;
+                if (responseCode != HttpURLConnection.HTTP_OK) {
+                    httpUrlConnection.disconnect();
+                    httpUrlConnection = (HttpURLConnection) url.openConnection();
+                    responseCode = httpUrlConnection.getResponseCode();
+                }
+            }
+            if (responseCode != HttpURLConnection.HTTP_OK && responseCode != HttpURLConnection.HTTP_PARTIAL) {
+                throw new IOException("Unexpected HTTP response code " + responseCode + " while downloading " + resourceUrl);
             }
 
             // resume download (append to existing file) or start a new file
@@ -51,18 +61,47 @@ public class HTTPUtils {
                 }
             }
             existingFileSize = file.length();
-            
-            System.out.println(existingFileSize);
-            
             maxTries--;
         }
 
-        System.out.println(fileLength);
-        System.out.println(existingFileSize);
-        System.out.println(maxTries);
-
-        if(maxTries < 0){
-            throw new IOException("Cannot download file");
+        if(existingFileSize < fileLength && maxTries == 0){
+            throw new IOException("Cannot download file: still incomplete after all retry attempts");
         }
+
+        if(existingFileSize != fileLength){
+            throw new IOException("File is not downloaded correctly");
+        }
+
+
+         String expectedSha256 = org.apache.commons.io.IOUtils
+                 .toString(new URL(resourceUrl + ".sha256"), java.nio.charset.StandardCharsets.UTF_8)
+                 .trim().split("\\s+")[0];
+         String actualSha256 = sha256(file);
+         if (!actualSha256.equalsIgnoreCase(expectedSha256)) {
+             Files.deleteIfExists(file.toPath());
+             throw new IOException("Checksum mismatch for " + filePath + ": expected " + expectedSha256 +
+                     ", got " + actualSha256);
+         }
+    }
+
+    public static String sha256(File file) throws IOException {
+        MessageDigest digest;
+        try {
+            digest = MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 not available", e);
+        }
+        try (InputStream in = new BufferedInputStream(new FileInputStream(file))) {
+            byte[] buffer = new byte[8192];
+            int n;
+            while ((n = in.read(buffer)) > 0) {
+                digest.update(buffer, 0, n);
+            }
+        }
+        StringBuilder hex = new StringBuilder();
+        for (byte b : digest.digest()) {
+            hex.append(String.format("%02x", b));
+        }
+        return hex.toString();
     }
 }
