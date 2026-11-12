@@ -9,7 +9,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Golden regression dataset: reads {@code src/test/resources/golden/molecules.tsv} and converts each SMILES with
@@ -41,6 +43,7 @@ public final class GoldenDataset {
     public record Item(Entry entry, InsilicoMolecule molecule) { }
 
     private static List<Item> cachedItems;
+    private static Map<String, String> cachedSmiles;
 
     private GoldenDataset() { }
 
@@ -92,6 +95,40 @@ public final class GoldenDataset {
                     .append(e.source()).append('\t').append(e.category()).append('\n');
         Files.createDirectories(file.getParent());
         Files.writeString(file, sb.toString(), StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Input SMILES of every molecule of the dataset, by NAME (file order). Cached for the whole JVM; if the dataset
+     * cannot be read an empty map is returned, so that reports simply show the bare names.
+     *
+     * @return unmodifiable map NAME -&gt; SMILES
+     */
+    public static synchronized Map<String, String> smilesByName() {
+        if (cachedSmiles == null) {
+            Map<String, String> map = new LinkedHashMap<>();
+            try {
+                for (Entry e : readEntries(MOLECULES_FILE))
+                    map.put(e.name(), e.smiles());
+            } catch (IOException e) {
+                System.out.println("WARNING: cannot read " + MOLECULES_FILE + ": " + e.getMessage());
+            }
+            cachedSmiles = Collections.unmodifiableMap(map);
+        }
+        return cachedSmiles;
+    }
+
+    /**
+     * Label of a molecule for human readable reports: {@code NAME (SMILES)}. Names not in the dataset are returned
+     * unchanged.
+     *
+     * @param name molecule NAME
+     * @return the label
+     */
+    public static String label(String name) {
+        String smiles = smilesByName().get(name);
+        if (smiles == null)
+            return name;
+        return name + " (" + (smiles.isEmpty() ? "empty SMILES" : smiles) + ")";
     }
 
     /**

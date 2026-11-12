@@ -1,5 +1,7 @@
 package golden;
 
+import insilico.core.descriptor.Descriptor;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.fail;
@@ -23,10 +26,13 @@ import static org.junit.jupiter.api.Assertions.fail;
  * All the differences are collected (the comparison does not stop at the first one) and written to
  * {@code target/golden-diff/}:
  * <ul>
- *     <li>{@code <name>-diff.tsv}: one line per changed cell (ID, column, expected, actual);</li>
+ *     <li>{@code <name>-diff.tsv}: one line per changed cell (ID, SMILES, column, expected, actual);</li>
  *     <li>{@code summary.txt}: for every table, rows/columns added or removed, and for every column how many rows
  *     changed and the maximum absolute difference.</li>
  * </ul>
+ * Molecules are shown as {@code NAME (SMILES)} in the summary. {@link Descriptor#MISSING_VALUE} is treated as a
+ * missing value, not as a number: changes to or from it are counted separately and never enter the maximum
+ * difference.
  */
 public final class GoldenDiff {
 
@@ -55,6 +61,23 @@ public final class GoldenDiff {
      */
     public static void check(String name, Path referenceFile, String description, GoldenFiles.Table actual)
             throws IOException {
+        check(name, referenceFile, description, actual, diffs -> List.of());
+    }
+
+    /**
+     * Same as {@link #check(String, Path, String, GoldenFiles.Table)}, with a table-specific report added to the
+     * summary when the table differs. The extra lines are placed right after the table title, before the generic
+     * per-column summary, so they are visible in the (truncated) assertion message too.
+     *
+     * @param name short name of the table, used in report file names
+     * @param referenceFile the golden reference file
+     * @param description one line describing the content, written in the reference file
+     * @param actual the freshly computed table
+     * @param extraSummary builds the additional summary lines from the changed cells
+     * @throws IOException on read/write errors
+     */
+    public static void check(String name, Path referenceFile, String description, GoldenFiles.Table actual,
+                             Function<List<CellDiff>, List<String>> extraSummary) throws IOException {
         cleanDiffDirOnce();
         Files.deleteIfExists(DIFF_DIR.resolve(name + "-diff.tsv"));
 
@@ -78,6 +101,7 @@ public final class GoldenDiff {
         writeDiffFile(name, diffs);
         List<String> lines = new ArrayList<>();
         lines.add("=== " + name + " (" + referenceFile + ") ===");
+        lines.addAll(extraSummary.apply(diffs));
         lines.addAll(summary);
         lines.add("");
         Files.write(SUMMARY_FILE, lines, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
@@ -108,15 +132,13 @@ public final class GoldenDiff {
                 .filter(r -> !actual.rows().containsKey(r)).toList();
         List<String> addedRows = actual.rows().keySet().stream()
                 .filter(r -> !expected.rows().containsKey(r)).toList();
-        addList(summary, "Columns removed", removedCols);
-        addList(summary, "Columns added", addedCols);
-        addList(summary, "Rows removed", removedRows);
-        addList(summary, "Rows added", addedRows);
+        addList(summary, "Columns removed", removedCols.stream().map(GoldenDataset::label).toList());
+        addList(summary, "Columns added", addedCols.stream().map(GoldenDataset::label).toList());
+        addList(summary, "Rows removed", removedRows.stream().map(GoldenDataset::label).toList());
+        addList(summary, "Rows added", addedRows.stream().map(GoldenDataset::label).toList());
 
         List<CellDiff> diffs = new ArrayList<>();
-        Map<String, int[]> changedByColumn = new LinkedHashMap<>();
-        Map<String, Double> maxDiffByColumn = new LinkedHashMap<>();
-        Map<String, Set<String>> changedRowsByColumn = new LinkedHashMap<>();
+        Map<String, ColumnStats> statsByColumn = new LinkedHashMap<>();
 
         for (Map.Entry<String, List<String>> row : expected.rows().entrySet()) {
             List<String> actRow = actual.rows().get(row.getKey());
@@ -131,10 +153,7 @@ public final class GoldenDiff {
                 if (sameValue(e, a))
                     continue;
                 diffs.add(new CellDiff(row.getKey(), col.getKey(), e, a));
-                changedByColumn.computeIfAbsent(col.getKey(), k -> new int[1])[0]++;
-                changedRowsByColumn.computeIfAbsent(col.getKey(), k -> new LinkedHashSet<>()).add(row.getKey());
-                double d = numericDifference(e, a);
-                maxDiffByColumn.merge(col.getKey(), d, Math::max);
+                statsByColumn.computeIfAbsent(col.getKey(), k -> new ColumnStats()).add(row.getKey(), e, a);
             }
         }
 
@@ -142,17 +161,52 @@ public final class GoldenDiff {
             Set<String> changedRows = new LinkedHashSet<>();
             diffs.forEach(d -> changedRows.add(d.id()));
             summary.add(String.format(Locale.ROOT, "Changed cells: %d, in %d rows and %d columns",
-                    diffs.size(), changedRows.size(), changedByColumn.size()));
-            summary.add("Column\tChanged rows\tMax abs difference\tFirst rows");
-            for (Map.Entry<String, int[]> c : changedByColumn.entrySet()) {
-                double max = maxDiffByColumn.get(c.getKey());
-                List<String> first = changedRowsByColumn.get(c.getKey()).stream().limit(5).toList();
-                summary.add(c.getKey() + "\t" + c.getValue()[0] + "\t"
-                        + (Double.isNaN(max) ? "n/a (text)" : GoldenFiles.format(max)) + "\t"
-                        + String.join(", ", first));
+                    diffs.size(), changedRows.size(), statsByColumn.size()));
+            summary.add("Column\tChanged rows\tMax abs difference (both values present)\t"
+                    + "Changes to/from missing value\tFirst rows");
+            for (Map.Entry<String, ColumnStats> c : statsByColumn.entrySet()) {
+                ColumnStats s = c.getValue();
+                String max = s.numericChanges > 0 ? GoldenFiles.format(s.maxDiff)
+                        : (s.textChanges > 0 ? "n/a (text)" : "n/a");
+                List<String> first = s.rows.stream().limit(5).map(GoldenDataset::label).toList();
+                summary.add(GoldenDataset.label(c.getKey()) + "\t" + s.rows.size() + "\t" + max + "\t"
+                        + s.missingChanges + "\t" + String.join(", ", first));
             }
         }
         return diffs;
+    }
+
+    /**
+     * Statistics of the changed cells of one column. A change involving {@link Descriptor#MISSING_VALUE} on either side
+     * is only counted: the missing value is a convention, not a number, so it never enters the maximum difference.
+     */
+    private static final class ColumnStats {
+        final Set<String> rows = new LinkedHashSet<>();
+        int numericChanges = 0;
+        int missingChanges = 0;
+        int textChanges = 0;
+        double maxDiff = 0;
+
+        void add(String rowId, String expected, String actual) {
+            rows.add(rowId);
+            Double e = parse(expected), a = parse(actual);
+            if (e == null || a == null)
+                textChanges++;
+            else if (isMissing(e) || isMissing(a))
+                missingChanges++;
+            else {
+                numericChanges++;
+                maxDiff = Math.max(maxDiff, Math.abs(e - a));
+            }
+        }
+    }
+
+    /**
+     * @param value a numeric cell value
+     * @return true if the value is the {@link Descriptor#MISSING_VALUE} convention
+     */
+    static boolean isMissing(double value) {
+        return value == Descriptor.MISSING_VALUE;
     }
 
     /** Exact comparison: numerically when both cells are numbers, as text otherwise. */
@@ -163,14 +217,11 @@ public final class GoldenDiff {
         return e != null && a != null && Double.compare(e, a) == 0;
     }
 
-    private static double numericDifference(String expected, String actual) {
-        Double e = parse(expected), a = parse(actual);
-        if (e == null || a == null)
-            return Double.NaN;
-        return Math.abs(e - a);
-    }
-
-    private static Double parse(String s) {
+    /**
+     * @param s cell text
+     * @return the numeric value, or null if the cell is not a number
+     */
+    static Double parse(String s) {
         try {
             return Double.valueOf(s);
         } catch (NumberFormatException e) {
@@ -193,11 +244,22 @@ public final class GoldenDiff {
         summary.add(title + " (" + items.size() + "): " + shown);
     }
 
+    /**
+     * Writes one line per changed cell, with the SMILES of the row molecule. When the columns are molecules too (as
+     * in the similarity matrix), the SMILES of the column molecule is added as well.
+     */
     private static void writeDiffFile(String name, List<CellDiff> diffs) throws IOException {
-        StringBuilder sb = new StringBuilder("ID\tCOLUMN\tEXPECTED\tACTUAL\n");
-        for (CellDiff d : diffs)
-            sb.append(d.id()).append('\t').append(d.column()).append('\t').append(d.expected()).append('\t')
-                    .append(d.actual()).append('\n');
+        Map<String, String> smiles = GoldenDataset.smilesByName();
+        boolean moleculeColumns = diffs.stream().allMatch(d -> smiles.containsKey(d.column()));
+        StringBuilder sb = new StringBuilder(moleculeColumns
+                ? "ID\tSMILES\tCOLUMN\tCOLUMN_SMILES\tEXPECTED\tACTUAL\n"
+                : "ID\tSMILES\tCOLUMN\tEXPECTED\tACTUAL\n");
+        for (CellDiff d : diffs) {
+            sb.append(d.id()).append('\t').append(smiles.getOrDefault(d.id(), "")).append('\t').append(d.column());
+            if (moleculeColumns)
+                sb.append('\t').append(smiles.get(d.column()));
+            sb.append('\t').append(d.expected()).append('\t').append(d.actual()).append('\n');
+        }
         Files.writeString(DIFF_DIR.resolve(name + "-diff.tsv"), sb.toString(), StandardCharsets.UTF_8);
     }
 
