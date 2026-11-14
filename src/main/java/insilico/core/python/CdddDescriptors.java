@@ -341,6 +341,54 @@ public class CdddDescriptors {
         return smilesFileMap.get(smiles);
     }
 
+    /***
+     * Writes a single CSV file holding the descriptors of several molecules, one row per molecule, in the order of
+     * the given SMILES list. The per-molecule files produced by the CDDD script all share the same header, so the
+     * combined file has exactly the format the model scripts already expect to read: concatenating them needs no
+     * change to any Python script.
+     * <p>
+     * This is what allows a Python model to be executed in batch mode: instead of one descriptor file per molecule
+     * (and therefore one Python process per molecule), the model receives one file with every molecule in it.
+     *
+     * @param smilesList the molecules to include, in the order their results are expected back
+     * @param target the file to write
+     * @throws IOException if a descriptor file is missing or unreadable, which would silently misalign the rows
+     */
+    public void writeCombinedDescriptorFile(List<String> smilesList, Path target) throws IOException {
+
+        boolean headerWritten = false;
+
+        try (BufferedWriter writer = Files.newBufferedWriter(target, StandardCharsets.UTF_8)) {
+            for (String smiles : smilesList) {
+                String descriptorFile = getFilePathOf(smiles);
+                if (descriptorFile == null) {
+                    throw new IOException("No CDDD descriptor file for molecule '" + smiles
+                            + "': cannot build the combined descriptor file");
+                }
+
+                List<String> lines = Files.readAllLines(Paths.get(descriptorFile), StandardCharsets.UTF_8);
+                if (lines.size() < 2) {
+                    throw new IOException("CDDD descriptor file " + descriptorFile + " of molecule '" + smiles
+                            + "' has no data row");
+                }
+
+                if (!headerWritten) {
+                    writer.write(lines.get(0));
+                    writer.newLine();
+                    headerWritten = true;
+                }
+
+                // copy the data rows verbatim, so quoting and separators stay exactly as the CDDD script wrote them
+                for (int i = 1; i < lines.size(); i++) {
+                    writer.write(lines.get(i));
+                    writer.newLine();
+                }
+            }
+        }
+
+        log.info("Written combined descriptor file with {} molecules in {}", smilesList.size(), target);
+    }
+
     public void dispose() throws IOException {
         FileUtils.deleteDirectory(new File(descriptorDirectory));
         FileUtils.delete(new File(inputSmilesFileName));

@@ -6,6 +6,7 @@ import insilico.core.exception.*;
 import insilico.core.localization.StringSelectorCore;
 import insilico.core.model.runner.iInsilicoModelRunnerMessenger;
 import insilico.core.model.trainingset.TrainingSet;
+import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.python.CdddDescriptors;
 import insilico.core.python.Communication;
 import insilico.core.tools.utils.FileUtilities;
@@ -21,9 +22,12 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 public abstract class InsilicoModelPython extends InsilicoModel implements iInsilicoModelPython {
@@ -37,6 +41,32 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     protected iInsilicoModelRunnerMessenger messenger;
     protected String envTag;
     String resourceFileZip;
+
+    /** Name of the column the Python scripts echo back, used to check that the batch rows are aligned. */
+    protected static final String BATCH_SMILES_COLUMN = "smiles";
+
+    /** Default number of molecules sent to the Python script in one execution. */
+    protected static final int DEFAULT_BATCH_CHUNK_SIZE = 500;
+
+    /**
+     * Predictions computed in advance by {@link #prepareBatch(List)}, keyed by the input SMILES of the molecule, the
+     * same key {@link CdddDescriptors#getFilePathOf(String)} uses. Null when no batch is active, which is the
+     * default and makes the model behave exactly as before.
+     */
+    private Map<String, Map<String, String>> batchPredictions;
+
+    /**
+     * The CDDD descriptors of the current run, needed to build the batch input file.
+     * <p>
+     * It is kept here in addition to the subclass field because {@code setDescriptorGenerator} is abstract and every
+     * model stores the generator in a field of its own, which this base class cannot reach. The runner sets it
+     * through {@link #setCdddDescriptorsForBatch(CdddDescriptors)} next to {@code setDescriptorGenerator}, so no
+     * model had to be modified.
+     */
+    private CdddDescriptors batchCdddDescriptors;
+
+    /** Number of molecules per Python execution; see {@link #DEFAULT_BATCH_CHUNK_SIZE}. */
+    private int batchChunkSize = DEFAULT_BATCH_CHUNK_SIZE;
 
     public InsilicoModelPython(String modelData) throws InitFailureException {
         super(modelData);
@@ -152,6 +182,17 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      * The management of the name is left to the implemented model
      */
     public Map<String, String> calculatePythonModel(Path scriptPath, String... params) throws GenericFailureException{
+
+        // When a batch has been prepared, the prediction of the current molecule has already been computed and no
+        // process needs to be started. Models keep calling this method unchanged and keep reading the same Map.
+        Map<String, String> cached = getCachedPrediction();
+        if (cached != null) {
+            // the caller created an empty output file before calling: nothing will write to it, so remove it
+            deleteOutputTempFile();
+            log.debug("Using the batch prediction of the current molecule, no Python process started.");
+            return cached;
+        }
+
         Map<String, String> result=null;
         try {
             log.info("Start calculating model results.");
@@ -291,8 +332,268 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     }
 
     public void prepareInputData() throws GenericFailureException {
-        FileUtilities.WriteByteArrayToFile(inputTempFile, ("smiles\r\n"+CurMolecule.GetSMILES()).getBytes(StandardCharsets.UTF_8));
-        log.info("Prepared input file.");
+        prepareInputData(List.of(CurMolecule.GetSMILES()), inputTempFile);
+    }
+
+    /**
+     * Writes the SMILES input file read by the models that do not use the CDDD descriptors and compute their own
+     * descriptors in Python. It is the multi-molecule form of {@link #prepareInputData()}: same format, one row per
+     * molecule instead of one.
+     *
+     * @param smilesList the molecules to write, in the order their results are expected back
+     * @param inputFile the file to write
+     * @throws GenericFailureException if the file cannot be written
+     */
+    public void prepareInputData(List<String> smilesList, String inputFile) throws GenericFailureException {
+        StringBuilder sb = new StringBuilder("smiles\r\n");
+        for (String smiles : smilesList) {
+            sb.append(smiles).append("\r\n");
+        }
+        FileUtilities.WriteByteArrayToFile(inputFile, sb.toString().getBytes(StandardCharsets.UTF_8));
+        log.info("Prepared input file with {} molecules.", smilesList.size());
+    }
+
+    // ---------------------------------------------------------------------------------------------------------
+    // Batch execution
+    // ---------------------------------------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * False here: a model opts in by overriding this method, once its Python script has been verified to handle an
+     * input file with more than one row.
+     */
+    @Override
+    public boolean supportsBatchExecution() {
+        return false;
+    }
+
+    @Override
+    public void clearBatch() {
+        batchPredictions = null;
+    }
+
+    /**
+     * @return true if a batch has been prepared and is being used, false if the model is running one Python process
+     * per molecule. Useful to tell a successful batch from a silent fallback.
+     */
+    public boolean isBatchActive() {
+        return batchPredictions != null;
+    }
+
+    /**
+     * Gives this model the CDDD descriptors of the current run, so that it can build its batch input file.
+     * Called by the runner together with {@code setDescriptorGenerator}; see {@link #batchCdddDescriptors}.
+     *
+     * @param cdddDescriptors the descriptors computed for the whole set of molecules
+     */
+    public void setCdddDescriptorsForBatch(CdddDescriptors cdddDescriptors) {
+        this.batchCdddDescriptors = cdddDescriptors;
+    }
+
+    /** @return the number of molecules sent to the Python script in one execution */
+    public int getBatchChunkSize() {
+        return batchChunkSize;
+    }
+
+    /**
+     * @param batchChunkSize molecules per Python execution; values below 1 are ignored. Smaller chunks use less
+     *                       memory and give more frequent progress updates, larger ones start fewer processes.
+     */
+    public void setBatchChunkSize(int batchChunkSize) {
+        if (batchChunkSize > 0) {
+            this.batchChunkSize = batchChunkSize;
+        }
+    }
+
+    @Override
+    public void prepareBatch(List<InsilicoMolecule> molecules) throws GenericFailureException {
+
+        clearBatch();
+
+        if (!supportsBatchExecution() || molecules == null || molecules.isEmpty()) {
+            return;
+        }
+
+        // Only the molecules the model could actually predict, in order and without repetitions: an invalid molecule
+        // fails before the prediction anyway, and the same SMILES always gives the same result.
+        List<String> keys = new ArrayList<>();
+        Set<String> alreadyAdded = new LinkedHashSet<>();
+        for (InsilicoMolecule molecule : molecules) {
+            if (molecule == null || !molecule.IsValid()) {
+                continue;
+            }
+            String key = molecule.getInputSMILES();
+            if (key == null || key.isEmpty()) {
+                continue;
+            }
+            if (isUsingCdddDescriptor()
+                    && (batchCdddDescriptors == null || !batchCdddDescriptors.checkIfCdddFileIsValid(key))) {
+                continue;
+            }
+            if (alreadyAdded.add(key)) {
+                keys.add(key);
+            }
+        }
+
+        if (keys.isEmpty()) {
+            log.info("No molecule can be predicted in batch by model {}: keeping the per-molecule execution.",
+                    this.getInfo().getName());
+            return;
+        }
+
+        Map<String, Map<String, String>> predictions = new HashMap<>();
+        for (int from = 0; from < keys.size(); from += batchChunkSize) {
+            List<String> chunk = keys.subList(from, Math.min(from + batchChunkSize, keys.size()));
+            if (!runBatchChunk(chunk, predictions)) {
+                // Anything unexpected and the batch is abandoned as a whole: the per-molecule execution is slower
+                // but always correct, and is far better than silently returning misaligned predictions.
+                log.error("Batch execution failed for model {}: falling back to the per-molecule execution.",
+                        this.getInfo().getName());
+                return;
+            }
+            if (messenger != null) {
+                messenger.SendMessage("Model " + this.getInfo().getName() + ": predicted "
+                        + Math.min(from + batchChunkSize, keys.size()) + " of " + keys.size() + " molecules");
+            }
+        }
+
+        batchPredictions = predictions;
+        log.info("Model {}: {} molecules predicted in batch.", this.getInfo().getName(), predictions.size());
+    }
+
+    /**
+     * Runs the Python script once on a chunk of molecules and stores one prediction per molecule.
+     * <p>
+     * The rows that come back are matched to the input molecules by position, and the match is verified against the
+     * SMILES column the scripts echo back. If anything does not line up, nothing is stored and false is returned.
+     *
+     * @param keys the input SMILES of the chunk, in the order they are written to the input file
+     * @param predictions the map to fill
+     * @return true if every molecule of the chunk got its prediction
+     */
+    private boolean runBatchChunk(List<String> keys, Map<String, Map<String, String>> predictions) {
+
+        File inputFile = null;
+        File outputFile = null;
+        try {
+            inputFile = File.createTempFile("insilico-batch-input-", ".csv");
+            outputFile = File.createTempFile("insilico-batch-output-", ".csv");
+
+            buildBatchInputFile(keys, inputFile.toPath());
+
+            Path scriptPath = Paths.get(pathToExternalFolder.toString(), getScriptName());
+            String[] params = buildBatchCommandParams(inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
+
+            log.info("Executing model {} in batch on {} molecules.", this.getInfo().getName(), keys.size());
+            boolean computationOk;
+            if (SystemUtils.IS_OS_WINDOWS) {
+                computationOk = communication.executePureCommandInPythonEnv(getPythonEnv(), scriptPath.toString(), params);
+            } else {
+                computationOk = communication.executeScriptInCondaEnv(getCondaEnv(), scriptPath.toString(), params);
+            }
+
+            if (!computationOk) {
+                log.error("Batch execution of the Python script of model {} failed.", this.getInfo().getName());
+                return false;
+            }
+
+            List<Map<String, String>> rows =
+                    FileUtilities.readAllRowsAndHeaderFromFile(outputFile.getAbsolutePath(), ',');
+
+            if (rows.size() != keys.size()) {
+                log.error("Model {} returned {} rows for {} molecules: the batch output cannot be matched to the input.",
+                        this.getInfo().getName(), rows.size(), keys.size());
+                return false;
+            }
+
+            for (int i = 0; i < rows.size(); i++) {
+                Map<String, String> row = rows.get(i);
+                String returnedSmiles = row.get(BATCH_SMILES_COLUMN);
+                if (returnedSmiles != null && !returnedSmiles.equals(keys.get(i))) {
+                    log.error("Model {} returned the prediction of '{}' where '{}' was expected: "
+                                    + "the batch output is not aligned with the input.",
+                            this.getInfo().getName(), returnedSmiles, keys.get(i));
+                    return false;
+                }
+                predictions.put(keys.get(i), row);
+            }
+
+            return true;
+
+        } catch (Exception ex) {
+            log.error("Batch execution of model {} failed: {}", this.getInfo().getName(), ex.getMessage());
+            return false;
+        } finally {
+            deleteQuietly(inputFile);
+            deleteQuietly(outputFile);
+        }
+    }
+
+    /**
+     * Writes the input file of a batch execution. The default implementation covers both families of Python models,
+     * which is what keeps this API usable by future models:
+     * <ul>
+     *     <li>models using the CDDD descriptors get the per-molecule descriptor files merged into one file, which is
+     *     exactly the format their script already reads;</li>
+     *     <li>the other models get the plain SMILES file of {@link #prepareInputData(List, String)}.</li>
+     * </ul>
+     * A model whose script expects something else overrides this method.
+     *
+     * @param smilesList the molecules of the chunk, in order
+     * @param target the file to write
+     * @throws IOException if the file cannot be written
+     * @throws GenericFailureException if the descriptors needed to build it are not available
+     */
+    protected void buildBatchInputFile(List<String> smilesList, Path target)
+            throws IOException, GenericFailureException {
+
+        if (isUsingCdddDescriptor()) {
+            if (batchCdddDescriptors == null) {
+                throw new GenericFailureException("Model " + this.getInfo().getName()
+                        + " uses the CDDD descriptors but none were given for the batch execution");
+            }
+            batchCdddDescriptors.writeCombinedDescriptorFile(smilesList, target);
+        } else {
+            prepareInputData(smilesList, target.toString());
+        }
+    }
+
+    /**
+     * Command line arguments of a batch execution. The default is the {@code --input}/{@code --output} form used by
+     * the Python scripts; a model whose script takes them differently overrides this method.
+     *
+     * @param inputFile the input file of the chunk
+     * @param outputFile the file the script must write
+     * @return the arguments to append to the script path
+     */
+    protected String[] buildBatchCommandParams(String inputFile, String outputFile) {
+        return new String[] { "--input", inputFile, "--output", outputFile };
+    }
+
+    /**
+     * @return the prediction computed in advance for the current molecule, or null when no batch is active or the
+     * current molecule is not part of it, in which case the Python script must be executed as usual
+     */
+    private Map<String, String> getCachedPrediction() {
+        if (batchPredictions == null || CurMolecule == null) {
+            return null;
+        }
+        return batchPredictions.get(CurMolecule.getInputSMILES());
+    }
+
+    /** Removes the output file the caller created before asking for a prediction that came from the cache. */
+    private void deleteOutputTempFile() {
+        if (outputTempFile != null) {
+            deleteQuietly(new File(outputTempFile));
+        }
+    }
+
+    /** Deletes a temporary file without failing the computation if it cannot be removed. */
+    private void deleteQuietly(File file) {
+        if (file != null && file.exists() && !file.delete()) {
+            log.warn("Unable to delete the temporary file {}", file.getAbsolutePath());
+        }
     }
 
     public abstract void setDescriptorGenerator(Object descriptorGenerator);

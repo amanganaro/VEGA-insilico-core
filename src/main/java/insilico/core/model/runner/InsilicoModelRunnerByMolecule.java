@@ -80,10 +80,23 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
             if(InsilicoModelPython.class.isAssignableFrom(wrapper.getModel().getClass()) &&
                     ((InsilicoModelPython) wrapper.getModel()).isUsingCdddDescriptor()){
                 ((InsilicoModelPython) wrapper.getModel()).setDescriptorGenerator(cdddDescriptors);
+                ((InsilicoModelPython) wrapper.getModel()).setCdddDescriptorsForBatch(cdddDescriptors);
             }
         }
         for(InsilicoModelConsensusWrapper wrapper : ModelConsensusWrappers)
             wrapper.ResetResult();
+
+        // Predict all the molecules at once on the Python models that support it, so that their script is executed
+        // once instead of once per molecule. The loop below is left untouched: each model simply reads its own
+        // pre-computed result, exactly as it already does with the CDDD descriptors.
+        for (InsilicoModelWrapper wrapper : ModelWrappers) {
+            if (InsilicoModelPython.class.isAssignableFrom(wrapper.getModel().getClass())) {
+                InsilicoModelPython pythonModel = (InsilicoModelPython) wrapper.getModel();
+                if (pythonModel.supportsBatchExecution()) {
+                    pythonModel.prepareBatch(Mols);
+                }
+            }
+        }
 
         // Calculate descriptors and models on each molecule
         if (Messenger != null)
@@ -144,6 +157,13 @@ public class InsilicoModelRunnerByMolecule extends InsilicoModelRunner {
                 }
 
             moleculeIndex++;
+        }
+
+        // Release the batch predictions: they are only valid for the molecules of this run
+        for (InsilicoModelWrapper wrapper : ModelWrappers) {
+            if (InsilicoModelPython.class.isAssignableFrom(wrapper.getModel().getClass())) {
+                ((InsilicoModelPython) wrapper.getModel()).clearBatch();
+            }
         }
 
         if(cdddDescriptors!=null){

@@ -19,8 +19,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -116,6 +119,57 @@ public class FileUtilities {
             }
         }
 
+    }
+
+    /***
+     * Method to read the header and every data row of a CSV file, pairing each row with the header into a Map
+     * with the header values as keys. It is the multi-row counterpart of
+     * {@link #readSelectedRowAndHeaderFromFile(String, char, int)}, needed to read the output of a Python script
+     * executed in batch mode, where one row corresponds to one molecule.
+     * <p>
+     * The returned list preserves the file order, and each Map preserves the column order, so that the caller can
+     * map every row back to the molecule it was computed for.
+     *
+     * @param file path of the CSV file to read
+     * @param delimiter the column separator
+     * @return one Map per data row, in file order; an empty list if the file has no data rows
+     * @throws IOException on read errors
+     * @throws CsvValidationException on malformed CSV content
+     */
+    public static List<Map<String, String>> readAllRowsAndHeaderFromFile(String file, char delimiter)
+            throws IOException, CsvValidationException {
+
+        Path path = Paths.get(file);
+        List<Map<String, String>> rows = new ArrayList<>();
+
+        try (Reader reader = Files.newBufferedReader(path)) {
+            CSVParser parser = new CSVParserBuilder()
+                    .withSeparator(delimiter)
+                    .withIgnoreQuotations(true)
+                    .build();
+
+            try (CSVReader csvReader = new CSVReaderBuilder(reader)
+                    .withCSVParser(parser)
+                    .build()) {
+
+                String[] headers = csvReader.readNext();
+                if (headers == null) {
+                    return rows;
+                }
+
+                String[] rowValues;
+                while ((rowValues = csvReader.readNext()) != null) {
+                    // a LinkedHashMap keeps the column order of the file
+                    Map<String, String> rowMap = new LinkedHashMap<>();
+                    for (int i = 0; i < headers.length; i++) {
+                        rowMap.put(headers[i], i < rowValues.length ? rowValues[i] : null);
+                    }
+                    rows.add(rowMap);
+                }
+            }
+        }
+
+        return rows;
     }
 
     public static void deleteFolder(String path) throws IOException {
