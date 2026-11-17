@@ -1,0 +1,22 @@
+{
+  "progetto": "VEGA-insilico-core",
+  "cve": {
+    "log4j:log4j:CVE-2019-17571": { "esito": "non-raggiungibile", "versione": "1.2.16", "motivo": "Richiede org.apache.log4j.net.SocketServer in ascolto: nessun uso nel core. Unica configurazione log4j (InsilicoLogger, logger_*.cfg) con solo RollingFileAppender." },
+    "log4j:log4j:CVE-2022-23305": { "esito": "non-raggiungibile", "versione": "1.2.16", "motivo": "Richiede JDBCAppender configurato: le configurazioni del core usano solo RollingFileAppender." },
+    "log4j:log4j:CVE-2022-23307": { "esito": "non-raggiungibile", "versione": "1.2.16", "motivo": "Riguarda il visualizzatore Chainsaw: non usato." },
+    "log4j:log4j:CVE-2021-4104": { "esito": "non-raggiungibile", "versione": "1.2.16", "motivo": "Richiede JMSAppender e accesso in scrittura alla configurazione log4j: configurazione interna con solo RollingFileAppender." },
+    "log4j:log4j:CVE-2022-23302": { "esito": "non-raggiungibile", "versione": "1.2.16", "motivo": "Richiede JMSSink: non usato." },
+    "log4j:log4j:CVE-2023-26464": { "esito": "non-raggiungibile", "versione": "1.2.16", "motivo": "Richiede SocketAppender/Chainsaw su JRE < 1.7: il core gira su Java 17 e non li usa." },
+    "com.fasterxml.jackson.core:jackson-databind:CVE-2026-68497": { "esito": "non-raggiungibile", "versione": "2.22.0", "motivo": "Il core usa solo l'annotazione @JsonAutoDetect (ad/item/ADIndex*): nessun ObjectMapper ne' parsing di JSON nel core. Da rivalutare nelle applicazioni che deserializzano JSON ricevuto (la versione arriva da qui)." },
+    "com.fasterxml.jackson.core:jackson-databind:CVE-2026-91776": { "esito": "non-raggiungibile", "versione": "2.22.0", "motivo": "Richiede deserializzazione polimorfica per nome con defaultImpl: nessuna @JsonTypeInfo e nessun parsing JSON nel core." },
+    "com.fasterxml.jackson.core:jackson-databind:CVE-2026-91777": { "esito": "non-raggiungibile", "versione": "2.22.0", "motivo": "Richiede @JsonIdentityInfo e deserializzazione: assenti nel core." },
+    "com.fasterxml.jackson.core:jackson-core:CVE-2026-89407": { "esito": "non-raggiungibile", "versione": "2.22.0", "motivo": "DoS nel parsing di numeri in stringa: il core non fa parsing di JSON (solo annotazioni Jackson)." },
+    "com.fasterxml.jackson.core:jackson-core:CVE-2026-89425": { "esito": "non-raggiungibile", "versione": "2.22.0", "motivo": "Riguarda UTF8DataInputJsonParser (parsing da DataInput): nessun parsing di JSON nel core." },
+    "com.google.guava:guava:CVE-2026-102554": { "esito": "non-raggiungibile", "versione": "33.6.0-jre", "motivo": "Richiede la deserializzazione Java di collezioni Guava da dati non fidati: il core non importa com.google.common e deserializza solo i TrainingSet .dat interni ai jar dei modelli." },
+    "xerces:xercesImpl:CVE-2012-0881": { "esito": "non-raggiungibile", "versione": "2.8.0", "motivo": "xercesImpl 2.8.0 (da xom/cdk-dict) si registra come DocumentBuilderFactory e quindi analizza gli XML del core, ma solo risorse interne (model XML, QMRF, version). Nessun XML ricevuto dall'utente: i file molecola sono letti in formato MDL/SMILES." },
+    "xerces:xercesImpl:CVE-2013-4002": { "esito": "non-raggiungibile", "versione": "2.8.0", "motivo": "Come CVE-2012-0881: DoS con XML costruito ad arte, il core analizza solo XML interni." },
+    "xalan:xalan:CVE-2014-0107": { "esito": "non-raggiungibile", "versione": "2.7.0", "motivo": "Nessun uso di TransformerFactory/XPath nel core; CDK non usato per XSLT." },
+    "xalan:xalan:CVE-2022-34169": { "esito": "non-raggiungibile", "versione": "2.7.0", "motivo": "Richiede l'elaborazione di fogli XSLT malevoli: nessuna trasformazione XSLT nel core." },
+    "org.apache.jena:jena-core:CVE-2021-39239": { "esito": "non-raggiungibile", "versione": "2.7.4", "motivo": "XXE nel parsing RDF/XML: cdk-iordf e Jena non sono usati dal core (nessuna lettura RDF)." }
+  }
+}

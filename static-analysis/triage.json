@@ -1,0 +1,851 @@
+{
+  "rules": {
+    "SpotBugs:RC_REF_COMPARISON": {
+      "esito": "problema",
+      "ref": "#1, #3",
+      "motivo": "Double/Integer confrontati con ==. Reale in insilicoKnnQualitative:55 (pareggi tra classi mai rilevati) e CustomSmilesWriter:768 (numeri di massa >127). Falsi positivi CustomQueryMatcher:477 (numero atomico <=118) e CustomHydrogenAtom:37 (massa H 1-3): valori nella cache Integer -128..127.",
+      "files": [
+        "src/main/java/insilico/core/knn/insilicoKnnQualitative.java",
+        "src/main/java/insilico/core/molecule/conversion/custom/CustomSmilesWriter.java",
+        "src/main/java/insilico/core/molecule/tools/CustomQueryMatcher.java",
+        "src/main/java/insilico/core/molecule/tools/qmcustomclasses/CustomHydrogenAtom.java"
+      ]
+    },
+    "SpotBugs:RV_RETURN_VALUE_IGNORED_INFERRED": {
+      "esito": "problema",
+      "ref": "#2",
+      "motivo": "Depiction:69/72 - DepictionGenerator di CDK e' immutabile: withHighlight/withOuterGlowHighlight restituiscono un nuovo generatore che viene scartato, le sottostrutture non vengono evidenziate.",
+      "files": [
+        "src/main/java/insilico/core/molecule/tools/Depiction.java"
+      ]
+    },
+    "SpotBugs:ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD": {
+      "esito": "problema",
+      "ref": "#6",
+      "motivo": "StringSelectorCore.BackToDefault() cambia il locale ma non ricarica resourceBundle: la lingua non torna al default; e' anche un metodo d'istanza che modifica stato statico.",
+      "files": [
+        "src/main/java/insilico/core/localization/StringSelectorCore.java"
+      ]
+    },
+    "SpotBugs:ICAST_INT_CAST_TO_DOUBLE_PASSED_TO_CEIL": {
+      "esito": "problema",
+      "ref": "#7",
+      "motivo": "ReportPDF:1097 Math.ceil(Classes/2) con divisione intera: con un numero dispari di classi il totale pagine indicato nel PDF e' sbagliato (3 classi -> 1 invece di 2).",
+      "files": [
+        "src/main/java/insilico/core/model/report/pdf/ReportPDF.java"
+      ]
+    },
+    "SpotBugs:ICAST_IDIV_CAST_TO_DOUBLE": {
+      "esito": "problema",
+      "ref": "#8",
+      "motivo": "Similarity.getBinaryDistance: Jaccard (case 3) e Dice (case 4) con divisione intera danno solo 0 o 1. Latente: il tipo di default e' Maxwell-Pilliner (37), corretto, e setBinaryDistanceType non e' chiamato nel core.",
+      "files": [
+        "src/main/java/insilico/core/similarity/Similarity.java"
+      ]
+    },
+    "SpotBugs:OS_OPEN_STREAM": {
+      "esito": "problema",
+      "ref": "#9",
+      "motivo": "Stream di lettura di training set e file del modello non chiusi (TrainingSet:377, TrainingSetForKNNModels:61, InsilicoModelPython:346/365, CdddDescriptors:381, HTTPUtils:47): eseguito a ogni caricamento di modello.",
+      "files": [
+        "src/main/java/insilico/core/model/InsilicoModelPython.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSetForKNNModels.java",
+        "src/main/java/insilico/core/python/CdddDescriptors.java",
+        "src/main/java/insilico/core/tools/utils/HTTPUtils.java"
+      ]
+    },
+    "SpotBugs:NP_DEREFERENCE_OF_READLINE_VALUE": {
+      "esito": "problema",
+      "ref": "#9",
+      "motivo": "readLine() dell'intestazione usato senza controllo: un file vuoto da' NullPointerException invece del messaggio d'errore previsto. File interni, impatto basso.",
+      "files": [
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNPredictor.java",
+        "src/main/java/insilico/core/model/InsilicoModelPython.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSetForKNNModels.java"
+      ]
+    },
+    "SpotBugs:RV_RETURN_VALUE_IGNORED_BAD_PRACTICE": {
+      "esito": "problema",
+      "ref": "#9",
+      "motivo": "Esito di mkdirs/createNewFile/delete ignorato (FileUtilities, CdddDescriptors, ModelGuideWriter, Depiction): errori di filesystem non rilevati.",
+      "files": [
+        "src/main/java/insilico/core/model/guide/ModelGuideWriter.java",
+        "src/main/java/insilico/core/molecule/tools/Depiction.java",
+        "src/main/java/insilico/core/python/CdddDescriptors.java",
+        "src/main/java/insilico/core/tools/utils/FileUtilities.java"
+      ]
+    },
+    "SpotBugs:DM_DEFAULT_ENCODING": {
+      "esito": "problema",
+      "ref": "#9",
+      "motivo": "Lettura/scrittura file con charset di piattaforma: su Windows con locale non UTF-8 i caratteri non ASCII (es. bundle zh, nomi) possono corrompersi.",
+      "files": [
+        "src/main/java/insilico/core/alerts/AlertFileClassificationSMARTS.java",
+        "src/main/java/insilico/core/alerts/AlertFileQuantitativeSMARTS.java",
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNPredictor.java",
+        "src/main/java/insilico/core/devops/ModelsDeployment.java",
+        "src/main/java/insilico/core/model/InsilicoModelPython.java",
+        "src/main/java/insilico/core/model/guide/ModelGuideWriter.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFMSDoc.java",
+        "src/main/java/insilico/core/model/report/txt/ReportTXTConsensusSingle.java",
+        "src/main/java/insilico/core/model/report/txt/ReportTXTMultiple.java",
+        "src/main/java/insilico/core/model/report/txt/ReportTXTSingle.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSetForKNNModels.java",
+        "src/main/java/insilico/core/molecule/conversion/MDLMolecule.java",
+        "src/main/java/insilico/core/molecule/conversion/MDLTagReader.java",
+        "src/main/java/insilico/core/molecule/conversion/custom/CustomMDLWriter.java",
+        "src/main/java/insilico/core/molecule/conversion/file/MoleculeFile.java",
+        "src/main/java/insilico/core/molecule/conversion/file/MoleculeFileSDF.java",
+        "src/main/java/insilico/core/molecule/tools/MoleculeInfoPrinter.java",
+        "src/main/java/insilico/core/python/CdddDescriptors.java",
+        "src/main/java/insilico/core/tools/utils/CoreUtils.java",
+        "src/main/java/insilico/core/tools/utils/GeneralUtilities.java"
+      ]
+    },
+    "SpotBugs:COMMAND_INJECTION": {
+      "esito": "hardening",
+      "ref": "",
+      "motivo": "GeneralUtilities.executeCommandLine: i comandi arrivano da Communication, costruiti con concatenazione per cmd.exe /c e bash -c ma solo con dati interni (nomi env, percorsi sotto user.home, script del modello), non con input dell'utente. Fragile con percorsi contenenti spazi/virgolette: vedi #4.",
+      "files": [
+        "src/main/java/insilico/core/tools/utils/GeneralUtilities.java"
+      ]
+    },
+    "opengrep:command-injection-process-builder": {
+      "esito": "hardening",
+      "ref": "",
+      "motivo": "Stesse 4 righe di COMMAND_INJECTION (GeneralUtilities): stringhe di shell costruite in Communication con dati interni.",
+      "files": [
+        "src/main/java/insilico/core/tools/utils/GeneralUtilities.java"
+      ]
+    },
+    "SpotBugs:XXE_DOCUMENT": {
+      "esito": "hardening",
+      "ref": "",
+      "motivo": "DocumentBuilder senza disallow-doctype-decl, ma gli XML letti sono risorse interne dei jar (model XML, QMRF, version): nessun XML fornito dall'utente.",
+      "files": [
+        "src/main/java/insilico/core/model/InsilicoModelInfo.java",
+        "src/main/java/insilico/core/model/information/InsilicoModelInformation.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFDocument.java",
+        "src/main/java/insilico/core/version/InsilicoInfo.java"
+      ]
+    },
+    "opengrep:documentbuilderfactory-disallow-doctype-decl-missing": {
+      "esito": "hardening",
+      "ref": "",
+      "motivo": "Stesse 4 occorrenze di XXE_DOCUMENT: XML solo da risorse interne.",
+      "files": [
+        "src/main/java/insilico/core/model/InsilicoModelInfo.java",
+        "src/main/java/insilico/core/model/information/InsilicoModelInformation.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFDocument.java",
+        "src/main/java/insilico/core/version/InsilicoInfo.java"
+      ]
+    },
+    "SpotBugs:OBJECT_DESERIALIZATION": {
+      "esito": "hardening",
+      "ref": "",
+      "motivo": "TrainingSet.ReadFromSerializedFile deserializza i .dat dei training set presi con getResource dai jar dei modelli: sorgente fidata. Diventa critico se un giorno si caricano .dat esterni.",
+      "files": [
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java"
+      ]
+    },
+    "opengrep:object-deserialization": {
+      "esito": "hardening",
+      "ref": "",
+      "motivo": "Stessa occorrenza di OBJECT_DESERIALIZATION (TrainingSet:594).",
+      "files": [
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java"
+      ]
+    },
+    "SpotBugs:PATH_TRAVERSAL_IN": {
+      "esito": "falso-positivo",
+      "ref": "",
+      "motivo": "Percorsi da user.home/risorse interne/argomenti di build (devops) o scelti dall'utente stesso in un'app desktop (MoleculeFile, report): nessun confine di fiducia. Da rivedere se il core viene usato in un servizio web.",
+      "files": [
+        "src/main/java/insilico/core/devops/DeployConfiguration.java",
+        "src/main/java/insilico/core/devops/ModelsDeployment.java",
+        "src/main/java/insilico/core/model/InsilicoModelPython.java",
+        "src/main/java/insilico/core/model/guide/ModelGuideWriter.java",
+        "src/main/java/insilico/core/model/report/txt/ReportTXTConsensusSingle.java",
+        "src/main/java/insilico/core/model/report/txt/ReportTXTMultiple.java",
+        "src/main/java/insilico/core/molecule/conversion/file/MoleculeFile.java",
+        "src/main/java/insilico/core/molecule/tools/Depiction.java",
+        "src/main/java/insilico/core/python/CdddDescriptors.java",
+        "src/main/java/insilico/core/python/Communication.java",
+        "src/main/java/insilico/core/tools/utils/CoreUtils.java",
+        "src/main/java/insilico/core/tools/utils/FileUtilities.java",
+        "src/main/java/insilico/core/tools/utils/HTTPUtils.java"
+      ]
+    },
+    "SpotBugs:PATH_TRAVERSAL_OUT": {
+      "esito": "falso-positivo",
+      "ref": "",
+      "motivo": "Scrittura su file indicati dallo sviluppatore (ModelGuideWriter, QMRFMSDoc, TrainingSet.SerializeToFile usati in devops/build).",
+      "files": [
+        "src/main/java/insilico/core/model/guide/ModelGuideWriter.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFMSDoc.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java"
+      ]
+    },
+    "SpotBugs:URLCONNECTION_SSRF_FD": {
+      "esito": "falso-positivo",
+      "ref": "",
+      "motivo": "URL da getResource o fisso (amcc.it in Communication); nessun URL fornito dall'utente. L'integrita' del download e' trattata in #5.",
+      "files": [
+        "src/main/java/insilico/core/model/information/InsilicoModelInformation.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFDocument.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFMSDoc.java",
+        "src/main/java/insilico/core/tools/utils/FileUtilities.java",
+        "src/main/java/insilico/core/tools/utils/HTTPUtils.java"
+      ]
+    },
+    "opengrep:unsafe-reflection": {
+      "esito": "falso-positivo",
+      "ref": "",
+      "motivo": "DeployConfiguration.main: Class.forName sul nome classe passato dal pom in fase di build, non a runtime.",
+      "files": [
+        "src/main/java/insilico/core/devops/DeployConfiguration.java"
+      ]
+    },
+    "SpotBugs:PREDICTABLE_RANDOM": {
+      "esito": "falso-positivo",
+      "ref": "",
+      "motivo": "KekuleForm: casualita' algoritmica per la kekulizzazione, nessun uso di sicurezza.",
+      "files": [
+        "src/main/java/insilico/core/molecule/tools/KekuleForm.java"
+      ]
+    },
+    "SpotBugs:SA_LOCAL_SELF_COMPARISON": {
+      "esito": "falso-positivo",
+      "ref": "",
+      "motivo": "((int)C_OxiNumber)!=C_OxiNumber controlla se il double ha parte decimale: voluto.",
+      "files": [
+        "src/main/java/insilico/core/descriptor/weight/GhoseCrippenWeights.java",
+        "src/main/java/insilico/core/molecule/acf/GhoseCrippenACF.java"
+      ]
+    },
+    "opengrep:eqeq": {
+      "esito": "falso-positivo",
+      "ref": "",
+      "motivo": "CurTick == (int)CurTick e ((int)x)!=x: test di valore intero su double, voluto.",
+      "files": [
+        "src/main/java/insilico/core/model/report/pdf/scatterchart/ScatterChart.java",
+        "src/main/java/insilico/core/molecule/acf/GhoseCrippenACF.java"
+      ]
+    },
+    "SpotBugs:NP_NULL_ON_SOME_PATH": {
+      "esito": "falso-positivo",
+      "ref": "",
+      "motivo": "ReportPDF:1646 curSim viene da Alert.GetSimilarMolecules(), lista inizializzata nel costruttore e mai messa a null.",
+      "files": [
+        "src/main/java/insilico/core/model/report/pdf/ReportPDF.java"
+      ]
+    },
+    "SpotBugs:DE_MIGHT_IGNORE": {
+      "esito": "falso-positivo",
+      "ref": "",
+      "motivo": "simConstitutional:127 fallback voluto a 0 idrogeni quando getImplicitHydrogenCount() e' null.",
+      "files": [
+        "src/main/java/insilico/core/similarity/descriptors/simConstitutional.java"
+      ]
+    },
+    "SpotBugs:NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "FileUtilities.copyFilesRecursively: listFiles() null solo con errore di I/O su una cartella appena verificata.",
+      "files": [
+        "src/main/java/insilico/core/tools/utils/FileUtilities.java"
+      ]
+    },
+    "SpotBugs:CRLF_INJECTION_LOGS": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Log di libreria desktop con valori interni (comandi, SMILES, CAS): nessun sistema di log centralizzato da falsificare.",
+      "files": [
+        "src/main/java/insilico/core/devops/DeployConfiguration.java",
+        "src/main/java/insilico/core/molecule/conversion/CAS.java",
+        "src/main/java/insilico/core/molecule/conversion/SmilesMolecule.java",
+        "src/main/java/insilico/core/tools/utils/GeneralUtilities.java"
+      ]
+    },
+    "SpotBugs:REC_CATCH_EXCEPTION": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "catch (Exception) generico nella generazione PDF/conversioni: stile, gli errori vengono comunque rilanciati o loggati.",
+      "files": [
+        "src/main/java/insilico/core/devops/ModelsDeployment.java",
+        "src/main/java/insilico/core/model/InsilicoModelInfo.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFDocument.java",
+        "src/main/java/insilico/core/model/report/pdf/ReportPDF.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSetForKNNModels.java",
+        "src/main/java/insilico/core/molecule/conversion/MDLMolecule.java",
+        "src/main/java/insilico/core/molecule/tools/KekuleForm.java",
+        "src/main/java/insilico/core/molecule/tools/Manipulator.java"
+      ]
+    },
+    "SpotBugs:NM_VERY_CONFUSING": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Metodi Clone() con maiuscola accanto a Object.clone(): convenzione storica del progetto.",
+      "files": [
+        "src/main/java/insilico/core/descriptor/Descriptor.java",
+        "src/main/java/insilico/core/molecule/InsilicoMolecule.java",
+        "src/main/java/insilico/core/molecule/InsilicoMoleculeMessages.java",
+        "src/main/java/insilico/core/molecule/acf/ACFItem.java",
+        "src/main/java/insilico/core/molecule/acf/ACFItemList.java",
+        "src/main/java/insilico/core/similarity/SimilarityDescriptors.java"
+      ]
+    },
+    "SpotBugs:SE_BAD_FIELD": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Campi non serializzabili in classi Serializable mai serializzate in quella forma (cache molecole, FunctionalGroups). Le posizioni org/openscience e org/slf4j sono un errore di mappatura dello strumento.",
+      "files": [
+        "src/main/java/insilico/core/molecule/matrix/MoleculeMatrix.java",
+        "src/main/java/org/openscience/cdk/isomorphism/Pattern.java",
+        "src/main/java/org/slf4j/Logger.java"
+      ]
+    },
+    "SpotBugs:FE_FLOATING_POINT_EQUALITY": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Confronti == su double con costanti esatte (0, valori interi dei descrittori): voluti.",
+      "files": [
+        "src/main/java/insilico/core/alerts/builders/SAMeylanLogPFragments.java",
+        "src/main/java/insilico/core/descriptor/blocks/logp/MLogP.java",
+        "src/main/java/insilico/core/descriptor/weight/GhoseCrippenWeights.java",
+        "src/main/java/insilico/core/molecule/acf/ACFBuilder.java",
+        "src/main/java/insilico/core/molecule/acf/GhoseCrippenACF.java",
+        "src/main/java/insilico/core/molecule/tools/KekuleForm.java",
+        "src/main/java/insilico/core/molecule/tools/Manipulator.java",
+        "src/main/java/insilico/core/similarity/Similarity.java"
+      ]
+    },
+    "SpotBugs:CO_COMPARETO_INCORRECT_FLOATING": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "SimilarMolecule.compareTo con < e ==: problema solo con NaN, che le similarita' non producono.",
+      "files": [
+        "src/main/java/insilico/core/similarity/SimilarMolecule.java"
+      ]
+    },
+    "SpotBugs:NS_DANGEROUS_NON_SHORT_CIRCUIT": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "& tra due equals su stringhe: risultato identico, solo inefficiente.",
+      "files": [
+        "src/main/java/insilico/core/molecule/fragmenter/FragmenterCRS4.java"
+      ]
+    },
+    "SpotBugs:SA_LOCAL_SELF_ASSIGNMENT": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "counter=counter in CPANNPredictor: codice morto.",
+      "files": [
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNPredictor.java"
+      ]
+    },
+    "SpotBugs:DLS_DEAD_LOCAL_STORE": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Variabili assegnate e non usate: codice morto.",
+      "files": [
+        "src/main/java/insilico/core/ad/ADCheckIndicesQualitative.java",
+        "src/main/java/insilico/core/alerts/builders/SAMutagenIRFMN.java",
+        "src/main/java/insilico/core/alerts/builders/SAMutagenSarpy18K.java",
+        "src/main/java/insilico/core/descriptor/blocks/logp/ALogP.java",
+        "src/main/java/insilico/core/descriptor/blocks/logp/MeylanLogP.java",
+        "src/main/java/insilico/core/model/InsilicoModel.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFDocument.java",
+        "src/main/java/insilico/core/model/report/pdf/ReportPDF.java",
+        "src/main/java/insilico/core/molecule/conversion/CAS.java",
+        "src/main/java/insilico/core/molecule/tools/Depiction.java"
+      ]
+    },
+    "SpotBugs:UC_USELESS_OBJECT": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Oggetti creati e non usati: codice morto.",
+      "files": [
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNPredictor.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFDocument.java"
+      ]
+    },
+    "SpotBugs:UC_USELESS_VOID_METHOD": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Metodo senza effetti nel package legacy alert: codice morto.",
+      "files": [
+        "src/main/java/insilico/core/alert/AlertsEngine.java"
+      ]
+    },
+    "SpotBugs:UUF_UNUSED_FIELD": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Campo non usato: codice morto.",
+      "files": [
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNInputData.java"
+      ]
+    },
+    "SpotBugs:URF_UNREAD_FIELD": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Campi scritti e mai letti: codice morto.",
+      "files": [
+        "src/main/java/insilico/core/auxiliary/protoqsar/algae/AlgaeQuantitativeSVM.java",
+        "src/main/java/insilico/core/molecule/conversion/custom/CustomSmilesWriter.java",
+        "src/main/java/insilico/core/molecule/tools/KekuleForm.java"
+      ]
+    },
+    "SpotBugs:URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Campi pubblici non letti nel core (possono essere letti dai moduli modello).",
+      "files": [
+        "src/main/java/insilico/core/auxiliary/protoqsar/algae/AlgaeClassificationANN.java",
+        "src/main/java/insilico/core/model/report/pdf/classbarchart/ClassBarChart.java",
+        "src/main/java/insilico/core/model/report/pdf/classbarchart/ClassBarChartCoordinates.java",
+        "src/main/java/insilico/core/model/report/pdf/classbarchart/ClassBarDataPoint.java"
+      ]
+    },
+    "SpotBugs:WMI_WRONG_MAP_ITERATOR": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "keySet()+get(): piccola inefficienza.",
+      "files": [
+        "src/main/java/insilico/core/knn/insilicoKnnQualitative.java",
+        "src/main/java/insilico/core/molecule/fragmenter/FragmenterCRS4.java"
+      ]
+    },
+    "SpotBugs:SBSC_USE_STRINGBUFFER_CONCATENATION": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Concatenazione di stringhe in ciclo: piccola inefficienza.",
+      "files": [
+        "src/main/java/insilico/core/alert/AlertEncoding.java",
+        "src/main/java/insilico/core/alerts/AlertEncoding.java",
+        "src/main/java/insilico/core/exception/MoleculeConversionException.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFDocument.java",
+        "src/main/java/insilico/core/model/report/pdf/ReportPDF.java",
+        "src/main/java/insilico/core/molecule/conversion/file/MoleculeFileSDF.java",
+        "src/main/java/insilico/core/tools/utils/ModelUtilities.java"
+      ]
+    },
+    "SpotBugs:SS_SHOULD_BE_STATIC": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Campi final costanti non static: stile.",
+      "files": [
+        "src/main/java/insilico/core/ad/ADCheckIndicesQualitative.java",
+        "src/main/java/insilico/core/alerts/builders/SABCFCaesar.java",
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNPredictor.java",
+        "src/main/java/insilico/core/molecule/conversion/custom/CustomSmilesWriter.java"
+      ]
+    },
+    "SpotBugs:MS_SHOULD_BE_FINAL": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Campi statici pubblici non final (costanti degli alert builder): stile dell'API esistente.",
+      "files": [
+        "src/main/java/insilico/core/alerts/builders/SABenigniBossa.java",
+        "src/main/java/insilico/core/alerts/builders/SABenigniBossaAdditional.java",
+        "src/main/java/insilico/core/constant/MessagesAD.java",
+        "src/main/java/insilico/core/constant/MessagesError.java",
+        "src/main/java/insilico/core/molecule/conversion/MDLMolecule.java",
+        "src/main/java/insilico/core/molecule/conversion/SmilesMolecule.java",
+        "src/main/java/insilico/core/molecule/tools/InsilicoMoleculeNormalization.java"
+      ]
+    },
+    "SpotBugs:MS_MUTABLE_ARRAY": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Array statici pubblici di nomi ACF: modificabili solo da codice interno.",
+      "files": [
+        "src/main/java/insilico/core/molecule/acf/GhoseCrippenACF.java"
+      ]
+    },
+    "SpotBugs:PA_PUBLIC_PRIMITIVE_ATTRIBUTE": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Campi pubblici nei predittori ausiliari: stile.",
+      "files": [
+        "src/main/java/insilico/core/auxiliary/protoqsar/algae/AlgaeClassificationANN.java",
+        "src/main/java/insilico/core/model/report/pdf/scatterchart/ScatterChartDataSet.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java",
+        "src/main/java/insilico/core/similarity/SimilarityDescriptors.java"
+      ]
+    },
+    "SpotBugs:CN_IDIOM": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Cloneable senza clone(): convenzione Clone() del progetto.",
+      "files": [
+        "src/main/java/insilico/core/molecule/acf/ACFItemList.java",
+        "src/main/java/insilico/core/propertycontainer/PropertyContainer.java"
+      ]
+    },
+    "SpotBugs:EQ_DOESNT_OVERRIDE_EQUALS": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Sottoclassi che non ridefiniscono equals: nessun uso in collezioni rilevato.",
+      "files": [
+        "src/main/java/insilico/core/model/trainingset/TrainingSetForKNNModels.java",
+        "src/main/java/insilico/core/molecule/tools/qmcustomclasses/CustomHydrogenAtom.java",
+        "src/main/java/insilico/core/molecule/tools/qmcustomclasses/CustomRecursiveSmartsAtom.java"
+      ]
+    },
+    "SpotBugs:UI_INHERITANCE_UNSAFE_GETRESOURCE": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "getClass().getResource voluto: le risorse vanno cercate nel jar della sottoclasse (modello).",
+      "files": [
+        "src/main/java/insilico/core/model/InsilicoModel.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java"
+      ]
+    },
+    "SpotBugs:SF_SWITCH_NO_DEFAULT": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "switch senza default: stile.",
+      "files": [
+        "src/main/java/insilico/core/descriptor/blocks/weights/other/WeightsIState.java",
+        "src/main/java/insilico/core/descriptor/weight/EState.java",
+        "src/main/java/insilico/core/descriptor/weight/EStateCorrectForH.java",
+        "src/main/java/insilico/core/model/report/pdf/ReportPDF.java",
+        "src/main/java/insilico/core/model/report/pdf/scatterchart/ScatterChart.java",
+        "src/main/java/insilico/core/model/report/pdf/scatterchart/ScatterChartDataSet.java",
+        "src/main/java/insilico/core/tools/utils/ModelUtilities.java"
+      ]
+    },
+    "SpotBugs:IS2_INCONSISTENT_SYNC": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "CustomSmilesWriter.setUseAromaticityFlag non sincronizzato: configurazione impostata prima dell'uso.",
+      "files": [
+        "src/main/java/insilico/core/molecule/conversion/custom/CustomSmilesWriter.java"
+      ]
+    },
+    "SpotBugs:DM_BOXED_PRIMITIVE_TOSTRING": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Boxing per toString: micro-ottimizzazione.",
+      "files": [
+        "src/main/java/insilico/core/model/report/pdf/scatterchart/ScatterChart.java"
+      ]
+    },
+    "SpotBugs:NM_METHOD_NAMING_CONVENTION": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Convenzione storica del progetto (metodi con maiuscola).",
+      "files": [
+        "src/main/java/insilico/core/ad/ADCheckACF.java",
+        "src/main/java/insilico/core/ad/ADCheckDescriptorRange.java",
+        "src/main/java/insilico/core/ad/ADCheckIndices.java",
+        "src/main/java/insilico/core/ad/ADCheckIndicesQuantitative.java",
+        "src/main/java/insilico/core/ad/ADCheckSA.java",
+        "src/main/java/insilico/core/ad/item/ADIndexACF.java",
+        "src/main/java/insilico/core/ad/item/ADIndexADI.java",
+        "src/main/java/insilico/core/ad/item/ADIndexADIAggregate.java",
+        "src/main/java/insilico/core/ad/item/ADIndexAccuracy.java",
+        "src/main/java/insilico/core/ad/item/ADIndexConcordance.java",
+        "src/main/java/insilico/core/ad/item/ADIndexMaxError.java",
+        "src/main/java/insilico/core/ad/item/ADIndexRange.java",
+        "src/main/java/insilico/core/ad/item/ADIndexSimilarity.java",
+        "src/main/java/insilico/core/alert/Alert.java",
+        "src/main/java/insilico/core/alert/AlertsEngine.java",
+        "src/main/java/insilico/core/alerts/Alert.java",
+        "src/main/java/insilico/core/alerts/AlertBlock.java",
+        "src/main/java/insilico/core/alerts/AlertBlockFromSMARTS.java",
+        "src/main/java/insilico/core/alerts/builders/SAAndrogenBindComparaIRFMN.java",
+        "src/main/java/insilico/core/alerts/builders/SABCFCaesar.java",
+        "src/main/java/insilico/core/alerts/builders/SABCFIRFMNThreshold.java",
+        "src/main/java/insilico/core/alerts/builders/SABenigniBossa.java",
+        "src/main/java/insilico/core/alerts/builders/SABenigniBossaAdditional.java",
+        "src/main/java/insilico/core/alerts/builders/SACarcinogenicityAntares.java",
+        "src/main/java/insilico/core/alerts/builders/SACarcinogenicityIsscanCgx.java",
+        "src/main/java/insilico/core/alerts/builders/SACombaseMutagenicityAccuracy.java",
+        "src/main/java/insilico/core/alerts/builders/SAFishIRFMN.java",
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNInputData.java",
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNPredictor.java",
+        "src/main/java/insilico/core/auxiliary/opera/OperaDistance.java",
+        "src/main/java/insilico/core/auxiliary/opera/OperaModel.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/algae/AlgaeClassificationANN.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/algae/AlgaeQuantitativeSVM.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/algae/weight/Mass.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/algae/weight/QuantumNumber.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/filters/BiocideFilter.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/sludge/SludgeQualitativeTree.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/sludge/SludgeQuantitativeRegression.java",
+        "src/main/java/insilico/core/descriptor/Descriptor.java",
+        "src/main/java/insilico/core/descriptor/blocks/AtomCenteredFragments.java",
+        "src/main/java/insilico/core/descriptor/blocks/Constitutional.java",
+        "src/main/java/insilico/core/descriptor/blocks/FunctionalGroups.java",
+        "src/main/java/insilico/core/descriptor/blocks/Rings.java",
+        "src/main/java/insilico/core/descriptor/blocks/logp/CHLogP.java",
+        "src/main/java/insilico/core/descriptor/blocks/weights/TopologicalDistances.java",
+        "src/main/java/insilico/core/descriptor/blocks/weights/VanDerWaalsOLD.java",
+        "src/main/java/insilico/core/descriptor/blocks/weights/other/WeightsValenceVertexDegree.java",
+        "src/main/java/insilico/core/descriptor/weight/CovalentRadius.java",
+        "src/main/java/insilico/core/descriptor/weight/Electronegativity.java",
+        "src/main/java/insilico/core/descriptor/weight/IonizationPotential.java",
+        "src/main/java/insilico/core/descriptor/weight/Mass.java",
+        "src/main/java/insilico/core/descriptor/weight/Polarizability.java",
+        "src/main/java/insilico/core/descriptor/weight/QuantumNumber.java",
+        "src/main/java/insilico/core/descriptor/weight/ValenceVertexDegree.java",
+        "src/main/java/insilico/core/descriptor/weight/VanDerWaals.java",
+        "src/main/java/insilico/core/knn/insilicoKnn.java",
+        "src/main/java/insilico/core/knn/insilicoKnnQualitative.java",
+        "src/main/java/insilico/core/knn/insilicoKnnQuantitative.java",
+        "src/main/java/insilico/core/localization/StringSelectorCore.java",
+        "src/main/java/insilico/core/model/InsilicoModelOutput.java",
+        "src/main/java/insilico/core/model/InsilicoModelPython.java",
+        "src/main/java/insilico/core/model/report/pdf/ReportPDFSingle.java",
+        "src/main/java/insilico/core/model/report/txt/ReportTXTConsensusSingle.java",
+        "src/main/java/insilico/core/model/report/txt/ReportTXTSingle.java",
+        "src/main/java/insilico/core/model/runner/InsilicoModelConsensusWrapper.java",
+        "src/main/java/insilico/core/model/runner/InsilicoModelRunnerByMolecule.java",
+        "src/main/java/insilico/core/model/runner/InsilicoModelWrapper.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSet.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSetForKNNModels.java",
+        "src/main/java/insilico/core/molecule/acf/ACFItem.java",
+        "src/main/java/insilico/core/molecule/acf/ACFItemList.java",
+        "src/main/java/insilico/core/molecule/conversion/CAS.java",
+        "src/main/java/insilico/core/molecule/conversion/FormatSMILES.java",
+        "src/main/java/insilico/core/molecule/conversion/MDLTagReader.java",
+        "src/main/java/insilico/core/molecule/conversion/ValueConversion.java",
+        "src/main/java/insilico/core/molecule/conversion/file/MoleculeFileSDF.java",
+        "src/main/java/insilico/core/molecule/conversion/file/MoleculeFileSmiles.java",
+        "src/main/java/insilico/core/molecule/conversion/file/MoleculeFileTXT.java",
+        "src/main/java/insilico/core/molecule/tools/Aromaticity.java",
+        "src/main/java/insilico/core/molecule/tools/AtomicNumber.java",
+        "src/main/java/insilico/core/molecule/tools/MoleculeInfoPrinter.java",
+        "src/main/java/insilico/core/molecule/tools/MoleculeNormalization.java",
+        "src/main/java/insilico/core/similarity/ScreeningFingerprint.java",
+        "src/main/java/insilico/core/similarity/Similarity.java",
+        "src/main/java/insilico/core/similarity/SimilarityDescriptors.java",
+        "src/main/java/insilico/core/similarity/descriptors/simConstitutional.java",
+        "src/main/java/insilico/core/similarity/descriptors/simWeightElectronegativity.java",
+        "src/main/java/insilico/core/similarity/descriptors/simWeightMass.java",
+        "src/main/java/insilico/core/similarity/descriptors/simWeightPolarizability.java",
+        "src/main/java/insilico/core/similarity/descriptors/simWeightVanDerWaals.java",
+        "src/main/java/insilico/core/tools/logger/InsilicoLogger.java",
+        "src/main/java/insilico/core/tools/utils/FileUtilities.java",
+        "src/main/java/insilico/core/tools/utils/GeneralUtilities.java",
+        "src/main/java/insilico/core/tools/utils/MoleculeUtilities.java"
+      ]
+    },
+    "SpotBugs:NM_FIELD_NAMING_CONVENTION": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Convenzione storica del progetto.",
+      "files": [
+        "src/main/java/insilico/core/ad/item/ADIndexADI.java",
+        "src/main/java/insilico/core/alerts/AlertBlock.java",
+        "src/main/java/insilico/core/alerts/AlertBlockFromSMARTS.java",
+        "src/main/java/insilico/core/auxiliary/opera/OperaModel.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/algae/AlgaeClassificationANN.java",
+        "src/main/java/insilico/core/descriptor/DescriptorBlock.java",
+        "src/main/java/insilico/core/model/guide/GuidePDFGenerator.java",
+        "src/main/java/insilico/core/model/information/InsilicoModelInformation.java",
+        "src/main/java/insilico/core/model/report/pdf/ReportPDF.java",
+        "src/main/java/insilico/core/model/runner/InsilicoModelRunner.java",
+        "src/main/java/insilico/core/molecule/conversion/file/MoleculeFile.java",
+        "src/main/java/insilico/core/propertycontainer/PropertyContainer.java"
+      ]
+    },
+    "SpotBugs:NM_CLASS_NAMING_CONVENTION": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Convenzione storica del progetto (classi con minuscola, es. insilicoKnn*).",
+      "files": [
+        "src/main/java/insilico/core/knn/insilicoKnn.java",
+        "src/main/java/insilico/core/knn/insilicoKnnPrediction.java",
+        "src/main/java/insilico/core/knn/insilicoKnnQualitative.java",
+        "src/main/java/insilico/core/knn/insilicoKnnQuantitative.java",
+        "src/main/java/insilico/core/main.java",
+        "src/main/java/insilico/core/similarity/descriptors/simConstitutional.java",
+        "src/main/java/insilico/core/similarity/descriptors/simWeightElectronegativity.java",
+        "src/main/java/insilico/core/similarity/descriptors/simWeightMass.java",
+        "src/main/java/insilico/core/similarity/descriptors/simWeightPolarizability.java",
+        "src/main/java/insilico/core/similarity/descriptors/simWeightVanDerWaals.java"
+      ]
+    },
+    "SpotBugs:EI_EXPOSE_REP": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Getter che restituiscono oggetti mutabili: normale in una libreria interna.",
+      "files": [
+        "src/main/java/insilico/core/ad/ADCheckIndices.java",
+        "src/main/java/insilico/core/ad/reasoining/ACFAnalysis.java",
+        "src/main/java/insilico/core/ad/reasoining/Uncertainty.java",
+        "src/main/java/insilico/core/ad/reasoining/UncertaintyClassBar.java",
+        "src/main/java/insilico/core/ad/reasoning/ACFAnalysis.java",
+        "src/main/java/insilico/core/ad/reasoning/Uncertainty.java",
+        "src/main/java/insilico/core/ad/reasoning/UncertaintyClassBar.java",
+        "src/main/java/insilico/core/alert/Alert.java",
+        "src/main/java/insilico/core/alert/AlertList.java",
+        "src/main/java/insilico/core/alerts/Alert.java",
+        "src/main/java/insilico/core/alerts/AlertBlock.java",
+        "src/main/java/insilico/core/alerts/AlertFileClassificationSMARTS.java",
+        "src/main/java/insilico/core/alerts/AlertFileQuantitativeSMARTS.java",
+        "src/main/java/insilico/core/alerts/AlertList.java",
+        "src/main/java/insilico/core/alerts/builders/SABenigniBossa.java",
+        "src/main/java/insilico/core/alerts/builders/SABenigniBossaAdditional.java",
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNInputData.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/algae/AlgaeDescriptors.java",
+        "src/main/java/insilico/core/auxiliary/protoqsar/sludge/SludgeDescriptors.java",
+        "src/main/java/insilico/core/descriptor/DescriptorBlock.java",
+        "src/main/java/insilico/core/descriptor/weight/EState.java",
+        "src/main/java/insilico/core/descriptor/weight/EStateCorrectForH.java",
+        "src/main/java/insilico/core/exception/MoleculeConversionException.java",
+        "src/main/java/insilico/core/knn/insilicoKnn.java",
+        "src/main/java/insilico/core/knn/insilicoKnnPrediction.java",
+        "src/main/java/insilico/core/model/InsilicoModel.java",
+        "src/main/java/insilico/core/model/InsilicoModelConsensus.java",
+        "src/main/java/insilico/core/model/InsilicoModelConsensusOutput.java",
+        "src/main/java/insilico/core/model/InsilicoModelInfo.java",
+        "src/main/java/insilico/core/model/InsilicoModelOutput.java",
+        "src/main/java/insilico/core/model/information/InsilicoModelInformation.java",
+        "src/main/java/insilico/core/model/report/pdf/scatterchart/ScatterChartAxis.java",
+        "src/main/java/insilico/core/model/runner/InsilicoModelConsensusWrapper.java",
+        "src/main/java/insilico/core/model/runner/InsilicoModelRunner.java",
+        "src/main/java/insilico/core/model/runner/InsilicoModelWrapper.java",
+        "src/main/java/insilico/core/molecule/InsilicoMoleculeCache.java",
+        "src/main/java/insilico/core/molecule/acf/ACFItemList.java",
+        "src/main/java/insilico/core/molecule/acf/GhoseCrippenACF.java",
+        "src/main/java/insilico/core/molecule/conversion/MDLTagReader.java",
+        "src/main/java/insilico/core/molecule/matrix/MoleculeMatrix.java",
+        "src/main/java/insilico/core/molecule/tools/CustomQueryMatcher.java",
+        "src/main/java/insilico/core/molecule/tools/qmcustomclasses/CustomHydrogenAtom.java",
+        "src/main/java/insilico/core/molecule/tools/qmcustomclasses/CustomRecursiveSmartsAtom.java"
+      ]
+    },
+    "SpotBugs:EI_EXPOSE_REP2": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Setter/costruttori che salvano oggetti mutabili: normale in una libreria interna.",
+      "files": [
+        "src/main/java/insilico/core/ad/reasoining/UncertaintyClassBar.java",
+        "src/main/java/insilico/core/ad/reasoning/UncertaintyClassBar.java",
+        "src/main/java/insilico/core/alerts/AlertBlock.java",
+        "src/main/java/insilico/core/alerts/AlertBlockFromSMARTS.java",
+        "src/main/java/insilico/core/alerts/builders/SABenigniBossa.java",
+        "src/main/java/insilico/core/alerts/builders/SAMutagenCRS4.java",
+        "src/main/java/insilico/core/alerts/builders/SAMutagenIRFMN.java",
+        "src/main/java/insilico/core/alerts/builders/SAMutagenSarpy.java",
+        "src/main/java/insilico/core/alerts/builders/SAMutagenSarpy18K.java",
+        "src/main/java/insilico/core/auxiliary/cpannatnic/CPANNInputData.java",
+        "src/main/java/insilico/core/knn/insilicoKnn.java",
+        "src/main/java/insilico/core/knn/insilicoKnnPrediction.java",
+        "src/main/java/insilico/core/model/InsilicoModel.java",
+        "src/main/java/insilico/core/model/InsilicoModelConsensus.java",
+        "src/main/java/insilico/core/model/InsilicoModelConsensusOutput.java",
+        "src/main/java/insilico/core/model/InsilicoModelOutput.java",
+        "src/main/java/insilico/core/model/runner/InsilicoModelConsensusWrapper.java",
+        "src/main/java/insilico/core/model/runner/InsilicoModelWrapper.java",
+        "src/main/java/insilico/core/molecule/InsilicoMoleculeCache.java",
+        "src/main/java/insilico/core/molecule/acf/GhoseCrippenACF.java",
+        "src/main/java/insilico/core/molecule/conversion/custom/CustomMDLWriter.java",
+        "src/main/java/insilico/core/molecule/conversion/custom/CustomSmilesWriter.java",
+        "src/main/java/insilico/core/molecule/matrix/MoleculeMatrix.java",
+        "src/main/java/insilico/core/molecule/tools/CustomQueryMatcher.java",
+        "src/main/java/insilico/core/molecule/tools/qmcustomclasses/CustomHydrogenAtom.java",
+        "src/main/java/insilico/core/molecule/tools/qmcustomclasses/CustomRecursiveSmartsAtom.java",
+        "src/main/java/insilico/core/python/CdddDescriptors.java"
+      ]
+    },
+    "SpotBugs:CT_CONSTRUCTOR_THROW": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Costruttori che lanciano eccezioni (InitFailureException): design voluto, nessuna classe di sicurezza.",
+      "files": [
+        "src/main/java/insilico/core/alerts/AlertBlock.java",
+        "src/main/java/insilico/core/alerts/AlertFileClassificationSMARTS.java",
+        "src/main/java/insilico/core/alerts/AlertFileQuantitativeSMARTS.java",
+        "src/main/java/insilico/core/descriptor/weight/EState.java",
+        "src/main/java/insilico/core/descriptor/weight/EStateCorrectForH.java",
+        "src/main/java/insilico/core/model/InsilicoModelInfo.java",
+        "src/main/java/insilico/core/model/InsilicoModelPython.java",
+        "src/main/java/insilico/core/model/information/InsilicoModelInformation.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFDocument.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFMSDoc.java",
+        "src/main/java/insilico/core/model/report/pdf/ReportPDF.java",
+        "src/main/java/insilico/core/molecule/tools/CustomQueryMatcher.java",
+        "src/main/java/insilico/core/python/CdddDescriptors.java",
+        "src/main/java/insilico/core/python/Communication.java",
+        "src/main/java/insilico/core/version/InsilicoInfo.java"
+      ]
+    },
+    "SpotBugs:SIC_INNER_SHOULD_BE_STATIC": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Classi interne non static: micro-ottimizzazione.",
+      "files": [
+        "src/main/java/insilico/core/alerts/builders/SABenigniBossa.java",
+        "src/main/java/insilico/core/alerts/builders/SABenigniBossaAdditional.java",
+        "src/main/java/insilico/core/model/information/InsilicoModelInformation.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFDocument.java"
+      ]
+    },
+    "SpotBugs:OBL_UNSATISFIED_OBLIGATION": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Duplicato di OS_OPEN_STREAM (#9).",
+      "files": [
+        "src/main/java/insilico/core/model/InsilicoModelPython.java",
+        "src/main/java/insilico/core/python/CdddDescriptors.java"
+      ]
+    },
+    "SpotBugs:OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Stream non chiusi solo in caso di eccezione: coperto da #9 (try-with-resources).",
+      "files": [
+        "src/main/java/insilico/core/model/InsilicoModelPython.java",
+        "src/main/java/insilico/core/model/qmrf/QMRFMSDoc.java",
+        "src/main/java/insilico/core/python/CdddDescriptors.java",
+        "src/main/java/insilico/core/tools/utils/CoreUtils.java",
+        "src/main/java/insilico/core/tools/utils/FileUtilities.java",
+        "src/main/java/insilico/core/tools/utils/HTTPUtils.java"
+      ]
+    },
+    "SpotBugs:DM_BOXED_PRIMITIVE_FOR_PARSING": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Micro-ottimizzazione.",
+      "files": [
+        "src/main/java/insilico/core/model/information/InsilicoModelInformation.java",
+        "src/main/java/insilico/core/model/trainingset/TrainingSetForKNNModels.java"
+      ]
+    },
+    "SpotBugs:MS_PKGPROTECT": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Campi statici modificabili: stile.",
+      "files": [
+        "src/main/java/insilico/core/ad/ADCheckIndices.java",
+        "src/main/java/insilico/core/alerts/builders/SAMoaIRFMN.java"
+      ]
+    },
+    "SpotBugs:DM_NEXTINT_VIA_NEXTDOUBLE": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "Micro-ottimizzazione.",
+      "files": [
+        "src/main/java/insilico/core/molecule/tools/KekuleForm.java"
+      ]
+    },
+    "opengrep:hardcoded-conditional": {
+      "esito": "rumore",
+      "ref": "",
+      "motivo": "USE_CUSTOM_CONDA come flag statico: voluto.",
+      "files": [
+        "src/main/java/insilico/core/python/Communication.java"
+      ]
+    }
+  },
+  "updated": "2026-11-09"
+}
