@@ -2,6 +2,7 @@ package regression;
 
 import insilico.core.model.InsilicoModel;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.TestFactory;
@@ -36,6 +37,18 @@ public abstract class ModelRegressionTest {
     protected abstract List<InsilicoModel> getModels() throws Exception;
 
     /**
+     * Whether the model(s) of this module have a training set. Rule-based models (e.g. structural classifiers) have
+     * none: a module overrides this to return {@code false}, and its {@code [ts]} tests are then reported as skipped
+     * instead of failing on an empty training set. The default is {@code true}, so an unexpectedly empty training set
+     * still fails the test.
+     *
+     * @return true if the ts dataset applies to this module's models
+     */
+    protected boolean hasTrainingSet() {
+        return true;
+    }
+
+    /**
      * One dynamic test per (model, dataset) pair, named like {@code HydrolysisCoral [core]}.
      *
      * @return the dynamic tests
@@ -57,7 +70,11 @@ public abstract class ModelRegressionTest {
                 if (label == null || label.isEmpty())
                     label = model.getInfo().getKey();
                 String testName = label + " [" + dataset.id() + "]";
-                tests.add(DynamicTest.dynamicTest(testName, () -> ModelRegression.check(model, dataset)));
+                if (dataset == ModelRegression.Dataset.TS && !hasTrainingSet())
+                    tests.add(DynamicTest.dynamicTest(testName, () -> Assumptions.abort(
+                            "model " + model.getInfo().getKey() + " has no training set (hasTrainingSet() is false)")));
+                else
+                    tests.add(DynamicTest.dynamicTest(testName, () -> ModelRegression.check(model, dataset)));
             }
         }
         return tests.stream();
