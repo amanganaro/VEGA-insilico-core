@@ -1,9 +1,13 @@
-package golden;
+package regression;
 
+import insilico.core.model.InsilicoModel;
 import org.openscience.cdk.CDK;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -12,22 +16,24 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Reading and writing of the golden reference files.
+ * Reading and writing of regression reference files, shared by the core golden tests and by the model regression
+ * tests of the VegaModels-* modules (this package is published in the core test-jar).
  * <p>
  * Format: tab separated; lines starting with {@code #} are metadata/comments and are ignored when reading; the first
  * other line is the header, whose first column is the row id. Line endings (CRLF / LF) are irrelevant.
  */
-public final class GoldenFiles {
+public final class RegressionFiles {
 
     /** System property: when true the tests rewrite the reference files instead of comparing. */
     public static final String UPDATE_PROPERTY = "golden.update";
 
-    private GoldenFiles() { }
+    private RegressionFiles() { }
 
     /**
      * An in-memory table: header (first column = id) and rows by id, in insertion order.
@@ -47,6 +53,34 @@ public final class GoldenFiles {
                         + (header.size() - 1));
             if (rows.put(id, values) != null)
                 throw new IllegalArgumentException("Duplicated row id: " + id);
+        }
+
+        /**
+         * @param column column name (not the id column)
+         * @return the index of the column in the row value lists, or -1 if absent
+         */
+        public int valueIndex(String column) {
+            int i = header.indexOf(column);
+            return i < 1 ? -1 : i - 1;
+        }
+
+        /**
+         * @param column column name to be removed (not the id column)
+         * @return a copy of this table without the given column (this table if the column is absent)
+         */
+        public Table withoutColumn(String column) {
+            int idx = valueIndex(column);
+            if (idx < 0)
+                return this;
+            List<String> newHeader = new ArrayList<>(header);
+            newHeader.remove(idx + 1);
+            Table t = new Table(newHeader);
+            for (Map.Entry<String, List<String>> row : rows.entrySet()) {
+                List<String> values = new ArrayList<>(row.getValue());
+                values.remove(idx);
+                t.addRow(row.getKey(), values);
+            }
+            return t;
         }
     }
 
@@ -86,9 +120,41 @@ public final class GoldenFiles {
      * @throws IOException on read errors or malformed rows
      */
     public static Table read(Path file) throws IOException {
+        try (Reader r = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
+            return read(r, file.toString());
+        }
+    }
+
+    /**
+     * Reads a table written by {@link #write} from the classpath.
+     *
+     * @param resource classpath resource name, without leading slash (e.g. {@code regression/KEY-ts.tsv})
+     * @return the table, or null if the resource does not exist
+     * @throws IOException on read errors or malformed rows
+     */
+    public static Table readResource(String resource) throws IOException {
+        InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+        if (is == null)
+            return null;
+        try (Reader r = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            return read(r, resource);
+        }
+    }
+
+    /**
+     * Reads a table written by {@link #write}.
+     *
+     * @param reader source
+     * @param sourceName name of the source, used in error messages
+     * @return the table
+     * @throws IOException on read errors or malformed rows
+     */
+    public static Table read(Reader reader, String sourceName) throws IOException {
         Table table = null;
         int lineNumber = 0;
-        for (String line : Files.readAllLines(file, StandardCharsets.UTF_8)) {
+        BufferedReader br = new BufferedReader(reader);
+        String line;
+        while ((line = br.readLine()) != null) {
             lineNumber++;
             if (line.startsWith("#") || line.isEmpty())
                 continue;
@@ -98,12 +164,12 @@ public final class GoldenFiles {
                 continue;
             }
             if (fields.size() != table.header().size())
-                throw new IOException(file + ":" + lineNumber + ": " + fields.size() + " fields, expected "
+                throw new IOException(sourceName + ":" + lineNumber + ": " + fields.size() + " fields, expected "
                         + table.header().size());
             table.addRow(fields.get(0), new ArrayList<>(fields.subList(1, fields.size())));
         }
         if (table == null)
-            throw new IOException(file + ": no header found");
+            throw new IOException(sourceName + ": no header found");
         return table;
     }
 
@@ -117,13 +183,40 @@ public final class GoldenFiles {
         return Double.toString(value);
     }
 
+    /**
+     * Makes a text value safe for a cell: tabs and line breaks would break the file format.
+     *
+     * @param value cell text, possibly null
+     * @return the sanitized text (empty for null)
+     */
+    public static String cell(String value) {
+        if (value == null)
+            return "";
+        return value.replace('\t', ' ').replace('\r', ' ').replace('\n', ' ');
+    }
+
     /** @return the metadata line: core and CDK versions, git commit and date */
     public static String metadata() {
         return "core=" + coreVersion() + " cdk=" + CDK.getVersion() + " commit=" + gitCommit()
                 + " date=" + LocalDate.now();
     }
 
+    /**
+     * Version of the Core library in use: read from the Maven metadata of the Core jar when running in a model module,
+     * from the local {@code pom.xml} when running in the core project itself.
+     */
     private static String coreVersion() {
+        try (InputStream is = InsilicoModel.class.getResourceAsStream("/META-INF/maven/InSilico/Core/pom.properties")) {
+            if (is != null) {
+                Properties p = new Properties();
+                p.load(is);
+                String v = p.getProperty("version");
+                if (v != null)
+                    return v;
+            }
+        } catch (IOException e) {
+            // fall back to pom.xml
+        }
         try {
             String pom = Files.readString(Path.of("pom.xml"), StandardCharsets.UTF_8);
             Matcher m = Pattern.compile("<artifactId>Core</artifactId>\\s*<version>([^<]+)</version>").matcher(pom);

@@ -29,7 +29,8 @@ import java.util.TreeSet;
 import java.util.stream.IntStream;
 
 /**
- * Builds the golden dataset ({@code molecules.tsv}) by merging three sources:
+ * Builds the golden dataset ({@code regression/core-molecules.tsv}, shared with the model regression tests) by
+ * merging three sources:
  * <ol>
  *     <li><b>BENCH</b>: benchmark molecules in {@code golden/benchmark.tsv}; they are (re)imported from a plain
  *     SMILES file with {@code -Dgolden.benchmark=<path>}, optionally only some lines with

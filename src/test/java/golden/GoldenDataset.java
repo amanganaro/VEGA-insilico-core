@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Golden regression dataset: reads {@code src/test/resources/golden/molecules.tsv} and converts each SMILES with
- * {@link SmilesMolecule#Convert(String)}, exactly as {@code model.ModelExecutionTest} does.
+ * Golden regression dataset: reads {@code src/test/resources/regression/core-molecules.tsv} and converts each
+ * SMILES with {@link SmilesMolecule#Convert(String)}, exactly as the model regression tests do.
  * <p>
  * File format: tab separated, header {@code NAME SMILES SOURCE CATEGORY}; lines starting with {@code #} are comments.
  */
@@ -25,7 +25,7 @@ public final class GoldenDataset {
     public static final Path GOLDEN_DIR = Path.of("src", "test", "resources", "golden");
 
     /** The dataset file. */
-    public static final Path MOLECULES_FILE = GOLDEN_DIR.resolve("molecules.tsv");
+    public static final Path MOLECULES_FILE = Path.of("src", "test", "resources", "regression", "core-molecules.tsv");
 
     /** Value of the CATEGORY column (prefix) for molecules that are invalid on purpose. */
     public static final String INVALID_CATEGORY_PREFIX = "invalid";
