@@ -19,6 +19,9 @@ import java.util.*;
 @Slf4j
 public class CdddDescriptors {
 
+    /** Column of the CDDD descriptor files holding the SMILES of the molecule, in the CDDD canonical form. */
+    private static final String CDDD_SMILES_COLUMN = "smiles";
+
     Communication communication;
     private Path pathToExternalFolder;
     private Path pathToVEGAFolder;
@@ -125,6 +128,15 @@ public class CdddDescriptors {
         this.smilesList=smilesList;
     }
 
+    /***
+     * Writes the input file of the CDDD script: one SMILES per line.
+     * <p>
+     * No filler molecule is added here. The encoder needs a number of rows that is a multiple of 128 to give
+     * reproducible descriptors, but the molecules it rejects are dropped by the script itself, so only the script
+     * knows how many actually reach it: the filling lives in {@code app-cddd.py}.
+     * @param inputFile path of the file to write
+     * @throws GenericFailureException if the file cannot be written
+     */
     public void prepareInputData(String inputFile) throws GenericFailureException {
         StringBuilder sb=new StringBuilder();
         sb.append("smiles\n");
@@ -133,7 +145,7 @@ public class CdddDescriptors {
         }
 
         FileUtilities.WriteByteArrayToFile(inputFile,sb.toString().getBytes(StandardCharsets.UTF_8));
-        log.info("Prepared input file.");
+        log.info("Prepared input file with {} molecules.", smilesList.size());
     }
 
     /***
@@ -350,13 +362,22 @@ public class CdddDescriptors {
      * This is what allows a Python model to be executed in batch mode: instead of one descriptor file per molecule
      * (and therefore one Python process per molecule), the model receives one file with every molecule in it.
      *
+     * The returned map is what lets the caller recognise the rows that come back: the CDDD script rewrites the SMILES
+     * of each molecule in its own canonical form, so the model script echoes that form and not the SMILES this method
+     * was given. Mapping one to the other here, where the file is written, is the only place where the two are known
+     * together.
+     *
      * @param smilesList the molecules to include, in the order their results are expected back
      * @param target the file to write
+     * @return the SMILES written in the file, each mapped to the molecule of {@code smilesList} it belongs to. Two
+     * molecules with the same canonical form keep only the first, so no SMILES is ever mapped to two molecules
      * @throws IOException if a descriptor file is missing or unreadable, which would silently misalign the rows
      */
-    public void writeCombinedDescriptorFile(List<String> smilesList, Path target) throws IOException {
+    public Map<String, String> writeCombinedDescriptorFile(List<String> smilesList, Path target) throws IOException {
 
         boolean headerWritten = false;
+        int smilesColumn = -1;
+        Map<String, String> writtenSmiles = new LinkedHashMap<>();
 
         try (BufferedWriter writer = Files.newBufferedWriter(target, StandardCharsets.UTF_8)) {
             for (String smiles : smilesList) {
@@ -376,17 +397,60 @@ public class CdddDescriptors {
                     writer.write(lines.get(0));
                     writer.newLine();
                     headerWritten = true;
+                    smilesColumn = columnIndexOf(lines.get(0), CDDD_SMILES_COLUMN);
                 }
 
                 // copy the data rows verbatim, so quoting and separators stay exactly as the CDDD script wrote them
                 for (int i = 1; i < lines.size(); i++) {
                     writer.write(lines.get(i));
                     writer.newLine();
+                    if (smilesColumn >= 0) {
+                        String written = valueAt(lines.get(i), smilesColumn);
+                        if (written != null) {
+                            writtenSmiles.putIfAbsent(written, smiles);
+                        }
+                    }
                 }
             }
         }
 
         log.info("Written combined descriptor file with {} molecules in {}", smilesList.size(), target);
+        return writtenSmiles;
+    }
+
+    /**
+     * @param header the header line of a CDDD descriptor file
+     * @param column the column to look for
+     * @return the index of the column, or -1 if the header does not have it
+     */
+    private static int columnIndexOf(String header, String column) {
+        String[] names = header.split(",", -1);
+        for (int i = 0; i < names.length; i++) {
+            if (column.equalsIgnoreCase(unquote(names[i].trim()))) {
+                return i;
+            }
+        }
+        log.warn("No '{}' column in the CDDD descriptor file header: the rows of a batch execution will have to be "
+                + "matched by position", column);
+        return -1;
+    }
+
+    /**
+     * @param line a data line of a CDDD descriptor file
+     * @param index the column to read
+     * @return the value of that column, or null if the line is shorter than expected
+     */
+    private static String valueAt(String line, int index) {
+        String[] values = line.split(",", -1);
+        return index < values.length ? unquote(values[index]) : null;
+    }
+
+    /** @param value a CSV value @return the value without its surrounding double quotes, if it has any */
+    private static String unquote(String value) {
+        if (value.length() > 1 && value.startsWith("\"") && value.endsWith("\"")) {
+            return value.substring(1, value.length() - 1);
+        }
+        return value;
     }
 
     public void dispose() throws IOException {

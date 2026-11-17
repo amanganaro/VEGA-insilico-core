@@ -92,9 +92,12 @@ public class FileUtilities {
 
         Path path = Paths.get(file);
         try(Reader reader = Files.newBufferedReader(path)) {
+            // No escape character: the default one is the backslash, which is a meaningful character in a SMILES
+            // (C/C=C\C), and would otherwise be silently removed from every value that contains it.
             CSVParser parser = new CSVParserBuilder()
                     .withSeparator(delimiter)
                     .withIgnoreQuotations(true)
+                    .withEscapeChar(CSVParser.NULL_CHARACTER)
                     .build();
 
             try (CSVReader csvReader = new CSVReaderBuilder(reader)
@@ -143,9 +146,12 @@ public class FileUtilities {
         List<Map<String, String>> rows = new ArrayList<>();
 
         try (Reader reader = Files.newBufferedReader(path)) {
+            // No escape character: the default one is the backslash, which is a meaningful character in a SMILES
+            // (C/C=C\C), and would otherwise be silently removed from every value that contains it.
             CSVParser parser = new CSVParserBuilder()
                     .withSeparator(delimiter)
                     .withIgnoreQuotations(true)
+                    .withEscapeChar(CSVParser.NULL_CHARACTER)
                     .build();
 
             try (CSVReader csvReader = new CSVReaderBuilder(reader)

@@ -23,6 +23,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -480,7 +481,7 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
             inputFile = File.createTempFile("insilico-batch-input-", ".csv");
             outputFile = File.createTempFile("insilico-batch-output-", ".csv");
 
-            buildBatchInputFile(keys, inputFile.toPath());
+            Map<String, String> writtenSmiles = buildBatchInputFile(keys, inputFile.toPath());
 
             Path scriptPath = Paths.get(pathToExternalFolder.toString(), getScriptName());
             String[] params = buildBatchCommandParams(inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
@@ -500,6 +501,13 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
 
             List<Map<String, String>> rows =
                     FileUtilities.readAllRowsAndHeaderFromFile(outputFile.getAbsolutePath(), ',');
+
+            if (!rows.isEmpty() && rows.stream().allMatch(row -> row.get(BATCH_SMILES_COLUMN) != null)) {
+                // Every row says which molecule it belongs to, so it can be matched by name rather than by position.
+                // This is what makes the batch usable with the scripts that silently drop rows, such as the ones that
+                // skip the molecules RDKit cannot standardize.
+                return matchBySmiles(writtenSmiles, rows, predictions);
+            }
 
             if (rows.size() != keys.size()) {
                 log.error("Model {} returned {} rows for {} molecules: the batch output cannot be matched to the input.",
@@ -531,6 +539,48 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
     }
 
     /**
+     * Matches the rows of a batch output to the molecules of the chunk by the input SMILES that every row carries,
+     * instead of by position. Order does not matter, and a script is free to return fewer rows than it was given:
+     * several drop the molecules RDKit cannot standardize, and some deduplicate the structures they are given.
+     * <p>
+     * A row whose SMILES is not one of the input molecules means the output cannot be trusted, and the chunk is
+     * rejected. The molecules left without a row are simply not added to {@code predictions}: when they are executed,
+     * they find no cached result and start their own Python process, so they get exactly the result (usually an
+     * error) they would have had without the batch.
+     *
+     * @param writtenSmiles the SMILES written in the input file, each mapped to the molecule it belongs to, as
+     *                      returned by {@link #buildBatchInputFile(List, Path)}
+     * @param rows the rows returned by the script, each with the {@value #BATCH_SMILES_COLUMN} column
+     * @param predictions where the matched rows are added, by molecule
+     * @return true if every row belongs to an input molecule, false if the output does not match the input
+     */
+    private boolean matchBySmiles(Map<String, String> writtenSmiles, List<Map<String, String>> rows,
+                                  Map<String, Map<String, String>> predictions) {
+        Map<String, Map<String, String>> matched = new LinkedHashMap<>();
+
+        for (Map<String, String> row : rows) {
+            String returnedSmiles = row.get(BATCH_SMILES_COLUMN);
+            String molecule = writtenSmiles.get(returnedSmiles);
+            if (molecule == null) {
+                log.error("Model {} returned the prediction of '{}', which is not one of the {} molecules written in "
+                        + "its input file: the batch output does not match the input.",
+                        this.getInfo().getName(), returnedSmiles, writtenSmiles.size());
+                return false;
+            }
+            // A repeated molecule is the same prediction computed twice: keeping the first row is enough.
+            matched.putIfAbsent(molecule, row);
+        }
+
+        predictions.putAll(matched);
+        if (matched.size() < writtenSmiles.size()) {
+            log.warn("Model {} returned a prediction for {} of the {} molecules it was given: the other {} will be "
+                            + "executed one by one.", this.getInfo().getName(), matched.size(), writtenSmiles.size(),
+                    writtenSmiles.size() - matched.size());
+        }
+        return true;
+    }
+
+    /**
      * Writes the input file of a batch execution. The default implementation covers both families of Python models,
      * which is what keeps this API usable by future models:
      * <ul>
@@ -542,10 +592,13 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
      *
      * @param smilesList the molecules of the chunk, in order
      * @param target the file to write
+     * @return the SMILES actually written in the file, each mapped to the molecule of {@code smilesList} it belongs
+     * to. They differ when the file is built from the CDDD descriptors, which hold the canonical form of each
+     * molecule; the model script echoes what it was given, so this is what identifies the rows that come back
      * @throws IOException if the file cannot be written
      * @throws GenericFailureException if the descriptors needed to build it are not available
      */
-    protected void buildBatchInputFile(List<String> smilesList, Path target)
+    protected Map<String, String> buildBatchInputFile(List<String> smilesList, Path target)
             throws IOException, GenericFailureException {
 
         if (isUsingCdddDescriptor()) {
@@ -553,10 +606,15 @@ public abstract class InsilicoModelPython extends InsilicoModel implements iInsi
                 throw new GenericFailureException("Model " + this.getInfo().getName()
                         + " uses the CDDD descriptors but none were given for the batch execution");
             }
-            batchCdddDescriptors.writeCombinedDescriptorFile(smilesList, target);
-        } else {
-            prepareInputData(smilesList, target.toString());
+            return batchCdddDescriptors.writeCombinedDescriptorFile(smilesList, target);
         }
+
+        prepareInputData(smilesList, target.toString());
+        Map<String, String> writtenSmiles = new LinkedHashMap<>();
+        for (String smiles : smilesList) {
+            writtenSmiles.putIfAbsent(smiles, smiles); // the SMILES are written as they are
+        }
+        return writtenSmiles;
     }
 
     /**
