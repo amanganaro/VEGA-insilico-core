@@ -28,11 +28,8 @@ REPOS=(fate ecotox other properties human)
 # in the summary, so the rest of the repository can still be checked. They are waiting to be fixed.
 #   ecotox: SDuckweedEC50Coral and HarlequinNOECCoral are models still being written, landed on master by mistake:
 #           they import insilico.core.coral.models.ec50, which does not exist yet.
-#   human:  SkinSensitizationToxTree does not compile (maven-compiler-plugin 3.8.0 fails on recent JDKs);
-#           CramerToxTree pulls an old uk.ac.ebi.beam, so every SMILES conversion throws NoSuchMethodError.
 declare -A BROKEN=(
     [ecotox]="VegaModels-SDuckweedEC50Coral VegaModels-HarlequinNOECCoral"
-    [human]="VegaModels-SkinSensitizationToxTree VegaModels-CramerToxTree"
 )
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
