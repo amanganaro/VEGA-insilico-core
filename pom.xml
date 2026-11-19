@@ -183,9 +183,15 @@
                 <directory>src/main/resources/images</directory>
                 <targetPath>../classes/images</targetPath>
             </resource>
+            <!--
+                The only filtered resource: it holds the name and the version taken from this pom, so that
+                InsilicoInfo reports at runtime the version the jar was actually built with. It is kept in a
+                directory of its own because filtering the whole src/main/resources would corrupt the binary
+                resources (images, zip archives, descriptor data).
+            -->
             <resource>
-                <directory>src/main/resources/version</directory>
-                <targetPath>../classes/version</targetPath>
+                <directory>src/main/resources-filtered</directory>
+                <filtering>true</filtering>
             </resource>
         </resources>
 

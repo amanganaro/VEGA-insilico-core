@@ -2,105 +2,80 @@ package insilico.core.version;
 
 import insilico.core.exception.InitFailureException;
 import insilico.core.localization.StringSelectorCore;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
+ * Name and version of the InSilico Core library.
+ *
+ * <p>The values are not maintained by hand: they are read from {@code core-version.properties}, a resource that
+ * Maven generates at build time by filtering {@code src/main/resources-filtered}, so the version reported here is
+ * always the version declared in the pom the jar was built from. The properties file is read once and cached.</p>
  *
  * @author Alberto Manganaro (a.manganaro@kode-solutions.net)
  */
 public class InsilicoInfo {
 
-    private String Name;
+    /** Resource holding the filtered values, looked up next to this class. */
+    private static final String PROPERTIES_SOURCE = "core-version.properties";
 
-    private int Major;
-    private int Minor;
-    private int Revision;
+    /** Values read from the resource, loaded on the first use and shared by every instance. */
+    private static Properties properties;
 
-    private static final String XMLSource = "/version/version.xml";
+    private final String name;
+    private final String version;
 
     /**
-     * Constructor. Builds the info object by reading the data retrieved
-     * in the XML file.
+     * Constructor. Reads the name and the version of the library.
      *
-     * @throws InitFailureException
+     * @throws InitFailureException if the generated resource is missing or unreadable, which means the library was
+     *                              not built through its Maven build
      */
     public InsilicoInfo() throws InitFailureException {
+        Properties values = load();
+        this.name = values.getProperty("name", "");
+        this.version = values.getProperty("version", "");
+    }
 
-        try {
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(new DataInputStream((getClass().getResource(XMLSource)).openStream()));
-            doc.getDocumentElement().normalize();
-
-            // Reads version
-            NodeList nodes = doc.getElementsByTagName("Version");
-            Element element = (Element) nodes.item(0);
-
-            this.Name = getValue("Name", element);
-            this.Major = Integer.parseInt(getValue("Major",element));
-            this.Minor = Integer.parseInt(getValue("Minor",element));
-            this.Revision = Integer.parseInt(getValue("Revision",element));
-
-        } catch (Throwable e) {
-            throw new InitFailureException(String.format(StringSelectorCore.getString("isinfo_read_core_fail"), e.getMessage()));
+    /**
+     * Reads the generated resource, once.
+     *
+     * @return the properties it contains
+     * @throws InitFailureException if the resource cannot be found or read
+     */
+    private static synchronized Properties load() throws InitFailureException {
+        if (properties != null) {
+            return properties;
+        }
+        try (InputStream stream = InsilicoInfo.class.getResourceAsStream(PROPERTIES_SOURCE)) {
+            if (stream == null) {
+                throw new IOException(PROPERTIES_SOURCE + " not found on the classpath");
+            }
+            Properties values = new Properties();
+            values.load(stream);
+            properties = values;
+            return properties;
+        } catch (IOException e) {
+            throw new InitFailureException(
+                    String.format(StringSelectorCore.getString("isinfo_read_core_fail"), e.getMessage()));
         }
     }
 
-
     /**
-     * Private method to retrieve node values
-     *
-     * @param tag tag to be searched
-     * @param element root element
-     * @return the value of the node
-     */
-    private static String getValue(String tag, Element element) {
-        NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
-        Node node = (Node) nodes.item(0);
-        return node.getNodeValue();
-    }
-
-
-    /**
-     * @return the Name
+     * @return the name of the library, as declared in the pom
      */
     public String getName() {
-        return Name;
+        return name;
     }
 
     /**
-     * @return the Major
-     */
-    public int getMajor() {
-        return Major;
-    }
-
-    /**
-     * @return the Minor
-     */
-    public int getMinor() {
-        return Minor;
-    }
-
-    /**
-     * @return the Revision
-     */
-    public int getRevision() {
-        return Revision;
-    }
-
-    /**
-     * Provides the model's version as a unique string
+     * Provides the library version as a single string, exactly as declared in the pom (for example {@code 1.3.21}).
+     *
      * @return the version
      */
     public String getVersion() {
-        return Major + "." + Minor + "." + Revision;
+        return version;
     }
 }
