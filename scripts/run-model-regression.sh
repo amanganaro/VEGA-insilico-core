@@ -26,7 +26,8 @@ REPOS=(fate ecotox other properties human)
 
 # Modules that cannot run for reasons unrelated to the regression tests: they are excluded from the build and listed
 # in the summary, so the rest of the repository can still be checked. They are waiting to be fixed.
-#   ecotox: SDuckweedEC50Coral and HarlequinNOECCoral import insilico.core.coral.models.ec50, which Core 1.3.21 lacks.
+#   ecotox: SDuckweedEC50Coral and HarlequinNOECCoral are models still being written, landed on master by mistake:
+#           they import insilico.core.coral.models.ec50, which does not exist yet.
 #   human:  SkinSensitizationToxTree does not compile (maven-compiler-plugin 3.8.0 fails on recent JDKs);
 #           CramerToxTree pulls an old uk.ac.ebi.beam, so every SMILES conversion throws NoSuchMethodError.
 declare -A BROKEN=(
