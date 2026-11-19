@@ -4,6 +4,21 @@ History of the InSilico Core library. Until version 1.3.21 it was kept in `src/m
 which also carried the version number; the version is now taken from the pom at build time, so only the history
 remains and it lives here.
 
+## 1.3.22
+
+- The version reported by `InsilicoInfo` is taken from the pom at build time instead of a hand-maintained XML
+  resource, which had already drifted (it declared 1.3.20 while the library was 1.3.21).
+- `InsilicoInfo.getMajor()`, `getMinor()` and `getRevision()` removed: `getVersion()` returns the whole version
+  string as the pom declares it.
+- Version history moved from `version/version.xml` to this file.
+
+## 1.3.21
+
+- Model regression test support: the shared base classes are published in the test-jar.
+- Batch execution for Python models: one process per set instead of one per molecule, with the returned rows
+  matched by SMILES rather than by position.
+- Golden tests for the descriptor blocks and the similarity matrix.
+
 ## 1.3.20
 
 - Removed support for PMML models (moved to the Core-Aux artifact).
