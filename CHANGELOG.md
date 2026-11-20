@@ -4,6 +4,15 @@ History of the InSilico Core library. Until version 1.3.21 it was kept in `src/m
 which also carried the version number; the version is now taken from the pom at build time, so only the history
 remains and it lives here.
 
+## 1.3.23
+
+- PaDEL descriptors run out of process: PadelAdapter 0.4 talks to PadelService, so PadelFullLib (with its old CDK
+  and the unrelocated Guava, Jena, ICU4J and RapidMiner it bundles) is no longer on the classpath of the core and the
+  models. Models that call the old adapter API (`SetSMILES`/`CalculateDescriptors`) must move to
+  `newRequest(...).add(...).calculate()`.
+- `SludgeDescriptors` calculates its 13 descriptors in a single request per molecule; values unchanged.
+- `docs/models-dependency-analysis.md`: survey of risky dependencies across the model repositories.
+
 ## 1.3.22
 
 - The version reported by `InsilicoInfo` is taken from the pom at build time instead of a hand-maintained XML

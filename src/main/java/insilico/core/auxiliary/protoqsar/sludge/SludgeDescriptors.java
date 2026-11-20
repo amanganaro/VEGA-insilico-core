@@ -1,14 +1,14 @@
 package insilico.core.auxiliary.protoqsar.sludge;
 
 import insilico.core.molecule.InsilicoMolecule;
-import libpadeldescriptor.*;
-import org.openscience.cdk1.qsar.IMolecularDescriptor;
-import org.openscience.cdk1.qsar.descriptors.molecular.BCUTDescriptor;
 import padeladapter.PadelInterface;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
+ * PaDEL descriptors of the ProtoQSAR sludge models (classification and quantitative), calculated through the PaDEL
+ * service in a single request per molecule.
  *
  * @author Alberto
  */
@@ -24,90 +24,25 @@ public class SludgeDescriptors {
     
     public void Calculate(InsilicoMolecule mol) throws Exception {
 
-        PadelInterface PI = new PadelInterface();
-        
-        IMolecularDescriptor MD;
-        ArrayList<String> DescNames;
+        double[][] res = new PadelInterface().newRequest(mol.GetSMILES())
+                // classification
+                .add("AutocorrelationDescriptor", List.of("ATSC4p"))
+                .add("ExtendedTopochemicalAtomDescriptor", List.of("ETA_BetaP_ns_d"))
+                .add("AutocorrelationDescriptor", List.of("GATS1i", "GATS3c"))
+                .add("EStateAtomTypeDescriptor", List.of("maxHother", "minsCH3", "minwHBa"))
+                .add("BurdenModifiedEigenvaluesDescriptor", List.of("SpMax1_Bhm"))
+                // regression
+                .add("EStateAtomTypeDescriptor", List.of("minHBint2"))
+                .add("AutocorrelationDescriptor", List.of("ATSC7v"))
+                .add("BaryszMatrixDescriptor", List.of("VE3_DzZ"))
+                .add("AutocorrelationDescriptor", List.of("AATSC4e"))
+                .add("BCUTDescriptor", List.of("BCUTp-1l"))
+                .calculate();
 
-        PI.SetSMILES(mol.GetSMILES());
-
-        // classification
-
-        MD = new AutocorrelationDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("ATSC4p");
-        double[] res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res) 
-            DescList.add(d);
-
-        MD = new ExtendedTopochemicalAtomDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("ETA_BetaP_ns_d");
-        res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res)
-            DescList.add(d);
-
-        MD = new AutocorrelationDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("GATS1i");
-        DescNames.add("GATS3c");
-        res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res)
-            DescList.add(d);
-
-        MD = new EStateAtomTypeDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("maxHother");
-        DescNames.add("minsCH3");
-        DescNames.add("minwHBa");
-        res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res)
-            DescList.add(d);
-
-        MD = new BurdenModifiedEigenvaluesDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("SpMax1_Bhm");
-        res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res)
-            DescList.add(d);
-
-        // regression
-
-        MD = new EStateAtomTypeDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("minHBint2");
-        res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res)
-            DescList.add(d);          
-
-        MD = new AutocorrelationDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("ATSC7v");
-        res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res)
-            DescList.add(d);          
-
-        MD = new BaryszMatrixDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("VE3_DzZ");
-            res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res)
-            DescList.add(d);          
-
-        MD = new AutocorrelationDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("AATSC4e");
-        res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res)
-            DescList.add(d);          
-
-        MD = new BCUTDescriptor();
-        DescNames = new ArrayList<>();
-        DescNames.add("BCUTp-1l");
-        res = PI.CalculateDescriptors(MD, DescNames);
-        for (double d : res)
-            DescList.add(d);          
-                
+        // 8 descriptors for the classification model, then 5 for the quantitative one
+        for (double[] block : res)
+            for (double d : block)
+                DescList.add(d);
     }
     
     
