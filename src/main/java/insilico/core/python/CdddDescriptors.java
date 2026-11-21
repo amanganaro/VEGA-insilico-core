@@ -220,10 +220,13 @@ public class CdddDescriptors {
 
                 log.info("Start to extract the cddd.zip file.");
 
+                // The serialized CDDD model is not part of the Core: it comes from the InSilico:VegaResources-Cddd
+                // artifact, which the model modules using CDDD descriptors declare as a dependency
                 InputStream is = getClass().getResourceAsStream("/descriptor/cddd.zip");
                 if (is == null) {
-                    log.error("File cddd.zip not found");
-                    throw new PythonModelResourceNotFoundException("File cddd.zip not in resource folder not found");
+                    log.error("File cddd.zip not found on the classpath");
+                    throw new PythonModelResourceNotFoundException("File /descriptor/cddd.zip not found on the " +
+                            "classpath: add the dependency InSilico:VegaResources-Cddd");
                 }
 
                 File zipFile = File.createTempFile("insilico-model-", ".zip");

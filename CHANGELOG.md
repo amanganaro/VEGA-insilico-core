@@ -4,6 +4,15 @@ History of the InSilico Core library. Until version 1.3.21 it was kept in `src/m
 which also carried the version number; the version is now taken from the pom at build time, so only the history
 remains and it lives here.
 
+## 1.3.24
+
+- The serialized CDDD model `descriptor/cddd.zip` (587 MB) is no longer inside the Core jar: it moved to the
+  artifact `InSilico:VegaResources-Cddd`, which the model modules using CDDD descriptors declare (the Core keeps it
+  only as a test dependency). The Core jar goes from 590 MB to 2.9 MB. The Core code is unchanged apart from a
+  clearer error when the zip is missing from the classpath.
+- Note for whoever upgrades: the zip that the Core carried up to 1.3.23 held an old `app-cddd.py`, without the
+  filling to 128 rows that makes CDDD reproducible; VegaResources-Cddd 1.1.0 carries the corrected script.
+
 ## 1.3.23
 
 - PaDEL descriptors run out of process: PadelAdapter 0.4 talks to PadelService, so PadelFullLib (with its old CDK
