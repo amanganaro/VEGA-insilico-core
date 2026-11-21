@@ -13,6 +13,7 @@
 #   --update                 regenerate the reference files (-Dgolden.update=true) instead of comparing
 #   --core-version X.Y.Z     run against another InSilico Core version (-Dvega.core.version)
 #   --no-adi                 do not compare the ADI on the core dataset (-Dregression.adi=false)
+#   --skip IDS               leave out these molecule ids, comma separated, e.g. --skip CUR-366 (-Dregression.skip)
 #   --repos "a b ..."        only these repositories, e.g. --repos "fate ecotox" (default: all five)
 #   --root DIR               directory that contains the VEGA-models-* repositories
 #   --online                 do not pass -o to Maven
@@ -49,6 +50,8 @@ while [ $# -gt 0 ]; do
         --core-version) [ $# -ge 2 ] || { echo "--core-version needs a value" >&2; exit 2; }
                         mvn_args+=("-Dvega.core.version=$2"); shift 2;;
         --no-adi)       mvn_args+=("-Dregression.adi=false"); shift;;
+        --skip)         [ $# -ge 2 ] || { echo "--skip needs a value" >&2; exit 2; }
+                        mvn_args+=("-Dregression.skip=$2"); shift 2;;
         --repos)        [ $# -ge 2 ] || { echo "--repos needs a value" >&2; exit 2; }
                         read -r -a selected <<< "$2"; shift 2;;
         --root)         [ $# -ge 2 ] || { echo "--root needs a value" >&2; exit 2; }

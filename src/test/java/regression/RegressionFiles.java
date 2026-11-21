@@ -17,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,6 +81,20 @@ public final class RegressionFiles {
                 values.remove(idx);
                 t.addRow(row.getKey(), values);
             }
+            return t;
+        }
+
+        /**
+         * @param ids ids of the rows to be removed (ids not in the table are ignored)
+         * @return a copy of this table without the given rows (this table if none of them is present)
+         */
+        public Table withoutRows(Set<String> ids) {
+            if (ids.isEmpty() || ids.stream().noneMatch(rows::containsKey))
+                return this;
+            Table t = new Table(header);
+            for (Map.Entry<String, List<String>> row : rows.entrySet())
+                if (!ids.contains(row.getKey()))
+                    t.addRow(row.getKey(), row.getValue());
             return t;
         }
     }

@@ -17,6 +17,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +50,7 @@ import static org.junit.jupiter.api.Assertions.fail;
  *     not produced. {@code -Dregression.adi=false} drops the ADI column from the comparison without needing to
  *     regenerate the reference, which always contains it.</li>
  * </ul>
+ * {@code -Dregression.skip=ID1,ID2} leaves some molecules out of both the computation and the comparison.
  *
  * @see ModelRegressionTest
  */
@@ -65,6 +67,13 @@ public final class ModelRegression {
 
     /** System property enabling the ADI comparison on the core dataset (default true). */
     public static final String ADI_PROPERTY = "regression.adi";
+
+    /**
+     * System property listing molecule ids to leave out, separated by commas (e.g. {@code CUR-366}). The molecules are
+     * neither computed nor compared, and their rows are dropped from the reference before the comparison. Meant for
+     * trials where a molecule cannot be computed (for instance one that makes a model run forever).
+     */
+    public static final String SKIP_PROPERTY = "regression.skip";
 
     private static final String ID_COLUMN = "ID";
     private static final String SMILES_COLUMN = "SMILES";
@@ -131,6 +140,42 @@ public final class ModelRegression {
         return !"false".equalsIgnoreCase(System.getProperty(ADI_PROPERTY, "true"));
     }
 
+    /** @return the molecule ids listed in the {@value #SKIP_PROPERTY} system property (empty when unset) */
+    public static Set<String> skippedIds() {
+        String p = System.getProperty(SKIP_PROPERTY);
+        Set<String> ids = new LinkedHashSet<>();
+        if (p != null)
+            for (String id : p.split(","))
+                if (!id.isBlank())
+                    ids.add(id.trim());
+        return ids;
+    }
+
+    /**
+     * Removes the molecules listed in {@value #SKIP_PROPERTY}, printing which ones were left out.
+     *
+     * @param entries the dataset rows
+     * @param name name of the run (model key and dataset), for the message
+     * @return the rows that are not skipped
+     */
+    private static List<DatasetEntry> withoutSkipped(List<DatasetEntry> entries, String name) {
+        Set<String> skip = skippedIds();
+        if (skip.isEmpty())
+            return entries;
+        List<DatasetEntry> kept = new ArrayList<>(entries.size());
+        List<String> skipped = new ArrayList<>();
+        for (DatasetEntry e : entries) {
+            if (skip.contains(e.id()))
+                skipped.add(e.id());
+            else
+                kept.add(e);
+        }
+        if (!skipped.isEmpty())
+            System.out.printf("[model-regression] %s: skipped %s (%s)%n", name, String.join(", ", skipped),
+                    SKIP_PROPERTY);
+        return kept;
+    }
+
     /**
      * Runs the regression check of one model on one dataset: rewrites the reference file in update mode, otherwise
      * recomputes the model on the reference molecules and compares, failing with a full report on any difference.
@@ -165,7 +210,7 @@ public final class ModelRegression {
     /** Update mode: recompute on the live dataset and rewrite the reference file. */
     private static void update(InsilicoModel model, Dataset dataset, String key, String name, String description,
                                boolean includeAdi) throws Exception {
-        List<DatasetEntry> entries = datasetEntries(model, dataset, key);
+        List<DatasetEntry> entries = withoutSkipped(datasetEntries(model, dataset, key), name);
         if (entries.isEmpty())
             fail("Dataset " + dataset.id() + " for model " + key + " is empty");
 
@@ -183,7 +228,9 @@ public final class ModelRegression {
             fail("Reference regression/" + name + ".tsv not found on the classpath for model " + key
                     + ": generate it with " + REGENERATE_HINT);
 
-        List<DatasetEntry> referenceEntries = entriesFromReference(expected, name);
+        // Skipped molecules are neither computed nor compared: drop them from the reference too.
+        List<DatasetEntry> referenceEntries = withoutSkipped(entriesFromReference(expected, name), name);
+        expected = expected.withoutRows(skippedIds());
         if (referenceEntries.isEmpty())
             fail("Reference regression/" + name + ".tsv has no molecules");
 
