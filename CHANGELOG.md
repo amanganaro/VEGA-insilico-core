@@ -12,6 +12,11 @@ remains and it lives here.
   clearer error when the zip is missing from the classpath.
 - Note for whoever upgrades: the zip that the Core carried up to 1.3.23 held an old `app-cddd.py`, without the
   filling to 128 rows that makes CDDD reproducible; VegaResources-Cddd 1.1.0 carries the corrected script.
+- Dependency cleanup (`docs/core-cleanup.md`), republished as the same 1.3.24 since no output changes:
+  - Guava 33.6.0-jre → 33.8.0-jre. The core does not use it, but the direct declaration is what moves CDK 2.3 off
+    the guava 17.0 its 23 modules declare, so it stays, now with a comment saying why.
+  - jackson-databind and jackson-core 2.22.0 → 2.22.3.
+  - Jena, JUnit 4 + Hamcrest and Xalan excluded from `cdk-bundle`: CDK brings them but the core never uses them.
 
 ## 1.3.23
 
