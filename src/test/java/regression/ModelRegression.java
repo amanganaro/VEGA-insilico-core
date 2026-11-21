@@ -235,7 +235,11 @@ public final class ModelRegression {
             fail("Reference regression/" + name + ".tsv has no molecules");
 
         // The live dataset is read only to warn when it no longer matches the reference (read before Purge).
-        List<DatasetEntry> currentEntries = datasetEntries(model, dataset, key);
+        // Skipped molecules are left out here too, so they are not reported as a dataset change.
+        Set<String> skip = skippedIds();
+        List<DatasetEntry> currentEntries = datasetEntries(model, dataset, key).stream()
+                .filter(e -> !skip.contains(e.id()))
+                .toList();
 
         RegressionFiles.Table actual = timedBuild(model, convert(referenceEntries), includeAdi, name);
 
