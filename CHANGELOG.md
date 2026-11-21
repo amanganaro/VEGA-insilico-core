@@ -17,6 +17,17 @@ remains and it lives here.
     the guava 17.0 its 23 modules declare, so it stays, now with a comment saying why.
   - jackson-databind and jackson-core 2.22.0 → 2.22.3.
   - Jena, JUnit 4 + Hamcrest and Xalan excluded from `cdk-bundle`: CDK brings them but the core never uses them.
+- New package `insilico.core.similarity.legacy`, published in the same 1.3.24 since the results do not change. It
+  holds the CDK 2.3 implementation of `Fingerprinter`, `ExtendedFingerprinter` and `PubchemFingerprinter`
+  (`LegacyFingerprinter`, `LegacyExtendedFingerprinter`, `LegacyPubchemFingerprinter`: verbatim CDK sources, LGPL,
+  original authors and license kept). `SimilarityDescriptorsBuilder` and `ScreeningFingerprint` now use them.
+  - Why: the fingerprints of the training-set molecules are serialized in the `ts_*.dat` files. A molecule counts as
+    being in the training set when the similarity score is exactly 1, so a single changed bit loses that match and
+    silently changes the applicability domain, the experimental values and the kNN predictions. CDK changed all
+    three fingerprinters after 2.3, so the fingerprints are now kept in the core and no longer follow the CDK
+    version.
+  - On CDK 2.3 this is the very same code: golden tests and the model regression on the core dataset are unchanged
+    (measured, see `docs/cdk-2.14-trial.md`).
 
 ## 1.3.23
 

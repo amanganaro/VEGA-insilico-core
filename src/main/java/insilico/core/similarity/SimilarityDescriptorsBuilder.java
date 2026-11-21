@@ -5,6 +5,9 @@ import insilico.core.descriptor.blocks.FunctionalGroups;
 import insilico.core.exception.DescriptorNotFoundException;
 import insilico.core.molecule.InsilicoMolecule;
 import insilico.core.similarity.descriptors.simConstitutional;
+import insilico.core.similarity.legacy.LegacyExtendedFingerprinter;
+import insilico.core.similarity.legacy.LegacyFingerprinter;
+import insilico.core.similarity.legacy.LegacyPubchemFingerprinter;
 import org.openscience.cdk.DefaultChemObjectBuilder;
 import org.openscience.cdk.fingerprint.*;
 
@@ -48,17 +51,24 @@ public class SimilarityDescriptorsBuilder {
 
     /**
      * Sets the fingerprint type to be used.
+     * <p>
+     * The types VEGA actually uses are built by the {@code Legacy*} classes of
+     * {@link insilico.core.similarity.legacy}, which hold the CDK 2.3 implementation. The fingerprints of the
+     * training sets are serialized in the {@code ts_*.dat} files, so a change of the fingerprint breaks the identity
+     * match with the training molecules: it would silently change the applicability domain, the experimental values
+     * and the kNN predictions. Keeping our own copy makes the fingerprints independent of the CDK version.
+     *
      * @param FingerPrintType type of fingerprint to be selected
      */
     public final void SetFingerPrint(int FingerPrintType) {
         switch (FingerPrintType) {
             case FP_DEFAULT:
-                FP = new Fingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
+                FP = new LegacyFingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
                 break;
             case FP_EXTENDED:
-                FP = new ExtendedFingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
+                FP = new LegacyExtendedFingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
                 // Option needed to be compliant with prev CDK fingerprinter
-                ((ExtendedFingerprinter)FP).setHashPseudoAtoms(true);
+                ((LegacyExtendedFingerprinter)FP).setHashPseudoAtoms(true);
                 break;
             case FP_GRAPHONLY:
                 FP = new GraphOnlyFingerprinter(PARAM_FP_SIZE, PARAM_FP_DEPTH);
@@ -76,7 +86,7 @@ public class SimilarityDescriptorsBuilder {
                 FP = new MACCSFingerprinter();
                 break;
             case FP_PUBCHEM:
-                FP = new PubchemFingerprinter(DefaultChemObjectBuilder.getInstance());
+                FP = new LegacyPubchemFingerprinter(DefaultChemObjectBuilder.getInstance());
                 break;
             case FP_SUBSTRUCTURE:
                 FP = new SubstructureFingerprinter();

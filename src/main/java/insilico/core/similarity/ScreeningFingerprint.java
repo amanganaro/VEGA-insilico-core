@@ -2,8 +2,8 @@ package insilico.core.similarity;
 
 import insilico.core.exception.GenericFailureException;
 import insilico.core.localization.StringSelectorCore;
+import insilico.core.similarity.legacy.LegacyExtendedFingerprinter;
 import org.openscience.cdk.exception.CDKException;
-import org.openscience.cdk.fingerprint.ExtendedFingerprinter;
 import org.openscience.cdk.fingerprint.IFingerprinter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
@@ -12,7 +12,8 @@ import java.util.BitSet;
 public class ScreeningFingerprint {
 
     private static final int SIZE = 64;
-    private static final IFingerprinter FP = new ExtendedFingerprinter(SIZE, 3);
+    // CDK 2.3 implementation, kept in the core: see SimilarityDescriptorsBuilder.SetFingerPrint
+    private static final IFingerprinter FP = new LegacyExtendedFingerprinter(SIZE, 3);
 
     public static long Calculate(IAtomContainer structure) throws GenericFailureException {
         try {

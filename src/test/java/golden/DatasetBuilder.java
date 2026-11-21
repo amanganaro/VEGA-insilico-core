@@ -6,7 +6,7 @@ import insilico.core.similarity.SimilarityDescriptorsBuilder;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
-import org.openscience.cdk.fingerprint.ExtendedFingerprinter;
+import insilico.core.similarity.legacy.LegacyExtendedFingerprinter;
 import org.openscience.cdk.interfaces.IAtomContainer;
 
 import java.io.IOException;
@@ -223,8 +223,8 @@ class DatasetBuilder {
      */
     private static List<Candidate> toCandidates(Map<String, String> smilesToSource) {
         List<Map.Entry<String, String>> input = new ArrayList<>(smilesToSource.entrySet());
-        ThreadLocal<ExtendedFingerprinter> fingerprinter = ThreadLocal.withInitial(() -> {
-            ExtendedFingerprinter fp = new ExtendedFingerprinter(SimilarityDescriptorsBuilder.PARAM_FP_SIZE,
+        ThreadLocal<LegacyExtendedFingerprinter> fingerprinter = ThreadLocal.withInitial(() -> {
+            LegacyExtendedFingerprinter fp = new LegacyExtendedFingerprinter(SimilarityDescriptorsBuilder.PARAM_FP_SIZE,
                     SimilarityDescriptorsBuilder.PARAM_FP_DEPTH);
             fp.setHashPseudoAtoms(true);
             return fp;
